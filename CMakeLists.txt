@@ -1,0 +1,22 @@
+cmake_minimum_required(VERSION 3.16)
+project(rtp-payloader)
+include(FindPkgConfig)
+message(STATUS "PROJECT_NAME = ${PROJECT_NAME}")
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "MSYS")
+  message("Detected MSYS2...")
+  set(MSYS_LIBS ws2_32 mingwex)
+endif()
+
+add_library(rtp-payloader SHARED rtp_stream.cc )
+pkg_check_modules(SWSCALE REQUIRED libswscale)
+target_link_libraries(rtp-payloader png pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS})
+target_include_directories(rtp-payloader PUBLIC ${SWSCALE_INCLUDE_DIRS})
+set_target_properties(rtp-payloader PROPERTIES SOVERSION 1)
+#set_target_properties(rtp-payloader PROPERTIES VERSION ${PROJECT_VERSION})
+
+project(rtp-example)
+message(STATUS "PROJECT_NAME = ${PROJECT_NAME}")
+add_executable(rtp-example example.cc pngget.cc)
+target_link_libraries(rtp-example rtp-payloader)
+file(COPY lenna-lg.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
