@@ -76,33 +76,37 @@ Use his program to stream data to the udpsc example above on the tegra X1
 #define MAX_BUFSIZE 1280 * 3     // allow for RGB data upto 1280 pixels wide
 #define MAX_UDP_DATA 1500        // enough space for three lines of UDP data MTU size should be checked
 
+#pragma pack(1)
+
 // 12 byte RTP Raw video header
-typedef struct __attribute__((__packed__)) {
+typedef struct{
   int32_t protocol : 32;
   int32_t timestamp : 32;
   int32_t source : 32;
 } RtpHeader;
 
-typedef struct __attribute__((__packed__)) {
-  int16_t length : 16;
-  int16_t line_number : 16;
-  int16_t offset : 16;
+typedef struct  {
+  int16_t length; __attribute__ ((aligned (16)));
+  int16_t line_number ; __attribute__ ((aligned (16)));
+  int16_t offset; __attribute__ ((aligned (16)));
 } LineHeader;
 
-typedef struct __attribute__((__packed__)) {
-  int16_t extended_sequence_number : 16;
+typedef struct {
+  int16_t extended_sequence_number; __attribute__ ((aligned (16)));
   LineHeader line[NUM_LINES_PER_PACKET];  // TODO (ross@rossnewman.com): This can be multiline.
 } PayloadHeader;
 
-typedef struct __attribute__((__packed__)) {
+typedef struct  {
   RtpHeader rtp;
   PayloadHeader payload;
 } Header;
 
-typedef struct __attribute__((__packed__)) {
-  Header head;
-  char data[MAX_BUFSIZE];
+typedef struct {
+  Header head; __attribute__ ((aligned (32)));
+  char data[MAX_BUFSIZE]; __attribute__ ((aligned (8)));
 } RtpPacket;
+#pragma pack()
+
 
 void yuvtorgb(int height, int width, char *yuv, char *rgba);
 void rgbtoyuv(int height, int width, char *rgb, char *yuv);
