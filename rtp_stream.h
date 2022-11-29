@@ -79,34 +79,39 @@ Use his program to stream data to the udpsc example above on the tegra X1
 #pragma pack(1)
 
 // 12 byte RTP Raw video header
-typedef struct{
+typedef struct {
   int32_t protocol : 32;
   int32_t timestamp : 32;
   int32_t source : 32;
 } RtpHeader;
 
-typedef struct  {
-  int16_t length; __attribute__ ((aligned (16)));
-  int16_t line_number ; __attribute__ ((aligned (16)));
-  int16_t offset; __attribute__ ((aligned (16)));
+typedef struct {
+  int16_t length;
+  __attribute__((aligned(16)));
+  int16_t line_number;
+  __attribute__((aligned(16)));
+  int16_t offset;
+  __attribute__((aligned(16)));
 } LineHeader;
 
 typedef struct {
-  int16_t extended_sequence_number; __attribute__ ((aligned (16)));
+  int16_t extended_sequence_number;
+  __attribute__((aligned(16)));
   LineHeader line[NUM_LINES_PER_PACKET];  // TODO (ross@rossnewman.com): This can be multiline.
 } PayloadHeader;
 
-typedef struct  {
+typedef struct {
   RtpHeader rtp;
   PayloadHeader payload;
 } Header;
 
 typedef struct {
-  Header head; __attribute__ ((aligned (32)));
-  char data[MAX_BUFSIZE]; __attribute__ ((aligned (8)));
+  Header head;
+  __attribute__((aligned(32)));
+  char data[MAX_BUFSIZE];
+  __attribute__((aligned(8)));
 } RtpPacket;
 #pragma pack()
-
 
 void yuvtorgb(int height, int width, char *yuv, char *rgba);
 void rgbtoyuv(int height, int width, char *rgb, char *yuv);
@@ -164,6 +169,6 @@ typedef struct {
   RtpStream *stream;
 } TxData;
 
-static TxData arg_rx;
+// static TxData arg_rx;
 
 #endif
