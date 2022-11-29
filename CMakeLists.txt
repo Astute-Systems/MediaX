@@ -3,6 +3,8 @@ project(vivoe-media)
 include(FindPkgConfig)
 message(STATUS "PROJECT_NAME = ${PROJECT_NAME}")
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wall -Werror")
+
 if (${CMAKE_SYSTEM_NAME} MATCHES "MSYS")
   message("Detected MSYS2...")
   set(MSYS_LIBS ws2_32 mingwex)

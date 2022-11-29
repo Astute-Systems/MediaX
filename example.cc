@@ -78,13 +78,11 @@ void DumpHex(const void *data, size_t size) {
 }
 
 int main(int argc, char **argv) {
-  int sockfd, portno, n, c, frame = 0;
+  int c, frame = 0;
   int move = 0;
   char *yuv;
-  png_byte *row;
   char packet[BUFSIZE];
-  RtpStream *rtp;
-  png_bytep *row_pointers;
+  png_bytep *row_pointers = nullptr;
 
   yuv = (char *)malloc((STREAM_WIDTH * STREAM_HEIGHT) * 2);
 
@@ -94,27 +92,25 @@ int main(int argc, char **argv) {
   row_pointers = get_row_pointwes();
 
   /* setup RTP streaming class */
-  rtp = new RtpStream(STREAM_WIDTH, STREAM_WIDTH);
-  rtp->RtpStreamOut((char *)RTP_OUTPUT_IP, RTP_OUTPUT_PORT);
-  rtp->Open();
+  RtpStream rtp(STREAM_WIDTH, STREAM_WIDTH);
+  rtp.RtpStreamOut((char *)RTP_OUTPUT_IP, RTP_OUTPUT_PORT);
+  rtp.Open();
 
   /* get a message from the user */
   bzero(packet, BUFSIZE);
 
   /* Loop frames forever */
   while (1) {
-    struct timeval NTP_value;
     int32_t time = 10000;
 
     /* Convert all the scan lines */
     for (c = 0; c < (STREAM_HEIGHT); c++) {
-      int x, last = 0;
       png_byte *row = row_pointers[c];
       rgbtoyuv(STREAM_HEIGHT, STREAM_WIDTH, &packet[c], (char *)row);
     }
 
     DumpHex(packet, 40);
-    if (rtp->Transmit(packet) < 0) break;
+    if (rtp.Transmit(packet) < 0) break;
 
 #if 1
     /* move the image (png must have extra byte as the second image is green)  */
@@ -129,7 +125,6 @@ int main(int argc, char **argv) {
   }
 
   free(yuv);
-  free(rtp);
   printf("Example terminated...\n");
 
   return 0;

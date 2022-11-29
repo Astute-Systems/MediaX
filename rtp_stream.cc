@@ -117,12 +117,11 @@ void RtpStream::RtpStreamOut(char *hostname, int portno) {
 bool RtpStream::Open() {
   if (port_no_in_) {
     struct sockaddr_in si_me;
-    int i, slen = sizeof(si_me);
 
     // create a UDP socket
     if ((sockfd_in_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
       cout << "ERROR opening socket\n";
-      return error;
+      return false;
     }
     // zero out the structure
     memset((char *)&si_me, 0, sizeof(si_me));
@@ -134,7 +133,7 @@ bool RtpStream::Open() {
     // bind socket to port
     if (bind(sockfd_in_, (struct sockaddr *)&si_me, sizeof(si_me)) == -1) {
       cout << "ERROR binding socket\n";
-      return error;
+      return false;
     }
 #if RTP_MULTICAST
     {
@@ -155,7 +154,7 @@ bool RtpStream::Open() {
     sockfd_out_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (sockfd_out_ < 0) {
       cout << "ERROR opening socket\n";
-      return error;
+      return false;
     }
 
     /* gethostbyname: get the server's DNS entry */
@@ -199,12 +198,13 @@ void RtpStream::Close() {
 
 #if ENDIAN_SWAP
 void EndianSwap32(uint32_t *data, unsigned int length) {
-  int c = 0;
+  uint32_t c = 0;
 
   for (c = 0; c < length; c++) data[c] = __bswap_32(data[c]);
 }
+
 void EndianSwap16(uint16_t *data, unsigned int length) {
-  int c = 0;
+  uint16_t c = 0;
 
   for (c = 0; c < length; c++) data[c] = __bswap_16(data[c]);
 }
@@ -228,7 +228,6 @@ void RtpStream::UpdateHeader(Header *packet, int line, int last, int32_t timesta
 
 void *ReceiveThread(void *data) {
   TxData *arg;
-  ssize_t len = 0;
   RtpPacket *packet;
   bool receiving = true;
   int scancount = 0;
@@ -253,7 +252,7 @@ void *ReceiveThread(void *data) {
       //
       // Read in the RTP data
       //
-      len = recvfrom(arg->stream->sockfd_in_, arg->stream->udpdata, MAX_UDP_DATA, 0, NULL, NULL);
+      recvfrom(arg->stream->sockfd_in_, arg->stream->udpdata, MAX_UDP_DATA, 0, NULL, NULL);
 
       packet = reinterpret_cast<RtpPacket *>(arg->stream->udpdata);
 #if ENDIAN_SWAP
@@ -324,7 +323,7 @@ void *ReceiveThread(void *data) {
           printf("po=%d, p=%d, os=%d, Sc = %d, pixel=%d, length=%d\n", payloadoffset, payload, os, c, pixel, length);
 
 #ifdef GST_1_FIX  // UYVY is VYUY (GStreamer bug?) need to swop.
-        for (int fix = 0; fix < length; fix += 4) {
+        for (uint32_t fix = 0; fix < length; fix += 4) {
           unsigned char tmp = arg->stream->udpdata[os + fix + 2];
           arg->stream->udpdata[os + fix + 2] = arg->stream->udpdata[os + fix];
           arg->stream->udpdata[os + fix] = tmp;
@@ -352,6 +351,7 @@ bool RtpStream::Recieve(void **cpu, unsigned long timeout) {
   sched_param param;
   pthread_attr_t tattr;
   pthread_t rx;
+  TxData arg_rx;
 
   arg_rx.rgbframe = 0;
   arg_rx.width = width_;
@@ -380,9 +380,8 @@ bool RtpStream::Recieve(void **cpu, unsigned long timeout) {
 void *TransmitThread(void *data) {
   RtpPacket packet;
   TxData *arg;
-  char *yuv;
-  int c = 0;
-  int n = 0;
+  uint32_t c = 0;
+  uint32_t n = 0;
 
   arg = (TxData *)data;
 
@@ -391,11 +390,10 @@ void *TransmitThread(void *data) {
   /* send a frame */
   pthread_mutex_lock(&arg->stream->mutex_);
   {
-    struct timeval NTP_value;
-    int32_t time = 10000;
+    uint32_t time = 10000;
 
     for (c = 0; c < (arg->height); c++) {
-      int x, last = 0;
+      uint32_t last = 0;
 
       if (c == arg->height - 1) last = 1;
       arg->stream->UpdateHeader((Header *)&packet, c, last, time, RTP_SOURCE);
