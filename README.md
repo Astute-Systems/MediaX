@@ -11,12 +11,12 @@ This is a RAW (YUV) Real Time Protocol pay-loader written in C. This example is 
 
 > **NOTE** : This example has been tested on 64 bit ARM. Target hardware was the Nvidia Jetson TX1/TX2/AGX/Orin. Code is endian swapped. To run on intel set #define ARM  0 in [rtpstream.c](rtpstream.c). If you see jitter then modify rc.local as per [rc.local](tx1/rc.local)
 
-#Dependancies
-The following dependancies need to me installed prior to building this project:
+#Dependencies
+The following dependencies need to me installed prior to building this project:
 ```
-sudo apt install libswscale
+sudo apt install libswscale-dev
 ```
-libswscale is required for RGB/RGBA to UYVY colourspace conversion.
+libswscale is required for RGB/RGBA to UYVY colour space conversion.
 # Installation
 Build the example
 ```
