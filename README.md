@@ -1,6 +1,7 @@
 
 
 [![Action cyclone](https://github.com/DefenceX/vivoe-media-framework/actions/workflows/build-ubuntu-amd64.yaml/badge.svg)](https://github.com/DefenceX/vivoe-media-framework/actions/workflows/build-ubuntu-amd64.yaml.yaml)
+[![Action sonarscan](https://github.com/DefenceX/vivoe-lite/actions/workflows/sonarcloud.yaml/badge.svg)](https://sonarcloud.io/project/overview?id=DefenceX_vivoe-media-framework)
 [![License](https://img.shields.io/badge/licence-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 # Real Time Protocol in C
 This code implements RFC4421 RTP (Real Time Protocol) Payload Format for Uncompressed Video but is mandated by the UK MoD as part of DEF STAN 00-82 (VIVOE) uncompressed RTP video straming protocol for real time video. If you are not familiar with the Generic Vehicle Architecture (DEF STAN 00-23) and VIVOE then you can read more [here](https://en.wikipedia.org/wiki/Generic_Vehicle_Architecture).
