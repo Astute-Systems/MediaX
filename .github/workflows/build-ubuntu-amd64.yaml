@@ -24,7 +24,7 @@ jobs:
 
       - name: Apt Install
         run: |
-          sudo apt-get --no-install-recommends install libswscale cmake g++ 
+          sudo apt-get --no-install-recommends install libswscale-dev cmake g++
 
       - name: CMake and Build
         run: mkdir build && cd build && cmake .. && make -j $(nproc)
