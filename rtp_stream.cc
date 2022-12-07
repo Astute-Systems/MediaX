@@ -127,13 +127,13 @@ RtpStream::~RtpStream(void) { free(buffer_in_); }
 void RtpStream::RtpStreamIn(const char *hostname, const int portno) {
   cout << "[RTP] RtpStreamIn " << hostname << ":" << portno << "\n";
   port_no_in_ = portno;
-  strcpy(hostname_in_, hostname);
+  strncpy(hostname_in_, hostname, sizeof(hostname_in_));
 }
 
 void RtpStream::RtpStreamOut(const char *hostname, const int portno) {
   cout << "[RTP] RtpStreamOut " << hostname << ":" << portno << "\n";
   port_no_out_ = portno;
-  strcpy(hostname_out_, hostname);
+  strncpy(hostname_out_, hostname, sizeof(hostname_in_));
 }
 
 bool RtpStream::Open() {
