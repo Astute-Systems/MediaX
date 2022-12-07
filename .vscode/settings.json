@@ -4,6 +4,21 @@
     "editor.formatOnSave": true,
     "C_Cpp.clang_format_fallbackStyle": "{BasedOnStyle: Google, ColumnLimit: 120}",
     "cSpell.words": [
-        "rgbframe"
+        "gstreamer",
+        "Jetson",
+        "libswscale",
+        "payloader",
+        "RGBA",
+        "rgbframe",
+        "rtpvrawdepay",
+        "rtpvrawpay",
+        "sonarscan",
+        "udpsink",
+        "udpsrc",
+        "UYVY",
+        "videoconvert",
+        "videotestsrc",
+        "VIVOE",
+        "ximagesink"
     ]
 }

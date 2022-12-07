@@ -4,12 +4,12 @@
 [![Action sonarscan](https://github.com/DefenceX/vivoe-lite/actions/workflows/sonarcloud.yaml/badge.svg)](https://sonarcloud.io/project/overview?id=DefenceX_vivoe-media-framework)
 [![License](https://img.shields.io/badge/licence-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 # Real Time Protocol in C
-This code implements RFC4421 RTP (Real Time Protocol) Payload Format for Uncompressed Video but is mandated by the UK MoD as part of DEF STAN 00-82 (VIVOE) uncompressed RTP video straming protocol for real time video. If you are not familiar with the Generic Vehicle Architecture (DEF STAN 00-23) and VIVOE then you can read more [here](https://en.wikipedia.org/wiki/Generic_Vehicle_Architecture).
+This code implements RFC4421 RTP (Real Time Protocol) Payload Format for Uncompressed Video but is mandated by the UK MoD as part of DEF STAN 00-82 (VIVOE) uncompressed RTP video streaming protocol for real time video. If you are not familiar with the Generic Vehicle Architecture (DEF STAN 00-23) and VIVOE then you can read more [here](https://en.wikipedia.org/wiki/Generic_Vehicle_Architecture).
 
 ## Payloader example
-This is a RAW (YUV) Real Time Protocol pay-loader written in C. This example is send only to recieve the data you can use the gstreamer pipeline below.
+This is a RAW (YUV) Real Time Protocol pay-loader written in C. This example is send only to receive the data you can use the gstreamer pipeline below.
 
-> **NOTE** : This example has been tested on 64 bit ARM. Target hardware was the Nvidia Jetson TX1/TX2 and Abaco Systems GVC1000. Code is endian swapped. To run on intel set #define ARM  0 in [rtpstream.c](rtpstream.c). If you see jitter then modify rc.local as per [rc.local](tx1/rc.local)
+> **NOTE** : This example has been tested on 64 bit ARM. Target hardware was the Nvidia Jetson TX1/TX2/AGX/Orin. Code is endian swapped. To run on intel set #define ARM  0 in [rtpstream.c](rtpstream.c). If you see jitter then modify rc.local as per [rc.local](tx1/rc.local)
 
 #Dependancies
 The following dependancies need to me installed prior to building this project:
