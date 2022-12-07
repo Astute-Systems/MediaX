@@ -1,7 +1,29 @@
-/*
- * Might need to add a route here:
- * 	sudo route add -net 239.0.0.0 netmask 255.0.0.0 eth1
- */
+//
+// MIT License
+//
+// Copyright (c) 2022 Ross Newman (ross.newman@defencex.com.au)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+// associated documentation files (the 'Software'), to deal in the Software without restriction,
+// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+// subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or substantial
+// portions of the Software.
+// THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+///
+/// \brief RTP streaming video class for uncompressed DEF-STAN 00-82 video streams
+///
+/// \file rtp_stream.cc
+///
+/// Might need to add a route here (hint to send out multicast traffic):
+///	sudo route add -net 239.0.0.0 netmask 255.0.0.0 eth1
+///
 
 #include <pthread.h>
 #include <sched.h>
@@ -102,13 +124,13 @@ RtpStream::RtpStream(int height, int width) {
 RtpStream::~RtpStream(void) { free(buffer_in_); }
 
 /* Broadcast the stream to port i.e. 5004 */
-void RtpStream::RtpStreamIn(char *hostname, int portno) {
+void RtpStream::RtpStreamIn(const char *hostname, const int portno) {
   cout << "[RTP] RtpStreamIn " << hostname << ":" << portno << "\n";
   port_no_in_ = portno;
   strcpy(hostname_in_, hostname);
 }
 
-void RtpStream::RtpStreamOut(char *hostname, int portno) {
+void RtpStream::RtpStreamOut(const char *hostname, const int portno) {
   cout << "[RTP] RtpStreamOut " << hostname << ":" << portno << "\n";
   port_no_out_ = portno;
   strcpy(hostname_out_, hostname);
@@ -347,7 +369,7 @@ void *ReceiveThread(void *data) {
   return 0;
 }
 
-bool RtpStream::Recieve(void **cpu, unsigned long timeout) {
+bool RtpStream::Receive(void **cpu, unsigned long timeout) {
   sched_param param;
   pthread_attr_t tattr;
   pthread_t rx;
@@ -420,8 +442,8 @@ sched_param param;
 pthread_t tx;
 static TxData arg_tx;
 
-int RtpStream::Transmit(char *rgbframe) {
-  arg_tx.rgbframe = rgbframe;
+int RtpStream::Transmit(const char *rgbframe) {
+  arg_tx.rgbframe = const_cast<char *>(rgbframe);
   arg_tx.width = width_;
   arg_tx.height = height_;
   arg_tx.stream = this;

@@ -1,0 +1,9 @@
+{
+    "cmake.configureOnOpen": false,
+    "C_Cpp.clang_format_path": "/usr/bin/clang-format",
+    "editor.formatOnSave": true,
+    "C_Cpp.clang_format_fallbackStyle": "{BasedOnStyle: Google, ColumnLimit: 120}",
+    "cSpell.words": [
+        "rgbframe"
+    ]
+}

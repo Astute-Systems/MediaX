@@ -1,32 +1,50 @@
-/* Example RTP packet from wireshark
-      Real-Time Transport Protocol
-      10.. .... = Version: RFC 1889 Version (2)
-      ..0. .... = Padding: False
-      ...0 .... = Extension: False
-      .... 0000 = Contributing source identifiers count: 0
-      0... .... = Marker: False
-      Payload type: DynamicRTP-Type-96 (96)
-      Sequence number: 34513
-      Timestamp: 2999318601
-      Synchronization Source identifier: 0xdccae7a8 (3704285096)
-      Payload: 000003c000a08000019e00a2000029292929f06e29292929...
-*/
+//
+// MIT License
+//
+// Copyright (c) 2022 Ross Newman (ross.newman@defencex.com.au)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+// associated documentation files (the 'Software'), to deal in the Software without restriction,
+// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+// subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or substantial
+// portions of the Software.
+// THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+///
+/// \brief RTP streaming video class for uncompressed DEF-STAN 00-82 video streams
+///
+/// \file rtp_stream.h
+///
+///
+/// Example RTP packet from wireshark
+///      Real-Time Transport Protocol      10.. .... = Version: RFC 1889 Version (2)
+///      ..0. .... = Padding: False
+///      ...0 .... = Extension: False
+///      .... 0000 = Contributing source identifiers count: 0
+///      0... .... = Marker: False
+///      Payload type: DynamicRTP-Type-96 (96)
+///      Sequence number: 34513
+///      Timestamp: 2999318601
+///      Synchronization Source identifier: 0xdccae7a8 (3704285096)
+///      Payload: 000003c000a08000019e00a2000029292929f06e29292929...
+///
+///
+/// Gstreamer1.0 working example UYVY streaming
+/// ===========================================
+/// gst-launch-1.0 videotestsrc num_buffers ! video/x-raw, format=UYVY, framerate=25/1, width=640, height=480 ! queue !
+/// rtpvrawpay ! udpsink host=127.0.0.1 port=5004
+///
+/// gst-launch-1.0 udpsrc port=5004 caps="application/x-rtp, media=(string)video, clock-rate=(int)90000,
+/// encoding-name=(string)RAW, sampling=(string)YCbCr-4:2:2, depth=(string)8, width=(string)480, height=(string)480,
+/// payload=(int)96" ! queue ! rtpvrawdepay ! queue ! xvimagesink sync=false
 
-/*
-
-Gstreamer1.0 working example UYVY streaming
-===========================================
-gst-launch-1.0 videotestsrc num_buffers ! video/x-raw, format=UYVY, framerate=25/1, width=640, height=480 ! queue !
-rtpvrawpay ! udpsink host=127.0.0.1 port=5004
-
-gst-launch-1.0 udpsrc port=5004 caps="application/x-rtp, media=(string)video, clock-rate=(int)90000,
-encoding-name=(string)RAW, sampling=(string)YCbCr-4:2:2, depth=(string)8, width=(string)480, height=(string)480,
-payload=(int)96" ! queue ! rtpvrawdepay ! queue ! xvimagesink sync=false
-
-
-Use his program to stream data to the udpsc example above on the tegra X1
-
-*/
+/// Use his program to stream data to the udpsc example above on the tegra X1
 
 #ifndef __RTP_STREAM_H__
 #define __RTP_STREAM_H__
@@ -68,7 +86,7 @@ Use his program to stream data to the udpsc example above on the tegra X1
 #define RTP_EXTENSION 0x0
 #define RTP_MARKER 0x0
 #define RTP_PAYLOAD_TYPE 0x60  // 96 Dynamic Type
-#define RTP_SOURCE 0x12345678  // Sould be unique
+#define RTP_SOURCE 0x12345678  // Should be unique
 #define RTP_FRAMERATE 25
 
 #define Hz90 90000
@@ -126,12 +144,12 @@ class RtpStream {
   RtpStream(int height, int width);
   ~RtpStream();
   static unsigned long sequence_number_;
-  void RtpStreamOut(char *hostname, int port);
-  void RtpStreamIn(char *hostname, int port);
-  int Transmit(char *rgbframe);
+  void RtpStreamOut(const char *hostname, const int port);
+  void RtpStreamIn(const char *hostname, const int port);
+  int Transmit(const char *rgbframe);
   bool Open();
   void Close();
-  bool Recieve(void **cpu, unsigned long timeout = ULONG_MAX);
+  bool Receive(void **cpu, unsigned long timeout = ULONG_MAX);
   int sockfd_in_;
   int sockfd_out_;
   struct sockaddr_in server_addr_in_;
@@ -160,7 +178,7 @@ class RtpStream {
 
 //
 // Transmit data structure
-//
+// Battlefield Management System (BMS) state definition
 typedef struct {
   char *rgbframe;
   char *yuvframe;
