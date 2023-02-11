@@ -69,7 +69,7 @@ void error(char *msg) {
   exit(0);
 }
 
-void yuvtorgb(int height, int width, char *yuv, char *rgba) {
+void YuvToRgb(int height, int width, char *yuv, char *rgba) {
   SwsContext *ctx =
       sws_getContext(width, height, AV_PIX_FMT_YUYV422, width, height, AV_PIX_FMT_RGB24, SWS_BICUBIC, 0, 0, 0);
   uint8_t *inData[1] = {(uint8_t *)yuv};    // RGB24 have one plane
@@ -79,7 +79,7 @@ void yuvtorgb(int height, int width, char *yuv, char *rgba) {
   sws_scale(ctx, inData, inLinesize, 0, height, outData, outLinesize);
 }
 
-void yuvtorgba(int height, int width, char *yuv, char *rgb) {
+void YuvToRgba(int height, int width, char *yuv, char *rgb) {
   SwsContext *ctx =
       sws_getContext(width, height, AV_PIX_FMT_UYVY422, width, height, AV_PIX_FMT_RGBA, SWS_BICUBIC, 0, 0, 0);
   uint8_t *inData[1] = {(uint8_t *)yuv};   // RGB24 have one plane
@@ -98,7 +98,7 @@ void rgbatoyuv(int height, int width, char *rgba, char *yuv) {
   sws_scale(ctx, inData, inLinesize, 0, height, outData, outLinesize);
 }
 
-void rgbtoyuv(int height, int width, char *rgb, char *yuv) {
+void RgbToYuv(int height, int width, char *rgb, char *yuv) {
   SwsContext *ctx = sws_getContext(width, height, AV_PIX_FMT_RGB24, width, height, AV_PIX_FMT_YUYV422, 0, 0, 0, 0);
   uint8_t *inData[1] = {(uint8_t *)rgb};   // RGB24 have one plane
   uint8_t *outData[1] = {(uint8_t *)yuv};  // YUYV have one plane
@@ -187,9 +187,10 @@ bool RtpStream::Open() {
     }
 
     /* build the server's Internet address */
-    bzero((char *)&server_addr_out_, sizeof(server_addr_out_));
+    memset((char *)&server_addr_out_, 0, sizeof(server_addr_out_));
     server_addr_out_.sin_family = AF_INET;
-    bcopy((char *)server_out_->h_addr, (char *)&server_addr_out_.sin_addr.s_addr, server_out_->h_length);
+    memset((char *)server_out_->h_addr, 0, server_out_->h_length);
+    memset((char *)&server_addr_out_.sin_addr.s_addr, 0, server_out_->h_length);
     server_addr_out_.sin_port = htons(port_no_out_);
 
     /* send the message to the server */
@@ -222,17 +223,17 @@ void RtpStream::Close() {
 void EndianSwap32(uint32_t *data, unsigned int length) {
   uint32_t c = 0;
 
-  for (c = 0; c < length; c++) data[c] = __bswap_32(data[c]);
+  for (c = 0; c < length; c++) data[c] = __builtin_bswap32 (data[c]);
 }
 
 void EndianSwap16(uint16_t *data, unsigned int length) {
   uint16_t c = 0;
 
-  for (c = 0; c < length; c++) data[c] = __bswap_16(data[c]);
+  for (c = 0; c < length; c++) data[c] = __builtin_bswap32 (data[c]);
 }
 #endif
 void RtpStream::UpdateHeader(Header *packet, int line, int last, int32_t timestamp, int32_t source) {
-  bzero((char *)packet, sizeof(Header));
+  memset((char *)packet, 0, sizeof(Header));
   packet->rtp.protocol = RTP_VERSION << 30;
   packet->rtp.protocol = packet->rtp.protocol | RTP_PAYLOAD_TYPE << 16;
   packet->rtp.protocol = packet->rtp.protocol | sequence_number_++;

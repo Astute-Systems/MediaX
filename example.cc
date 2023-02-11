@@ -35,13 +35,9 @@ Use his program to stream data to the udpsc example above on the tegra X1
 #define STREAM_WIDTH 480
 #define BUFSIZE (STREAM_WIDTH * STREAM_HEIGHT) * 3
 
-#include <byteswap.h>
-#include <netdb.h>
-#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -97,7 +93,7 @@ int main(int argc, char **argv) {
   rtp.Open();
 
   /* get a message from the user */
-  bzero(packet, BUFSIZE);
+  memset(packet, 0, BUFSIZE);
 
   /* Loop frames forever */
   while (1) {
@@ -106,7 +102,7 @@ int main(int argc, char **argv) {
     /* Convert all the scan lines */
     for (c = 0; c < (STREAM_HEIGHT); c++) {
       png_byte *row = row_pointers[c];
-      rgbtoyuv(STREAM_HEIGHT, STREAM_WIDTH, &packet[c], (char *)row);
+      RgbToYuv(STREAM_HEIGHT, STREAM_WIDTH, &packet[c], (char *)row);
     }
 
     DumpHex(packet, 40);
