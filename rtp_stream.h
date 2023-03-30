@@ -131,10 +131,10 @@ typedef struct {
 } RtpPacket;
 #pragma pack()
 
-void yuvtorgb(int height, int width, char *yuv, char *rgba);
-void rgbtoyuv(int height, int width, char *rgb, char *yuv);
-void yuvtorgba(int height, int width, char *yuv, char *rgba);
-void yuvtorgb(int height, int width, char *yuv, char *rgb);
+void YuvToRgb(int height, int width, char *yuv, char *rgba);
+void RgbToYuv(int height, int width, char *rgb, char *yuv);
+void YuvToRgba(int height, int width, char *yuv, char *rgba);
+void YuvToRgb(int height, int width, char *yuv, char *rgb);
 
 //
 // rtpstream RGB data

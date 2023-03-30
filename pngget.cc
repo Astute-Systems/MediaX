@@ -33,14 +33,14 @@ int number_of_passes;
 void read_png_file(char* file_name) {
   char header[8];  // 8 is the maximum size that can be checked
 
-  /* open file and test for it being a png */
+  // open file and test for it being a png
   FILE* fp = fopen(file_name, "rb");
   if (!fp) abort_("[read_png_file] File %s could not be opened for reading", file_name);
   fread(header, 1, 8, fp);
   if (png_sig_cmp((png_bytep)header, 0, 8))
     abort_("[read_png_file] File %s is not recognized as a PNG file", file_name);
 
-  /* initialize stuff */
+  // initialize stuff
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 
   if (!png_ptr) abort_("[read_png_file] png_create_read_struct failed");
@@ -64,7 +64,7 @@ void read_png_file(char* file_name) {
   number_of_passes = png_set_interlace_handling(png_ptr);
   png_read_update_info(png_ptr, info_ptr);
 
-  /* read file */
+  // read file
   if (setjmp(png_jmpbuf(png_ptr))) abort_("[read_png_file] Error during read_image");
 
   row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * height);

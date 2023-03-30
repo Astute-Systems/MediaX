@@ -61,15 +61,13 @@ typedef struct float4 {
   float w;
 } float4;
 
-/*
- * error - wrapper for perror
- */
+// error - wrapper for perror
 void error(char *msg) {
   perror(msg);
   exit(0);
 }
 
-void yuvtorgb(int height, int width, char *yuv, char *rgba) {
+void YuvToRgb(int height, int width, char *yuv, char *rgba) {
   SwsContext *ctx =
       sws_getContext(width, height, AV_PIX_FMT_YUYV422, width, height, AV_PIX_FMT_RGB24, SWS_BICUBIC, 0, 0, 0);
   uint8_t *inData[1] = {(uint8_t *)yuv};    // RGB24 have one plane
@@ -79,7 +77,7 @@ void yuvtorgb(int height, int width, char *yuv, char *rgba) {
   sws_scale(ctx, inData, inLinesize, 0, height, outData, outLinesize);
 }
 
-void yuvtorgba(int height, int width, char *yuv, char *rgb) {
+void YuvToRgba(int height, int width, char *yuv, char *rgb) {
   SwsContext *ctx =
       sws_getContext(width, height, AV_PIX_FMT_UYVY422, width, height, AV_PIX_FMT_RGBA, SWS_BICUBIC, 0, 0, 0);
   uint8_t *inData[1] = {(uint8_t *)yuv};   // RGB24 have one plane
@@ -89,7 +87,7 @@ void yuvtorgba(int height, int width, char *yuv, char *rgb) {
   sws_scale(ctx, inData, inLinesize, 0, height, outData, outLinesize);
 }
 
-void rgbatoyuv(int height, int width, char *rgba, char *yuv) {
+void RgbaToYuv(int height, int width, char *rgba, char *yuv) {
   SwsContext *ctx = sws_getContext(width, height, AV_PIX_FMT_RGBA, width, height, AV_PIX_FMT_YUYV422, 0, 0, 0, 0);
   uint8_t *inData[1] = {(uint8_t *)rgba};  // RGB24 have one plane
   uint8_t *outData[1] = {(uint8_t *)yuv};  // YUYV have one plane
@@ -98,7 +96,7 @@ void rgbatoyuv(int height, int width, char *rgba, char *yuv) {
   sws_scale(ctx, inData, inLinesize, 0, height, outData, outLinesize);
 }
 
-void rgbtoyuv(int height, int width, char *rgb, char *yuv) {
+void RgbToYuv(int height, int width, char *rgb, char *yuv) {
   SwsContext *ctx = sws_getContext(width, height, AV_PIX_FMT_RGB24, width, height, AV_PIX_FMT_YUYV422, 0, 0, 0, 0);
   uint8_t *inData[1] = {(uint8_t *)rgb};   // RGB24 have one plane
   uint8_t *outData[1] = {(uint8_t *)yuv};  // YUYV have one plane
