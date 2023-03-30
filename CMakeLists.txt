@@ -18,7 +18,7 @@ set_target_properties(vivoe-media PROPERTIES SOVERSION 1)
 project(rtp-example)
 add_executable(rtp-example example.cc pngget.cc)
 target_link_libraries(rtp-example vivoe-media)
-file(COPY lenna-lg.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY testcard.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # Install 
 install(TARGETS vivoe-media DESTINATION /usr/local/lib)

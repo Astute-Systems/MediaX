@@ -92,17 +92,27 @@ void RgbaToYuv(int height, int width, char *rgba, char *yuv) {
   uint8_t *inData[1] = {(uint8_t *)rgba};  // RGB24 have one plane
   uint8_t *outData[1] = {(uint8_t *)yuv};  // YUYV have one plane
   int inLinesize[1] = {width * 4};         // RGB stride
-  int outLinesize[1] = {width * 2};        // YUYV srtide
+  int outLinesize[1] = {width * 2};        // YUYV stride
   sws_scale(ctx, inData, inLinesize, 0, height, outData, outLinesize);
 }
 
-void RgbToYuv(int height, int width, char *rgb, char *yuv) {
-  SwsContext *ctx = sws_getContext(width, height, AV_PIX_FMT_RGB24, width, height, AV_PIX_FMT_YUYV422, 0, 0, 0, 0);
-  uint8_t *inData[1] = {(uint8_t *)rgb};   // RGB24 have one plane
-  uint8_t *outData[1] = {(uint8_t *)yuv};  // YUYV have one plane
-  int inLinesize[1] = {width * 3};         // RGB stride
-  int outLinesize[1] = {width * 2};        // YUYV srtide
-  sws_scale(ctx, inData, inLinesize, 0, height, outData, outLinesize);
+void RgbToYuv(int height, int width, uint8_t *rgb, uint8_t *yuv) {
+  struct SwsContext *sws_ctx = nullptr;
+  int src_linesize[1] = {3 * width};
+  int dst_linesize[3] = {width * 2};
+  uint8_t *src_data[1] = {rgb};
+  uint8_t *dst_data[3] = {yuv};
+
+  sws_ctx = sws_getContext(width, height, AV_PIX_FMT_RGB24, width, height, AV_PIX_FMT_YUYV422, SWS_BICUBIC, nullptr,
+                           nullptr, nullptr);
+
+  if (!sws_ctx) {
+    fprintf(stderr, "Error initializing the scaling context\n");
+    return;
+  }
+  sws_scale(sws_ctx, src_data, src_linesize, 0, height, dst_data, dst_linesize);
+
+  // sws_freeContext(sws_ctx);
 }
 
 unsigned long RtpStream::sequence_number_;
@@ -404,6 +414,7 @@ void *TransmitThread(void *data) {
   uint32_t n = 0;
 
   arg = (TxData *)data;
+  int16_t stride = arg->width * 2;
 
   RtpStream::sequence_number_ = 0;
 
@@ -422,6 +433,9 @@ void *TransmitThread(void *data) {
       EndianSwap32(reinterpret_cast<uint32_t *>(&packet), sizeof(RtpHeader) / 4);
       EndianSwap16(reinterpret_cast<uint16_t *>(&packet.head.payload), sizeof(PayloadHeader) / 2);
 #endif
+
+      memcpy(packet.data, (void *)&arg->rgbframe[(c * stride) + 1], stride);
+      // memset(packet.data, 255, stride);
       n = sendto(arg->stream->sockfd_out_, (char *)&packet, 24 + (arg->width * 2), 0,
                  (const sockaddr *)&arg->stream->server_addr_out_, arg->stream->server_len_out_);
 
@@ -450,7 +464,7 @@ int RtpStream::Transmit(const char *rgbframe) {
   // Start a thread so we can start capturing the next frame while transmitting the data
   pthread_join(tx, 0);
   pthread_create(&tx, NULL, TransmitThread, &arg_tx);
-  return 0;  // Cant know the if the transmit was successfull if done in a thread
+  return 0;  // Cant know the if the transmit was successful if done in a thread
 #else
   return TransmitThread(&arg_tx);
 #endif

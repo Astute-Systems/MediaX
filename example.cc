@@ -33,9 +33,10 @@
 //
 
 const char kRtpOutputIp[] = "127.0.0.1";
+const char kFilename[] = "testcard.png";
 const int kRtpOutputPort = 5004;
-const int kStreamHeight = 640;
-const int kStreamWidth = 480;
+const int kStreamHeight = 480;
+const int kStreamWidth = 640;
 #define kBuffSize (kStreamHeight * kStreamHeight) * 3
 
 #include <byteswap.h>
@@ -81,21 +82,19 @@ void DumpHex(const void *data, size_t size) {
 }
 
 int main(int argc, char **argv) {
-  int c, frame = 0;
+  int frame = 0;
   int move = 0;
-  char *yuv;
-  char packet[kBuffSize];
+  uint8_t packet[kBuffSize];
   png_bytep *row_pointers = nullptr;
-
-  yuv = (char *)malloc((kStreamWidth * kStreamHeight) * 2);
 
   printf("Example RTP streaming\n");
 
-  read_png_file((char *)"./lenna-lg.png");
+  read_png_file((char *)kFilename);
   row_pointers = get_row_pointwes();
+  printf("Read PNG file %s\n", kFilename);
 
   // setup RTP streaming class
-  RtpStream rtp(kStreamWidth, kStreamHeight);
+  RtpStream rtp(kStreamHeight, kStreamWidth);
   rtp.RtpStreamOut((char *)kRtpOutputIp, kRtpOutputPort);
   rtp.Open();
 
@@ -107,15 +106,11 @@ int main(int argc, char **argv) {
     int32_t time = 10000;
 
     // Convert all the scan lines
-    for (c = 0; c < (kStreamHeight); c++) {
-      png_byte *row = row_pointers[c];
-      // printf("Row %d\n", c);
-      // DumpHex(row, 40);
-      RgbToYuv(kStreamHeight, kStreamWidth, &packet[c], (char *)row);
-    }
+    RgbToYuv(kStreamHeight, kStreamWidth, (uint8_t *)&row_pointers[0], (uint8_t *)packet);
 
-    DumpHex(packet, 56);
-    if (rtp.Transmit(packet) < 0) break;
+    DumpHex(row_pointers, 64);
+    DumpHex(packet, 64);
+    if (rtp.Transmit((char *)packet) < 0) break;
 
 #if 1
     // move the image (png must have extra byte as the second image is green)
@@ -124,12 +119,13 @@ int main(int argc, char **argv) {
 #endif
 
     // approximately 24 frames a second
+    // delay 40ms
+
     usleep(1000000 / RTP_FRAMERATE);
     time += (Hz90 / RTP_FRAMERATE);
     printf("Sent frame %d\n", frame++);
   }
 
-  free(yuv);
   printf("Example terminated...\n");
 
   return 0;
