@@ -1,10 +1,73 @@
 #include "pngget.h"
 
+#include <png.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+#include <cstdint>
+#include <iostream>
+#include <memory>
+#include <vector>
+
+std::vector<uint8_t> read_png_rgb24(const char* filename) {
+  FILE* fp = fopen(filename, "rb");
+  if (!fp) {
+    std::cerr << "Error opening file: " << filename << std::endl;
+    return {};
+  }
+
+  png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+  if (!png_ptr) {
+    std::cerr << "Error creating read struct" << std::endl;
+    fclose(fp);
+    return {};
+  }
+
+  png_infop info_ptr = png_create_info_struct(png_ptr);
+  if (!info_ptr) {
+    std::cerr << "Error creating info struct" << std::endl;
+    png_destroy_read_struct(&png_ptr, nullptr, nullptr);
+    fclose(fp);
+    return {};
+  }
+
+  if (setjmp(png_jmpbuf(png_ptr))) {
+    std::cerr << "Error during PNG read" << std::endl;
+    png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
+    fclose(fp);
+    return {};
+  }
+
+  png_init_io(png_ptr, fp);
+  png_read_info(png_ptr, info_ptr);
+
+  png_uint_32 width, height;
+  int bit_depth, color_type;
+  png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, nullptr, nullptr, nullptr);
+
+  png_set_expand(png_ptr);
+  png_set_strip_16(png_ptr);
+  png_set_gray_to_rgb(png_ptr);
+  png_set_filler(png_ptr, 0xFF, PNG_FILLER_AFTER);
+  png_read_update_info(png_ptr, info_ptr);
+
+  std::vector<png_bytep> row_pointers(height);
+  std::vector<uint8_t> rgb24_buffer(width * height * 3);
+
+  for (png_uint_32 y = 0; y < height; y++) {
+    row_pointers[y] = reinterpret_cast<png_bytep>(&rgb24_buffer[y * width * 3]);
+  }
+
+  png_read_image(png_ptr, row_pointers.data());
+
+  png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
+  fclose(fp);
+
+  return rgb24_buffer;
+}
 
 #define PNG_DEBUG 3
 png_structp png_ptr;

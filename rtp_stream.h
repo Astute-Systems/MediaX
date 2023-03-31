@@ -132,7 +132,7 @@ typedef struct {
 #pragma pack()
 
 void YuvToRgb(int height, int width, char *yuv, char *rgba);
-void RgbToYuv(int height, int width, uint8_t *rgb, uint8_t *yuv);
+void RgbToYuv(int height, int width, char *rgb, char *yuv);
 void RgbaToYuvBasic(int width, int height, unsigned char *rgb_buffer, unsigned char *yuv_buffer);
 void YuvToRgba(int height, int width, char *yuv, char *rgba);
 void YuvToRgb(int height, int width, char *yuv, char *rgb);
