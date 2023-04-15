@@ -44,7 +44,7 @@
 using namespace std;
 
 uint32_t RtpStream::sequence_number_ = 0;
-uint32_t RtpStream::extended_sequence_number_ = 0;
+uint16_t RtpStream::extended_sequence_number_ = 0;
 
 // static TxData arg_rx;
 // error - wrapper for perror
@@ -52,7 +52,6 @@ void error(const std::string &msg) {
   perror(msg.c_str());
   exit(0);
 }
-
 
 RtpStream::RtpStream(uint32_t height, uint32_t width) : height_(height), width_(width) {
   pthread_mutex_init(&mutex_, NULL);
@@ -96,28 +95,25 @@ bool RtpStream::Open() {
   }
 
   if (port_no_out_) {
-    /* socket: create the outbound socket */
+    // socket: create the outbound socket
     sockfd_out_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (sockfd_out_ < 0) {
       cout << "ERROR opening socket\n";
       return false;
     }
 
-    /* gethostbyname: get the server's DNS entry */
-    server_out_ = gethostbyname(hostname_out_.c_str());
-    if (server_out_ == NULL) {
+    // gethostbyname: get the server's DNS entry
+    getaddrinfo(hostname_out_.c_str(), nullptr, nullptr, &server_out_);
+    if (server_out_ == nullptr) {
       fprintf(stderr, "ERROR, no such host as %s\n", hostname_out_.c_str());
       exit(0);
     }
 
-    /* build the server's Internet address */
-    memset((char *)&server_addr_out_, 0, sizeof(server_addr_out_));
+    // build the server's Internet address
     server_addr_out_.sin_family = AF_INET;
-    memset(server_out_->h_addr, 0, server_out_->h_length);
-    memset((char *)&server_addr_out_.sin_addr.s_addr, 0, server_out_->h_length);
     server_addr_out_.sin_port = htons(port_no_out_);
 
-    /* send the message to the server */
+    // send the message to the server
     server_len_out_ = sizeof(server_addr_out_);
 #if 0
     int n = sendto(sockfd_out_, (char *) "hello", 5, 0,
@@ -145,35 +141,26 @@ void RtpStream::Close() const {
 
 #if ENDIAN_SWAP
 void EndianSwap32(uint32_t *data, unsigned int length) {
-  uint32_t c = 0;
-
-  for (c = 0; c < length; c++) data[c] = __bswap_32(data[c]);
+  for (uint32_t c = 0; c < length; c++) data[c] = __bswap_32(data[c]);
 }
 
 void EndianSwap16(uint16_t *data, unsigned int length) {
   for (uint16_t c = 0; c < length; c++) data[c] = __bswap_16(data[c]);
 }
 #endif
-void RtpStream::UpdateHeader(Header *packet, int line, int last, int32_t timestamp, int32_t source) {
+
+void RtpStream::UpdateHeader(Header *packet, int line, int last, int32_t timestamp, int32_t source) const {
   memset((char *)packet, 0, sizeof(Header));
   packet->rtp.protocol = kRtpVersion << 30;
   packet->rtp.protocol = (kRtpExtension << 28) | packet->rtp.protocol;
   packet->rtp.protocol = packet->rtp.protocol | kRtpPayloadType << 16;
   packet->rtp.protocol = packet->rtp.protocol | sequence_number_++;
-  /* leaving other fields as zero TODO Fix */
   packet->rtp.timestamp = timestamp += (Hz90 / kRtpFramerate);
   packet->rtp.source = source;
-  // packet->payload.extended_sequence_number = extended_sequence_number_++;
-  packet->payload.extended_sequence_number = 0;
-  if (kRtpExtension) {
-    packet->payload.line[0].length = (int16_t)width_ * 2;
-    packet->payload.line[0].line_number = (int16_t)line;
-    packet->payload.line[0].offset = 0;
-  } else {
-    packet->payload.line[0].length = (int16_t)width_ * 2;
-    packet->payload.line[0].line_number = (int16_t)line;
-    packet->payload.line[0].offset = 0;
-  }
+  packet->payload.extended_sequence_number = extended_sequence_number_++;
+  packet->payload.line[0].length = (int16_t)width_ * 2;
+  packet->payload.line[0].line_number = (int16_t)line;
+  packet->payload.line[0].offset = 0;
   if (last == 1) {
     packet->rtp.protocol = packet->rtp.protocol | 1 << 23;
   }
@@ -250,16 +237,7 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
         pixel = ((packet->head.payload.line[c].offset & 0x7FFF) * 2) +
                 ((packet->head.payload.line[c].line_number & 0x7FFF) * (stream->width_ * 2));
         length = packet->head.payload.line[c].length & 0xFFFF;
-        if (pixel < 3000)
-          printf("po=%d, p=%d, os=%d, Sc = %d, pixel=%d, length=%d\n", payload_offset, payload, os, c, pixel, length);
 
-#ifdef GST_1_FIX  // UYVY is VYUY (GStreamer bug?) need to swop.
-        for (uint32_t fix = 0; fix < length; fix += 4) {
-          unsigned char tmp = stream->udpdata[os + fix + 2];
-          stream->udpdata[os + fix + 2] = stream->udpdata[os + fix];
-          stream->udpdata[os + fix] = tmp;
-        }
-#endif
         memcpy(&stream->buffer_in_[pixel], &stream->udpdata[os], length);
 
         last_packet += length;
@@ -268,7 +246,6 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
 
       if (marker) receiving = false;
 
-      scan_line = true;
       scan_count = 0;
     }
   }

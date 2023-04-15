@@ -156,7 +156,7 @@ class RtpStream {
 
   /// The incremental sequence numer for transmitting RTP packets
   static uint32_t sequence_number_;
-  static uint32_t extended_sequence_number_;
+  static uint16_t extended_sequence_number_;
 
   /// Height in pixels of stream
   uint32_t height_;
@@ -179,15 +179,15 @@ class RtpStream {
   uint8_t *gpuBuffer;
   std::array<uint8_t, kMaxUdpData> udpdata;
   uint8_t *buffer_in_;
-  struct hostent *server_in_;
-  struct hostent *server_out_;
+  struct addrinfo *server_in_;
+  struct addrinfo *server_out_;
 
   // Ingress port
   std::string hostname_in_;
-  int32_t port_no_in_ = 0;
+  int16_t port_no_in_ = 0;
   // Egress port
   std::string hostname_out_;
-  int32_t port_no_out_ = 0;
+  int16_t port_no_out_ = 0;
 
   ///
   /// \brief Populate the RTP header
@@ -198,7 +198,7 @@ class RtpStream {
   /// \param timestamp the timestamp
   /// \param source the source id
   ///
-  void UpdateHeader(Header *packet, int line, int last, int32_t timestamp, int32_t source);
+  void UpdateHeader(Header *packet, int line, int last, int32_t timestamp, int32_t source) const;
 
   ///
   /// \brief Transmit RTP data to the network using a separate thread
