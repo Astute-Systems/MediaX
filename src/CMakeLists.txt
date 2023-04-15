@@ -13,5 +13,9 @@ target_link_libraries(mediax png pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS})
 target_include_directories(mediax PUBLIC ${SWSCALE_INCLUDE_DIRS})
 set_target_properties(mediax PROPERTIES SOVERSION 1)
 
+add_library(mediax_static STATIC rtp_stream.cc colourspace.cc)
+target_link_libraries(mediax_static png pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS})
+target_include_directories(mediax_static PUBLIC ${SWSCALE_INCLUDE_DIRS})
+
 # Install 
 install(TARGETS mediax DESTINATION /usr/local/lib)

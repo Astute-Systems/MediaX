@@ -255,7 +255,7 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
   return;
 }
 
-bool RtpStream::Receive(uint8_t **cpu, uint32_t timeout) {
+bool RtpStream::Receive(uint8_t *cpu, uint32_t timeout) {
   if (kRtpThreaded) {
     // Elevate priority to get the RTP packets in quickly
 
@@ -269,7 +269,7 @@ bool RtpStream::Receive(uint8_t **cpu, uint32_t timeout) {
   } else {
     ReceiveThread(this);
   }
-  *cpu = (uint8_t *)buffer_in_;
+  cpu = buffer_in_;
   return true;
 }
 
