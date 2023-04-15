@@ -1,10 +1,10 @@
 file(REMOVE_RECURSE
+  "../bin/rtp-example"
+  "../bin/rtp-example.pdb"
   "CMakeFiles/rtp-example.dir/example.cc.o"
   "CMakeFiles/rtp-example.dir/example.cc.o.d"
   "CMakeFiles/rtp-example.dir/pngget.cc.o"
   "CMakeFiles/rtp-example.dir/pngget.cc.o.d"
-  "rtp-example"
-  "rtp-example.pdb"
 )
 
 # Per-language clean rules from dependency scanning.

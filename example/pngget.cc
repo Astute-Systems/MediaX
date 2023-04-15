@@ -1,3 +1,25 @@
+//
+// MIT License
+//
+// Copyright (c) 2023 DefenceX (enquiries@defencex.ai)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+// associated documentation files (the 'Software'), to deal in the Software without restriction,
+// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+// subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or substantial
+// portions of the Software.
+// THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+///
+/// \file pngget.cc
+///
+
 #include "pngget.h"
 
 #include <png.h>
@@ -10,10 +32,11 @@
 #include <cstdint>
 #include <iostream>
 #include <memory>
+#include <string>
 #include <vector>
 
-std::vector<uint8_t> read_png_rgb24(const char* filename) {
-  FILE* fp = fopen(filename, "rb");
+std::vector<uint8_t> read_png_rgb24(std::string_view filename) {
+  FILE* fp = fopen(std::string(filename).c_str(), "rb");
   if (!fp) {
     std::cerr << "Error opening file: " << filename << std::endl;
     return {};
@@ -102,7 +125,7 @@ void read_png_file(char* file_name) {
   // open file and test for it being a png
   FILE* fp = fopen(file_name, "rb");
   if (!fp) abort_("[read_png_file] File %s could not be opened for reading", file_name);
-  fread(header, 1, 8, fp);
+  if (fread(header, 1, 8, fp)) abort_("[read_png_file] File %s is not recognized as a PNG file", file_name);
   if (png_sig_cmp((png_bytep)header, 0, 8))
     abort_("[read_png_file] File %s is not recognized as a PNG file", file_name);
 

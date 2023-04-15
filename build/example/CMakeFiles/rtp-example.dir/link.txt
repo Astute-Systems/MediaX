@@ -1,1 +1,1 @@
-/usr/bin/c++  -fPIC -Wall -Werror -rdynamic CMakeFiles/rtp-example.dir/example.cc.o CMakeFiles/rtp-example.dir/pngget.cc.o -o rtp-example  -Wl,-rpath,/home/newman/repos/MediaX/build/src ../src/libvivoe-media.so.1 -lpng -lpthread -lswscale 
+/usr/bin/c++  -O2 -fPIC -Wall -Werror -rdynamic CMakeFiles/rtp-example.dir/example.cc.o CMakeFiles/rtp-example.dir/pngget.cc.o -o ../bin/rtp-example  -Wl,-rpath,/home/newman/repos/MediaX/build/lib ../lib/libmediax.so.1 /usr/lib/x86_64-linux-gnu/libgflags.so.2.2.2 -lpng -lpthread -lswscale -lpthread 

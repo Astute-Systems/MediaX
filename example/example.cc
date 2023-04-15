@@ -1,3 +1,21 @@
+//
+// MIT License
+//
+// Copyright (c) 2023 DefenceX (enquiries@defencex.ai)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+// associated documentation files (the 'Software'), to deal in the Software without restriction,
+// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+// subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or substantial
+// portions of the Software.
+// THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // Example RTP packet from wireshark
 //      Real-Time Transport Protocol
 //      10.. .... = Version: RFC 1889 Version (2)
@@ -26,6 +44,7 @@
 //
 
 #include <byteswap.h>
+#include <gflags/gflags.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -35,17 +54,18 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <csignal>
+#include <string>
 #include <vector>
 
 #include "pngget.h"
 #include "rtp_stream.h"
 
-const char kRtpOutputIp[] = "127.0.0.1";
-const char kFilename[] = "testcard.png";
-const int kRtpOutputPort = 5004;
-const int kStreamHeight = 480;
-const int kStreamWidth = 640;
-const int kBuffSize = (kStreamHeight * kStreamWidth) * 3;
+DEFINE_string(ipaddr, "127.0.0.1", "the IP address of the transmit stream");
+DEFINE_int32(port, 5004, "the port to use for the transmit stream");
+DEFINE_int32(height, 480, "the height of the image");
+DEFINE_int32(width, 640, "the width of the image");
+DEFINE_string(filename, "testcard.png", "the PNG file to use as the source of the video stream");
 
 void DumpHex(const int8_t *data, size_t size) {
   std::string ascii = "                ";
@@ -120,26 +140,40 @@ void RGB24toYUV422(int height, int width, char *rgb_buffer, char *yuv_buffer) {
   }
 }
 
+static bool running = true;
+
+void signalHandler(int signum) { running = false; }
+
 int main(int argc, char **argv) {
   uint32_t frame = 0;
-  uint32_t move = 0;
+  int move = 0;
+  const int kBuffSize = (640 * 480) * 3;
   int8_t yuv[kBuffSize];
   int8_t rtb_test[kBuffSize];
+
+  // register signal SIGINT and signal handler
+  signal(SIGINT, signalHandler);
+
+  gflags::ParseCommandLineFlags(&argc, &argv, true);
 
   printf("Example RTP streaming\n");
 
   // Setup RTP streaming class
-  RtpStream rtp(kStreamHeight, kStreamWidth);
-  rtp.RtpStreamOut(kRtpOutputIp, kRtpOutputPort);
+  RtpStream rtp(FLAGS_height, FLAGS_width);
+  rtp.RtpStreamOut(FLAGS_ipaddr, FLAGS_port);
   rtp.Open();
 
   memset(rtb_test, 0, kBuffSize);
-  std::vector<uint8_t> rgb = read_png_rgb24(kFilename);
+  std::vector<uint8_t> rgb = read_png_rgb24(FLAGS_filename);
+  if (rgb.size() == 0) {
+    printf("Failed to read png file\n");
+    return -1;
+  }
 
   // Loop frames forever
-  while (1) {
+  while (running) {
     // Convert all the scan lines
-    RgbToYuv(kStreamHeight, kStreamWidth, rgb.data(), (uint8_t *)yuv);
+    RgbToYuv(FLAGS_height, FLAGS_width, rgb.data(), (uint8_t *)yuv);
 
     DumpHex(yuv, 64);
     if (rtp.Transmit((uint8_t *)yuv) < 0) break;
@@ -147,7 +181,7 @@ int main(int argc, char **argv) {
 #if 1
     // move the image (png must have extra byte as the second image is green)
     move += 3;
-    if (move == kStreamWidth * 3) move = 0;
+    if (move == FLAGS_width * 3) move = 0;
 #endif
 
     // approximately 24 frames a second
@@ -158,6 +192,7 @@ int main(int argc, char **argv) {
 
     printf("Sent frame %d\n", frame++);
   }
+  rtp.Close();
 
   printf("Example terminated...\n");
 

@@ -3,7 +3,7 @@
 #Gstreamer1.0 working example UYVY streaming
 #===========================================
 echo 'Starting example application...'
-./build/rtp-example &
+./build/bin/rtp-example -filename images/testcard.png &
 
 sleep 1
 
@@ -13,7 +13,7 @@ gst-launch-1.0 udpsrc port=5004 caps="application/x-rtp, media=(string)video, cl
 
 sleep 10
 
-pkill -f rtp-example
+pkill -f rtp-example 
 pkill -f gst-launch-1.0
 exit
 

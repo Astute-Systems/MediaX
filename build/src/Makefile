@@ -162,25 +162,25 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-src/CMakeFiles/vivoe-media.dir/rule:
-	cd /home/newman/repos/MediaX/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/vivoe-media.dir/rule
-.PHONY : src/CMakeFiles/vivoe-media.dir/rule
+src/CMakeFiles/mediax.dir/rule:
+	cd /home/newman/repos/MediaX/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/mediax.dir/rule
+.PHONY : src/CMakeFiles/mediax.dir/rule
 
 # Convenience name for target.
-vivoe-media: src/CMakeFiles/vivoe-media.dir/rule
-.PHONY : vivoe-media
+mediax: src/CMakeFiles/mediax.dir/rule
+.PHONY : mediax
 
 # fast build rule for target.
-vivoe-media/fast:
-	cd /home/newman/repos/MediaX/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/vivoe-media.dir/build.make src/CMakeFiles/vivoe-media.dir/build
-.PHONY : vivoe-media/fast
+mediax/fast:
+	cd /home/newman/repos/MediaX/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/mediax.dir/build.make src/CMakeFiles/mediax.dir/build
+.PHONY : mediax/fast
 
 rtp_stream.o: rtp_stream.cc.o
 .PHONY : rtp_stream.o
 
 # target to build an object file
 rtp_stream.cc.o:
-	cd /home/newman/repos/MediaX/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/vivoe-media.dir/build.make src/CMakeFiles/vivoe-media.dir/rtp_stream.cc.o
+	cd /home/newman/repos/MediaX/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/mediax.dir/build.make src/CMakeFiles/mediax.dir/rtp_stream.cc.o
 .PHONY : rtp_stream.cc.o
 
 rtp_stream.i: rtp_stream.cc.i
@@ -188,7 +188,7 @@ rtp_stream.i: rtp_stream.cc.i
 
 # target to preprocess a source file
 rtp_stream.cc.i:
-	cd /home/newman/repos/MediaX/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/vivoe-media.dir/build.make src/CMakeFiles/vivoe-media.dir/rtp_stream.cc.i
+	cd /home/newman/repos/MediaX/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/mediax.dir/build.make src/CMakeFiles/mediax.dir/rtp_stream.cc.i
 .PHONY : rtp_stream.cc.i
 
 rtp_stream.s: rtp_stream.cc.s
@@ -196,7 +196,7 @@ rtp_stream.s: rtp_stream.cc.s
 
 # target to generate assembly for a file
 rtp_stream.cc.s:
-	cd /home/newman/repos/MediaX/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/vivoe-media.dir/build.make src/CMakeFiles/vivoe-media.dir/rtp_stream.cc.s
+	cd /home/newman/repos/MediaX/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/mediax.dir/build.make src/CMakeFiles/mediax.dir/rtp_stream.cc.s
 .PHONY : rtp_stream.cc.s
 
 # Help Target
@@ -211,7 +211,7 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... vivoe-media"
+	@echo "... mediax"
 	@echo "... rtp_stream.o"
 	@echo "... rtp_stream.i"
 	@echo "... rtp_stream.s"

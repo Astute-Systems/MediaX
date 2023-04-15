@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC  -fPIC -Wall -Werror -shared -Wl,-soname,libvivoe-media.so.1 -o libvivoe-media.so.1 CMakeFiles/vivoe-media.dir/rtp_stream.cc.o  -lpng -lpthread -lswscale 
