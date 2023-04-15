@@ -84,6 +84,8 @@ void RgbaToYuv(uint32_t height, uint32_t width, uint8_t *rgba, uint8_t *yuv) {
     return;
   }
 
+  //   memset(rgba, 0, height * width * 4);
+
   std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
       sws_getContext(width, height, AV_PIX_FMT_RGBA, width, height, AV_PIX_FMT_YUYV422, 0, nullptr, nullptr, nullptr),
       &sws_freeContext);

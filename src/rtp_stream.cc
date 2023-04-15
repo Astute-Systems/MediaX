@@ -299,7 +299,7 @@ void RtpStream::TransmitThread(RtpStream *stream) {
 #endif
 
       memcpy((void *)&packet.head.payload.line[1], (void *)&stream->arg_tx.rgbframe[(c * stride) + 1], stride);
-      n = sendto(stream->sockfd_out_, (uint8_t *)&packet, stride, 0, (const sockaddr *)&stream->server_addr_out_,
+      n = sendto(stream->sockfd_out_, (uint8_t *)&packet, stride + 20, 0, (const sockaddr *)&stream->server_addr_out_,
                  stream->server_len_out_);
 
       if (n == 0) {
