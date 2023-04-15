@@ -46,6 +46,7 @@ extern "C" {
 using namespace std;
 
 uint32_t RtpStream::sequence_number_ = 0;
+uint32_t RtpStream::extended_sequence_number_ = 0;
 
 // static TxData arg_rx;
 // error - wrapper for perror
@@ -67,10 +68,10 @@ void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) {
 void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) {
   SwsContext *ctx =
       sws_getContext(width, height, AV_PIX_FMT_UYVY422, width, height, AV_PIX_FMT_RGBA, SWS_BICUBIC, 0, 0, 0);
-  uint8_t *inData[1] = {(uint8_t *)yuv};    // RGB24 have one plane
-  uint8_t *outData[1] = {(uint8_t *)rgb};   // YUYV have one plane
+  uint8_t *inData[1] = {(uint8_t *)yuv};    // YUV have one plane
+  uint8_t *outData[1] = {(uint8_t *)rgb};   // RGBA have one plane
   int inLinesize[1] = {(int)(width * 2)};   // YUYV stride
-  int outLinesize[1] = {(int)(width * 4)};  // RGB srtide
+  int outLinesize[1] = {(int)(width * 4)};  // RGBA srtide
   sws_scale(ctx, inData, inLinesize, 0, height, outData, outLinesize);
 }
 
@@ -84,7 +85,8 @@ void RgbaToYuv(uint32_t height, uint32_t width, uint8_t *rgba, uint8_t *yuv) {
 }
 
 void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) {
-  SwsContext *ctx = sws_getContext(width, height, AV_PIX_FMT_RGB24, width, height, AV_PIX_FMT_YUYV422, 0, 0, 0, 0);
+  SwsContext *ctx =
+      sws_getContext(width, height, AV_PIX_FMT_RGB24, width, height, AV_PIX_FMT_YUYV422, SWS_BICUBIC, 0, 0, 0);
   uint8_t *inData[1] = {(uint8_t *)rgb};    // RGB24 have one plane
   uint8_t *outData[1] = {(uint8_t *)yuv};   // YUYV have one plane
   int inLinesize[1] = {(int)(width * 3)};   // RGB stride
@@ -183,7 +185,7 @@ bool RtpStream::Open() {
   return true;
 }
 
-void RtpStream::Close() {
+void RtpStream::Close() const {
   if (port_no_in_) {
     close(sockfd_in_);
   }
@@ -209,15 +211,23 @@ void EndianSwap16(uint16_t *data, unsigned int length) {
 void RtpStream::UpdateHeader(Header *packet, int line, int last, int32_t timestamp, int32_t source) {
   memset((char *)packet, 0, sizeof(Header));
   packet->rtp.protocol = kRtpVersion << 30;
+  packet->rtp.protocol = (kRtpExtension << 28) | packet->rtp.protocol;
   packet->rtp.protocol = packet->rtp.protocol | kRtpPayloadType << 16;
   packet->rtp.protocol = packet->rtp.protocol | sequence_number_++;
   /* leaving other fields as zero TODO Fix */
   packet->rtp.timestamp = timestamp += (Hz90 / kRtpFramerate);
   packet->rtp.source = source;
-  packet->payload.extended_sequence_number = 0; /* TODO : Fix extended seq numbers */
-  packet->payload.line[0].length = (int16_t)width_ * 2;
-  packet->payload.line[0].line_number = (int16_t)line;
-  packet->payload.line[0].offset = 0;
+  // packet->payload.extended_sequence_number = extended_sequence_number_++;
+  packet->payload.extended_sequence_number = 0;
+  if (kRtpExtension) {
+    packet->payload.line[0].length = (int16_t)width_ * 2;
+    packet->payload.line[0].line_number = (int16_t)line;
+    packet->payload.line[0].offset = 0;
+  } else {
+    packet->payload.line[0].length = (int16_t)width_ * 2;
+    packet->payload.line[0].line_number = (int16_t)line;
+    packet->payload.line[0].offset = 0;
+  }
   if (last == 1) {
     packet->rtp.protocol = packet->rtp.protocol | 1 << 23;
   }
@@ -303,7 +313,7 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
 
         os = payload_offset + payload;
         pixel = ((packet->head.payload.line[c].offset & 0x7FFF) * 2) +
-                ((packet->head.payload.line[c].line_number & 0x7FFF) * (stream->width_ * 2));
+                ((packet->head.payload.line[c].line_number & 0x7FFF) * (width_ * 2));
         length = packet->head.payload.line[c].length & 0xFFFF;
         if (pixel < 3000)
           printf("po=%d, p=%d, os=%d, Sc = %d, pixel=%d, length=%d\n", payload_offset, payload, os, c, pixel, length);
@@ -356,10 +366,9 @@ bool RtpStream::Receive(uint8_t **cpu, uint32_t timeout) {
 void RtpStream::TransmitThread(RtpStream *stream) const {
   RtpPacket packet;
 
-  uint32_t n = 0;
+  ssize_t n = 0;
 
-  int16_t stride = (uint16_t)stream->width_ * 2;
-  cout << "[RTP] width=" << stream->width_ << " stride=" << stride << "\n";
+  int16_t stride = width_ * 2;
 
   RtpStream::sequence_number_ = 0;
 
@@ -379,12 +388,12 @@ void RtpStream::TransmitThread(RtpStream *stream) const {
       EndianSwap16((uint16_t *)(&packet.head.payload), sizeof(PayloadHeader) / 2);
 #endif
 
-      memcpy(packet.data, (void *)&stream->arg_tx.rgbframe[(c * stride) + 1], stride);
-      n = sendto(stream->sockfd_out_, (uint8_t *)&packet, 24 + (stream->width_ * 2), 0,
-                 (const sockaddr *)&stream->server_addr_out_, stream->server_len_out_);
+      memcpy((void *)&packet.head.payload.line[1], (void *)&arg_tx.rgbframe[(c * stride) + 1], stride);
+      n = sendto(stream->sockfd_out_, (uint8_t *)&packet, stride, 0, (const sockaddr *)&stream->server_addr_out_,
+                 stream->server_len_out_);
 
       if (n == 0) {
-        cout << "[RTP] Transmit socket failure fd=" << stream->sockfd_out_ << "\n";
+        cerr << "[RTP] Transmit socket failure fd=" << stream->sockfd_out_ << "\n";
         return;
       }
     }

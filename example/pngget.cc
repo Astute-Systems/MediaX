@@ -80,10 +80,10 @@ std::vector<uint8_t> read_png_rgb24(std::string_view filename) {
   png_read_update_info(png_ptr, info_ptr);
 
   std::vector<png_bytep> row_pointers(height);
-  std::vector<uint8_t> rgb24_buffer(width * height * 3);
+  std::vector<uint8_t> rgb24_buffer((width * height) * 4);
 
   for (png_uint_32 y = 0; y < height; y++) {
-    row_pointers[y] = reinterpret_cast<png_bytep>(&rgb24_buffer[y * width * 3]);
+    row_pointers[y] = reinterpret_cast<png_bytep>(&rgb24_buffer[y * width * 4]);
   }
 
   png_read_image(png_ptr, row_pointers.data());
@@ -156,7 +156,7 @@ void read_png_file(char* file_name) {
   // read file
   if (setjmp(png_jmpbuf(png_ptr))) abort_("[read_png_file] Error during read_image");
 
-  row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * height);
+  row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * width);
   for (y = 0; y < height; y++) row_pointers[y] = (png_byte*)malloc(png_get_rowbytes(png_ptr, info_ptr));
 
   png_read_image(png_ptr, row_pointers);

@@ -140,7 +140,7 @@ class RtpStream {
   /// \brief Close the RTP stream
   ///
   ///
-  void Close();
+  void Close() const;
 
   ///
   /// \brief Transmit an RGB buffer
@@ -162,6 +162,7 @@ class RtpStream {
 
   /// The incremental sequence numer for transmitting RTP packets
   static uint32_t sequence_number_;
+  static uint32_t extended_sequence_number_;
 
   /// Height in pixels of stream
   uint32_t height_;

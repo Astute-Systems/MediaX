@@ -97,49 +97,6 @@ void DumpHex(uint8_t *data, size_t size) {
   }
 }
 
-void RGB24toYUV422(int height, int width, char *rgb_buffer, char *yuv_buffer) {
-  int8_t r = 0;
-  int8_t g = 0;
-  int8_t b = 0;
-  int32_t y1 = 0;
-  int32_t y2 = 0;
-  int32_t u = 0;
-  int32_t v = 0;
-  int32_t size = width * height;
-
-  // Convert each 2x1 pixel block from RGB to YUV
-  for (int i = 0; i < size; i += 2) {
-    r = *rgb_buffer++;
-    g = *rgb_buffer++;
-    b = *rgb_buffer++;
-    y1 = (int)(0.299 * r + 0.587 * g + 0.114 * b);
-    u = (int)((b - y1) * 0.564 + 128);
-    v = (int)((r - y1) * 0.713 + 128);
-
-    r = *rgb_buffer++;
-    g = *rgb_buffer++;
-    b = *rgb_buffer++;
-    y2 = (int)(0.299 * r + 0.587 * g + 0.114 * b);
-
-    // Interpolate the U and V values for the second pixel
-    u = (u + (int)((b - y2) * 0.564 + 128)) / 2;
-    v = (v + (int)((r - y2) * 0.713 + 128)) / 2;
-
-    // Clip the YUV values to the range [0, 255]
-    y1 = (y1 < 0) ? 0 : ((y1 > 255) ? 255 : y1);
-    u = (u < 0) ? 0 : ((u > 255) ? 255 : u);
-    v = (v < 0) ? 0 : ((v > 255) ? 255 : v);
-
-    y2 = (y2 < 0) ? 0 : ((y2 > 255) ? 255 : y2);
-
-    // Write the YUV values to the output buffer
-    *yuv_buffer++ = (unsigned char)y1;
-    *yuv_buffer++ = (unsigned char)u;
-    *yuv_buffer++ = (unsigned char)y2;
-    *yuv_buffer++ = (unsigned char)v;
-  }
-}
-
 static bool running = true;
 
 void signalHandler(int signum) { running = false; }
@@ -175,7 +132,7 @@ int main(int argc, char **argv) {
     // DumpHex((uint8_t *)rgb.data(), 64);
 
     // Convert all the scan lines
-    RgbToYuv(FLAGS_height, FLAGS_width, rgb.data(), (uint8_t *)yuv);
+    RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), (uint8_t *)yuv);
 
     DumpHex(yuv, 64);
     if (rtp.Transmit((uint8_t *)yuv) < 0) break;
