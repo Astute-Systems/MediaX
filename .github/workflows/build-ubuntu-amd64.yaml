@@ -27,7 +27,7 @@ jobs:
           sudo apt-get --no-install-recommends install libswscale-dev libgflags-dev cmake g++
 
       - name: CMake and Build
-        run: mkdir build && cd build && cmake .. && make -j $(nproc)
+        run: mkdir build && cd build && cmake .. && make
 
       - name: Install
         run: cd build && sudo make install

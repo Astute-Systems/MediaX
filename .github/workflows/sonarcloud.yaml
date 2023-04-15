@@ -24,7 +24,6 @@ jobs:
           sudo apt-get --no-install-recommends install libswscale-dev libgflags-dev cmake g++
       - name: Run build-wrapper
         run: |
-          tree -L 3 -d
           cmake -S . -B build
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build ./build/ --config Release
       - name: Run sonar-scanner

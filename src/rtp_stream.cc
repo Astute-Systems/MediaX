@@ -39,9 +39,7 @@
 #include <netinet/ip.h>
 #include <sys/socket.h>
 #endif
-extern "C" {
-#include "libswscale/swscale.h"
-}
+
 #include "rtp_stream.h"
 using namespace std;
 
@@ -55,44 +53,6 @@ void error(const std::string &msg) {
   exit(0);
 }
 
-void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) {
-  SwsContext *ctx =
-      sws_getContext(width, height, AV_PIX_FMT_YUYV422, width, height, AV_PIX_FMT_RGB24, SWS_BICUBIC, 0, 0, 0);
-  uint8_t *inData[1] = {(uint8_t *)yuv};    // RGB24 have one plane
-  uint8_t *outData[1] = {(uint8_t *)rgba};  // YUYV have one plane
-  int inLinesize[1] = {(int)(width * 2)};   // YUYV stride
-  int outLinesize[1] = {(int)(width * 3)};  // RGB srtide
-  sws_scale(ctx, inData, inLinesize, 0, height, outData, outLinesize);
-}
-
-void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) {
-  SwsContext *ctx =
-      sws_getContext(width, height, AV_PIX_FMT_UYVY422, width, height, AV_PIX_FMT_RGBA, SWS_BICUBIC, 0, 0, 0);
-  uint8_t *inData[1] = {(uint8_t *)yuv};    // YUV have one plane
-  uint8_t *outData[1] = {(uint8_t *)rgb};   // RGBA have one plane
-  int inLinesize[1] = {(int)(width * 2)};   // YUYV stride
-  int outLinesize[1] = {(int)(width * 4)};  // RGBA srtide
-  sws_scale(ctx, inData, inLinesize, 0, height, outData, outLinesize);
-}
-
-void RgbaToYuv(uint32_t height, uint32_t width, uint8_t *rgba, uint8_t *yuv) {
-  SwsContext *ctx = sws_getContext(width, height, AV_PIX_FMT_RGBA, width, height, AV_PIX_FMT_YUYV422, 0, 0, 0, 0);
-  uint8_t *inData[1] = {(uint8_t *)rgba};   // RGB24 have one plane
-  uint8_t *outData[1] = {(uint8_t *)yuv};   // YUYV have one plane
-  int inLinesize[1] = {(int)(width * 4)};   // RGB stride
-  int outLinesize[1] = {(int)(width * 2)};  // YUYV stride
-  sws_scale(ctx, inData, inLinesize, 0, height, outData, outLinesize);
-}
-
-void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) {
-  SwsContext *ctx =
-      sws_getContext(width, height, AV_PIX_FMT_RGB24, width, height, AV_PIX_FMT_YUYV422, SWS_BICUBIC, 0, 0, 0);
-  uint8_t *inData[1] = {(uint8_t *)rgb};    // RGB24 have one plane
-  uint8_t *outData[1] = {(uint8_t *)yuv};   // YUYV have one plane
-  int inLinesize[1] = {(int)(width * 3)};   // RGB stride
-  int outLinesize[1] = {(int)(width * 2)};  // YUYV stride
-  sws_scale(ctx, inData, inLinesize, 0, height, outData, outLinesize);
-}
 
 RtpStream::RtpStream(uint32_t height, uint32_t width) : height_(height), width_(width) {
   pthread_mutex_init(&mutex_, NULL);
@@ -133,18 +93,6 @@ bool RtpStream::Open() {
       cout << "ERROR binding socket\n";
       return false;
     }
-#if RTP_MULTICAST
-    {
-      struct ip_mreq multi;
-
-      // Multicast
-      multi.imr_multiaddr.s_addr = inet_addr(IP_MULTICAST_IN);
-      multi.imr_interface.s_addr = htonl(INADDR_ANY);
-      if (setsockopt(sockfd_in_, IPPROTO_UDP, IP_ADD_MEMBERSHIP, &multi, sizeof(multi)) < 0) {
-        cout << "ERROR failed to join multicast group " << IP_MULTICAST_IN << "\n";
-      }
-    }
-#endif
   }
 
   if (port_no_out_) {
@@ -203,9 +151,7 @@ void EndianSwap32(uint32_t *data, unsigned int length) {
 }
 
 void EndianSwap16(uint16_t *data, unsigned int length) {
-  uint16_t c = 0;
-
-  for (c = 0; c < length; c++) data[c] = __bswap_16(data[c]);
+  for (uint16_t c = 0; c < length; c++) data[c] = __bswap_16(data[c]);
 }
 #endif
 void RtpStream::UpdateHeader(Header *packet, int line, int last, int32_t timestamp, int32_t source) {
@@ -242,11 +188,8 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
   while (receiving) {
     int marker;
 
-#if kRtpCheck
     int version;
     int payloadType;
-    int seqNo, last;
-#endif
     bool valid = false;
 
     //
@@ -265,13 +208,9 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
       //
       // Decode Header bits and confirm RTP packet
       //
-#if kRtpCheck
       payloadType = (packet->head.rtp.protocol & 0x007F0000) >> 16;
       version = (packet->head.rtp.protocol & 0xC0000000) >> 30;
-      seqNo = (packet->head.rtp.protocol & 0x0000FFFF);
-      if ((payloadType == 96) && (version == 2))
-#endif
-      {
+      if ((payloadType == 96) && (version == 2)) {
         valid = true;
       }
     }
@@ -280,10 +219,6 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
 
       // Decode Header bits
       marker = (packet->head.rtp.protocol & 0x00800000) >> 23;
-#if kRtpCheck
-      printf("[RTP] seqNo %d, Packet %d, marker %d, Rx length %d, timestamp 0x%08x\n", seqNo, payloadType, marker, len,
-             packet->head.rtp.timestamp);
-#endif
 
       //
       // Count the number of scan_lines in the packet
@@ -313,7 +248,7 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
 
         os = payload_offset + payload;
         pixel = ((packet->head.payload.line[c].offset & 0x7FFF) * 2) +
-                ((packet->head.payload.line[c].line_number & 0x7FFF) * (width_ * 2));
+                ((packet->head.payload.line[c].line_number & 0x7FFF) * (stream->width_ * 2));
         length = packet->head.payload.line[c].length & 0xFFFF;
         if (pixel < 3000)
           printf("po=%d, p=%d, os=%d, Sc = %d, pixel=%d, length=%d\n", payload_offset, payload, os, c, pixel, length);
@@ -344,31 +279,29 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
 }
 
 bool RtpStream::Receive(uint8_t **cpu, uint32_t timeout) {
-#if kRtpThreaded
-  // Elevate priority to get the RTP packets in quickly
-  pthread_attr_init(&tattr);
-  pthread_attr_getschedparam(&tattr, &param);
-  param.sched_priority = 99;
-  pthread_attr_setschedparam(&tattr, &param);
+  if (kRtpThreaded) {
+    // Elevate priority to get the RTP packets in quickly
 
-  // Start a thread so we can start capturing the next frame while transmitting the data
-  rx_thread_ = std::thread(&RtpStream::ReceiveThread, this).detach(
+    // Start a thread so we can start capturing the next frame while transmitting the data
+    rx_thread_ = std::thread(&RtpStream::ReceiveThread, this);
+    rx_thread_.detach();
 
-  // Wait for completion
-  pthread_join(rx, 0);
-#else
-  ReceiveThread(this);
-#endif
+    // Wait for completion
+    rx_thread_.join();
+
+  } else {
+    ReceiveThread(this);
+  }
   *cpu = (uint8_t *)buffer_in_;
   return true;
 }
 
-void RtpStream::TransmitThread(RtpStream *stream) const {
+void RtpStream::TransmitThread(RtpStream *stream) {
   RtpPacket packet;
 
   ssize_t n = 0;
 
-  int16_t stride = width_ * 2;
+  int16_t stride = stream->width_ * 2;
 
   RtpStream::sequence_number_ = 0;
 
@@ -388,7 +321,7 @@ void RtpStream::TransmitThread(RtpStream *stream) const {
       EndianSwap16((uint16_t *)(&packet.head.payload), sizeof(PayloadHeader) / 2);
 #endif
 
-      memcpy((void *)&packet.head.payload.line[1], (void *)&arg_tx.rgbframe[(c * stride) + 1], stride);
+      memcpy((void *)&packet.head.payload.line[1], (void *)&stream->arg_tx.rgbframe[(c * stride) + 1], stride);
       n = sendto(stream->sockfd_out_, (uint8_t *)&packet, stride, 0, (const sockaddr *)&stream->server_addr_out_,
                  stream->server_len_out_);
 
@@ -405,13 +338,13 @@ void RtpStream::TransmitThread(RtpStream *stream) const {
 int RtpStream::Transmit(uint8_t *rgbframe) {
   arg_tx.rgbframe = rgbframe;
 
-#if kRtpThreaded
-  // Start a thread so we can start capturing the next frame while transmitting the data
-  tx_thread_.join();
-  tx_thread_ =  std::thread(&RtpStream::ReceiveThread, this).detach(
-  return 0;  // Cant know the if the transmit was successful if done in a thread
-#else
-  TransmitThread(this);
-#endif
-return 0;
+  if (kRtpThreaded) {
+    // Start a thread so we can start capturing the next frame while transmitting the data
+    tx_thread_ = std::thread(TransmitThread, this);
+    tx_thread_.detach();
+  } else {
+    TransmitThread(this);
+  }
+
+  return 0;
 }
