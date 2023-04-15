@@ -1,0 +1,5 @@
+project(rtp-example)
+include_directories(${CMAKE_SOURCE_DIR}/src)
+add_executable(rtp-example example.cc pngget.cc)
+target_link_libraries(rtp-example vivoe-media)
+file(COPY ${CMAKE_SOURCE_DIR}/images/testcard.png DESTINATION ${CMAKE_BINARY_DIR})

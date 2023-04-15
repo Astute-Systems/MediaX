@@ -13,12 +13,27 @@
         "rtpvrawdepay",
         "rtpvrawpay",
         "sonarscan",
+        "udpdata",
         "udpsink",
         "udpsrc",
         "UYVY",
         "videoconvert",
         "videotestsrc",
         "VIVOE",
-        "ximagesink"
-    ]
+        "ximagesink",
+        "yuvframe"
+    ],
+    "sonarlint.pathToCompileCommands": "${workspaceFolder}/build/compile_commands.json",
+    "C_Cpp.doxygen.generateOnType": false,
+    "doxdocgen.c.firstLine": "///",
+    "doxdocgen.c.lastLine": "/// ",
+    "doxdocgen.c.triggerSequence": "///",
+    "doxdocgen.c.commentPrefix": "/// ",
+    "doxdocgen.file.fileTemplate": "\\file {name}",
+    "doxdocgen.file.versionTag": "\\version 0.1",
+    "doxdocgen.generic.authorTag": "\\author {author} ({email})",
+    "doxdocgen.generic.briefTemplate": "\\brief {text}",
+    "doxdocgen.generic.dateTemplate": "\\date {date}",
+    "doxdocgen.generic.paramTemplate": "\\param {param} ",
+    "doxdocgen.generic.returnTemplate": "\\return {type} "
 }
