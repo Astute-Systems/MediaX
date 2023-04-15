@@ -21,7 +21,7 @@ jobs:
         run: sudo apt-get update
       - name: Apt Install
         run: |
-          sudo apt-get --no-install-recommends install libswscale-dev cmake g++
+          sudo apt-get --no-install-recommends install libswscale-dev libgflags-dev cmake g++
       - name: Run build-wrapper
         run: |
           tree -L 3 -d
