@@ -95,20 +95,17 @@ void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) {
 RtpStream::RtpStream(uint32_t height, uint32_t width) : height_(height), width_(width) {
   pthread_mutex_init(&mutex_, NULL);
   buffer_in_ = (uint8_t *)malloc(height * width * 2);  // Holds YUV data
-  cout << "[RTP] RtpStream created << " << width_ << "x" << height_ << "\n";
 }
 
 RtpStream::~RtpStream(void) { free(buffer_in_); }
 
 /* Broadcast the stream to port i.e. 5004 */
 void RtpStream::RtpStreamIn(std::string_view hostname, const int portno) {
-  cout << "[RTP] RtpStreamIn " << hostname << ":" << portno << "\n";
   port_no_in_ = portno;
   hostname_in_ = hostname;
 }
 
 void RtpStream::RtpStreamOut(std::string_view hostname, const int portno) {
-  cout << "[RTP] RtpStreamOut " << hostname << ":" << portno << "\n";
   port_no_out_ = portno;
   hostname_out_ = hostname;
 }
@@ -168,7 +165,7 @@ bool RtpStream::Open() {
     server_addr_out_.sin_family = AF_INET;
     memset(server_out_->h_addr, 0, server_out_->h_length);
     memset((char *)&server_addr_out_.sin_addr.s_addr, 0, server_out_->h_length);
-    server_addr_out_.sin_port = port_no_out_;
+    server_addr_out_.sin_port = htons(port_no_out_);
 
     /* send the message to the server */
     server_len_out_ = sizeof(server_addr_out_);
@@ -356,9 +353,9 @@ bool RtpStream::Receive(uint8_t **cpu, uint32_t timeout) {
   return true;
 }
 
-void RtpStream::TransmitThread(RtpStream *stream) {
+void RtpStream::TransmitThread(RtpStream *stream) const {
   RtpPacket packet;
-  uint32_t c = 0;
+
   uint32_t n = 0;
 
   int16_t stride = (uint16_t)stream->width_ * 2;
@@ -371,7 +368,7 @@ void RtpStream::TransmitThread(RtpStream *stream) {
   {
     uint32_t time = 10000;
 
-    for (c = 0; c < (stream->height_); c++) {
+    for (uint32_t c = 0; c < (stream->height_); c++) {
       uint32_t last = 0;
 
       if (c == stream->height_ - 1) last = 1;
@@ -386,7 +383,7 @@ void RtpStream::TransmitThread(RtpStream *stream) {
       n = sendto(stream->sockfd_out_, (uint8_t *)&packet, 24 + (stream->width_ * 2), 0,
                  (const sockaddr *)&stream->server_addr_out_, stream->server_len_out_);
 
-      if (n < 0) {
+      if (n == 0) {
         cout << "[RTP] Transmit socket failure fd=" << stream->sockfd_out_ << "\n";
         return;
       }

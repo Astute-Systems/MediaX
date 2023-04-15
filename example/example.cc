@@ -61,13 +61,13 @@
 #include "pngget.h"
 #include "rtp_stream.h"
 
-DEFINE_string(ipaddr, "127.0.0.1", "the IP address of the transmit stream");
+DEFINE_string(ipaddr, "239.192.1.1", "the IP address of the transmit stream");
 DEFINE_int32(port, 5004, "the port to use for the transmit stream");
 DEFINE_int32(height, 480, "the height of the image");
 DEFINE_int32(width, 640, "the width of the image");
 DEFINE_string(filename, "testcard.png", "the PNG file to use as the source of the video stream");
 
-void DumpHex(const int8_t *data, size_t size) {
+void DumpHex(uint8_t *data, size_t size) {
   std::string ascii = "                ";
   size_t i = 0;
   size_t j = 0;
@@ -148,15 +148,15 @@ int main(int argc, char **argv) {
   uint32_t frame = 0;
   int move = 0;
   const int kBuffSize = (640 * 480) * 3;
-  int8_t yuv[kBuffSize];
-  int8_t rtb_test[kBuffSize];
+  uint8_t yuv[kBuffSize];
+  uint8_t rtb_test[kBuffSize];
 
   // register signal SIGINT and signal handler
   signal(SIGINT, signalHandler);
 
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
-  printf("Example RTP streaming\n");
+  printf("Example RTP streaming to %s:%d\n", FLAGS_ipaddr.c_str(), FLAGS_port);
 
   // Setup RTP streaming class
   RtpStream rtp(FLAGS_height, FLAGS_width);
@@ -165,13 +165,15 @@ int main(int argc, char **argv) {
 
   memset(rtb_test, 0, kBuffSize);
   std::vector<uint8_t> rgb = read_png_rgb24(FLAGS_filename);
-  if (rgb.size() == 0) {
-    printf("Failed to read png file\n");
+  if (rgb.empty()) {
+    printf("Failed to read png file (%s)\n", FLAGS_filename.c_str());
     return -1;
   }
 
   // Loop frames forever
   while (running) {
+    // DumpHex((uint8_t *)rgb.data(), 64);
+
     // Convert all the scan lines
     RgbToYuv(FLAGS_height, FLAGS_width, rgb.data(), (uint8_t *)yuv);
 

@@ -89,7 +89,7 @@
 /// Helper functions for different colour space options
 void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba);
 void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv);
-void RgbaToYuvBasic(uint32_t width, uint32_t height, uint8_t *rgb_buffer, uint8_t *yuv_buffer);
+void RgbaToYuv(uint32_t width, uint32_t height, uint8_t *rgb_buffer, uint8_t *yuv_buffer);
 void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba);
 void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb);
 
@@ -189,10 +189,10 @@ class RtpStream {
 
   // Ingress port
   std::string hostname_in_;
-  int8_t port_no_in_ = 0;
+  int32_t port_no_in_ = 0;
   // Egress port
   std::string hostname_out_;
-  int8_t port_no_out_ = 0;
+  int32_t port_no_out_ = 0;
 
   ///
   /// \brief Populate the RTP header
@@ -210,7 +210,7 @@ class RtpStream {
   /// \param stream this object
   /// \return void
   ///
-  void TransmitThread(RtpStream *stream);
+  void TransmitThread(RtpStream *stream) const;
 
   ///
   /// \brief Recieve RTP data to the network using a separate thread
