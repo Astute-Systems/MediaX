@@ -28,8 +28,8 @@
 extern "C" {
 #include "libswscale/swscale.h"
 }
-void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) {
-  if (!rgba || !yuv) {
+void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) {
+  if (!rgb || !yuv) {
     // Handle null pointers gracefully
     return;
   }
@@ -43,8 +43,8 @@ void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) {
     return;
   }
 
-  const std::array<uint8_t *, 1> inData = {rgba};
-  std::array<uint8_t *, 1> outData = {yuv};
+  const std::array<uint8_t *, 1> inData = {yuv};
+  std::array<uint8_t *, 1> outData = {rgb};
 
   // Use static_cast instead of C-style cast
   const std::array<int32_t, 1> inLinesize = {(int32_t)(width * 2)};

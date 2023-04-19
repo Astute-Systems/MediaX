@@ -239,7 +239,7 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
                 ((packet->head.payload.line[c].line_number & 0x7FFF) * (stream->width_ * 2));
         length = packet->head.payload.line[c].length & 0xFFFF;
 
-        memcpy(&stream->buffer_in_[pixel], &stream->udpdata[os], length);
+        memcpy(&stream->buffer_in_[pixel + 1], &stream->udpdata[os], length);
 
         last_packet += length;
         payload += length;

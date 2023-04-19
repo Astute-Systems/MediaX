@@ -39,7 +39,7 @@ class RGBBufferDrawingArea : public Gtk::DrawingArea {
 
     uint8_t* cpu_buffer;
     rtp_.Receive(&cpu_buffer);
-    memset(m_buffer_.data(), 128, m_buffer_.size());
+    memset(m_buffer_.data(), 128, m_buffer_.size());  // Set buffer gray
     memcpy(m_buffer_.data(), cpu_buffer, m_buffer_.size());
     YuvToRgb(FLAGS_height, FLAGS_width, cpu_buffer, m_buffer_.data());
     m_frame_counter_++;
