@@ -40,11 +40,11 @@ Command line arguments use **--help** and are listed below:
 ```
     -filename (the PNG file to use as the source of the video stream) type: string default: "testcard.png"
     -height (the height of the image) type: int32 default: 480
-    -ipaddr (the IP address of the transmit stream) type: string default: "127.0.0.1"
+    -ipaddr (the IP address of the transmit stream) type: string default: "239.192.1.1"
     -port (the port to use for the transmit stream) type: int32 default: 5004
     -width (the width of the image) type: int32 default: 640
 ```
-The recieve example will display the stream:
+The recieve example will display the stream (user **--help** for options):
 ```
 ./recieve-example
 ```

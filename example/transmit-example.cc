@@ -67,36 +67,6 @@ DEFINE_int32(height, 480, "the height of the image");
 DEFINE_int32(width, 640, "the width of the image");
 DEFINE_string(filename, "testcard.png", "the PNG file to use as the source of the video stream");
 
-void DumpHex(uint8_t *data, size_t size) {
-  std::string ascii = "                ";
-  size_t i = 0;
-  size_t j = 0;
-  ascii[16] = '\0';
-  for (i = 0; i < size; ++i) {
-    printf("%02X ", (data)[i]);
-    if ((data[i] >= ' ') && (data[i] <= '~')) {
-      ascii[i % 16] = (data)[i];
-    } else {
-      ascii[i % 16] = '.';
-    }
-    if ((i + 1) % 8 == 0 || i + 1 == size) {
-      printf(" ");
-      if ((i + 1) % 16 == 0) {
-        printf("|  %s \n", ascii.c_str());
-      } else if (i + 1 == size) {
-        ascii[(i + 1) % 16] = '\0';
-        if ((i + 1) % 16 <= 8) {
-          printf(" ");
-        }
-        for (j = (i + 1) % 16; j < 16; ++j) {
-          printf("   ");
-        }
-        printf("|  %s \n", ascii.c_str());
-      }
-    }
-  }
-}
-
 static bool running = true;
 
 void signalHandler(int signum [[maybe_unused]]) { running = false; }
@@ -130,10 +100,9 @@ int main(int argc, char **argv) {
   // Loop frames forever
   while (running) {
     // Convert all the scan lines
-    RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), (uint8_t *)yuv.data());
+    RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
 
-    DumpHex(yuv.data(), 64);
-    if (rtp.Transmit((uint8_t *)yuv.data()) < 0) break;
+    if (rtp.Transmit(yuv.data()) < 0) break;
 
 #if 1
     // move the image (png must have extra byte as the second image is green)
@@ -147,7 +116,8 @@ int main(int argc, char **argv) {
 
     /// delay 40ms
 
-    std::cout << "Sent frame " << frame++;
+    std::cout << "Sent frame " << frame;
+    frame++;
   }
   rtp.Close();
 
