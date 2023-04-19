@@ -12,7 +12,7 @@
 
 
 [![License](https://img.shields.io/badge/licence-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
-# Real Time Protocol in C
+# Real Time Protocol in C++
 This code implements RFC4421 RTP (Real Time Protocol) Payload Format for Uncompressed Video but is mandated by the UK MoD as part of DEF STAN 00-82 (VIVOE) uncompressed RTP video streaming protocol for real time video. If you are not familiar with the Generic Vehicle Architecture (DEF STAN 00-23) and VIVOE then you can read more [here](https://en.wikipedia.org/wiki/Generic_Vehicle_Architecture).
 
 ## Payloader example
@@ -23,7 +23,7 @@ This is a RAW (YUV) Real Time Protocol pay-loader written in C++. This example i
 #Dependencies
 The following dependencies need to me installed prior to building this project:
 ```
-sudo apt install libswscale-dev libgflags-dev
+sudo apt install libswscale-dev libgflags-dev libgtkmm-3.0-dev
 ```
 libswscale is required for RGB/RGBA to UYVY colour space conversion.
 # Installation
