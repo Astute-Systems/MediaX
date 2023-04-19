@@ -30,6 +30,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #if _WIN32
 #include <WS2tcpip.h>
 #include <winsock2.h>
@@ -54,19 +55,19 @@ void error(const std::string &msg) {
 }
 
 RtpStream::RtpStream(uint32_t height, uint32_t width) : height_(height), width_(width) {
-  pthread_mutex_init(&mutex_, NULL);
-  buffer_in_ = (uint8_t *)malloc(height * width * 2);  // Holds YUV data
+  pthread_mutex_init(&mutex_, nullptr);
+  buffer_in_.resize(height * width * 2);
 }
 
-RtpStream::~RtpStream(void) { free(buffer_in_); }
+RtpStream::~RtpStream(void) = default;
 
 /* Broadcast the stream to port i.e. 5004 */
-void RtpStream::RtpStreamIn(std::string_view hostname, const int portno) {
+void RtpStream::RtpStreamIn(std::string_view hostname, const uint16_t portno) {
   port_no_in_ = portno;
   hostname_in_ = hostname;
 }
 
-void RtpStream::RtpStreamOut(std::string_view hostname, const int portno) {
+void RtpStream::RtpStreamOut(std::string_view hostname, const uint16_t portno) {
   port_no_out_ = portno;
   hostname_out_ = hostname;
 }
@@ -251,7 +252,7 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
     }
   }
 
-  stream->arg_tx.yuvframe = stream->buffer_in_;
+  stream->arg_tx.yuvframe = stream->buffer_in_.data();
 
   return;
 }
@@ -269,7 +270,7 @@ bool RtpStream::Receive(uint8_t **cpu, uint32_t timeout [[maybe_unused]]) {
   } else {
     ReceiveThread(this);
   }
-  *cpu = buffer_in_;
+  *cpu = buffer_in_.data();
   return true;
 }
 

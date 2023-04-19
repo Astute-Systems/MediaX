@@ -5,6 +5,7 @@
     "C_Cpp.clang_format_fallbackStyle": "{BasedOnStyle: Google, ColumnLimit: 120}",
     "cSpell.words": [
         "COLOURSPACE",
+        "Defence",
         "gflags",
         "gstreamer",
         "Jetson",

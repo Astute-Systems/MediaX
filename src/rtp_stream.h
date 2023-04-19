@@ -112,7 +112,7 @@ class RtpStream {
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
   /// \param port defaults to 5004
   ///
-  void RtpStreamOut(std::string_view hostname, const int port = 5004);
+  void RtpStreamOut(std::string_view hostname, const uint16_t port = 5004);
 
   ///
   /// \brief Configure at RTP input stream
@@ -120,7 +120,7 @@ class RtpStream {
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
   /// \param port defaults to 5004
   ///
-  void RtpStreamIn(std::string_view hostname, const int port = 5004);
+  void RtpStreamIn(std::string_view hostname, const uint16_t port = 5004);
 
   ///
   /// \brief Open the RTP stream
@@ -170,16 +170,11 @@ class RtpStream {
  private:
   int sockfd_in_;
   int sockfd_out_;
-  struct sockaddr_in server_addr_in_;
   struct sockaddr_in server_addr_out_;
-  socklen_t server_len_in_;
   socklen_t server_len_out_;
   pthread_mutex_t mutex_;
-  unsigned int frame_ = 0;
-  uint8_t *gpuBuffer;
   std::array<uint8_t, kMaxUdpData> udpdata;
-  uint8_t *buffer_in_;
-  struct addrinfo *server_in_;
+  std::vector<uint8_t> buffer_in_;
   struct addrinfo *server_out_;
 
   // Ingress port
@@ -215,7 +210,6 @@ class RtpStream {
   static void ReceiveThread(RtpStream *stream);
 
   // Arguments sent to thread
-  sched_param param;
   std::thread rx_thread_;
   std::thread tx_thread_;
 };
