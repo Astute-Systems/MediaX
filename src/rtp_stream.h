@@ -152,7 +152,7 @@ class RtpStream {
   /// \return true
   /// \return false
   ///
-  bool Receive(uint8_t *cpu, uint32_t timeout = 0);
+  bool Receive(uint8_t **cpu, uint32_t timeout = 0);
 
   /// The incremental sequence numer for transmitting RTP packets
   static uint32_t sequence_number_;

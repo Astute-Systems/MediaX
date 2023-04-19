@@ -55,7 +55,7 @@
 #include <unistd.h>
 
 #include <csignal>
-#include <string>
+#include <iostream>
 #include <vector>
 
 #include "pngget.h"
@@ -99,43 +99,41 @@ void DumpHex(uint8_t *data, size_t size) {
 
 static bool running = true;
 
-void signalHandler(int signum) { running = false; }
+void signalHandler(int signum [[maybe_unused]]) { running = false; }
 
 int main(int argc, char **argv) {
   uint32_t frame = 0;
   int move = 0;
   const int kBuffSize = (640 * 480) * 3;
-  uint8_t yuv[kBuffSize];
-  uint8_t rtb_test[kBuffSize];
+  std::array<uint8_t, kBuffSize> yuv;
+  std::array<uint8_t, kBuffSize> rtb_test;
 
   // register signal SIGINT and signal handler
   signal(SIGINT, signalHandler);
 
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
-  printf("Example RTP streaming to %s:%d\n", FLAGS_ipaddr.c_str(), FLAGS_port);
+  std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port;
 
   // Setup RTP streaming class
   RtpStream rtp(FLAGS_height, FLAGS_width);
   rtp.RtpStreamOut(FLAGS_ipaddr, FLAGS_port);
   rtp.Open();
 
-  memset(rtb_test, 0, kBuffSize);
+  memset(rtb_test.data(), 0, kBuffSize);
   std::vector<uint8_t> rgb = read_png_rgb24(FLAGS_filename);
   if (rgb.empty()) {
-    printf("Failed to read png file (%s)\n", FLAGS_filename.c_str());
+    std::cout << "Failed to read png file (" << FLAGS_filename << ")";
     return -1;
   }
 
   // Loop frames forever
   while (running) {
-    // DumpHex((uint8_t *)rgb.data(), 64);
-
     // Convert all the scan lines
-    RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), (uint8_t *)yuv);
+    RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), (uint8_t *)yuv.data());
 
-    DumpHex(yuv, 64);
-    if (rtp.Transmit((uint8_t *)yuv) < 0) break;
+    DumpHex(yuv.data(), 64);
+    if (rtp.Transmit((uint8_t *)yuv.data()) < 0) break;
 
 #if 1
     // move the image (png must have extra byte as the second image is green)
@@ -149,11 +147,11 @@ int main(int argc, char **argv) {
 
     /// delay 40ms
 
-    printf("Sent frame %d\n", frame++);
+    std::cout << "Sent frame " << frame++;
   }
   rtp.Close();
 
-  printf("Example terminated...\n");
+  std::cout << "Example terminated...\n";
 
   return 0;
 }

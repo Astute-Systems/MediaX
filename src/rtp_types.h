@@ -68,17 +68,13 @@ struct RtpHeader {
 
 struct LineHeader {
   int16_t length;
-  __attribute__((aligned(16)));
   int16_t line_number;
-  __attribute__((aligned(16)));
   int16_t offset;
-  __attribute__((aligned(16)));
 };
 
 struct PayloadHeader {
   int16_t extended_sequence_number;
-  __attribute__((aligned(16)));
-  LineHeader line[kNumberLinesPerPacket];  // TODO (ross@rossnewman.com): This can be multiline.
+  LineHeader line[kNumberLinesPerPacket];  // This can be multiline min the future
 };
 
 struct Header {
@@ -88,9 +84,7 @@ struct Header {
 
 struct RtpPacket {
   Header head;
-  __attribute__((aligned(32)));
   int8_t data[kMaximumBufferSize];
-  __attribute__((aligned(8)));
 };
 
 class RtpStream;

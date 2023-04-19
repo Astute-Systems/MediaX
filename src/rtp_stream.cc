@@ -155,7 +155,8 @@ void RtpStream::UpdateHeader(Header *packet, int line, int last, int32_t timesta
   packet->rtp.protocol = (kRtpExtension << 28) | packet->rtp.protocol;
   packet->rtp.protocol = packet->rtp.protocol | kRtpPayloadType << 16;
   packet->rtp.protocol = packet->rtp.protocol | sequence_number_++;
-  packet->rtp.timestamp = timestamp += (Hz90 / kRtpFramerate);
+  timestamp += (Hz90 / kRtpFramerate);
+  packet->rtp.timestamp = timestamp;
   packet->rtp.source = source;
   packet->payload.extended_sequence_number = extended_sequence_number_++;
   packet->payload.line[0].length = (int16_t)width_ * 2;
@@ -217,7 +218,7 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
         EndianSwap16((uint16_t *)(&packet->head.payload.line[scan_count]), sizeof(LineHeader) / 2);
 #endif
         more = (packet->head.payload.line[scan_count].offset & 0x8000) >> 15;
-        if (!more) scan_line = false;  // The last scan_line
+        !more ? scan_line = false : scan_line = true;  // The last scan_line
         scan_count++;
       }
 
@@ -255,13 +256,12 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
   return;
 }
 
-bool RtpStream::Receive(uint8_t *cpu, uint32_t timeout) {
+bool RtpStream::Receive(uint8_t **cpu, uint32_t timeout [[maybe_unused]]) {
   if (kRtpThreaded) {
     // Elevate priority to get the RTP packets in quickly
 
     // Start a thread so we can start capturing the next frame while transmitting the data
     rx_thread_ = std::thread(&RtpStream::ReceiveThread, this);
-    rx_thread_.detach();
 
     // Wait for completion
     rx_thread_.join();
@@ -269,7 +269,7 @@ bool RtpStream::Receive(uint8_t *cpu, uint32_t timeout) {
   } else {
     ReceiveThread(this);
   }
-  cpu = buffer_in_;
+  *cpu = buffer_in_;
   return true;
 }
 
@@ -278,7 +278,7 @@ void RtpStream::TransmitThread(RtpStream *stream) {
 
   ssize_t n = 0;
 
-  int16_t stride = stream->width_ * 2;
+  int32_t stride = stream->width_ * 2;
 
   RtpStream::sequence_number_ = 0;
 

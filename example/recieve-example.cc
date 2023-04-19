@@ -3,6 +3,7 @@
 #include <gtkmm.h>
 
 #include <cstdint>
+#include <iostream>
 #include <vector>
 
 #include "rtp_stream.h"
@@ -15,9 +16,8 @@ DEFINE_int32(width, 640, "the width of the image");
 class RGBBufferDrawingArea : public Gtk::DrawingArea {
  public:
   RGBBufferDrawingArea(int width, int height, const std::vector<uint8_t>& buffer)
-      : m_width(width), m_height(height), m_buffer(buffer), rtp_(RtpStream(height, width)) {
+      : m_width(width), m_height(height), m_buffer_(buffer), rtp_(RtpStream(height, width)) {
     // Setup RTP streaming class
-
     rtp_.RtpStreamIn(FLAGS_ipaddr, FLAGS_port);
     rtp_.Open();
   }
@@ -30,29 +30,27 @@ class RGBBufferDrawingArea : public Gtk::DrawingArea {
 
   Glib::RefPtr<Gdk::Pixbuf> getPixbuf() {
     auto pixbuf =
-        Gdk::Pixbuf::create_from_data(m_buffer.data(), Gdk::COLORSPACE_RGB, false, 8, m_width, m_height, m_width * 3);
+        Gdk::Pixbuf::create_from_data(m_buffer_.data(), Gdk::COLORSPACE_RGB, false, 8, m_width, m_height, m_width * 3);
     return pixbuf;
   }
 
   void update_buffer() {
-    // Update the buffer with a simple color cycling effect
-    for (int i = 0; i < m_height; ++i) {
-      for (int j = 0; j < m_width; ++j) {
-        int idx = (i * m_width + j) * 3;
-        m_buffer[idx] = (m_buffer[idx] + 1) % 256;
-        m_buffer[idx + 1] = (m_buffer[idx + 1] + 1) % 256;
-        m_buffer[idx + 2] = (m_buffer[idx + 2] + 1) % 256;
-      }
-    }
-    rtp_.Receive((uint8_t*)m_buffer.data());
+    std::cout << "Frame = " << m_frame_counter_ << "\n";
 
+    uint8_t* cpu_buffer;
+    rtp_.Receive(&cpu_buffer);
+    memset(m_buffer_.data(), 128, m_buffer_.size());
+    memcpy(m_buffer_.data(), cpu_buffer, m_buffer_.size());
+    YuvToRgb(FLAGS_height, FLAGS_width, cpu_buffer, m_buffer_.data());
+    m_frame_counter_++;
     queue_draw();
   }
 
  private:
   int m_width;
   int m_height;
-  std::vector<uint8_t> m_buffer;
+  uint64_t m_frame_counter_ = 0;
+  std::vector<uint8_t> m_buffer_;
   RtpStream rtp_;
 };
 
@@ -81,22 +79,19 @@ class RGBBufferWindow : public Gtk::Window {
 int main(int argc, char* argv[]) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
+  std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port;
+
   auto app = Gtk::Application::create(argc, argv, "com.example.rgb_buffer_display");
 
   int width = FLAGS_width;
   int height = FLAGS_height;
 
-  // Create a simple RGB buffer
-  std::vector<uint8_t> buffer(width * height * 3, 0);
-  for (int i = 0; i < height; ++i) {
-    for (int j = 0; j < width; ++j) {
-      int idx = (i * width + j) * 3;
-      buffer[idx] = i % 256;
-      buffer[idx + 1] = j % 256;
-      buffer[idx + 2] = (i + j) % 256;
-    }
-  }
+  // Create a simple RGB buffer and fill white
+  std::vector<uint8_t> buffer(width * height * 3, 255);
 
   RGBBufferWindow window(width, height, buffer);
-  return app->run(window);
+  int ret = app->run(window);
+
+  std::cout << "Example terminated...\n";
+  return ret;
 }
