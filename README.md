@@ -32,11 +32,11 @@ Build the example
 mkdir build
 cmake ..
 ```
-Run the example
+Run the transmit example
 ```
-./rtp-example
+./transmit-example
 ```
-Catch the stream using the gstreamer src pipeline in the section below. Following command line options are supported:
+Command line arguments use **--help** and are listed below:
 ```
     -filename (the PNG file to use as the source of the video stream) type: string default: "testcard.png"
     -height (the height of the image) type: int32 default: 480
@@ -44,6 +44,12 @@ Catch the stream using the gstreamer src pipeline in the section below. Followin
     -port (the port to use for the transmit stream) type: int32 default: 5004
     -width (the width of the image) type: int32 default: 640
 ```
+The recieve example will display the stream:
+```
+./recieve-example
+```
+
+Catch the stream using the gstreamer src pipeline in the section below. Following command line options are supported:
 
 > **NOTE** : This example uses the test image ([images/testcard.png](images/testcard.png)) as the source of the video stream. You can replace lena with your own image or use another source for the video data.
 
@@ -58,6 +64,6 @@ Use this pipeline to capture the stream:
 
     gst-launch-1.0 -v udpsrc port=5004 caps="application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)RAW, sampling=(string)YCbCr-4:2:2, depth=(string)8, width=(string)640, height=(string)480, payload=(int)96" ! queue ! rtpvrawdepay ! queue ! videoconvert ! ximagesink 
     
-Gstreamer running with test image [images/testcard.png](images/testcard.png) (480x480):
+Gstreamer running with test image [images/testcard.png](images/testcard.png) (640x480):
 
 ![Test Card image](images/testcard.png)
