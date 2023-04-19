@@ -154,6 +154,7 @@ class RtpStream {
   ///
   bool Receive(uint8_t **cpu, uint32_t timeout = 0);
 
+ private:
   /// The incremental sequence numer for transmitting RTP packets
   static uint32_t sequence_number_;
   static uint16_t extended_sequence_number_;
@@ -167,7 +168,6 @@ class RtpStream {
   /// Transmit arguments used by the thread
   TxData arg_tx;
 
- private:
   int sockfd_in_;
   int sockfd_out_;
   struct sockaddr_in server_addr_out_;

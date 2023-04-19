@@ -319,7 +319,6 @@ int RtpStream::Transmit(uint8_t *rgbframe) {
   if (kRtpThreaded) {
     // Start a thread so we can start capturing the next frame while transmitting the data
     tx_thread_ = std::thread(TransmitThread, this);
-    tx_thread_.detach();
   } else {
     TransmitThread(this);
   }
