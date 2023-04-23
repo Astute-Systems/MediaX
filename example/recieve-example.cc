@@ -32,7 +32,7 @@ class RGBBufferDrawingArea : public Gtk::DrawingArea {
   RGBBufferDrawingArea(int width, int height, const std::vector<uint8_t>& buffer)
       : m_width(width), m_height(height), m_buffer_(buffer), rtp_(RtpStream(height, width)) {
     // Setup RTP streaming class
-    rtp_.RtpStreamIn(FLAGS_ipaddr, FLAGS_port);
+    rtp_.RtpStreamIn("TestVideo1", FLAGS_ipaddr, (uint16_t)FLAGS_port);
     rtp_.Open();
   }
 

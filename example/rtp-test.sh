@@ -3,7 +3,7 @@
 #Gstreamer1.0 working example UYVY streaming
 #===========================================
 echo 'Starting example application...'
-./build/bin/rtp-example -filename images/testcard.png &
+./build/bin/transmit-example -filename images/testcard.png -ipaddr=238.192.1.1 -height=480 -width=640 -port=5004  &
 
 sleep 1
 

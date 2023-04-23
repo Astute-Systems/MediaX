@@ -35,6 +35,7 @@
 #endif
 
 #include "rtp_stream.h"
+#include "sap_announcer.h"
 using namespace std;
 
 uint32_t RtpStream::sequence_number_ = 0;
@@ -54,15 +55,17 @@ RtpStream::RtpStream(uint32_t height, uint32_t width) : height_(height), width_(
 
 RtpStream::~RtpStream(void) = default;
 
-/* Broadcast the stream to port i.e. 5004 */
-void RtpStream::RtpStreamIn(std::string_view hostname, const uint16_t portno) {
-  port_no_in_ = portno;
+// Broadcast the stream to port i.e. 5004
+void RtpStream::RtpStreamIn(std::string_view name, std::string_view hostname, const uint16_t portno) {
+  stream_in_name_ = name;
   hostname_in_ = hostname;
+  port_no_in_ = portno;
 }
 
-void RtpStream::RtpStreamOut(std::string_view hostname, const uint16_t portno) {
-  port_no_out_ = portno;
+void RtpStream::RtpStreamOut(std::string_view name, std::string_view hostname, const uint16_t portno) {
+  stream_out_name_ = name;
   hostname_out_ = hostname;
+  port_no_out_ = portno;
 }
 
 bool RtpStream::Open() {
@@ -120,6 +123,11 @@ bool RtpStream::Open() {
     }
 #endif
   }
+
+  // Lastly start a SAP announcement
+  sap::SAPAnnouncer::GetInstance().AddSAPAnnouncement(
+      {stream_out_name_, "239.168.1.1", 5004, height_, width_, framerate_, false});
+  sap::SAPAnnouncer::GetInstance().Start();
   return true;
 }
 

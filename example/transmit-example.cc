@@ -78,11 +78,11 @@ int main(int argc, char **argv) {
 
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
-  std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port;
+  std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
 
   // Setup RTP streaming class
   RtpStream rtp(FLAGS_height, FLAGS_width);
-  rtp.RtpStreamOut(FLAGS_ipaddr, FLAGS_port);
+  rtp.RtpStreamOut("TestVideo1", FLAGS_ipaddr, (uint16_t)FLAGS_port);
   rtp.Open();
 
   memset(rtb_test.data(), 0, kBuffSize);
@@ -97,7 +97,9 @@ int main(int argc, char **argv) {
     // Convert all the scan lines
     RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
 
-    if (rtp.Transmit(yuv.data()) < 0) break;
+    std::cout << "GotHere 108\n";
+    //  if (rtp.Transmit(yuv.data()) < 0) break;
+    std::cout << "GotHere 109\n";
 
 #if 1
     // move the image (png must have extra byte as the second image is green)

@@ -37,7 +37,7 @@
 /// encoding-name=(string)RAW, sampling=(string)YCbCr-4:2:2, depth=(string)8, width=(string)480, height=(string)480,
 /// payload=(int)96" ! queue ! rtpvrawdepay ! queue ! xvimagesink sync=false
 
-/// Use his program to stream data to the udpsc example above on the tegra X1
+/// Use his program to stream data to the udpsrc example above on the tegra X1
 
 #ifndef __RTP_STREAM_H__
 #define __RTP_STREAM_H__
@@ -105,7 +105,7 @@ class RtpStream {
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
   /// \param port defaults to 5004
   ///
-  void RtpStreamOut(std::string_view hostname, const uint16_t port = 5004);
+  void RtpStreamOut(std::string_view name, std::string_view hostname, const uint16_t port = 5004);
 
   ///
   /// \brief Configure at RTP input stream
@@ -113,7 +113,7 @@ class RtpStream {
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
   /// \param port defaults to 5004
   ///
-  void RtpStreamIn(std::string_view hostname, const uint16_t port = 5004);
+  void RtpStreamIn(std::string_view name, std::string_view hostname, const uint16_t port = 5004);
 
   ///
   /// \brief Open the RTP stream
@@ -158,11 +158,16 @@ class RtpStream {
   /// Width in pixels of stream
   uint32_t width_;
 
+  /// Intended update framerate
+  uint32_t framerate_ = 25;
+
   /// Transmit arguments used by the thread
   TxData arg_tx;
 
   int sockfd_in_;
+  std::string stream_in_name_ = "unknown";
   int sockfd_out_;
+  std::string stream_out_name_ = "unknown";
   struct sockaddr_in server_addr_out_;
   socklen_t server_len_out_;
   pthread_mutex_t mutex_;
@@ -172,10 +177,10 @@ class RtpStream {
 
   // Ingress port
   std::string hostname_in_;
-  int16_t port_no_in_ = 0;
+  int16_t port_no_in_ = 5004;
   // Egress port
   std::string hostname_out_;
-  int16_t port_no_out_ = 0;
+  int16_t port_no_out_ = 5004;
 
   ///
   /// \brief Populate the RTP header
