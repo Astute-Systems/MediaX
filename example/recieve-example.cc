@@ -1,3 +1,17 @@
+//
+// Copyright (C) 2023 DefenceX PTY LTD. All rights reserved.
+//
+// This software is distributed under the included copyright license.
+// Any redistribution or reproduction, in part or in whole, in any form or medium, is strictly prohibited without the
+// prior written consent of DefenceX PTY LTD.
+//
+// For any inquiries or concerns, please contact:
+// DefenceX PTY LTD
+// Email: enquiries@defencex.ai
+//
+/// \file recieve-example.cc
+///
+
 #include <cairomm/cairomm.h>
 #include <gflags/gflags.h>
 #include <gtkmm.h>

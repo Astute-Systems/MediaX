@@ -14,6 +14,7 @@
         "pixbuf",
         "RGBA",
         "rgbframe",
+        "rtpmap",
         "rtpvrawdepay",
         "rtpvrawpay",
         "sigc",
