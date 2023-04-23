@@ -27,7 +27,7 @@ struct SAPHeader {
   uint32_t originating_source;  // Originating Source, IPV4
 
   // Constructor
-  SAPHeader(uint8_t version, uint8_t hash, uint16_t originating_source)
+  SAPHeader(uint8_t version, uint8_t hash, uint32_t originating_source)
       : version(version), hash(hash), originating_source(originating_source) {}
 };
 
@@ -64,12 +64,15 @@ class SAPAnnouncer {
   ///
   void BroadcastSAPAnnouncements();
 
-  void ListAddresses(uint16_t select = 0);
+  void SetSourceInterface(uint16_t select = 0);
+  void ListInterfaces(uint16_t select = 0);
 
  private:
+  void SetAddressHelper(uint16_t select, bool helper);
+
   std::vector<SAPMessage> streams_;
   const std::string kIpaddr = "224.2.127.254";
-  const uint32_t kPort = 9875;
+  const uint16_t kPort = 9875;
   uint32_t source_ipaddress_;
 };
 

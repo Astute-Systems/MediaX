@@ -94,9 +94,13 @@ void SAPAnnouncer::BroadcastSAPAnnouncements() {
   }
 }
 
-void SAPAnnouncer::ListAddresses(uint16_t select) {
+void SAPAnnouncer::SetSourceInterface(uint16_t select) { SetAddressHelper(select, false); }
+
+void SAPAnnouncer::ListInterfaces(uint16_t select) { SetAddressHelper(select, true); }
+
+void SAPAnnouncer::SetAddressHelper(uint16_t select, bool helper) {
   uint16_t count_interfaces = 0;
-  struct ifaddrs *ifaddr, *ifa;
+  struct ifaddrs *ifaddr;
   char addr_str[INET_ADDRSTRLEN];
 
   if (getifaddrs(&ifaddr) == -1) {
@@ -104,26 +108,26 @@ void SAPAnnouncer::ListAddresses(uint16_t select) {
     return;
   }
 
-  for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
-    if (ifa->ifa_addr == NULL) {
+  for (struct ifaddrs *ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
+    if (ifa->ifa_addr == nullptr) {
       continue;
     }
 
     // Check for IPv4 address
     if (ifa->ifa_addr->sa_family == AF_INET) {
-      struct sockaddr_in *sa = (struct sockaddr_in *)ifa->ifa_addr;
+      auto sa = (struct sockaddr_in *)ifa->ifa_addr;
       inet_ntop(AF_INET, &(sa->sin_addr), addr_str, INET_ADDRSTRLEN);
 
       // Exclude the loopback address
       if (strcmp(addr_str, "127.0.0.1") != 0) {
         std::string postfix;
-        std::cout << "Interface: " << ifa->ifa_name << std::endl;
+        if (helper) std::cout << "Interface: " << ifa->ifa_name << std::endl;
         // save the last one
         if (count_interfaces == select) {
           source_ipaddress_ = sa->sin_addr.s_addr;
           postfix = " <- selected";
         }
-        std::cout << "IPv4 Address: " << addr_str << postfix << std::endl;
+        if (helper) std::cout << "IPv4 Address: " << addr_str << postfix << std::endl;
         count_interfaces++;
       }
     }
