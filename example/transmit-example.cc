@@ -62,13 +62,12 @@ DEFINE_int32(height, 480, "the height of the image");
 DEFINE_int32(width, 640, "the width of the image");
 DEFINE_string(filename, "testcard.png", "the PNG file to use as the source of the video stream");
 
-static bool running = true;
+static bool application_running = true;
 
-void signalHandler(int signum [[maybe_unused]]) { running = false; }
+void signalHandler(int signum [[maybe_unused]]) { application_running = false; }
 
 int main(int argc, char **argv) {
   uint32_t frame = 0;
-  int move = 0;
   const int kBuffSize = (640 * 480) * 3;
   std::array<uint8_t, kBuffSize> yuv;
   std::array<uint8_t, kBuffSize> rtb_test;
@@ -79,6 +78,8 @@ int main(int argc, char **argv) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
   std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
+
+  sleep(1);
 
   // Setup RTP streaming class
   RtpStream rtp(FLAGS_height, FLAGS_width);
@@ -93,21 +94,14 @@ int main(int argc, char **argv) {
     return -1;
   }
 
+  // Convert all the scan lines
+
   // Loop frames forever
-  while (running) {
-    // Convert all the scan lines
+  while (application_running) {
+    memset(rgb.data(), 0, kBuffSize);
     RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
 
-    memset(yuv.data(), 0, kBuffSize);
-    std::cout << "Transmit\n";
     if (rtp.Transmit(yuv.data()) < 0) break;
-    std::cout << "Transmitted\n";
-
-#if 1
-    // move the image (png must have extra byte as the second image is green)
-    move += 3;
-    if (move == FLAGS_width * 3) move = 0;
-#endif
 
     // approximately 24 frames a second
     // delay 40ms
@@ -115,7 +109,7 @@ int main(int argc, char **argv) {
 
     /// delay 40ms
 
-    std::cout << "Sent frame " << frame;
+    std::cout << "Sent frame " << frame << "\n";
     frame++;
   }
   rtp.Close();

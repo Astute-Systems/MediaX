@@ -87,7 +87,7 @@ bool RtpStream::Open() {
     // bind socket to port
     if (bind(sockfd_in_, (struct sockaddr *)&si_me, sizeof(si_me)) == -1) {
       cout << "ERROR binding socket\n";
-      return false;
+      exit(-1);
     }
   }
 
@@ -96,38 +96,30 @@ bool RtpStream::Open() {
     sockfd_out_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (sockfd_out_ < 0) {
       cout << "ERROR opening socket\n";
-      return false;
+      exit(-1);
     }
 
     // gethostbyname: get the server's DNS entry
     getaddrinfo(hostname_out_.c_str(), nullptr, nullptr, &server_out_);
     if (server_out_ == nullptr) {
       fprintf(stderr, "ERROR, no such host as %s\n", hostname_out_.c_str());
-      exit(0);
+      exit(-1);
     }
 
     // build the server's Internet address
+    memset(&server_addr_out_, 0, sizeof(server_addr_out_));
     server_addr_out_.sin_family = AF_INET;
+    server_addr_out_.sin_addr.s_addr = inet_addr(hostname_out_.c_str());
     server_addr_out_.sin_port = htons(port_no_out_);
 
     // send the message to the server
     server_len_out_ = sizeof(server_addr_out_);
-#if 0
-    int n = sendto(sockfd_out_, (char *) "hello", 5, 0,
-                   (const sockaddr *) &server_addr_out_, server_len_out_);
-
-    printf("n=%d\n", n);
-    if (n < 0) {
-      printf("[RTP] Transmit socket failure fd=%d\n", sockfd_out_);
-      return n;
-    }
-#endif
   }
 
   // Lastly start a SAP announcement
-  sap::SAPAnnouncer::GetInstance().AddSAPAnnouncement(
-      {stream_out_name_, "239.168.1.1", 5004, height_, width_, framerate_, false});
-  sap::SAPAnnouncer::GetInstance().Start();
+  // sap::SAPAnnouncer::GetInstance().AddSAPAnnouncement(
+  //     {stream_out_name_, hostname_out_, port_no_out_, height_, width_, framerate_, false});
+  // sap::SAPAnnouncer::GetInstance().Start();
   return true;
 }
 
@@ -305,7 +297,7 @@ void RtpStream::TransmitThread(RtpStream *stream) {
                  stream->server_len_out_);
 
       if (n == 0) {
-        cerr << "[RTP] Transmit socket failure fd=" << stream->sockfd_out_ << "\n";
+        std::cerr << "[RTP] Transmit socket failure fd=" << stream->sockfd_out_ << "\n";
         return;
       }
     }

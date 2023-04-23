@@ -34,7 +34,7 @@ const uint32_t kNumberLinesPerPacket = 10;     // can have more that one line in
 const uint32_t kMaximumBufferSize = 1280 * 3;  // allow for RGB data upto 1280 pixels wide
 const uint32_t kMaxUdpData = 1500;             // enough space for three lines of UDP data MTU size should be checked
 const uint32_t kRtpCheck = 0;                  // 0 to disable RTP header checking
-const uint32_t kRtpThreaded = 1;               // transmit and recieve in a thread. RX thread blocks TX does not
+const uint32_t kRtpThreaded = 0;               // transmit and recieve in a thread. RX thread blocks TX does not
 const uint32_t kPitch = 4;                     // RGBX processing kPitch
 
 #if ENDIAN_SWAP

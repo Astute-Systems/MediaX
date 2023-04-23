@@ -41,7 +41,7 @@ struct SAPHeader {
 struct SAPMessage {
   std::string sessionName;
   std::string ipAddress;
-  uint32_t port;
+  uint16_t port;
   uint32_t height;
   uint32_t width;
   uint32_t framerate;

@@ -36,6 +36,9 @@ SAPAnnouncer::SAPAnnouncer() {
   multicast_addr_.sin_family = AF_INET;
   multicast_addr_.sin_addr.s_addr = inet_addr(kIpaddr.c_str());
   multicast_addr_.sin_port = htons(kPort);
+
+  // Select first found interface, can be overridden
+  SetSourceInterface(0);
 }
 
 SAPAnnouncer::~SAPAnnouncer() {
@@ -84,7 +87,9 @@ void SAPAnnouncer::SendSAPPacket(const SAPMessage &message, bool deletion) const
   // Prepare SDP message
   std::string sdp_msg =
       "v=0\r\n"
-      "o=- 3394362021 3394362021 IN IP4 192.168.204.5\r\n"
+      "o=- 3394362021 3394362021 IN IP4 " +
+      message.ipAddress +
+      "\r\n"
       "s=" +
       message.sessionName +
       "\r\n"
