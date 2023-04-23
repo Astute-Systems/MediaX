@@ -86,7 +86,8 @@ int main(int argc, char **argv) {
   rtp.Open();
 
   memset(rtb_test.data(), 0, kBuffSize);
-  std::vector<uint8_t> rgb = read_png_rgb24(FLAGS_filename);
+  Png image_reader;
+  std::vector<uint8_t> rgb = image_reader.ReadPngRgb24(FLAGS_filename);
   if (rgb.empty()) {
     std::cout << "Failed to read png file (" << FLAGS_filename << ")";
     return -1;
@@ -97,9 +98,10 @@ int main(int argc, char **argv) {
     // Convert all the scan lines
     RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
 
-    std::cout << "GotHere 108\n";
-    //  if (rtp.Transmit(yuv.data()) < 0) break;
-    std::cout << "GotHere 109\n";
+    memset(yuv.data(), 0, kBuffSize);
+    std::cout << "Transmit\n";
+    if (rtp.Transmit(yuv.data()) < 0) break;
+    std::cout << "Transmitted\n";
 
 #if 1
     // move the image (png must have extra byte as the second image is green)

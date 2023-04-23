@@ -28,7 +28,7 @@
 #include <string>
 #include <vector>
 
-std::vector<uint8_t> read_png_rgb24(std::string_view filename) {
+std::vector<uint8_t> Png::ReadPngRgb24(std::string_view filename) const {
   FILE* fp = fopen(std::string(filename).c_str(), "rb");
   if (!fp) {
     std::cerr << "Error opening file: " << filename << std::endl;
@@ -87,12 +87,9 @@ std::vector<uint8_t> read_png_rgb24(std::string_view filename) {
   return rgb24_buffer;
 }
 
-png_structp png_ptr;
+png_bytep* Png::GetRowPointwes() { return row_pointers; }
 
-png_bytep* row_pointers;
-png_bytep* get_row_pointwes() { return row_pointers; }
-
-void abort_(const char* s, ...) {
+void Png::Abort(const char* s, ...) {
   va_list args;
   va_start(args, s);
   vfprintf(stderr, s, args);
@@ -101,36 +98,25 @@ void abort_(const char* s, ...) {
   abort();
 }
 
-int x;
-int y;
-
-int width;
-int height;
-png_byte color_type;
-png_byte bit_depth;
-
-png_infop info_ptr;
-int number_of_passes;
-
-void read_png_file(char* file_name) {
+void Png::ReadPngFile(char* file_name) {
   char header[8];  // 8 is the maximum size that can be checked
 
   // open file and test for it being a png
   FILE* fp = fopen(file_name, "rb");
-  if (!fp) abort_("[read_png_file] File %s could not be opened for reading", file_name);
-  if (fread(header, 1, 8, fp)) abort_("[read_png_file] File %s is not recognized as a PNG file", file_name);
+  if (!fp) Abort("[read_png_file] File %s could not be opened for reading", file_name);
+  if (fread(header, 1, 8, fp)) Abort("[read_png_file] File %s is not recognized as a PNG file", file_name);
   if (png_sig_cmp((png_bytep)header, 0, 8))
-    abort_("[read_png_file] File %s is not recognized as a PNG file", file_name);
+    Abort("[read_png_file] File %s is not recognized as a PNG file", file_name);
 
   // initialize stuff
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 
-  if (!png_ptr) abort_("[read_png_file] png_create_read_struct failed");
+  if (!png_ptr) Abort("[read_png_file] png_create_read_struct failed");
 
   info_ptr = png_create_info_struct(png_ptr);
-  if (!info_ptr) abort_("[read_png_file] png_create_info_struct failed");
+  if (!info_ptr) Abort("[read_png_file] png_create_info_struct failed");
 
-  if (setjmp(png_jmpbuf(png_ptr))) abort_("[read_png_file] Error during init_io");
+  if (setjmp(png_jmpbuf(png_ptr))) Abort("[read_png_file] Error during init_io");
 
   png_init_io(png_ptr, fp);
   png_set_sig_bytes(png_ptr, 8);
@@ -147,7 +133,7 @@ void read_png_file(char* file_name) {
   png_read_update_info(png_ptr, info_ptr);
 
   // read file
-  if (setjmp(png_jmpbuf(png_ptr))) abort_("[read_png_file] Error during read_image");
+  if (setjmp(png_jmpbuf(png_ptr))) Abort("[read_png_file] Error during read_image");
 
   row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * width);
   for (y = 0; y < height; y++) row_pointers[y] = (png_byte*)malloc(png_get_rowbytes(png_ptr, info_ptr));

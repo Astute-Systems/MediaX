@@ -4,6 +4,7 @@
     "editor.formatOnSave": true,
     "C_Cpp.clang_format_fallbackStyle": "{BasedOnStyle: Google, ColumnLimit: 120}",
     "cSpell.words": [
+        "bytep",
         "COLOURSPACE",
         "Defence",
         "gflags",
@@ -12,6 +13,7 @@
         "libswscale",
         "payloader",
         "pixbuf",
+        "Pointwes",
         "RGBA",
         "rgbframe",
         "rtpmap",

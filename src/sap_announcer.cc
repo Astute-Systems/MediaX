@@ -115,7 +115,7 @@ void SAPAnnouncer::SendSAPPacket(const SAPMessage &message, bool deletion) const
   memcpy(&buffer[sizeof(SAPHeader)], sdp_msg.data(), sdp_msg.size());
 
   ssize_t sent_bytes = sendto(sockfd_, buffer.data(), sizeof(SAPHeader) + sdp_msg.size(), 0,
-                              reinterpret_cast<const struct sockaddr *>(&multicast_addr_), sizeof(multicast_addr_));
+                              (const struct sockaddr *)(&multicast_addr_), sizeof(multicast_addr_));
   if (sent_bytes < 0) {
     perror("sendto failed");
     exit(EXIT_FAILURE);
