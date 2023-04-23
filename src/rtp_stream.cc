@@ -117,9 +117,9 @@ bool RtpStream::Open() {
   }
 
   // Lastly start a SAP announcement
-  // sap::SAPAnnouncer::GetInstance().AddSAPAnnouncement(
-  //     {stream_out_name_, hostname_out_, port_no_out_, height_, width_, framerate_, false});
-  // sap::SAPAnnouncer::GetInstance().Start();
+  sap::SAPAnnouncer::GetInstance().AddSAPAnnouncement(
+      {stream_out_name_, hostname_out_, port_no_out_, height_, width_, framerate_, false});
+  sap::SAPAnnouncer::GetInstance().Start();
   return true;
 }
 
