@@ -98,7 +98,10 @@ int main(int argc, char **argv) {
 
   // Loop frames forever
   while (application_running) {
-    memset(rgb.data(), 0, kBuffSize);
+    // Clear the YUV buffer
+    memset(yuv.data(), 0, kBuffSize);
+
+    // Convert the RGB data to YUV again
     RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
 
     if (rtp.Transmit(yuv.data()) < 0) break;
