@@ -177,10 +177,10 @@ class RtpStream {
 
   // Ingress port
   std::string hostname_in_;
-  uint16_t port_no_in_ = 5004;
+  uint16_t port_no_in_ = 0;
   // Egress port
   std::string hostname_out_;
-  uint16_t port_no_out_ = 5004;
+  uint16_t port_no_out_ = 0;
 
   ///
   /// \brief Populate the RTP header
