@@ -191,8 +191,8 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
       //
       // Read in the RTP data
       //
-      ssize_t bytes = recvfrom(stream->sockfd_in_, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
-      if (bytes <= 0) {
+      if (ssize_t bytes = recvfrom(stream->sockfd_in_, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
+          bytes <= 0) {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         continue;
       }
@@ -287,8 +287,8 @@ bool RtpStream::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]) {
         auto start_time = std::chrono::high_resolution_clock::now();
         while (!new_rx_frame_) {
           auto end_time = std::chrono::high_resolution_clock::now();
-          auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
-          if (duration >= to) {
+          if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+              duration >= to) {
             // Leave the thread to recieve the rest of the frame
             rx_thread_.detach();
             return false;

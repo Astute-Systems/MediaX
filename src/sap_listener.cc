@@ -33,6 +33,6 @@ SAPListener &SAPListener::GetInstance() {
   return singleton_;
 }
 
-const std::vector<SDPMessage> &SAPListener::GetSAPAnnouncements() { return announcements_; }
+const std::vector<SDPMessage> &SAPListener::GetSAPAnnouncements() const { return announcements_; }
 
 }  // namespace sap

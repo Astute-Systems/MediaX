@@ -53,7 +53,7 @@ class SAPListener {
   ///
   /// \return The vectored list of SAP/SDP streams seen on the network
   ///
-  const std::vector<SDPMessage> &GetSAPAnnouncements();
+  const std::vector<SDPMessage> &GetSAPAnnouncements() const;
 
   ///
   /// \brief Start the SAP/SDP announcements thread
