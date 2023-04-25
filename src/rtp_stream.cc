@@ -157,11 +157,10 @@ void RtpStream::UpdateHeader(Header *packet, int line, int last, int32_t timesta
   packet->rtp.protocol = kRtpVersion << 30;
   packet->rtp.protocol = (kRtpExtension << 28) | packet->rtp.protocol;
   packet->rtp.protocol = packet->rtp.protocol | kRtpPayloadType << 16;
-  packet->rtp.protocol = packet->rtp.protocol | (sequence_number_ & 0xff);
-  timestamp += (Hz90 / kRtpFramerate);
-  packet->rtp.timestamp = timestamp;
+  packet->rtp.protocol = packet->rtp.protocol | (sequence_number_ & 0xffff);
+  packet->rtp.timestamp = GenerateTimestamp90kHz();
   packet->rtp.source = source;
-  packet->payload.extended_sequence_number = (sequence_number_ >> 16) & 0xff;
+  packet->payload.extended_sequence_number = (sequence_number_ >> 16) & 0xffff;
   packet->payload.line[0].length = (int16_t)width_ * 2;
   packet->payload.line[0].line_number = (int16_t)line;
   packet->payload.line[0].offset = 0;
@@ -325,8 +324,6 @@ void RtpStream::TransmitThread(RtpStream *stream) {
 
   int32_t stride = stream->width_ * 2;
 
-  RtpStream::sequence_number_ = 0;
-
   // send a frame, once last thread has completed
   pthread_mutex_lock(&stream->mutex_);
   {
@@ -375,4 +372,23 @@ int RtpStream::Transmit(uint8_t *rgbframe, bool blocking) {
   }
 
   return 0;
+}
+
+int32_t RtpStream::GenerateTimestamp90kHz() {
+  // Get the current time point
+  auto now = std::chrono::high_resolution_clock::now();
+
+  // Convert the time point to a duration since the epoch
+  auto duration = now.time_since_epoch();
+
+  // Convert the duration to a number of 90 kHz units
+  int64_t num_90kHz_units =
+      std::chrono::duration_cast<std::chrono::duration<int32_t, std::ratio<1, 90000>>>(duration).count();
+
+  // Check that the resulting value fits in a 32-bit signed integer
+  if (num_90kHz_units > std::numeric_limits<int32_t>::max() || num_90kHz_units < std::numeric_limits<int32_t>::min()) {
+    throw std::overflow_error("Timestamp value out of range for 32-bit signed integer");
+  }
+
+  return static_cast<int32_t>(num_90kHz_units);
 }

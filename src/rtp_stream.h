@@ -48,6 +48,7 @@
 #include <unistd.h>
 
 #include <array>
+#include <chrono>
 #include <string>
 #include <thread>
 
@@ -222,6 +223,7 @@ class RtpStream {
   ///
   static void ReceiveThread(RtpStream *stream);
 
+  static int32_t GenerateTimestamp90kHz();
   // Arguments sent to thread
   std::thread rx_thread_;
   std::thread tx_thread_;
