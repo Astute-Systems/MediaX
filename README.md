@@ -13,7 +13,9 @@
 
 [![License](https://img.shields.io/badge/licence-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 # Real Time Protocol in C++
-This code implements RFC4421 RTP (Real Time Protocol) Payload Format for Uncompressed Video but is mandated by the UK MoD as part of DEF STAN 00-82 (VIVOE) uncompressed RTP video streaming protocol for real time video. If you are not familiar with the Generic Vehicle Architecture (DEF STAN 00-23) and VIVOE then you can read more [here](https://en.wikipedia.org/wiki/Generic_Vehicle_Architecture).
+This code implements RFC4421 RTP (Real Time Protocol) Payload Format for Uncompressed Video but is mandated by the UK MoD as part of DEF STAN 00-082 (VIVOE) uncompressed RTP video streaming protocol for real time video. If you are not familiar with the Generic Vehicle Architecture (DEF STAN 00-23) and VIVOE then you can read more [here](https://en.wikipedia.org/wiki/Generic_Vehicle_Architecture).
+
+Transmit streams emit a SAP/SDP announcement every second as per RFC 2974 and RFC 4566. Also referenced as in DEF STAN 00-082.
 
 ## Payloader example
 This is a RAW (YUV) Real Time Protocol pay-loader written in C++. This example is send only to receive the data you can use the gstreamer pipeline below.
@@ -51,10 +53,10 @@ The recieve example will display the stream (user **--help** for options):
 
 Catch the stream using the gstreamer src pipeline in the section below. Following command line options are supported:
 
-> **NOTE** : This example uses the test image ([images/testcard.png](images/testcard.png)) as the source of the video stream. You can replace lena with your own image or use another source for the video data.
+> **NOTE** : This example uses the test image ([images/testcard.png](images/testcard.png)) as the source of the video stream. You can replace the testcard with your own image or use another source for the video data.
 
 ## gstreamer YUV streaming examples
-The test script test02.sh runs the example program against gstreamer.
+The test scripts [rtp-gst-test-rx.sh](example/rtp-gst-test-rx.sh), [rtp-gst-test-tx.sh](example/rtp-gst-test-tx.sh) runs the example program against gstreamer to ensure interoperability.
 
 Use this pipeline as a test payloader to make sure gstreamer is working:
 
@@ -63,7 +65,9 @@ Use this pipeline as a test payloader to make sure gstreamer is working:
 Use this pipeline to capture the stream:
 
     gst-launch-1.0 -v udpsrc port=5004 caps="application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)RAW, sampling=(string)YCbCr-4:2:2, depth=(string)8, width=(string)640, height=(string)480, payload=(int)96" ! queue ! rtpvrawdepay ! queue ! videoconvert ! ximagesink 
-    
+
+You can also run the provided examples back to back using the script [rtp-test.sh](example/rtp-test.sh)  
+
 Gstreamer running with test image [images/testcard.png](images/testcard.png) (640x480):
 
 ![Test Card image](images/testcard.png)
