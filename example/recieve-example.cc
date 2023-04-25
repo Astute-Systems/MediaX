@@ -54,25 +54,26 @@ static uint64_t m_frame_counter_ = 0;
 
 gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
   uint8_t *cpu_buffer;
-  // Fill the surface with video data if available
-  if (rtp_.Receive(&cpu_buffer, -1)) {
-    cairo_surface_t *surface = static_cast<cairo_surface_t *>(user_data);
 
+  // Fill the surface with video data if available
+  if (rtp_.Receive(&cpu_buffer, 60) == true) {
+    cairo_surface_t *surface = static_cast<cairo_surface_t *>(user_data);
     unsigned char *data = cairo_image_surface_get_data(surface);
     // Get the width and height of the surface
     int width = cairo_image_surface_get_width(surface);
     int height = cairo_image_surface_get_height(surface);
-    int stride = cairo_format_stride_for_width(CAIRO_FORMAT_RGB24, width);
-    memcpy(data, cpu_buffer, height * width * stride);
-    std::cout << "Frame: " << m_frame_counter_ << "\n";
+    YuvToRgba(height, width, cpu_buffer, data);
 
-    // // Mark the surface as dirty to ensure the data is properly updated
+    // Mark the surface as dirty to ensure the data is properly updated
     cairo_surface_mark_dirty(surface);
     cairo_set_source_surface(cr, surface, 0, 0);
-
     cairo_paint(cr);
   } else {
-    std::cout << "Timeout: " << m_frame_counter_ << "\n";
+    // Timedout
+    cairo_select_font_face(cr, "Courier", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+    cairo_set_font_size(cr, 24);
+    cairo_move_to(cr, 20, 50);
+    cairo_show_text(cr, "No Stream");
   }
   m_frame_counter_++;
   return FALSE;
@@ -91,8 +92,11 @@ int main(int argc, char *argv[]) {
   gtk_init(&argc, &argv);
 
   // Setup stream
-  rtp_.RtpStreamOut("TestVideo1", FLAGS_height, FLAGS_width, FLAGS_ipaddr, (uint16_t)FLAGS_port);
-  rtp_.Open();
+  rtp_.RtpStreamIn("TestVideo1", FLAGS_height, FLAGS_width, FLAGS_ipaddr, (uint16_t)FLAGS_port);
+  if (!rtp_.Open()) {
+    std::cerr << "Could not open stream, quitting";
+    return -1;
+  }
 
   // Create a new window
   GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);

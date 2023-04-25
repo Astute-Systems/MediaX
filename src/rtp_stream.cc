@@ -39,7 +39,6 @@
 using namespace std;
 
 uint32_t RtpStream::sequence_number_ = 0;
-uint16_t RtpStream::extended_sequence_number_ = 0;
 
 // static TxData arg_rx;
 // error - wrapper for perror
@@ -74,13 +73,17 @@ void RtpStream::RtpStreamOut(std::string_view name, uint32_t height, uint32_t wi
 }
 
 bool RtpStream::Open() {
+  if (!port_no_in_ && !port_no_out_) {
+    std::cerr << "No ports set, nothing to open";
+    exit(-1);
+  }
   if (port_no_in_) {
     struct sockaddr_in si_me;
 
     // create a UDP socket
     if ((sockfd_in_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
       cout << "ERROR opening socket\n";
-      return false;
+      exit(-1);
     }
     // zero out the structure
     memset((char *)&si_me, 0, sizeof(si_me));
@@ -153,17 +156,18 @@ void RtpStream::UpdateHeader(Header *packet, int line, int last, int32_t timesta
   packet->rtp.protocol = kRtpVersion << 30;
   packet->rtp.protocol = (kRtpExtension << 28) | packet->rtp.protocol;
   packet->rtp.protocol = packet->rtp.protocol | kRtpPayloadType << 16;
-  packet->rtp.protocol = packet->rtp.protocol | sequence_number_++;
+  packet->rtp.protocol = packet->rtp.protocol | (sequence_number_ & 0xff);
   timestamp += (Hz90 / kRtpFramerate);
   packet->rtp.timestamp = timestamp;
   packet->rtp.source = source;
-  packet->payload.extended_sequence_number = extended_sequence_number_++;
+  packet->payload.extended_sequence_number = (sequence_number_ >> 16) & 0xff;
   packet->payload.line[0].length = (int16_t)width_ * 2;
   packet->payload.line[0].line_number = (int16_t)line;
   packet->payload.line[0].offset = 0;
   if (last == 1) {
     packet->rtp.protocol = packet->rtp.protocol | 1 << 23;
   }
+  sequence_number_++;
 }
 
 bool RtpStream::new_rx_frame_ = false;
@@ -187,8 +191,11 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
       //
       // Read in the RTP data
       //
-      recvfrom(stream->sockfd_in_, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
-
+      ssize_t bytes = recvfrom(stream->sockfd_in_, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
+      if (bytes <= 0) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        continue;
+      }
       packet = (RtpPacket *)(stream->udpdata.data());
 #if ENDIAN_SWAP
       EndianSwap32((uint32_t *)(packet), sizeof(RtpHeader) / 4);
@@ -239,7 +246,7 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
                 ((packet->head.payload.line[c].line_number & 0x7FFF) * (stream->width_ * 2));
         length = packet->head.payload.line[c].length & 0xFFFF;
 
-        memcpy(&stream->buffer_in_[pixel + 1], &stream->udpdata[os], length);
+        memcpy(&stream->buffer_in_[pixel], &stream->udpdata[os], length);
 
         last_packet += length;
         payload += length;
@@ -258,6 +265,8 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
 }
 
 bool RtpStream::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]) {
+  if (port_no_in_ == 0) return false;
+
   if (kRtpThreaded) {
     if (new_rx_frame_) {
       // Dont start a new thread if a frame is available just return it
@@ -270,15 +279,16 @@ bool RtpStream::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]) {
       // Wait for completion
       if (timeout < 0) {
         rx_thread_.join();
+        *cpu = buffer_in_.data();
+        new_rx_frame_ = false;
+        return true;
       } else {
         auto to = std::chrono::milliseconds(timeout);
         auto start_time = std::chrono::high_resolution_clock::now();
         while (!new_rx_frame_) {
           auto end_time = std::chrono::high_resolution_clock::now();
           auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
-          // std::cout << "Loop: " << duration.count() << "\n";
           if (duration >= to) {
-            // std::cout << "Timeout: " << duration.count() << "\n";
             // Leave the thread to recieve the rest of the frame
             rx_thread_.detach();
             return false;
@@ -290,6 +300,7 @@ bool RtpStream::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]) {
   } else {
     ReceiveThread(this);
     *cpu = buffer_in_.data();
+    new_rx_frame_ = false;
     return true;
   }
   // should not ever get here
@@ -337,6 +348,8 @@ void RtpStream::TransmitThread(RtpStream *stream) {
 
 int RtpStream::Transmit(uint8_t *rgbframe, bool blocking) {
   arg_tx.rgbframe = rgbframe;
+
+  if (port_no_out_ == 0) return -1;
 
   if (kRtpThreaded) {
     // Start a thread so we can start capturing the next frame while transmitting the data

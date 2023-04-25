@@ -46,8 +46,8 @@ void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) {
   sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
 }
 
-void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) {
-  if (!rgb || !yuv) {
+void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) {
+  if (!rgba || !yuv) {
     // Handle null pointers gracefully
     return;
   }
@@ -61,8 +61,8 @@ void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) {
     return;
   }
 
-  const std::array<uint8_t *, 1> inData = {rgb};
-  std::array<uint8_t *, 1> outData = {yuv};
+  const std::array<uint8_t *, 1> inData = {yuv};
+  std::array<uint8_t *, 1> outData = {rgba};
 
   // Use static_cast instead of C-style cast
   const std::array<int32_t, 1> inLinesize = {(int32_t)(width * 2)};

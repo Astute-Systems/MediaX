@@ -105,6 +105,7 @@
         "cinttypes": "cpp",
         "typeinfo": "cpp",
         "valarray": "cpp",
-        "cstring": "cpp"
+        "cstring": "cpp",
+        "*.inc": "cpp"
     }
 }
