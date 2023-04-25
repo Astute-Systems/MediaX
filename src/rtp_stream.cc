@@ -152,7 +152,7 @@ void EndianSwap16(uint16_t *data, unsigned int length) {
 }
 #endif
 
-void RtpStream::UpdateHeader(Header *packet, int line, int last, int32_t timestamp, int32_t source) const {
+void RtpStream::UpdateHeader(Header *packet, int line, int last, int32_t source) const {
   memset((char *)packet, 0, sizeof(Header));
   packet->rtp.protocol = kRtpVersion << 30;
   packet->rtp.protocol = (kRtpExtension << 28) | packet->rtp.protocol;
@@ -253,7 +253,7 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
           payload += length;
         }
 
-        if (marker) receiving = false;
+        marker ? receiving = false : receiving = true;
 
         scan_count = 0;
       }
@@ -275,6 +275,34 @@ void RtpStream::Stop() {
   }
 }
 
+bool RtpStream::WaitForFrame(uint8_t **cpu, int32_t timeout) {
+  // Wait for completion
+  if (timeout < 0) {
+    while (!new_rx_frame_) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    *cpu = buffer_in_.data();
+    new_rx_frame_ = false;
+    return true;
+  } else {
+    auto to = std::chrono::milliseconds(timeout);
+    auto start_time = std::chrono::high_resolution_clock::now();
+
+    while (!new_rx_frame_) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+      auto end_time = std::chrono::high_resolution_clock::now();
+      if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+          duration >= to) {
+        // Leave the thread to recieve the rest of the frame
+        return false;
+      }
+    }
+    *cpu = buffer_in_.data();
+    new_rx_frame_ = false;
+    return true;
+  }
+}
+
 bool RtpStream::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]) {
   if (port_no_in_ == 0) return false;
 
@@ -285,32 +313,7 @@ bool RtpStream::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]) {
     new_rx_frame_ = false;
     return true;
   } else {
-    // Wait for completion
-    if (timeout < 0) {
-      while (!new_rx_frame_) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-      }
-      *cpu = buffer_in_.data();
-      new_rx_frame_ = false;
-      return true;
-    } else {
-      auto to = std::chrono::milliseconds(timeout);
-      auto start_time = std::chrono::high_resolution_clock::now();
-
-      while (!new_rx_frame_) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        auto end_time = std::chrono::high_resolution_clock::now();
-        if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
-            duration >= to) {
-          // Leave the thread to recieve the rest of the frame
-          return false;
-        }
-      }
-      // rx_thread_.join();
-      *cpu = buffer_in_.data();
-      new_rx_frame_ = false;
-      return true;
-    }
+    WaitForFrame(cpu, timeout);
   }
 
   // should not ever get here
@@ -327,13 +330,11 @@ void RtpStream::TransmitThread(RtpStream *stream) {
   // send a frame, once last thread has completed
   pthread_mutex_lock(&stream->mutex_);
   {
-    uint32_t time = 10000;
-
     for (uint32_t c = 0; c < (stream->height_); c++) {
       uint32_t last = 0;
 
       if (c == stream->height_ - 1) last = 1;
-      stream->UpdateHeader((Header *)&packet, c, last, time, kRtpSource);
+      stream->UpdateHeader((Header *)&packet, c, last, kRtpSource);
 
 #if ENDIAN_SWAP
       EndianSwap32((uint32_t *)(&packet), sizeof(RtpHeader) / 4);
