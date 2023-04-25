@@ -85,6 +85,9 @@
 //
 class RtpStream {
  public:
+  /// The supported colour spaces
+  enum class ColourspaceType { kColourspaceUndefined, kColourspaceRgb24, kColourspaceYuv, kColourspaceMono8 };
+
   ///
   /// \brief Construct a new Rtp Stream object
   ///
@@ -114,8 +117,8 @@ class RtpStream {
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
   /// \param port defaults to 5004
   ///
-  void RtpStreamIn(std::string_view name, uint32_t height, uint32_t width, std::string_view hostname,
-                   const uint16_t port = 5004);
+  void RtpStreamIn(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
+                   std::string_view hostname, const uint16_t port = 5004);
 
   ///
   /// \brief Open the RTP stream
@@ -124,6 +127,10 @@ class RtpStream {
   /// \return false
   ///
   bool Open();
+
+  void Start();
+
+  void Stop();
 
   ///
   /// \brief Close the RTP stream
@@ -153,23 +160,27 @@ class RtpStream {
  private:
   /// The incremental sequence numer for transmitting RTP packets
   static uint32_t sequence_number_;
-  static uint16_t extended_sequence_number_;
   static bool new_rx_frame_;
+  static bool rx_thread_running_;
 
   /// Height in pixels of stream
-  uint32_t height_;
+  uint32_t height_ = 0;
 
   /// Width in pixels of stream
-  uint32_t width_;
+  uint32_t width_ = 0;
 
   /// Intended update framerate
   uint32_t framerate_ = 25;
+
+  /// The encoded video type
+  ColourspaceType encoding_ = ColourspaceType::kColourspaceUndefined;
 
   /// Transmit arguments used by the thread
   TxData arg_tx;
 
   int sockfd_in_;
   std::string stream_in_name_ = "unknown";
+
   int sockfd_out_;
   std::string stream_out_name_ = "unknown";
   struct sockaddr_in server_addr_out_;

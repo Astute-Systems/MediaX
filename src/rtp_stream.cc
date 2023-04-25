@@ -52,8 +52,9 @@ RtpStream::RtpStream() { pthread_mutex_init(&mutex_, nullptr); }
 RtpStream::~RtpStream(void) = default;
 
 // Broadcast the stream to port i.e. 5004
-void RtpStream::RtpStreamIn(std::string_view name, uint32_t height, uint32_t width, std::string_view hostname,
-                            const uint16_t portno) {
+void RtpStream::RtpStreamIn(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
+                            std::string_view hostname, const uint16_t portno) {
+  encoding_ = encoding;
   height_ = height;
   width_ = width;
   stream_in_name_ = name;
@@ -171,138 +172,148 @@ void RtpStream::UpdateHeader(Header *packet, int line, int last, int32_t timesta
 }
 
 bool RtpStream::new_rx_frame_ = false;
+bool RtpStream::rx_thread_running_ = true;
 void RtpStream::ReceiveThread(RtpStream *stream) {
   RtpPacket *packet;
   bool receiving = true;
   int scan_count = 0;
   int last_packet;
+  while (rx_thread_running_) {
+    while (receiving) {
+      int marker;
 
-  while (receiving) {
-    int marker;
+      int version;
+      int payloadType;
+      bool valid = false;
 
-    int version;
-    int payloadType;
-    bool valid = false;
-
-    //
-    // Read data until we get the next RTP header
-    //
-    while (!valid) {
       //
-      // Read in the RTP data
+      // Read data until we get the next RTP header
       //
-      if (ssize_t bytes = recvfrom(stream->sockfd_in_, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
-          bytes <= 0) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        continue;
-      }
-      packet = (RtpPacket *)(stream->udpdata.data());
+      while (!valid) {
+        //
+        // Read in the RTP data
+        //
+        if (ssize_t bytes = recvfrom(stream->sockfd_in_, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
+            bytes <= 0) {
+          std::this_thread::sleep_for(std::chrono::milliseconds(100));
+          continue;
+        }
+        packet = (RtpPacket *)(stream->udpdata.data());
 #if ENDIAN_SWAP
-      EndianSwap32((uint32_t *)(packet), sizeof(RtpHeader) / 4);
+        EndianSwap32((uint32_t *)(packet), sizeof(RtpHeader) / 4);
 #endif
-      //
-      // Decode Header bits and confirm RTP packet
-      //
-      payloadType = (packet->head.rtp.protocol & 0x007F0000) >> 16;
-      version = (packet->head.rtp.protocol & 0xC0000000) >> 30;
-      if ((payloadType == 96) && (version == 2)) {
-        valid = true;
+        //
+        // Decode Header bits and confirm RTP packet
+        //
+        payloadType = (packet->head.rtp.protocol & 0x007F0000) >> 16;
+        version = (packet->head.rtp.protocol & 0xC0000000) >> 30;
+        if ((payloadType == 96) && (version == 2)) {
+          valid = true;
+        }
+      }
+      if (valid) {  // Start to decode packet
+        bool scan_line = true;
+
+        // Decode Header bits
+        marker = (packet->head.rtp.protocol & 0x00800000) >> 23;
+
+        //
+        // Count the number of scan_lines in the packet
+        //
+        while (scan_line) {
+          int more;
+
+#if ENDIAN_SWAP
+          EndianSwap16((uint16_t *)(&packet->head.payload.line[scan_count]), sizeof(LineHeader) / 2);
+#endif
+          more = (packet->head.payload.line[scan_count].offset & 0x8000) >> 15;
+          !more ? scan_line = false : scan_line = true;  // The last scan_line
+          scan_count++;
+        }
+
+        //
+        // Now we know the number of scan_lines we can copy the data
+        //
+        int payload_offset = sizeof(RtpHeader) + 2 + (scan_count * sizeof(LineHeader));
+        int payload = 0;
+
+        last_packet = payload_offset;
+        for (int c = 0; c < scan_count; c++) {
+          uint32_t os;
+          uint32_t pixel;
+          uint32_t length;
+
+          os = payload_offset + payload;
+          pixel = ((packet->head.payload.line[c].offset & 0x7FFF) * 2) +
+                  ((packet->head.payload.line[c].line_number & 0x7FFF) * (stream->width_ * 2));
+          length = packet->head.payload.line[c].length & 0xFFFF;
+
+          memcpy(&stream->buffer_in_[pixel], &stream->udpdata[os], length);
+
+          last_packet += length;
+          payload += length;
+        }
+
+        if (marker) receiving = false;
+
+        scan_count = 0;
       }
     }
-    if (valid) {  // Start to decode packet
-      bool scan_line = true;
 
-      // Decode Header bits
-      marker = (packet->head.rtp.protocol & 0x00800000) >> 23;
-
-      //
-      // Count the number of scan_lines in the packet
-      //
-      while (scan_line) {
-        int more;
-
-#if ENDIAN_SWAP
-        EndianSwap16((uint16_t *)(&packet->head.payload.line[scan_count]), sizeof(LineHeader) / 2);
-#endif
-        more = (packet->head.payload.line[scan_count].offset & 0x8000) >> 15;
-        !more ? scan_line = false : scan_line = true;  // The last scan_line
-        scan_count++;
-      }
-
-      //
-      // Now we know the number of scan_lines we can copy the data
-      //
-      int payload_offset = sizeof(RtpHeader) + 2 + (scan_count * sizeof(LineHeader));
-      int payload = 0;
-
-      last_packet = payload_offset;
-      for (int c = 0; c < scan_count; c++) {
-        uint32_t os;
-        uint32_t pixel;
-        uint32_t length;
-
-        os = payload_offset + payload;
-        pixel = ((packet->head.payload.line[c].offset & 0x7FFF) * 2) +
-                ((packet->head.payload.line[c].line_number & 0x7FFF) * (stream->width_ * 2));
-        length = packet->head.payload.line[c].length & 0xFFFF;
-
-        memcpy(&stream->buffer_in_[pixel], &stream->udpdata[os], length);
-
-        last_packet += length;
-        payload += length;
-      }
-
-      if (marker) receiving = false;
-
-      scan_count = 0;
-    }
-  }
-
-  stream->arg_tx.yuvframe = stream->buffer_in_.data();
-  new_rx_frame_ = true;
-
+    stream->arg_tx.yuvframe = stream->buffer_in_.data();
+    new_rx_frame_ = true;
+    receiving = true;
+  }  // Recieve loop
   return;
+}
+
+void RtpStream::Start() { rx_thread_ = std::thread(&RtpStream::ReceiveThread, this); }
+
+void RtpStream::Stop() {
+  if (rx_thread_.joinable()) {
+    rx_thread_running_ = false;
+    rx_thread_.join();
+  }
 }
 
 bool RtpStream::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]) {
   if (port_no_in_ == 0) return false;
 
-  if (kRtpThreaded) {
-    if (new_rx_frame_) {
-      // Dont start a new thread if a frame is available just return it
-      *cpu = buffer_in_.data();
-      return true;
-    } else {
-      // Start a thread so we can start capturing the next frame while transmitting the data
-      rx_thread_ = std::thread(&RtpStream::ReceiveThread, this);
-
-      // Wait for completion
-      if (timeout < 0) {
-        rx_thread_.join();
-        *cpu = buffer_in_.data();
-        new_rx_frame_ = false;
-        return true;
-      } else {
-        auto to = std::chrono::milliseconds(timeout);
-        auto start_time = std::chrono::high_resolution_clock::now();
-        while (!new_rx_frame_) {
-          auto end_time = std::chrono::high_resolution_clock::now();
-          if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
-              duration >= to) {
-            // Leave the thread to recieve the rest of the frame
-            rx_thread_.detach();
-            return false;
-          }
-          std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        }
-      }
-    }
-  } else {
-    ReceiveThread(this);
+  // Check if we have a frame ready
+  if (new_rx_frame_) {
+    // Dont start a new thread if a frame is available just return it
     *cpu = buffer_in_.data();
     new_rx_frame_ = false;
     return true;
+  } else {
+    // Wait for completion
+    if (timeout < 0) {
+      while (!new_rx_frame_) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+      }
+      *cpu = buffer_in_.data();
+      new_rx_frame_ = false;
+      return true;
+    } else {
+      auto to = std::chrono::milliseconds(timeout);
+      auto start_time = std::chrono::high_resolution_clock::now();
+
+      while (!new_rx_frame_) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        auto end_time = std::chrono::high_resolution_clock::now();
+        if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+            duration >= to) {
+          // Leave the thread to recieve the rest of the frame
+          return false;
+        }
+      }
+      // rx_thread_.join();
+      *cpu = buffer_in_.data();
+      new_rx_frame_ = false;
+      return true;
+    }
   }
+
   // should not ever get here
   return false;
 }
