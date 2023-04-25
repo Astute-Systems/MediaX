@@ -71,3 +71,6 @@ You can also run the provided examples back to back using the script [rtp-test.s
 Gstreamer running with test image [images/testcard.png](images/testcard.png) (640x480):
 
 ![Test Card image](images/testcard.png)
+
+# Commercial Licensing
+This library is also available as part of VivoeX Pro under a commercial license. This version of the library supports all colour spaces listed in DEF STAN 00-082 and RTP H.264 hardware acceleration when run on Intel and Nvidia hardware. Please visit http://defencex.ai for more information and support.
