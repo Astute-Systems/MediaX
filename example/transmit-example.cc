@@ -82,8 +82,8 @@ int main(int argc, char **argv) {
   sleep(1);
 
   // Setup RTP streaming class
-  RtpStream rtp(FLAGS_height, FLAGS_width);
-  rtp.RtpStreamOut("TestVideo1", FLAGS_ipaddr, (uint16_t)FLAGS_port);
+  RtpStream rtp;
+  rtp.RtpStreamOut("TestVideo1", FLAGS_height, FLAGS_width, FLAGS_ipaddr, (uint16_t)FLAGS_port);
   rtp.Open();
 
   memset(rtb_test.data(), 0, kBuffSize);
@@ -104,15 +104,11 @@ int main(int argc, char **argv) {
     // Convert the RGB data to YUV again
     RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
 
-    if (rtp.Transmit(yuv.data()) < 0) break;
+    if (rtp.Transmit(yuv.data(), true) < 0) break;
 
     // approximately 24 frames a second
     // delay 40ms
     nanosleep((const struct timespec[]){{0, 1000000000L / kRtpFramerate}}, nullptr);
-
-    /// delay 40ms
-
-    std::cout << "Sent frame " << frame << "\n";
     frame++;
   }
   rtp.Close();

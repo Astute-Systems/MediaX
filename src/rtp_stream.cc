@@ -48,24 +48,29 @@ void error(const std::string &msg) {
   exit(0);
 }
 
-RtpStream::RtpStream(uint32_t height, uint32_t width) : height_(height), width_(width) {
-  pthread_mutex_init(&mutex_, nullptr);
-  buffer_in_.resize(height * width * 2);
-}
+RtpStream::RtpStream() { pthread_mutex_init(&mutex_, nullptr); }
 
 RtpStream::~RtpStream(void) = default;
 
 // Broadcast the stream to port i.e. 5004
-void RtpStream::RtpStreamIn(std::string_view name, std::string_view hostname, const uint16_t portno) {
+void RtpStream::RtpStreamIn(std::string_view name, uint32_t height, uint32_t width, std::string_view hostname,
+                            const uint16_t portno) {
+  height_ = height;
+  width_ = width;
   stream_in_name_ = name;
   hostname_in_ = hostname;
   port_no_in_ = portno;
+  buffer_in_.resize(height * width * 2);
 }
 
-void RtpStream::RtpStreamOut(std::string_view name, std::string_view hostname, const uint16_t portno) {
+void RtpStream::RtpStreamOut(std::string_view name, uint32_t height, uint32_t width, std::string_view hostname,
+                             const uint16_t portno) {
+  height_ = height;
+  width_ = width;
   stream_out_name_ = name;
   hostname_out_ = hostname;
   port_no_out_ = portno;
+  buffer_in_.resize(height * width * 2);
 }
 
 bool RtpStream::Open() {
@@ -161,6 +166,7 @@ void RtpStream::UpdateHeader(Header *packet, int line, int last, int32_t timesta
   }
 }
 
+bool RtpStream::new_rx_frame_ = false;
 void RtpStream::ReceiveThread(RtpStream *stream) {
   RtpPacket *packet;
   bool receiving = true;
@@ -246,25 +252,48 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
   }
 
   stream->arg_tx.yuvframe = stream->buffer_in_.data();
+  new_rx_frame_ = true;
 
   return;
 }
 
-bool RtpStream::Receive(uint8_t **cpu, uint32_t timeout [[maybe_unused]]) {
+bool RtpStream::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]) {
   if (kRtpThreaded) {
-    // Elevate priority to get the RTP packets in quickly
+    if (new_rx_frame_) {
+      // Dont start a new thread if a frame is available just return it
+      *cpu = buffer_in_.data();
+      return true;
+    } else {
+      // Start a thread so we can start capturing the next frame while transmitting the data
+      rx_thread_ = std::thread(&RtpStream::ReceiveThread, this);
 
-    // Start a thread so we can start capturing the next frame while transmitting the data
-    rx_thread_ = std::thread(&RtpStream::ReceiveThread, this);
-
-    // Wait for completion
-    rx_thread_.join();
-
+      // Wait for completion
+      if (timeout < 0) {
+        rx_thread_.join();
+      } else {
+        auto to = std::chrono::milliseconds(timeout);
+        auto start_time = std::chrono::high_resolution_clock::now();
+        while (!new_rx_frame_) {
+          auto end_time = std::chrono::high_resolution_clock::now();
+          auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+          // std::cout << "Loop: " << duration.count() << "\n";
+          if (duration >= to) {
+            // std::cout << "Timeout: " << duration.count() << "\n";
+            // Leave the thread to recieve the rest of the frame
+            rx_thread_.detach();
+            return false;
+          }
+          std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+      }
+    }
   } else {
     ReceiveThread(this);
+    *cpu = buffer_in_.data();
+    return true;
   }
-  *cpu = buffer_in_.data();
-  return true;
+  // should not ever get here
+  return false;
 }
 
 void RtpStream::TransmitThread(RtpStream *stream) {
@@ -276,7 +305,7 @@ void RtpStream::TransmitThread(RtpStream *stream) {
 
   RtpStream::sequence_number_ = 0;
 
-  /* send a frame */
+  // send a frame, once last thread has completed
   pthread_mutex_lock(&stream->mutex_);
   {
     uint32_t time = 10000;
@@ -306,12 +335,17 @@ void RtpStream::TransmitThread(RtpStream *stream) {
   return;
 }
 
-int RtpStream::Transmit(uint8_t *rgbframe) {
+int RtpStream::Transmit(uint8_t *rgbframe, bool blocking) {
   arg_tx.rgbframe = rgbframe;
 
   if (kRtpThreaded) {
     // Start a thread so we can start capturing the next frame while transmitting the data
     tx_thread_ = std::thread(TransmitThread, this);
+    if (blocking) {
+      tx_thread_.join();
+    } else {
+      tx_thread_.detach();
+    }
   } else {
     TransmitThread(this);
   }

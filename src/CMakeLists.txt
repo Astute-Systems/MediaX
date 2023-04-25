@@ -7,7 +7,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "MSYS")
   set(MSYS_LIBS ws2_32 mingwex)
 endif()
 
-add_library(mediax SHARED rtp_stream.cc sap_announcer.cc colourspace.cc)
+add_library(mediax SHARED rtp_stream.cc sap_announcer.cc sap_listener.cc colourspace.cc)
 pkg_check_modules(SWSCALE REQUIRED libswscale)
 target_link_libraries(mediax png pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS})
 target_include_directories(mediax PUBLIC ${SWSCALE_INCLUDE_DIRS})

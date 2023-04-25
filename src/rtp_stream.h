@@ -91,7 +91,7 @@ class RtpStream {
   /// \param height in pixels of the RTP stream
   /// \param width in pixels of the RTP stream
   ///
-  RtpStream(uint32_t height, uint32_t width);
+  RtpStream();
 
   ///
   /// \brief Destroy the Rtp Stream object
@@ -105,7 +105,8 @@ class RtpStream {
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
   /// \param port defaults to 5004
   ///
-  void RtpStreamOut(std::string_view name, std::string_view hostname, const uint16_t port = 5004);
+  void RtpStreamOut(std::string_view name, uint32_t height, uint32_t width, std::string_view hostname,
+                    const uint16_t port = 5004);
 
   ///
   /// \brief Configure at RTP input stream
@@ -113,7 +114,8 @@ class RtpStream {
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
   /// \param port defaults to 5004
   ///
-  void RtpStreamIn(std::string_view name, std::string_view hostname, const uint16_t port = 5004);
+  void RtpStreamIn(std::string_view name, uint32_t height, uint32_t width, std::string_view hostname,
+                   const uint16_t port = 5004);
 
   ///
   /// \brief Open the RTP stream
@@ -133,24 +135,26 @@ class RtpStream {
   /// \brief Transmit an RGB buffer
   ///
   /// \param rgbframe pointer to the frame data
+  /// \param blocking defaults to true, will wait till frame has been transmitted
   /// \return int
   ///
-  int Transmit(uint8_t *rgbframe);
+  int Transmit(uint8_t *rgbframe, bool blocking = true);
 
   ///
   /// \brief Recieve a frame or timeout
   ///
   /// \param cpu the fame buffer in CPU memory.
   /// \param timeout zero will wait forever or a timeout in milliseconds
-  /// \return true
-  /// \return false
+  /// \return true when frame available
+  /// \return false when no frame was received in the timeout
   ///
-  bool Receive(uint8_t **cpu, uint32_t timeout = 0);
+  bool Receive(uint8_t **cpu, int32_t timeout = 0);
 
  private:
   /// The incremental sequence numer for transmitting RTP packets
   static uint32_t sequence_number_;
   static uint16_t extended_sequence_number_;
+  static bool new_rx_frame_;
 
   /// Height in pixels of stream
   uint32_t height_;

@@ -12,13 +12,13 @@
 /// \file recieve-example.cc
 ///
 
+#include <cairo.h>
 #include <cairomm/cairomm.h>
 #include <gflags/gflags.h>
-#include <gtkmm.h>
+#include <gtk/gtk.h>
 
-#include <cstdint>
 #include <iostream>
-#include <vector>
+#include <string>
 
 #include "rtp_stream.h"
 
@@ -27,85 +27,103 @@ DEFINE_int32(port, 5004, "the port to use for the transmit stream");
 DEFINE_int32(height, 480, "the height of the image");
 DEFINE_int32(width, 640, "the width of the image");
 
-class RGBBufferDrawingArea : public Gtk::DrawingArea {
- public:
-  RGBBufferDrawingArea(int width, int height, const std::vector<uint8_t>& buffer)
-      : m_width(width), m_height(height), m_buffer_(buffer), rtp_(RtpStream(height, width)) {
-    // Setup RTP streaming class
-    rtp_.RtpStreamIn("TestVideo1", FLAGS_ipaddr, (uint16_t)FLAGS_port);
-    rtp_.Open();
+unsigned char *buffer = nullptr;  // Global variable to hold the RGB buffer
+
+static RtpStream rtp_;
+
+cairo_surface_t *create_rgb_surface(int width, int height) {
+  cairo_surface_t *surface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, width, height);
+  unsigned char *data = cairo_image_surface_get_data(surface);
+  int stride = cairo_format_stride_for_width(CAIRO_FORMAT_RGB24, width);
+
+  // Fill the surface with RGB data
+  for (int y = 0; y < height; ++y) {
+    for (int x = 0; x < width; ++x) {
+      uint32_t pixel = (255 << 16) | (0 << 8) | 0;  // Red: 255, Green: 0, Blue: 0
+      *((uint32_t *)(data + y * stride) + x) = pixel;
+    }
   }
 
-  bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override {
-    Gdk::Cairo::set_source_pixbuf(cr, getPixbuf(), 0, 0);
-    cr->paint();
-    return true;
+  // Mark the surface as dirty to ensure the data is properly updated
+  cairo_surface_mark_dirty(surface);
+
+  return surface;
+}
+
+static uint64_t m_frame_counter_ = 0;
+
+gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+  uint8_t *cpu_buffer;
+  // Fill the surface with video data if available
+  if (rtp_.Receive(&cpu_buffer, -1)) {
+    cairo_surface_t *surface = static_cast<cairo_surface_t *>(user_data);
+
+    unsigned char *data = cairo_image_surface_get_data(surface);
+    // Get the width and height of the surface
+    int width = cairo_image_surface_get_width(surface);
+    int height = cairo_image_surface_get_height(surface);
+    int stride = cairo_format_stride_for_width(CAIRO_FORMAT_RGB24, width);
+    memcpy(data, cpu_buffer, height * width * stride);
+    std::cout << "Frame: " << m_frame_counter_ << "\n";
+
+    // // Mark the surface as dirty to ensure the data is properly updated
+    cairo_surface_mark_dirty(surface);
+    cairo_set_source_surface(cr, surface, 0, 0);
+
+    cairo_paint(cr);
+  } else {
+    std::cout << "Timeout: " << m_frame_counter_ << "\n";
   }
+  m_frame_counter_++;
+  return FALSE;
+}
 
-  Glib::RefPtr<Gdk::Pixbuf> getPixbuf() {
-    auto pixbuf =
-        Gdk::Pixbuf::create_from_data(m_buffer_.data(), Gdk::COLORSPACE_RGB, false, 8, m_width, m_height, m_width * 3);
-    return pixbuf;
-  }
+gboolean update_callback(gpointer user_data) {
+  gtk_widget_queue_draw(GTK_WIDGET(user_data));
+  return TRUE;
+}
 
-  void update_buffer() {
-    std::cout << "Frame = " << m_frame_counter_ << "\n";
-
-    uint8_t* cpu_buffer;
-    rtp_.Receive(&cpu_buffer);
-    memset(m_buffer_.data(), 128, m_buffer_.size());  // Set buffer gray
-    memcpy(m_buffer_.data(), cpu_buffer, m_buffer_.size());
-    YuvToRgb(FLAGS_height, FLAGS_width, cpu_buffer, m_buffer_.data());
-    m_frame_counter_++;
-    queue_draw();
-  }
-
- private:
-  int m_width;
-  int m_height;
-  uint64_t m_frame_counter_ = 0;
-  std::vector<uint8_t> m_buffer_;
-  RtpStream rtp_;
-};
-
-class RGBBufferWindow : public Gtk::Window {
- public:
-  RGBBufferWindow(int width, int height, const std::vector<uint8_t>& buffer) : m_drawing_area(width, height, buffer) {
-    set_title("RGB Buffer Display");
-    set_default_size(width, height);
-    add(m_drawing_area);
-    m_drawing_area.show();
-
-    // Start the timer to update the buffer at 25 Hz (every 40 ms)
-    m_connection = Glib::signal_timeout().connect(sigc::mem_fun(*this, &RGBBufferWindow::on_timeout), 40);
-  }
-
-  bool on_timeout() {
-    m_drawing_area.update_buffer();
-    return true;
-  }
-
- private:
-  RGBBufferDrawingArea m_drawing_area;
-  sigc::connection m_connection;
-};
-
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
-  std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port;
+  std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
 
-  auto app = Gtk::Application::create(argc, argv, "com.example.rgb_buffer_display");
+  gtk_init(&argc, &argv);
 
-  int width = FLAGS_width;
-  int height = FLAGS_height;
+  // Setup stream
+  rtp_.RtpStreamOut("TestVideo1", FLAGS_height, FLAGS_width, FLAGS_ipaddr, (uint16_t)FLAGS_port);
+  rtp_.Open();
 
-  // Create a simple RGB buffer and fill white
-  std::vector<uint8_t> buffer(width * height * 3, 255);
+  // Create a new window
+  GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+  gtk_window_set_title(GTK_WINDOW(window), "recieve-example");
+  gtk_window_set_default_size(GTK_WINDOW(window), FLAGS_width, FLAGS_height);
 
-  RGBBufferWindow window(width, height, buffer);
-  int ret = app->run(window);
+  // Create a drawing area widget
+  GtkWidget *drawing_area = gtk_drawing_area_new();
+  gtk_container_add(GTK_CONTAINER(window), drawing_area);
 
-  std::cout << "Example terminated...\n";
-  return ret;
+  // Create a surface and set it as the user data for the draw area
+  cairo_surface_t *surface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, FLAGS_width, FLAGS_height);
+  gtk_widget_set_size_request(drawing_area, FLAGS_width, FLAGS_height);
+  g_object_set_data(G_OBJECT(drawing_area), "surface", surface);
+
+  // Connect to the "draw" signal of the drawing area
+  g_signal_connect(G_OBJECT(drawing_area), "draw", G_CALLBACK(on_draw), surface);
+  g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+  // Start the update timer
+  g_timeout_add(40, update_callback, drawing_area);  // 25 Hz = 40ms interval
+
+  gtk_widget_show_all(window);
+
+  gtk_main();
+
+  // Clean up
+  if (buffer != NULL) {
+    free(buffer);
+  }
+
+  return 0;
 }
