@@ -25,6 +25,8 @@
 #include <thread>
 #include <vector>
 
+#include "rtp_types.h"
+
 namespace sap {
 
 // A simplified SDP message structure
@@ -90,6 +92,15 @@ class SAPListener {
   static void SAPListenerThread(SAPListener *sap);
 
   std::vector<SDPMessage> announcements_;
+  std::array<uint8_t, kMaxUdpData> udpdata;
+
+  std::thread thread_;
+  const std::string kIpaddr = "224.2.127.254";
+  const uint16_t kPort = 9875;
+  uint32_t source_ipaddress_;
+  int sockfd_;
+  struct sockaddr_in multicast_addr_;
+  static bool running_;
 };
 
 }  // namespace sap

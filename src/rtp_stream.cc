@@ -35,6 +35,7 @@
 #endif
 
 #include "rtp_stream.h"
+#include "rtp_types.h"
 #include "sap_announcer.h"
 using namespace std;
 
@@ -83,7 +84,7 @@ bool RtpStream::Open() {
 
     // create a UDP socket
     if ((sockfd_in_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
-      cout << "ERROR opening socket\n";
+      std::cerr << "ERROR opening socket\n";
       exit(-1);
     }
     // zero out the structure
@@ -95,7 +96,7 @@ bool RtpStream::Open() {
 
     // bind socket to port
     if (bind(sockfd_in_, (struct sockaddr *)&si_me, sizeof(si_me)) == -1) {
-      cout << "ERROR binding socket\n";
+      std::cerr << "ERROR binding socket\n";
       exit(-1);
     }
   }
