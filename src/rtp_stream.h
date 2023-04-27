@@ -207,7 +207,7 @@ class RtpStream {
   /// \param timestamp the timestamp
   /// \param source the source id
   ///
-  void UpdateHeader(Header *packet, int line, int last, int32_t source) const;
+  void UpdateHeader(Header *packet, int line, int last, int32_t timestamp, int32_t source) const;
 
   ///
   /// \brief Transmit RTP data to the network using a separate thread
@@ -223,8 +223,21 @@ class RtpStream {
   ///
   static void ReceiveThread(RtpStream *stream);
 
+  ///
+  /// \brief Wait for a frame or timeout
+  ///
+  /// \param cpu
+  /// \param timeout
+  /// \return true
+  /// \return false
+  ///
   bool WaitForFrame(uint8_t **cpu, int32_t timeout);
 
+  ///
+  /// \brief Get a 90Htz timestamp
+  ///
+  /// \return int32_t The current time stamp
+  ///
   static int32_t GenerateTimestamp90kHz();
   // Arguments sent to thread
   std::thread rx_thread_;

@@ -43,7 +43,7 @@ void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) {
   const std::array<int32_t, 1> inLinesize = {(int32_t)(width * 2)};
   std::array<int32_t, 1> outLinesize = {(int32_t)(width * 3)};
 
-  sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
+  sws_scale(ctx.get(), inData.data(), inLinesize.data(), SWS_BICUBIC, height, outData.data(), outLinesize.data());
 }
 
 void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) {
@@ -78,7 +78,8 @@ void RgbaToYuv(uint32_t height, uint32_t width, uint8_t *rgba, uint8_t *yuv) {
   }
 
   std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
-      sws_getContext(width, height, AV_PIX_FMT_RGBA, width, height, AV_PIX_FMT_YUYV422, 0, nullptr, nullptr, nullptr),
+      sws_getContext(width, height, AV_PIX_FMT_RGBA, width, height, AV_PIX_FMT_YUYV422, SWS_BICUBIC, nullptr, nullptr,
+                     nullptr),
       &sws_freeContext);
   if (!ctx) {
     // Handle allocation failure gracefully

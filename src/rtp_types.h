@@ -19,8 +19,6 @@
 
 #include <stdint.h>
 
-#define ENDIAN_SWAP __amd64__ || __x86_64__  // Perform endian swap, Intel defined by gcc
-
 const uint32_t kGst1Fix = 1;
 const uint32_t kRtpVersion = 0x2;  // RFC 1889 Version 2
 const uint32_t kRtpPadding = 0x0;
@@ -37,10 +35,8 @@ const uint32_t kRtpCheck = 0;                  // 0 to disable RTP header checki
 const uint32_t kRtpThreaded = 1;               // transmit and recieve in a thread. RX thread blocks TX does not
 const uint32_t kPitch = 4;                     // RGBX processing kPitch
 
-#if ENDIAN_SWAP
 void EndianSwap32(uint32_t *data, unsigned int length);
 void EndianSwap16(uint16_t *data, unsigned int length);
-#endif
 
 struct float4 {
   float x;

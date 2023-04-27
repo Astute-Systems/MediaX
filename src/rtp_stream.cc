@@ -142,28 +142,47 @@ void RtpStream::Close() const {
   }
 }
 
-#if ENDIAN_SWAP
 void EndianSwap32(uint32_t *data, unsigned int length) {
+  // Check for Intel architecture
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
   for (uint32_t c = 0; c < length; c++) data[c] = __bswap_32(data[c]);
+  return;
+// Check for ARM architecture
+#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+  return;
+#else
+#error "Unknown byte order"
+#endif
 }
 
 void EndianSwap16(uint16_t *data, unsigned int length) {
+  // Check for Intel architecture
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
   for (uint16_t c = 0; c < length; c++) data[c] = __bswap_16(data[c]);
-}
+  return;
+// Check for ARM architecture
+#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+  return;
+#else
+#error "Unknown byte order"
 #endif
+}
 
-void RtpStream::UpdateHeader(Header *packet, int line, int last, int32_t source) const {
+void RtpStream::UpdateHeader(Header *packet, int line, int last, int32_t timestamp, int32_t source) const {
   memset((char *)packet, 0, sizeof(Header));
   packet->rtp.protocol = kRtpVersion << 30;
-  packet->rtp.protocol = (kRtpExtension << 28) | packet->rtp.protocol;
+  packet->rtp.protocol = packet->rtp.protocol | kRtpExtension << 28;
   packet->rtp.protocol = packet->rtp.protocol | kRtpPayloadType << 16;
   packet->rtp.protocol = packet->rtp.protocol | (sequence_number_ & 0xffff);
-  packet->rtp.timestamp = GenerateTimestamp90kHz();
+  packet->rtp.timestamp = timestamp;
   packet->rtp.source = source;
   packet->payload.extended_sequence_number = (sequence_number_ >> 16) & 0xffff;
   packet->payload.line[0].length = (int16_t)width_ * 2;
   packet->payload.line[0].line_number = (int16_t)line;
-  packet->payload.line[0].offset = 0;
+  packet->payload.line[0].offset = 0x8000;  // Indicates another line
+  packet->payload.line[1].length = 0;
+  packet->payload.line[1].line_number = 0;
+  packet->payload.line[1].offset = 0x0000;
   if (last == 1) {
     packet->rtp.protocol = packet->rtp.protocol | 1 << 23;
   }
@@ -198,9 +217,8 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
           continue;
         }
         packet = (RtpPacket *)(stream->udpdata.data());
-#if ENDIAN_SWAP
         EndianSwap32((uint32_t *)(packet), sizeof(RtpHeader) / 4);
-#endif
+
         //
         // Decode Header bits and confirm RTP packet
         //
@@ -221,10 +239,7 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
         //
         while (scan_line) {
           int more;
-
-#if ENDIAN_SWAP
           EndianSwap16((uint16_t *)(&packet->head.payload.line[scan_count]), sizeof(LineHeader) / 2);
-#endif
           more = (packet->head.payload.line[scan_count].offset & 0x8000) >> 15;
           !more ? scan_line = false : scan_line = true;  // The last scan_line
           scan_count++;
@@ -313,7 +328,7 @@ bool RtpStream::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]) {
     new_rx_frame_ = false;
     return true;
   } else {
-    WaitForFrame(cpu, timeout);
+    return WaitForFrame(cpu, timeout);
   }
 
   // should not ever get here
@@ -324,6 +339,7 @@ void RtpStream::TransmitThread(RtpStream *stream) {
   RtpPacket packet;
 
   ssize_t n = 0;
+  uint32_t timestamp = GenerateTimestamp90kHz();
 
   int32_t stride = stream->width_ * 2;
 
@@ -334,15 +350,13 @@ void RtpStream::TransmitThread(RtpStream *stream) {
       uint32_t last = 0;
 
       if (c == stream->height_ - 1) last = 1;
-      stream->UpdateHeader((Header *)&packet, c, last, kRtpSource);
+      stream->UpdateHeader((Header *)&packet, c, last, timestamp, kRtpSource);
 
-#if ENDIAN_SWAP
       EndianSwap32((uint32_t *)(&packet), sizeof(RtpHeader) / 4);
       EndianSwap16((uint16_t *)(&packet.head.payload), sizeof(PayloadHeader) / 2);
-#endif
 
-      memcpy((void *)&packet.head.payload.line[1], (void *)&stream->arg_tx.rgbframe[(c * stride) + 1], stride);
-      n = sendto(stream->sockfd_out_, (uint8_t *)&packet, stride + 20, 0, (const sockaddr *)&stream->server_addr_out_,
+      memcpy((void *)&packet.head.payload.line[2], (void *)&stream->arg_tx.rgbframe[(c * stride) + 1], stride);
+      n = sendto(stream->sockfd_out_, (uint8_t *)&packet, stride + 26, 0, (const sockaddr *)&stream->server_addr_out_,
                  stream->server_len_out_);
 
       if (n == 0) {
