@@ -19,6 +19,11 @@
 
 #include <stdint.h>
 
+// SAP/SDP constants
+const std::string kIpaddr = "224.2.127.254";
+const uint16_t kPort = 9875;
+
+// RTP constants
 const uint32_t kGst1Fix = 1;
 const uint32_t kRtpVersion = 0x2;  // RFC 1889 Version 2
 const uint32_t kRtpPadding = 0x0;

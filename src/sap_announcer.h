@@ -164,8 +164,6 @@ class SAPAnnouncer {
 
   std::vector<SAPMessage> streams_;
   std::thread thread_;
-  const std::string kIpaddr = "224.2.127.254";
-  const uint16_t kPort = 9875;
   uint32_t source_ipaddress_;
   int sockfd_;
   struct sockaddr_in multicast_addr_;

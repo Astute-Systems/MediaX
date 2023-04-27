@@ -22,6 +22,8 @@
 #include <thread>
 #include <vector>
 
+#include "rtp_types.h"
+
 namespace sap {
 
 bool SAPAnnouncer::running_ = false;
