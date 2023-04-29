@@ -138,8 +138,16 @@ class RtpStream {
   ///
   bool Open();
 
+  ///
+  /// \brief Start the stream
+  ///
+  ///
   void Start();
 
+  ///
+  /// \brief Stop the stream, can be quickly re-started
+  ///
+  ///
   void Stop();
 
   ///
