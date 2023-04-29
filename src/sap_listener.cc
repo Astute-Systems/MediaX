@@ -15,6 +15,7 @@
 
 #include <fcntl.h>  // for fcntl(), F_GETFL, F_SETFL, O_NONBLOCK
 
+#include <algorithm>
 #include <chrono>
 #include <cstring>
 #include <iostream>
@@ -23,6 +24,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+
 namespace sap {
 
 bool SAPListener::running_ = false;
@@ -80,8 +82,7 @@ void SAPListener::SAPListenerThread(SAPListener *sap) {
       continue;
     }
     // Process SAP here
-    std::cout << "+++++++++++++++++++++++SAP/SDP+++++++++++++++++++++++++\n";
-    std::cout << (char *)&sap->udpdata[8] << "\n";
+    sap->SapStore(sap->udpdata);
     std::this_thread::sleep_for(std::chrono::seconds(1));
   }
 }
@@ -96,6 +97,162 @@ void SAPListener::Stop() {
   thread_.join();
 }
 
-const std::vector<SDPMessage> &SAPListener::GetSAPAnnouncements() const { return announcements_; }
+SdpTypeEnum SAPListener::GetType(std::string &line) const {
+  if (line.substr(0, 2).compare("v=") == 0) return SdpTypeEnum::kProtocolVersion;
+  if (line.substr(0, 2).compare("o=") == 0) return SdpTypeEnum::kOriginatorSessionIdentifier;
+  if (line.substr(0, 2).compare("s=") == 0) return SdpTypeEnum::kSessionName;
+  if (line.substr(0, 2).compare("c=") == 0) return SdpTypeEnum::kConnectionInformation;
+  if (line.substr(0, 2).compare("t=") == 0) return SdpTypeEnum::kTimeSessionActive;
+  if (line.substr(0, 2).compare("m=") == 0) return SdpTypeEnum::kMediaNameAndTransportAddress;
+  if (line.substr(0, 2).compare("a=") == 0) return SdpTypeEnum::kSessionAttribute;
+  return SdpTypeEnum::kUnknown;
+}
+
+std::map<std::string, std::string> SAPListener::ParseAttributes(std::string &line) {
+  std::map<std::string, std::string> attributes;
+  std::string key;
+  std::string value;
+  bool attribute_name = true;
+
+  // Step through characters
+  for (unsigned long int i = 0; i < line.length(); i++) {
+    if (line[i] == ':') {
+      attribute_name = false;
+      continue;
+    }
+    if (attribute_name) {
+      if (line[i] != ' ') key += line[i];
+    } else {
+      // attribute_value
+      if (line[i] != ' ') value += line[i];
+    }
+  }
+  attributes[key] = value;
+  return attributes;
+}
+
+std::map<std::string, std::string> SAPListener::ParseAttributesEqual(std::string &line) {
+  std::map<std::string, std::string> attributes;
+  std::string key;
+  std::string value;
+  bool type = true;
+
+  // Step through characters
+  for (unsigned long int i = 0; i < line.length(); i++) {
+    if (line[i] == '=') {
+      type = false;
+      continue;
+    }
+    if (line[i] == ';') {
+      type = true;
+      attributes[key] = value;
+      key = "";
+      value = "";
+      continue;
+    }
+    if (type) {
+      if (line[i] != ' ') key += line[i];
+    } else {
+      if (line[i] != ' ') value += line[i];
+    }
+  }
+  return attributes;
+}
+
+bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
+  std::map<std::string, std::string> attributes_map;
+
+  const uint32_t *source = (uint32_t *)&udpdata[4];
+  SDPMessage sdp;
+  sdp.sdp_text = (char *)&rawdata[8];
+  // convert to string IP address
+  struct in_addr addr;
+  addr.s_addr = htonl(*source);
+  EndianSwap32(&addr.s_addr, 1);
+  sdp.ip_address_source = inet_ntoa(addr);
+  // Loop through lines
+  // Convert string to istringstream
+  std::istringstream iss(sdp.sdp_text);
+  std::string line;
+  while (std::getline(iss, line)) {
+    // Get the SDP type for this line
+    SdpTypeEnum line_type = GetType(line);
+
+    if (line_type == SdpTypeEnum::kUnknown) return false;
+
+    /// Remove the first two characters now we know the type
+    line = line.substr(2);
+
+    switch (line_type) {
+      case SdpTypeEnum::kProtocolVersion:
+        sdp.protocol_version = std::stoi(line);
+        break;
+      case SdpTypeEnum::kOriginatorSessionIdentifier:
+        break;
+      case SdpTypeEnum::kSessionName:
+        sdp.session_name = line;
+        break;
+      case SdpTypeEnum::kSessionInformation:
+        break;
+      case SdpTypeEnum::kUriOfDescription:
+        break;
+      case SdpTypeEnum::kEmailAddress:
+        break;
+      case SdpTypeEnum::kPhoneNumber:
+        break;
+      case SdpTypeEnum::kConnectionInformation: {
+        size_t lastSpace = line.find_last_of(" ");
+        // Extract last word using substr
+        sdp.ip_address = line.substr(lastSpace + 1);
+        size_t pos = sdp.ip_address.find('/');  // Find position of the first forward slash
+        if (pos != std::string::npos) {         // If a forward slash is found
+          sdp.ip_address =
+              sdp.ip_address.substr(0, pos);  // Get substring from start to the position of the forward slash
+        }
+
+      } break;
+      case SdpTypeEnum::kBandwidthInformation:
+        break;
+      case SdpTypeEnum::kSessionAttribute: {
+        std::map<std::string, std::string> attributes_map_more = ParseAttributes(line);
+        attributes_map.insert(attributes_map_more.begin(), attributes_map_more.end());
+      } break;
+      case SdpTypeEnum::kTimeSessionActive:
+        break;
+      case SdpTypeEnum::kMediaNameAndTransportAddress: {
+        // Get index of first space character
+        size_t firstSpace = line.find(" ");
+        // Extract second word using substr
+        std::string secondWord = line.substr(firstSpace + 1);
+        secondWord = secondWord.substr(0, secondWord.find(" "));
+        sdp.port = std::stoi(secondWord);
+      } break;
+      case SdpTypeEnum::kMediaTitle:
+        break;
+      case SdpTypeEnum::KConnectionInformation:
+        break;
+      default:
+        break;
+    }
+  }
+
+  std::map<std::string, std::string> attributes_map_fmtp;
+  attributes_map_fmtp = ParseAttributesEqual(attributes_map["fmtp"]);
+  attributes_map.insert(attributes_map_fmtp.begin(), attributes_map_fmtp.end());
+
+  sdp.height = std::stoi(attributes_map["height"]);
+  sdp.width = std::stoi(attributes_map["width"]);
+  sdp.framerate = std::stoi(attributes_map["framerate"]);
+  sdp.sampling = attributes_map["96sampling"];
+
+  std::cout << "SDP: source: " << sdp.ip_address_source << ", ipaddr: " << sdp.ip_address << ":" << sdp.port
+            << ", height: " << attributes_map["height"] << ", width: " << attributes_map["width"]
+            << ", framerate: " << sdp.framerate << ", sampling: " << sdp.sampling << "\n";
+  announcements_[sdp.session_name] = sdp;
+
+  return true;
+}
+
+const std::map<std::string, SDPMessage> &SAPListener::GetSAPAnnouncements() const { return announcements_; }
 
 }  // namespace sap
