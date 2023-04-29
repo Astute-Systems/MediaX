@@ -81,9 +81,18 @@
 #include "colourspace.h"
 #include "rtp_types.h"
 
-//
-// rtpstream RGB data
-//
+/// Store common port information for ingress and egress ports
+struct PortType {
+  std::string hostname;
+  uint16_t port_no = 0;
+  int sockfd;
+  std::string name = "unknown";
+};
+
+///
+/// \brief Manage an RTP stream
+///
+///
 class RtpStream {
  public:
   /// The supported colour spaces
@@ -179,24 +188,18 @@ class RtpStream {
   /// Transmit arguments used by the thread
   TxData arg_tx;
 
-  int sockfd_in_;
-  std::string stream_in_name_ = "unknown";
+  // Ingress port
+  PortType ingress_;
 
-  int sockfd_out_;
-  std::string stream_out_name_ = "unknown";
+  // Egress port
+  PortType egress_;
+  struct addrinfo *server_out_;
+
   struct sockaddr_in server_addr_out_;
   socklen_t server_len_out_;
   pthread_mutex_t mutex_;
   std::array<uint8_t, kMaxUdpData> udpdata;
   std::vector<uint8_t> buffer_in_;
-  struct addrinfo *server_out_;
-
-  // Ingress port
-  std::string hostname_in_;
-  uint16_t port_no_in_ = 0;
-  // Egress port
-  std::string hostname_out_;
-  uint16_t port_no_out_ = 0;
 
   ///
   /// \brief Populate the RTP header

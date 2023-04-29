@@ -58,9 +58,9 @@ void RtpStream::RtpStreamIn(std::string_view name, ColourspaceType encoding, uin
   encoding_ = encoding;
   height_ = height;
   width_ = width;
-  stream_in_name_ = name;
-  hostname_in_ = hostname;
-  port_no_in_ = portno;
+  ingress_.name = name;
+  ingress_.hostname = hostname;
+  ingress_.port_no = portno;
   buffer_in_.resize(height * width * 2);
 }
 
@@ -68,22 +68,22 @@ void RtpStream::RtpStreamOut(std::string_view name, uint32_t height, uint32_t wi
                              const uint16_t portno) {
   height_ = height;
   width_ = width;
-  stream_out_name_ = name;
-  hostname_out_ = hostname;
-  port_no_out_ = portno;
+  egress_.name = name;
+  egress_.hostname = hostname;
+  egress_.port_no = portno;
   buffer_in_.resize(height * width * 2);
 }
 
 bool RtpStream::Open() {
-  if (!port_no_in_ && !port_no_out_) {
+  if (!ingress_.port_no && !egress_.port_no) {
     std::cerr << "No ports set, nothing to open";
     exit(-1);
   }
-  if (port_no_in_) {
+  if (ingress_.port_no) {
     struct sockaddr_in si_me;
 
     // create a UDP socket
-    if ((sockfd_in_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
+    if ((ingress_.sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
       std::cerr << "ERROR opening socket\n";
       exit(-1);
     }
@@ -91,36 +91,36 @@ bool RtpStream::Open() {
     memset((char *)&si_me, 0, sizeof(si_me));
 
     si_me.sin_family = AF_INET;
-    si_me.sin_port = htons(port_no_in_);
+    si_me.sin_port = htons(ingress_.port_no);
     si_me.sin_addr.s_addr = htonl(INADDR_ANY);
 
     // bind socket to port
-    if (bind(sockfd_in_, (struct sockaddr *)&si_me, sizeof(si_me)) == -1) {
+    if (bind(ingress_.sockfd, (struct sockaddr *)&si_me, sizeof(si_me)) == -1) {
       std::cerr << "ERROR binding socket\n";
       exit(-1);
     }
   }
 
-  if (port_no_out_) {
+  if (egress_.port_no) {
     // socket: create the outbound socket
-    sockfd_out_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    if (sockfd_out_ < 0) {
+    egress_.sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (egress_.sockfd < 0) {
       cout << "ERROR opening socket\n";
       exit(-1);
     }
 
     // gethostbyname: get the server's DNS entry
-    getaddrinfo(hostname_out_.c_str(), nullptr, nullptr, &server_out_);
+    getaddrinfo(egress_.hostname.c_str(), nullptr, nullptr, &server_out_);
     if (server_out_ == nullptr) {
-      fprintf(stderr, "ERROR, no such host as %s\n", hostname_out_.c_str());
+      fprintf(stderr, "ERROR, no such host as %s\n", egress_.hostname.c_str());
       exit(-1);
     }
 
     // build the server's Internet address
     memset(&server_addr_out_, 0, sizeof(server_addr_out_));
     server_addr_out_.sin_family = AF_INET;
-    server_addr_out_.sin_addr.s_addr = inet_addr(hostname_out_.c_str());
-    server_addr_out_.sin_port = htons(port_no_out_);
+    server_addr_out_.sin_addr.s_addr = inet_addr(egress_.hostname.c_str());
+    server_addr_out_.sin_port = htons(egress_.port_no);
 
     // send the message to the server
     server_len_out_ = sizeof(server_addr_out_);
@@ -128,18 +128,18 @@ bool RtpStream::Open() {
 
   // Lastly start a SAP announcement
   sap::SAPAnnouncer::GetInstance().AddSAPAnnouncement(
-      {stream_out_name_, hostname_out_, port_no_out_, height_, width_, framerate_, false});
+      {egress_.name, egress_.hostname, egress_.port_no, height_, width_, framerate_, false});
   sap::SAPAnnouncer::GetInstance().Start();
   return true;
 }
 
 void RtpStream::Close() const {
-  if (port_no_in_) {
-    close(sockfd_in_);
+  if (ingress_.port_no) {
+    close(ingress_.sockfd);
   }
 
-  if (port_no_out_) {
-    close(sockfd_out_);
+  if (egress_.port_no) {
+    close(egress_.sockfd);
   }
 }
 
@@ -212,7 +212,7 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
         //
         // Read in the RTP data
         //
-        if (ssize_t bytes = recvfrom(stream->sockfd_in_, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
+        if (ssize_t bytes = recvfrom(stream->ingress_.sockfd, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
             bytes <= 0) {
           std::this_thread::sleep_for(std::chrono::milliseconds(100));
           continue;
@@ -320,7 +320,7 @@ bool RtpStream::WaitForFrame(uint8_t **cpu, int32_t timeout) {
 }
 
 bool RtpStream::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]) {
-  if (port_no_in_ == 0) return false;
+  if (ingress_.port_no == 0) return false;
 
   // Check if we have a frame ready
   if (new_rx_frame_) {
@@ -357,11 +357,11 @@ void RtpStream::TransmitThread(RtpStream *stream) {
       EndianSwap16((uint16_t *)(&packet.head.payload), sizeof(PayloadHeader) / 2);
 
       memcpy((void *)&packet.head.payload.line[2], (void *)&stream->arg_tx.rgbframe[(c * stride) + 1], stride);
-      n = sendto(stream->sockfd_out_, (uint8_t *)&packet, stride + 26, 0, (const sockaddr *)&stream->server_addr_out_,
-                 stream->server_len_out_);
+      n = sendto(stream->egress_.sockfd, (uint8_t *)&packet, stride + 26, 0,
+                 (const sockaddr *)&stream->server_addr_out_, stream->server_len_out_);
 
       if (n == 0) {
-        std::cerr << "[RTP] Transmit socket failure fd=" << stream->sockfd_out_ << "\n";
+        std::cerr << "[RTP] Transmit socket failure fd=" << stream->egress_.sockfd << "\n";
         return;
       }
     }
@@ -373,7 +373,7 @@ void RtpStream::TransmitThread(RtpStream *stream) {
 int RtpStream::Transmit(uint8_t *rgbframe, bool blocking) {
   arg_tx.rgbframe = rgbframe;
 
-  if (port_no_out_ == 0) return -1;
+  if (egress_.port_no == 0) return -1;
 
   if (kRtpThreaded) {
     // Start a thread so we can start capturing the next frame while transmitting the data

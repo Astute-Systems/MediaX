@@ -12,10 +12,12 @@
 /// \file sap-example.cc
 ///
 
+#include <iostream>
+
 #include "sap_listener.h"
 
 int main() {
-  sap::SAPListener &sap = sap::SAPListener::GetInstance();
+  sap::SAPListener& sap = sap::SAPListener::GetInstance();
 
   // Start all the streams for 10 seconds
   sap.Start();
@@ -29,6 +31,16 @@ int main() {
   sap.Start();
   sleep(5);
   sap.Stop();
+
+  const std::map<std::string, sap::SDPMessage>& announcements = sap.GetSAPAnnouncements();
+
+  std::cout << ">>>>>>>>> List of SAP announcements :\n";
+  for (const auto& announcement : announcements) {
+    sap::SDPMessage sdp = announcement.second;
+    std::cout << "SDP> name: " << sdp.session_name << ", source: " << sdp.ip_address_source
+              << ", ipaddr: " << sdp.ip_address << ":" << sdp.port << ", height: " << sdp.height
+              << ", width: " << sdp.width << ", framerate: " << sdp.framerate << ", sampling: " << sdp.sampling << "\n";
+  }
 
   return 0;
 }

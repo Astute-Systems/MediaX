@@ -175,6 +175,9 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
   std::istringstream iss(sdp.sdp_text);
   std::string line;
   while (std::getline(iss, line)) {
+    line.erase(remove(line.begin(), line.end(), '\r'), line.end());
+    line.erase(remove(line.begin(), line.end(), '\n'), line.end());
+
     // Get the SDP type for this line
     SdpTypeEnum line_type = GetType(line);
 
@@ -245,9 +248,6 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
   sdp.framerate = std::stoi(attributes_map["framerate"]);
   sdp.sampling = attributes_map["96sampling"];
 
-  std::cout << "SDP: source: " << sdp.ip_address_source << ", ipaddr: " << sdp.ip_address << ":" << sdp.port
-            << ", height: " << attributes_map["height"] << ", width: " << attributes_map["width"]
-            << ", framerate: " << sdp.framerate << ", sampling: " << sdp.sampling << "\n";
   announcements_[sdp.session_name] = sdp;
 
   return true;
