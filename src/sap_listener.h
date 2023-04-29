@@ -94,7 +94,7 @@ struct SDPMessage {
   std::string sdp_text;
 };
 
-typedef std::function<void(sap::SDPMessage &sdp)> SapCallback;
+using SapCallback = std::function<void(sap::SDPMessage &sdp)>;
 
 class SAPListener {
  public:
@@ -116,7 +116,7 @@ class SAPListener {
   ///
   /// \param session_name Advertised session name
   ///
-  void RegisterSapListener(std::string_view session_name, SapCallback callback);
+  void RegisterSapListener(std::string_view session_name, const SapCallback &callback);
 
   ///
   /// \brief Start the SAP/SDP announcements thread
@@ -165,7 +165,7 @@ class SAPListener {
   /// \param line
   /// \return std::map<std::string, std::string>
   ///
-  std::map<std::string, std::string> ParseAttributes(std::string &line);
+  std::map<std::string, std::string> ParseAttributes(std::string &line) const;
 
   ///
   /// \brief Parse attributes with equals
@@ -173,7 +173,7 @@ class SAPListener {
   /// \param line
   /// \return std::map<std::string, std::string>
   ///
-  std::map<std::string, std::string> ParseAttributesEqual(std::string &line);
+  std::map<std::string, std::string> ParseAttributesEqual(std::string &line) const;
 
   ///
   /// \brief Store or update the SAP data
@@ -187,7 +187,6 @@ class SAPListener {
   std::map<std::string, SDPMessage> announcements_;
   std::array<uint8_t, kMaxUdpData> udpdata;
   std::thread thread_;
-  uint32_t source_ipaddress_;
   int sockfd_;
   struct sockaddr_in multicast_addr_;
   static bool running_;

@@ -131,7 +131,7 @@ class RtpStream {
   /// \param port defaults to 5004
   ///
   void RtpStreamOut(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                    std::string_view hostname, const uint16_t port = 5004);
+                    std::string_view hostname, const uint32_t port = 5004);
 
   ///
   /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement
@@ -140,7 +140,7 @@ class RtpStream {
   /// \param port defaults to 5004
   ///
   static void RtpStreamIn(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                          std::string_view hostname, const uint16_t port = 5004);
+                          std::string_view hostname, const uint32_t port = 5004);
 
   ///
   /// \brief Register a SAP callback to get updated

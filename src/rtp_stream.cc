@@ -57,7 +57,7 @@ RtpStream::~RtpStream(void) = default;
 
 // Broadcast the stream to port i.e. 5004
 void RtpStream::RtpStreamIn(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                            std::string_view hostname, const uint16_t portno) {
+                            std::string_view hostname, const uint32_t portno) {
   ingress_.encoding = encoding;
   ingress_.height = height;
   ingress_.width = width;
@@ -69,7 +69,7 @@ void RtpStream::RtpStreamIn(std::string_view name, ColourspaceType encoding, uin
 }
 
 void RtpStream::RtpStreamOut(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                             std::string_view hostname, const uint16_t portno) {
+                             std::string_view hostname, const uint32_t portno) {
   egress_.encoding = encoding;
   egress_.height = height;
   egress_.width = width;

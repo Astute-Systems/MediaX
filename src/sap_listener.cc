@@ -87,7 +87,7 @@ void SAPListener::SAPListenerThread(SAPListener *sap) {
   }
 }
 
-void SAPListener::RegisterSapListener(std::string_view session_name, SapCallback callback) {
+void SAPListener::RegisterSapListener(std::string_view session_name, const SapCallback &callback) {
   callbacks_[std::string(session_name)] = callback;
 }
 
@@ -112,7 +112,7 @@ SdpTypeEnum SAPListener::GetType(std::string &line) const {
   return SdpTypeEnum::kUnknown;
 }
 
-std::map<std::string, std::string> SAPListener::ParseAttributes(std::string &line) {
+std::map<std::string, std::string> SAPListener::ParseAttributes(std::string &line) const {
   std::map<std::string, std::string> attributes;
   std::string key;
   std::string value;
@@ -135,7 +135,7 @@ std::map<std::string, std::string> SAPListener::ParseAttributes(std::string &lin
   return attributes;
 }
 
-std::map<std::string, std::string> SAPListener::ParseAttributesEqual(std::string &line) {
+std::map<std::string, std::string> SAPListener::ParseAttributesEqual(std::string &line) const {
   std::map<std::string, std::string> attributes;
   std::string key;
   std::string value;
@@ -252,11 +252,6 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
   sdp.sampling = attributes_map["96sampling"];
 
   announcements_[sdp.session_name] = sdp;
-
-  // std::cout << "SDP> name: " << sdp.session_name << ", source: " << sdp.ip_address_source
-  //           << ", ipaddr: " << sdp.ip_address << ":" << sdp.port << ", height: " << sdp.height
-  //           << ", width: " << sdp.width << ", framerate: " << sdp.framerate << ", sampling: " << sdp.sampling <<
-  //           "\n";
 
   // Check the callbacks
   for (auto &cb : callbacks_) {
