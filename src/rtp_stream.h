@@ -80,13 +80,22 @@
 
 #include "colourspace.h"
 #include "rtp_types.h"
+#include "sap_listener.h"
 
 /// Store common port information for ingress and egress ports
 struct PortType {
   std::string hostname;
-  uint16_t port_no = 0;
-  int sockfd;
+  uint32_t port_no = 0;
+  int sockfd = 0;
   std::string name = "unknown";
+  /// Height in pixels of stream
+  uint32_t height = 0;
+  /// Width in pixels of stream
+  uint32_t width = 0;
+  /// Intended update framerate
+  uint32_t framerate = 25;
+  bool socket_open = false;
+  bool settings_valid = false;  // Can be set when SAP/SDP arrives or gets deleted
 };
 
 ///
@@ -122,13 +131,26 @@ class RtpStream {
                     const uint16_t port = 5004);
 
   ///
-  /// \brief Configure at RTP input stream
+  /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement
   ///
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
   /// \param port defaults to 5004
   ///
   void RtpStreamIn(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
                    std::string_view hostname, const uint16_t port = 5004);
+
+  ///
+  /// \brief Register a SAP callback to get updated
+  ///
+  /// \param sdp
+  ///
+  static void SapCallback(sap::SDPMessage &sdp);
+
+  ///
+  /// \brief Configure at RTP input stream and  wait for the SAP/SDP announcement
+  ///
+  ///
+  void RtpStreamIn(std::string_view name) const;
 
   ///
   /// \brief Open the RTP stream
@@ -154,7 +176,7 @@ class RtpStream {
   /// \brief Close the RTP stream
   ///
   ///
-  void Close() const;
+  void Close();
 
   ///
   /// \brief Transmit an RGB buffer
@@ -181,15 +203,6 @@ class RtpStream {
   static bool new_rx_frame_;
   static bool rx_thread_running_;
 
-  /// Height in pixels of stream
-  uint32_t height_ = 0;
-
-  /// Width in pixels of stream
-  uint32_t width_ = 0;
-
-  /// Intended update framerate
-  uint32_t framerate_ = 25;
-
   /// The encoded video type
   ColourspaceType encoding_ = ColourspaceType::kColourspaceUndefined;
 
@@ -197,7 +210,7 @@ class RtpStream {
   TxData arg_tx;
 
   // Ingress port
-  PortType ingress_;
+  static PortType ingress_;
 
   // Egress port
   PortType egress_;

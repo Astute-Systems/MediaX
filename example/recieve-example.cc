@@ -83,12 +83,19 @@ int main(int argc, char *argv[]) {
   gtk_init(&argc, &argv);
 
   // Setup stream
-  rtp_.RtpStreamIn("TestVideo1", RtpStream::ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
-                   (uint16_t)FLAGS_port);
-  if (!rtp_.Open()) {
-    std::cerr << "Could not open stream, quitting";
-    return -1;
+  if (false) {
+    rtp_.RtpStreamIn("TestVideo1");
+  } else {
+    rtp_.RtpStreamIn("TestVideo1", RtpStream::ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
+                     (uint16_t)FLAGS_port);
+
+    // We have all the information so we can request the ports open now. No need to wait for SAP/SDP
+    if (!rtp_.Open()) {
+      std::cerr << "Could not open stream, quitting";
+      return -1;
+    }
   }
+
   rtp_.Start();
 
   // Create a new window

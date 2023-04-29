@@ -87,6 +87,10 @@ void SAPListener::SAPListenerThread(SAPListener *sap) {
   }
 }
 
+void SAPListener::RegisterSapListener(std::string_view session_name, SapCallback callback) {
+  callbacks_[std::string(session_name)] = callback;
+}
+
 void SAPListener::Start() {
   running_ = true;
   thread_ = std::thread(SAPListenerThread, this);
@@ -190,8 +194,16 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
       case SdpTypeEnum::kProtocolVersion:
         sdp.protocol_version = std::stoi(line);
         break;
-      case SdpTypeEnum::kOriginatorSessionIdentifier:
-        break;
+      case SdpTypeEnum::kOriginatorSessionIdentifier: {
+        size_t lastSpace = line.find_last_of(" ");
+        // Extract last word using substr
+        sdp.ip_address = line.substr(lastSpace + 1);
+        size_t pos = sdp.ip_address.find('/');  // Find position of the first forward slash
+        if (pos != std::string::npos) {         // If a forward slash is found
+          sdp.ip_address =
+              sdp.ip_address.substr(0, pos);  // Get substring from start to the position of the forward slash
+        }
+      } break;
       case SdpTypeEnum::kSessionName:
         sdp.session_name = line;
         break;
@@ -203,17 +215,8 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
         break;
       case SdpTypeEnum::kPhoneNumber:
         break;
-      case SdpTypeEnum::kConnectionInformation: {
-        size_t lastSpace = line.find_last_of(" ");
-        // Extract last word using substr
-        sdp.ip_address = line.substr(lastSpace + 1);
-        size_t pos = sdp.ip_address.find('/');  // Find position of the first forward slash
-        if (pos != std::string::npos) {         // If a forward slash is found
-          sdp.ip_address =
-              sdp.ip_address.substr(0, pos);  // Get substring from start to the position of the forward slash
-        }
-
-      } break;
+      case SdpTypeEnum::kConnectionInformation:
+        break;
       case SdpTypeEnum::kBandwidthInformation:
         break;
       case SdpTypeEnum::kSessionAttribute: {
@@ -249,6 +252,19 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
   sdp.sampling = attributes_map["96sampling"];
 
   announcements_[sdp.session_name] = sdp;
+
+  // std::cout << "SDP> name: " << sdp.session_name << ", source: " << sdp.ip_address_source
+  //           << ", ipaddr: " << sdp.ip_address << ":" << sdp.port << ", height: " << sdp.height
+  //           << ", width: " << sdp.width << ", framerate: " << sdp.framerate << ", sampling: " << sdp.sampling <<
+  //           "\n";
+
+  // Check the callbacks
+  for (auto &cb : callbacks_) {
+    if (cb.first == sdp.session_name) {
+      // We have a match, hit the callback
+      cb.second(sdp);
+    }
+  }
 
   return true;
 }

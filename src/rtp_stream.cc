@@ -41,6 +41,8 @@ using namespace std;
 
 uint32_t RtpStream::sequence_number_ = 0;
 
+PortType RtpStream::ingress_;
+
 // static TxData arg_rx;
 // error - wrapper for perror
 void error(const std::string &msg) {
@@ -56,22 +58,40 @@ RtpStream::~RtpStream(void) = default;
 void RtpStream::RtpStreamIn(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
                             std::string_view hostname, const uint16_t portno) {
   encoding_ = encoding;
-  height_ = height;
-  width_ = width;
+  ingress_.height = height;
+  ingress_.width = width;
   ingress_.name = name;
   ingress_.hostname = hostname;
   ingress_.port_no = portno;
+  ingress_.settings_valid = true;
   buffer_in_.resize(height * width * 2);
 }
 
 void RtpStream::RtpStreamOut(std::string_view name, uint32_t height, uint32_t width, std::string_view hostname,
                              const uint16_t portno) {
-  height_ = height;
-  width_ = width;
+  egress_.height = height;
+  egress_.width = width;
+  egress_.framerate = 25;
   egress_.name = name;
   egress_.hostname = hostname;
   egress_.port_no = portno;
+  egress_.settings_valid = true;
   buffer_in_.resize(height * width * 2);
+}
+
+void RtpStream::SapCallback(sap::SDPMessage &sdp) {
+  ingress_.hostname = sdp.ip_address;
+  ingress_.port_no = sdp.port;
+  ingress_.height = sdp.height;
+  ingress_.width = sdp.width;
+  ingress_.framerate = sdp.framerate;
+  ingress_.settings_valid = true;
+}
+
+void RtpStream::RtpStreamIn(std::string_view name) const {
+  sap::SAPListener &sap = sap::SAPListener::GetInstance();
+  sap.RegisterSapListener(name, SapCallback);
+  sap::SAPListener::GetInstance().Start();
 }
 
 bool RtpStream::Open() {
@@ -93,12 +113,13 @@ bool RtpStream::Open() {
     si_me.sin_family = AF_INET;
     si_me.sin_port = htons(ingress_.port_no);
     si_me.sin_addr.s_addr = htonl(INADDR_ANY);
-
+    std::cout << "Opening\n";
     // bind socket to port
     if (bind(ingress_.sockfd, (struct sockaddr *)&si_me, sizeof(si_me)) == -1) {
       std::cerr << "ERROR binding socket\n";
       exit(-1);
     }
+    ingress_.socket_open = true;
   }
 
   if (egress_.port_no) {
@@ -124,22 +145,30 @@ bool RtpStream::Open() {
 
     // send the message to the server
     server_len_out_ = sizeof(server_addr_out_);
+    egress_.socket_open = true;
+
+    // Lastly start a SAP announcement
+    sap::SAPAnnouncer::GetInstance().AddSAPAnnouncement(
+        {egress_.name, egress_.hostname, egress_.port_no, egress_.height, egress_.width, egress_.framerate, false});
+    sap::SAPAnnouncer::GetInstance().Start();
   }
 
-  // Lastly start a SAP announcement
-  sap::SAPAnnouncer::GetInstance().AddSAPAnnouncement(
-      {egress_.name, egress_.hostname, egress_.port_no, height_, width_, framerate_, false});
-  sap::SAPAnnouncer::GetInstance().Start();
   return true;
 }
 
-void RtpStream::Close() const {
+void RtpStream::Close() {
+  sap::SAPListener::GetInstance().Stop();
+
   if (ingress_.port_no) {
     close(ingress_.sockfd);
+    ingress_.sockfd = 0;
+    ingress_.socket_open = false;
   }
 
   if (egress_.port_no) {
     close(egress_.sockfd);
+    egress_.sockfd = 0;
+    egress_.socket_open = false;
   }
 }
 
@@ -178,7 +207,7 @@ void RtpStream::UpdateHeader(Header *packet, int line, int last, int32_t timesta
   packet->rtp.timestamp = timestamp;
   packet->rtp.source = source;
   packet->payload.extended_sequence_number = (sequence_number_ >> 16) & 0xffff;
-  packet->payload.line[0].length = (int16_t)width_ * 2;
+  packet->payload.line[0].length = (int16_t)egress_.width * 2;
   packet->payload.line[0].line_number = (int16_t)line;
   packet->payload.line[0].offset = 0x8000;  // Indicates another line
   packet->payload.line[1].length = 0;
@@ -197,6 +226,7 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
   bool receiving = true;
   int scan_count = 0;
   int last_packet;
+
   while (rx_thread_running_) {
     while (receiving) {
       int marker;
@@ -212,7 +242,8 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
         //
         // Read in the RTP data
         //
-        if (ssize_t bytes = recvfrom(stream->ingress_.sockfd, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
+        if (ssize_t bytes =
+                recvfrom(RtpStream::ingress_.sockfd, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
             bytes <= 0) {
           std::this_thread::sleep_for(std::chrono::milliseconds(100));
           continue;
@@ -260,7 +291,7 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
 
           os = payload_offset + payload;
           pixel = ((packet->head.payload.line[c].offset & 0x7FFF) * 2) +
-                  ((packet->head.payload.line[c].line_number & 0x7FFF) * (stream->width_ * 2));
+                  ((packet->head.payload.line[c].line_number & 0x7FFF) * (stream->ingress_.width * 2));
           length = packet->head.payload.line[c].length & 0xFFFF;
 
           memcpy(&stream->buffer_in_[pixel], &stream->udpdata[os], length);
@@ -282,7 +313,10 @@ void RtpStream::ReceiveThread(RtpStream *stream) {
   return;
 }
 
-void RtpStream::Start() { rx_thread_ = std::thread(&RtpStream::ReceiveThread, this); }
+void RtpStream::Start() {
+  rx_thread_running_ = true;
+  rx_thread_ = std::thread(&RtpStream::ReceiveThread, this);
+}
 
 void RtpStream::Stop() {
   if (rx_thread_.joinable()) {
@@ -321,7 +355,12 @@ bool RtpStream::WaitForFrame(uint8_t **cpu, int32_t timeout) {
 
 bool RtpStream::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]) {
   if (ingress_.port_no == 0) return false;
+  if (ingress_.settings_valid == false) return false;
 
+  // Check ports open
+  if (ingress_.socket_open == false) {
+    Open();
+  }
   // Check if we have a frame ready
   if (new_rx_frame_) {
     // Dont start a new thread if a frame is available just return it
@@ -342,15 +381,15 @@ void RtpStream::TransmitThread(RtpStream *stream) {
   ssize_t n = 0;
   uint32_t timestamp = GenerateTimestamp90kHz();
 
-  int32_t stride = stream->width_ * 2;
+  int32_t stride = stream->egress_.width * 2;
 
   // send a frame, once last thread has completed
   pthread_mutex_lock(&stream->mutex_);
   {
-    for (uint32_t c = 0; c < (stream->height_); c++) {
+    for (uint32_t c = 0; c < (stream->egress_.height); c++) {
       uint32_t last = 0;
 
-      if (c == stream->height_ - 1) last = 1;
+      if (c == stream->egress_.height - 1) last = 1;
       stream->UpdateHeader((Header *)&packet, c, last, timestamp, kRtpSource);
 
       EndianSwap32((uint32_t *)(&packet), sizeof(RtpHeader) / 4);

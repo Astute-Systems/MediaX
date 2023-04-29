@@ -21,6 +21,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#include <functional>
 #include <map>
 #include <string>
 #include <thread>
@@ -93,6 +94,8 @@ struct SDPMessage {
   std::string sdp_text;
 };
 
+typedef std::function<void(sap::SDPMessage &sdp)> SapCallback;
+
 class SAPListener {
  public:
   ///
@@ -107,6 +110,13 @@ class SAPListener {
   /// \return The vectored list of SAP/SDP streams seen on the network
   ///
   const std::map<std::string, SDPMessage> &GetSAPAnnouncements() const;
+
+  ///
+  /// \brief Register a callback for our session_name
+  ///
+  /// \param session_name Advertised session name
+  ///
+  void RegisterSapListener(std::string_view session_name, SapCallback callback);
 
   ///
   /// \brief Start the SAP/SDP announcements thread
@@ -173,6 +183,7 @@ class SAPListener {
   ///
   bool SapStore(std::array<uint8_t, kMaxUdpData> &udpdata);
 
+  std::map<std::string, SapCallback> callbacks_;
   std::map<std::string, SDPMessage> announcements_;
   std::array<uint8_t, kMaxUdpData> udpdata;
   std::thread thread_;
