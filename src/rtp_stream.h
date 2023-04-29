@@ -82,6 +82,9 @@
 #include "rtp_types.h"
 #include "sap_listener.h"
 
+/// Supported colour spaces
+enum class ColourspaceType { kColourspaceUndefined, kColourspaceRgb24, kColourspaceYuv, kColourspaceMono8 };
+
 /// Store common port information for ingress and egress ports
 struct PortType {
   std::string hostname;
@@ -94,6 +97,7 @@ struct PortType {
   uint32_t width = 0;
   /// Intended update framerate
   uint32_t framerate = 25;
+  ColourspaceType encoding;
   bool socket_open = false;
   bool settings_valid = false;  // Can be set when SAP/SDP arrives or gets deleted
 };
@@ -105,7 +109,6 @@ struct PortType {
 class RtpStream {
  public:
   /// The supported colour spaces
-  enum class ColourspaceType { kColourspaceUndefined, kColourspaceRgb24, kColourspaceYuv, kColourspaceMono8 };
 
   ///
   /// \brief Construct a new Rtp Stream object
@@ -127,8 +130,8 @@ class RtpStream {
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
   /// \param port defaults to 5004
   ///
-  void RtpStreamOut(std::string_view name, uint32_t height, uint32_t width, std::string_view hostname,
-                    const uint16_t port = 5004);
+  void RtpStreamOut(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
+                    std::string_view hostname, const uint16_t port = 5004);
 
   ///
   /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement
@@ -136,8 +139,8 @@ class RtpStream {
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
   /// \param port defaults to 5004
   ///
-  void RtpStreamIn(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                   std::string_view hostname, const uint16_t port = 5004);
+  static void RtpStreamIn(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
+                          std::string_view hostname, const uint16_t port = 5004);
 
   ///
   /// \brief Register a SAP callback to get updated
@@ -220,7 +223,7 @@ class RtpStream {
   socklen_t server_len_out_;
   pthread_mutex_t mutex_;
   std::array<uint8_t, kMaxUdpData> udpdata;
-  std::vector<uint8_t> buffer_in_;
+  static std::vector<uint8_t> buffer_in_;
 
   ///
   /// \brief Populate the RTP header

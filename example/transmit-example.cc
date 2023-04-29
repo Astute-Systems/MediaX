@@ -83,7 +83,8 @@ int main(int argc, char **argv) {
 
   // Setup RTP streaming class
   RtpStream rtp;
-  rtp.RtpStreamOut("TestVideo1", FLAGS_height, FLAGS_width, FLAGS_ipaddr, (uint16_t)FLAGS_port);
+  rtp.RtpStreamOut("TestVideo1", ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
+                   (uint16_t)FLAGS_port);
   rtp.Open();
 
   memset(rtb_test.data(), 0, kBuffSize);

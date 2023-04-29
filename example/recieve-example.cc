@@ -26,6 +26,8 @@ DEFINE_string(ipaddr, "239.192.1.1", "the IP address of the transmit stream");
 DEFINE_int32(port, 5004, "the port to use for the transmit stream");
 DEFINE_int32(height, 480, "the height of the image");
 DEFINE_int32(width, 640, "the width of the image");
+DEFINE_string(session_name, "TestVideo1", "the SAP/SDP session name");
+DEFINE_bool(wait_sap, false, "wait for SAP/SDP announcement");
 
 struct OnDrawData {
   std::string name;
@@ -78,15 +80,16 @@ gboolean update_callback(gpointer user_data) {
 int main(int argc, char *argv[]) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
-  std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
-
   gtk_init(&argc, &argv);
 
   // Setup stream
-  if (false) {
+  if (FLAGS_wait_sap) {
+    // Just give the stream name and wait for SAP/SDP announcement
+    std::cout << "Example RTP streaming to " << FLAGS_session_name << "\n";
     rtp_.RtpStreamIn("TestVideo1");
   } else {
-    rtp_.RtpStreamIn("TestVideo1", RtpStream::ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
+    std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
+    rtp_.RtpStreamIn("TestVideo1", ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
                      (uint16_t)FLAGS_port);
 
     // We have all the information so we can request the ports open now. No need to wait for SAP/SDP

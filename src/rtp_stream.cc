@@ -42,6 +42,7 @@ using namespace std;
 uint32_t RtpStream::sequence_number_ = 0;
 
 PortType RtpStream::ingress_;
+std::vector<uint8_t> RtpStream::buffer_in_;
 
 // static TxData arg_rx;
 // error - wrapper for perror
@@ -57,7 +58,7 @@ RtpStream::~RtpStream(void) = default;
 // Broadcast the stream to port i.e. 5004
 void RtpStream::RtpStreamIn(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
                             std::string_view hostname, const uint16_t portno) {
-  encoding_ = encoding;
+  ingress_.encoding = encoding;
   ingress_.height = height;
   ingress_.width = width;
   ingress_.name = name;
@@ -67,8 +68,9 @@ void RtpStream::RtpStreamIn(std::string_view name, ColourspaceType encoding, uin
   buffer_in_.resize(height * width * 2);
 }
 
-void RtpStream::RtpStreamOut(std::string_view name, uint32_t height, uint32_t width, std::string_view hostname,
-                             const uint16_t portno) {
+void RtpStream::RtpStreamOut(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
+                             std::string_view hostname, const uint16_t portno) {
+  egress_.encoding = encoding;
   egress_.height = height;
   egress_.width = width;
   egress_.framerate = 25;
@@ -80,12 +82,7 @@ void RtpStream::RtpStreamOut(std::string_view name, uint32_t height, uint32_t wi
 }
 
 void RtpStream::SapCallback(sap::SDPMessage &sdp) {
-  ingress_.hostname = sdp.ip_address;
-  ingress_.port_no = sdp.port;
-  ingress_.height = sdp.height;
-  ingress_.width = sdp.width;
-  ingress_.framerate = sdp.framerate;
-  ingress_.settings_valid = true;
+  RtpStreamIn(sdp.session_name, ColourspaceType::kColourspaceYuv, sdp.height, sdp.width, sdp.ip_address, sdp.port);
 }
 
 void RtpStream::RtpStreamIn(std::string_view name) const {
@@ -113,7 +110,6 @@ bool RtpStream::Open() {
     si_me.sin_family = AF_INET;
     si_me.sin_port = htons(ingress_.port_no);
     si_me.sin_addr.s_addr = htonl(INADDR_ANY);
-    std::cout << "Opening\n";
     // bind socket to port
     if (bind(ingress_.sockfd, (struct sockaddr *)&si_me, sizeof(si_me)) == -1) {
       std::cerr << "ERROR binding socket\n";
@@ -358,9 +354,10 @@ bool RtpStream::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]) {
   if (ingress_.settings_valid == false) return false;
 
   // Check ports open
-  if (ingress_.socket_open == false) {
+  if ((ingress_.socket_open == false) && (ingress_.settings_valid == true)) {
     Open();
   }
+
   // Check if we have a frame ready
   if (new_rx_frame_) {
     // Dont start a new thread if a frame is available just return it
