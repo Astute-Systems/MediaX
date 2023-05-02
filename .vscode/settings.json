@@ -9,6 +9,7 @@
         "Defence",
         "gflags",
         "gstreamer",
+        "ipaddr",
         "Jetson",
         "libswscale",
         "payloader",
