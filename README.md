@@ -17,6 +17,9 @@ This code implements RFC4421 RTP (Real Time Protocol) Payload Format for Uncompr
 
 Transmit streams emit a SAP/SDP announcement every second as per RFC 2974 and RFC 4566. Also referenced as in DEF STAN 00-082.
 
+## Documentation
+Doxygen documentation is available on [Github Page](https://defencex.github.io/MediaX).
+
 ## Payloader example
 This is a RAW (YUV) Real Time Protocol pay-loader written in C++. This example is send only to receive the data you can use the gstreamer pipeline below.
 
