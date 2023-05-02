@@ -9,7 +9,11 @@
 // DefenceX PTY LTD
 // Email: enquiries@defencex.ai
 //
-/// \file sap_announcer.cc
+/// \brief Session Announcement Protocol (SDP) implementation for announcement of the stream data. The SAP packet
+/// contains the Session Description Protocol (SDP).
+///
+/// \file sap_announcer.h
+///
 
 #ifndef __SAP_ANNOUNCER_H__
 #define __SAP_ANNOUNCER_H__

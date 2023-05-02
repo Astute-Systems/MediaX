@@ -10,7 +10,8 @@
 // DefenceX PTY LTD
 // Email: enquiries@defencex.ai
 //
-///
+/// \brief Functions to convert between different colour spaces, these functions are optimized for Nvidia CUDA when
+/// available.
 ///
 /// \file colourspace_cuda.cc
 ///

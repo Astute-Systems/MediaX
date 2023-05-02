@@ -9,7 +9,7 @@
 // DefenceX PTY LTD
 // Email: enquiries@defencex.ai
 //
-///
+/// \brief Functions to convert between different colour spaces
 ///
 /// \file colourspace.cc
 ///
