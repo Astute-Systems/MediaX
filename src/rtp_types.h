@@ -65,6 +65,26 @@ struct LineHeader {
   int16_t offset;
 };
 
+/// Supported colour spaces
+enum class ColourspaceType { kColourspaceUndefined, kColourspaceRgb24, kColourspaceYuv, kColourspaceMono8 };
+
+/// Store common port information for ingress and egress ports
+struct PortType {
+  std::string hostname;
+  uint32_t port_no = 0;
+  int sockfd = 0;
+  std::string name = "unknown";
+  /// Height in pixels of stream
+  uint32_t height = 0;
+  /// Width in pixels of stream
+  uint32_t width = 0;
+  /// Intended update framerate
+  uint32_t framerate = 25;
+  ColourspaceType encoding;
+  bool socket_open = false;
+  bool settings_valid = false;  // Can be set when SAP/SDP arrives or gets deleted
+};
+
 struct PayloadHeader {
   int16_t extended_sequence_number;
   LineHeader line[kNumberLinesPerPacket];  // This can be multiline min the future

@@ -12,7 +12,7 @@
 ///
 /// \brief RTP streaming video class for uncompressed DEF-STAN 00-82 video streams
 ///
-/// \file rtp_stream.h
+/// \file rtpvraw_payloader.h
 ///
 ///
 /// Example RTP packet from wireshark
@@ -39,9 +39,10 @@
 
 /// Use his program to stream data to the udpsrc example above on the tegra X1
 
-#ifndef __RTP_STREAM_H__
-#define __RTP_STREAM_H__
+#ifndef __RTPVRAW_PAYLOADER_H
+#define __RTPVRAW_PAYLOADER_H
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -51,62 +52,23 @@
 #include <chrono>
 #include <string>
 #include <thread>
-
 #if _WIN32
 #include <winsock2.h>
-// Swap bytes in 16 bit value.
-#define __bswap_constant_16(x) ((((x) >> 8) & 0xffu) | (((x)&0xffu) << 8))
-// Swap bytes in 32 bit value.
-#define __bswap_constant_32(x) \
-  ((((x)&0xff000000u) >> 24) | (((x)&0x00ff0000u) >> 8) | (((x)&0x0000ff00u) << 8) | (((x)&0x000000ffu) << 24))
-#define __bswap_32(x)                  \
-  (__extension__({                     \
-    register unsigned int __bsx = (x); \
-    __bswap_constant_32(__bsx);        \
-  }))
-#define __bswap_16(x)               \
-  (__extension__({                  \
-    unsigned short int __bsx = (x); \
-    __bswap_constant_16(__bsx);     \
-  }))
 #else
-#include <byteswap.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #endif
-#include <limits.h>
-
 #include "colourspace.h"
 #include "rtp_types.h"
 #include "sap_listener.h"
-
-/// Supported colour spaces
-enum class ColourspaceType { kColourspaceUndefined, kColourspaceRgb24, kColourspaceYuv, kColourspaceMono8 };
-
-/// Store common port information for ingress and egress ports
-struct PortType {
-  std::string hostname;
-  uint32_t port_no = 0;
-  int sockfd = 0;
-  std::string name = "unknown";
-  /// Height in pixels of stream
-  uint32_t height = 0;
-  /// Width in pixels of stream
-  uint32_t width = 0;
-  /// Intended update framerate
-  uint32_t framerate = 25;
-  ColourspaceType encoding;
-  bool socket_open = false;
-  bool settings_valid = false;  // Can be set when SAP/SDP arrives or gets deleted
-};
 
 ///
 /// \brief Manage an RTP stream
 ///
 ///
-class RtpStream {
+class RtpvrawPayloader {
  public:
   /// The supported colour spaces
 
@@ -116,13 +78,13 @@ class RtpStream {
   /// \param height in pixels of the RTP stream
   /// \param width in pixels of the RTP stream
   ///
-  RtpStream();
+  RtpvrawPayloader();
 
   ///
   /// \brief Destroy the Rtp Stream object
   ///
   ///
-  ~RtpStream();
+  ~RtpvrawPayloader();
 
   ///
   /// \brief Configure an RTP output stream
@@ -130,17 +92,8 @@ class RtpStream {
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
   /// \param port defaults to 5004
   ///
-  void RtpStreamOut(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                    std::string_view hostname, const uint32_t port = 5004);
-
-  ///
-  /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement
-  ///
-  /// \param hostname IP address i.e. 239.192.1.1 for multicast
-  /// \param port defaults to 5004
-  ///
-  static void RtpStreamIn(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                          std::string_view hostname, const uint32_t port = 5004);
+  void RtpvrawPayloaderOut(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
+                           std::string_view hostname, const uint32_t port = 5004);
 
   ///
   /// \brief Register a SAP callback to get updated
@@ -153,7 +106,7 @@ class RtpStream {
   /// \brief Configure at RTP input stream and  wait for the SAP/SDP announcement
   ///
   ///
-  void RtpStreamIn(std::string_view name) const;
+  void RtpvrawPayloaderIn(std::string_view name) const;
 
   ///
   /// \brief Open the RTP stream
@@ -251,17 +204,12 @@ class RtpStream {
  private:
   /// The incremental sequence numer for transmitting RTP packets
   static uint32_t sequence_number_;
-  static bool new_rx_frame_;
-  static bool rx_thread_running_;
 
   /// The encoded video type
   ColourspaceType encoding_ = ColourspaceType::kColourspaceUndefined;
 
   /// Transmit arguments used by the thread
   TxData arg_tx;
-
-  // Ingress port
-  static PortType ingress_;
 
   // Egress port
   PortType egress_;
@@ -272,6 +220,8 @@ class RtpStream {
   pthread_mutex_t mutex_;
   std::array<uint8_t, kMaxUdpData> udpdata;
   static std::vector<uint8_t> buffer_in_;
+  // Arguments sent to thread
+  std::thread tx_thread_;
 
   ///
   /// \brief Populate the RTP header
@@ -289,14 +239,14 @@ class RtpStream {
   /// \param stream this object
   /// \return void
   ///
-  static void TransmitThread(RtpStream *stream);
+  static void TransmitThread(RtpvrawPayloader *stream);
 
   ///
   /// \brief Recieve RTP data to the network using a separate thread
   ///
   /// \param stream this object
   ///
-  static void ReceiveThread(RtpStream *stream);
+  static void ReceiveThread(RtpvrawPayloader *stream);
 
   ///
   /// \brief Wait for a frame or timeout
@@ -314,9 +264,6 @@ class RtpStream {
   /// \return int32_t The current time stamp
   ///
   static int32_t GenerateTimestamp90kHz();
-  // Arguments sent to thread
-  std::thread rx_thread_;
-  std::thread tx_thread_;
 };
 
-#endif
+#endif  // __RTPVRAW_PAYLOADER_H
