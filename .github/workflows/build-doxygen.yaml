@@ -37,7 +37,7 @@ jobs:
           export SEM_VERSION=${MAJOR}.${MINOR}.${PATCH} && \
           export GIT_HASH=$(git rev-parse --short HEAD) && \
           echo "Current version ${SEM_VERSION} with #${GIT_HASH} and path ${IMAGE_DIR}" && \
-          doxygen && \
+          doxygen
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact
