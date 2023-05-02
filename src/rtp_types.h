@@ -100,7 +100,6 @@ struct RtpPacket {
   int8_t data[kMaximumBufferSize];
 };
 
-class RtpStream;
 //
 // Transmit data structure
 // Battlefield Management System (BMS) state definition

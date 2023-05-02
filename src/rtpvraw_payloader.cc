@@ -43,13 +43,6 @@ uint32_t RtpvrawPayloader::sequence_number_ = 0;
 
 std::vector<uint8_t> RtpvrawPayloader::buffer_in_;
 
-// static TxData arg_rx;
-// error - wrapper for perror
-void error(const std::string &msg) {
-  perror(msg.c_str());
-  exit(0);
-}
-
 RtpvrawPayloader::RtpvrawPayloader() { pthread_mutex_init(&mutex_, nullptr); }
 
 RtpvrawPayloader::~RtpvrawPayloader(void) = default;

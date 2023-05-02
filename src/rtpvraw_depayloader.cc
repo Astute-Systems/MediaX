@@ -42,13 +42,6 @@
 PortType RtpvrawDepayloader::ingress_;
 std::vector<uint8_t> RtpvrawDepayloader::buffer_in_;
 
-// static TxData arg_rx;
-// error - wrapper for perror
-void error(const std::string &msg) {
-  perror(msg.c_str());
-  exit(0);
-}
-
 RtpvrawDepayloader::RtpvrawDepayloader() { pthread_mutex_init(&mutex_, nullptr); }
 
 RtpvrawDepayloader::~RtpvrawDepayloader(void) = default;

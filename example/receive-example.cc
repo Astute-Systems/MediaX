@@ -20,7 +20,7 @@
 #include <iostream>
 #include <string>
 
-#include "rtp_stream.h"
+#include "rtpvraw_depayloader.h"
 
 DEFINE_string(ipaddr, "239.192.1.1", "the IP address of the transmit stream");
 DEFINE_int32(port, 5004, "the port to use for the transmit stream");
@@ -38,7 +38,7 @@ struct OnDrawData {
   uint16_t port;
 };
 
-static RtpStream rtp_;
+static RtpvrawDepayloader rtp_;
 
 static uint64_t m_frame_counter_ = 0;
 
@@ -84,11 +84,11 @@ int main(int argc, char *argv[]) {
   if (FLAGS_wait_sap) {
     // Just give the stream name and wait for SAP/SDP announcement
     std::cout << "Example RTP streaming to " << FLAGS_session_name << "\n";
-    rtp_.RtpStreamIn("TestVideo1");
+    rtp_.RtpvrawDepayloaderIn("TestVideo1");
   } else {
     std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
-    RtpStream::RtpStreamIn("TestVideo1", ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
-                           (uint16_t)FLAGS_port);
+    RtpvrawDepayloader::RtpvrawDepayloaderIn("TestVideo1", ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width,
+                                             FLAGS_ipaddr, (uint16_t)FLAGS_port);
 
     // We have all the information so we can request the ports open now. No need to wait for SAP/SDP
     if (!rtp_.Open()) {

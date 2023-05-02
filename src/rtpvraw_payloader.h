@@ -96,19 +96,6 @@ class RtpvrawPayloader {
                            std::string_view hostname, const uint32_t port = 5004);
 
   ///
-  /// \brief Register a SAP callback to get updated
-  ///
-  /// \param sdp
-  ///
-  static void SapCallback(sap::SDPMessage &sdp);
-
-  ///
-  /// \brief Configure at RTP input stream and  wait for the SAP/SDP announcement
-  ///
-  ///
-  void RtpvrawPayloaderIn(std::string_view name) const;
-
-  ///
   /// \brief Open the RTP stream
   ///
   /// \return true

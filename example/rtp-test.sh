@@ -11,14 +11,14 @@ echo 'Starting example application...'
 
 sleep 1
 
-echo 'Starting reciever...'
+echo 'Starting receiver...'
 
-./build/bin/recieve-example -ipaddr=127.0.0.1 -height=480 -width=640 -port=5004  &
+./build/bin/receive-example -ipaddr=127.0.0.1 -height=480 -width=640 -port=5004  &
 
 sleep 10
 
 pkill -f transmit-example 
-pkill -f recieve-example
+pkill -f receive-example
 exit
 
 
