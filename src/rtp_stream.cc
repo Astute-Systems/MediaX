@@ -444,3 +444,15 @@ int32_t RtpStream::GenerateTimestamp90kHz() {
 
   return static_cast<int32_t>(num_90kHz_units);
 }
+
+ColourspaceType RtpStream::GetColourSpace() const { return ingress_.encoding; }
+
+uint32_t RtpStream::GetHeight() const { return ingress_.height; }
+
+uint32_t RtpStream::GetWidth() const { return ingress_.width; }
+
+uint32_t RtpStream::GetFrameRate() const { return ingress_.framerate; }
+
+std::string RtpStream::GetIpAddress() const { return ingress_.hostname; }
+
+uint32_t RtpStream::GetPort() const { return ingress_.port_no; }

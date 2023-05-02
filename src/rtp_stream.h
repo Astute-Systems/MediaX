@@ -200,6 +200,54 @@ class RtpStream {
   ///
   bool Receive(uint8_t **cpu, int32_t timeout = 0);
 
+  ///
+  /// \brief Get the Colour Space object of the incoming stream. \note This may be invalid id no SAP/SDP announcement
+  /// has been received yet.
+  ///
+  /// \return ColourspaceType
+  ///
+  ColourspaceType GetColourSpace() const;
+
+  ///
+  /// \brief Get the Height object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
+  /// received yet.
+  ///
+  /// \return uint32_t
+  ///
+  uint32_t GetHeight() const;
+
+  ///
+  /// \brief Get the Width object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
+  /// received yet.
+  ///
+  /// \return uint32_t
+  ///
+  uint32_t GetWidth() const;
+
+  ///
+  /// \brief Get the Frame Rate of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
+  /// received yet.
+  ///
+  /// \return uint32_t
+  ///
+  uint32_t GetFrameRate() const;
+
+  ///
+  /// \brief Get the Ip Address of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
+  /// received yet.
+  ///
+  /// \return std::string
+  ///
+  std::string GetIpAddress() const;
+
+  ///
+  /// \brief Get the Port of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
+  /// received yet.
+  ///
+  /// \return uint32_t
+  ///
+  uint32_t GetPort() const;
+
  private:
   /// The incremental sequence numer for transmitting RTP packets
   static uint32_t sequence_number_;

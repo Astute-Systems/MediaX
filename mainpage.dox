@@ -39,6 +39,7 @@ An example of a video sequence is shown below:
    Sender -> Sender :  Open()
    Sender -> Switch :  IGMP(join)
    Sender --> Receiver :  SAP/SDP Announcement @ 1 Htz
+   note right: SAP announcements are broadcast every \n second on IP 224.2.127.254, Port 9875
    Sender -> Sender :  Transmit(*rgb_data) @ 25Htz
    Sender -> Switch :  RTP
    note left: Many RTP packets sent to transmit the \nframe data, only showing one to simplify \nthe diagram 
@@ -70,7 +71,7 @@ Transmit streams emit a SAP/SDP announcement every second as per RFC 2974 and RF
 \subsection examples Payloader example
 This is a RAW (YUV) Real Time Protocol pay-loader written in C++. This example is send only to receive the data you can use the gstreamer pipeline below.
 
-> **NOTE** : This example has been tested on 64 bit ARM. Target hardware was the Nvidia Jetson TX1/TX2/AGX/Orin. Code is endian swapped. To run on intel set #define ARM  0 in [src/rtpstream.c](src/rtpstream.c). If you see jitter then modify rc.local as per [rc.local](tx1/rc.local)
+> **NOTE** : This example has been tested on 64 bit ARM. Target hardware was the Nvidia Jetson TX1/TX2/AGX/Orin.
 
 \section dep Dependencies
 The following dependencies need to me installed prior to building this project:
@@ -111,7 +112,7 @@ Catch the stream using the gstreamer src pipeline in the section below. Followin
 
 > **NOTE** : This example uses the test image ([images/testcard.png](images/testcard.png)) as the source of the video stream. You can replace the testcard with your own image or use another source for the video data.
 
-\section gst gstreamer YUV streaming examples
+\section gst Gstreamer examples
 The test scripts ./example/rtp-gst-test-rx.sh, ./example/rtp-gst-test-tx.sh runs the example program against gstreamer to ensure interoperability.
 
 Use this pipeline as a test payloader to make sure gstreamer is working:
