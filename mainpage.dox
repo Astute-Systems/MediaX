@@ -1,0 +1,62 @@
+\mainpage User Manual
+\par Table of Contents
+
+- \ref users_guide
+   - @ref intro
+   - @ref execute
+- \ref sdk_guide
+
+\section users_guide User Guide
+\subsection intro Introduction
+This library provides functions for streaming video that conforms to DEF STAN 00-082.
+
+An example of a video sequence is shown below:
+
+@startuml
+
+   skinparam sequence {
+   ArrowColor DeepSkyBlue
+   ActorBorderColor DeepSkyBlue
+   LifeLineBorderColor blue
+   LifeLineBackgroundColor #A9DCDF
+
+   ParticipantBorderColor DeepSkyBlue
+   ParticipantBackgroundColor DodgerBlue
+   ParticipantFontName Impact
+   ParticipantFontSize 17
+   ParticipantFontColor #FFFFFF
+
+   ActorBackgroundColor aqua
+   ActorFontColor DeepSkyBlue
+   ActorFontSize 17
+   ActorFontName Aapex
+   }
+   participant Sender as Sender
+   participant Switch      as Switch
+   participant Receiver    as Receiver
+
+   Sender -> Sender :  RtpStreamOut("TestVideo1", height, width, framerate, ipaddr, port)
+   Sender -> Sender :  Open()
+   Sender -> Sender :  IGMP(join)
+   Sender --> Receiver :  SAP/SDP Announcement @ 1 Htz
+   Sender -> Sender :  Transmit(*rgb_data) @ 25Htz
+   Sender -> Switch :  RTP
+   note left: Many RTP packets sent to transmit the \nframe data, only showing one to simplify \nthe diagram 
+== some time later ==
+   Receiver -> Receiver : RtpStreamIn("TestVideo1")
+   note right: Will wait for SAP/SDP announcement\n containing this session name
+   Sender --> Receiver :  SAP/SDP Announcement @ 1 Htz
+   Receiver -> Receiver : Open()
+   Receiver -> Switch :  IGMP(join)
+   Sender -> Sender :  Transmit(*rgb_data) @ 25Htz
+   Sender -> Receiver :  RTP
+   Receiver -> Receiver :  Recieve(*rgb_data) @ 25Htz
+   Sender -> Sender :  Transmit(*rgb_data) @ 25Htz
+   Sender -> Receiver :  RTP
+   Receiver -> Receiver :  Recieve(*rgb_data) @ 25Htz
+   Sender -> Sender : Close()
+   Sender -> Switch :  IGMP(leave)
+   Sender --> Receiver :  SAP/SDP Deletion
+   Receiver -> Receiver :  Close()
+   Receiver -> Switch :  IGMP(leave)
+@enduml
