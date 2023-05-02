@@ -35,8 +35,9 @@ libswscale is required for RGB/RGBA to UYVY colour space conversion.
 Build the example
 ```
 mkdir build
-cmake ..
+cmake -DBUILD_CUDA=OFF ..
 ```
+To enable CUDA acceleration set BUILD_CUDA to ON
 Run the transmit example
 ```
 ./transmit-example
@@ -50,11 +51,11 @@ Command line arguments use **--help** and are listed below:
     -width (the width of the image) type: int32 default: 640
 
 ```
-The recieve example will display the stream (user **--help** for options):
+The receive example will display the stream (user **--help** for options):
 ```
-./recieve-example
+./receive-example
 ```
-Receiver has these additional recieve command line options, see **--help** for more info:
+Receiver has these additional receive command line options, see **--help** for more info:
 ```
     -session_name (the SAP/SDP session name) type: string default: "TestVideo1"
     -wait_sap (wait for SAP/SDP announcement) type: bool default: false

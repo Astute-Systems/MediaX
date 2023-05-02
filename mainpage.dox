@@ -82,9 +82,9 @@ libswscale is required for RGB/RGBA to UYVY colour space conversion.
 Build the example
 ```
 mkdir build
-cmake ..
+cmake -DBUILD_CUDA=OFF ..
 ```
-Run the transmit example
+To enable CUDA acceleration set -DBUILD_CUDA to ON
 ```
 ./transmit-example
 ```
@@ -112,7 +112,7 @@ Catch the stream using the gstreamer src pipeline in the section below. Followin
 > **NOTE** : This example uses the test image ([images/testcard.png](images/testcard.png)) as the source of the video stream. You can replace the testcard with your own image or use another source for the video data.
 
 \section gst gstreamer YUV streaming examples
-The test scripts [rtp-gst-test-rx.sh](example/rtp-gst-test-rx.sh), [rtp-gst-test-tx.sh](example/rtp-gst-test-tx.sh) runs the example program against gstreamer to ensure interoperability.
+The test scripts ./example/rtp-gst-test-rx.sh, ./example/rtp-gst-test-tx.sh runs the example program against gstreamer to ensure interoperability.
 
 Use this pipeline as a test payloader to make sure gstreamer is working:
 
@@ -122,4 +122,4 @@ Use this pipeline to capture the stream:
 
     gst-launch-1.0 -v udpsrc port=5004 caps="application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)RAW, sampling=(string)YCbCr-4:2:2, depth=(string)8, width=(string)640, height=(string)480, payload=(int)96" ! queue ! rtpvrawdepay ! queue ! videoconvert ! ximagesink 
 
-You can also run the provided examples back to back using the script rtp-test.sh 
+You can also run the provided examples back to back using the script  ./example/rtp-test.sh 

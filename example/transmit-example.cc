@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
     memset(yuv.data(), 0, kBuffSize);
 
     // Convert the RGB data to YUV again
-    RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
+    video::RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
 
     if (rtp.Transmit(yuv.data(), true) < 0) break;
 
