@@ -258,10 +258,11 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
   announcements_[sdp.session_name] = sdp;
 
   // Check the callbacks
-  for (auto &cb : callbacks_) {
-    if (cb.first == sdp.session_name) {
+
+  for (const auto &[name, callback] : callbacks_) {
+    if (name == sdp.session_name) {
       // We have a match, hit the callback
-      cb.second(sdp);
+      callback(sdp);
     }
   }
 
