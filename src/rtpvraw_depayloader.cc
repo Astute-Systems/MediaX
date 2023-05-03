@@ -59,7 +59,7 @@ void RtpvrawDepayloader::RtpvrawDepayloaderIn(std::string_view name, Colourspace
   buffer_in_.resize(height * width * 2);
 }
 
-void RtpvrawDepayloader::SapCallback(sap::SDPMessage &sdp) {
+void RtpvrawDepayloader::SapCallback(const sap::SDPMessage &sdp) {
   RtpvrawDepayloaderIn(sdp.session_name, ColourspaceType::kColourspaceYuv, sdp.height, sdp.width, sdp.ip_address,
                        sdp.port);
 }
@@ -70,7 +70,7 @@ void RtpvrawDepayloader::RtpvrawDepayloaderIn(std::string_view name) const {
   sap::SAPListener::GetInstance().Start();
 }
 
-bool RtpvrawDepayloader::Open() {
+bool RtpvrawDepayloader::Open() const {
   if (!ingress_.port_no) {
     std::cerr << "No ports set, nothing to open";
     exit(-1);
@@ -87,7 +87,7 @@ bool RtpvrawDepayloader::Open() {
     memset((char *)&si_me, 0, sizeof(si_me));
 
     si_me.sin_family = AF_INET;
-    si_me.sin_port = htons(ingress_.port_no);
+    si_me.sin_port = htons((uint16_t)ingress_.port_no);
     si_me.sin_addr.s_addr = htonl(INADDR_ANY);
     // bind socket to port
     if (bind(ingress_.sockfd, (struct sockaddr *)&si_me, sizeof(si_me)) == -1) {
@@ -100,7 +100,7 @@ bool RtpvrawDepayloader::Open() {
   return true;
 }
 
-void RtpvrawDepayloader::Close() {
+void RtpvrawDepayloader::Close() const {
   sap::SAPListener::GetInstance().Stop();
 
   if (ingress_.port_no) {
@@ -110,10 +110,37 @@ void RtpvrawDepayloader::Close() {
   }
 }
 
+bool RtpvrawDepayloader::ReadRtpHeader(RtpvrawDepayloader *stream, RtpPacket *packet) {
+  int version;
+  int payloadType;
+
+  //
+  // Read in the RTP data
+  //
+  if (ssize_t bytes =
+          recvfrom(RtpvrawDepayloader::ingress_.sockfd, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
+      bytes <= 0) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    return false;
+  }
+  packet = (RtpPacket *)(stream->udpdata.data());
+  EndianSwap32((uint32_t *)(packet), sizeof(RtpHeader) / 4);
+
+  //
+  // Decode Header bits and confirm RTP packet
+  //
+  payloadType = (packet->head.rtp.protocol & 0x007F0000) >> 16;
+  version = (packet->head.rtp.protocol & 0xC0000000) >> 30;
+  if ((payloadType == 96) && (version == 2)) {
+    return true;
+  }
+  return false;
+}
+
 bool RtpvrawDepayloader::new_rx_frame_ = false;
 bool RtpvrawDepayloader::rx_thread_running_ = true;
 void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
-  RtpPacket *packet;
+  RtpPacket *packet{};
   bool receiving = true;
   int scan_count = 0;
   int last_packet;
@@ -151,7 +178,8 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
           valid = true;
         }
       }
-      if (valid) {  // Start to decode packet
+      if (valid) {
+        // Valid packet so start to decode packet
         bool scan_line = true;
 
         // Decode Header bits
@@ -182,10 +210,10 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
 
           os = payload_offset + payload;
           pixel = ((packet->head.payload.line[c].offset & 0x7FFF) * 2) +
-                  ((packet->head.payload.line[c].line_number & 0x7FFF) * (stream->ingress_.width * 2));
+                  ((packet->head.payload.line[c].line_number & 0x7FFF) * (RtpvrawDepayloader::ingress_.width * 2));
           length = packet->head.payload.line[c].length & 0xFFFF;
 
-          memcpy(&stream->buffer_in_[pixel], &stream->udpdata[os], length);
+          memcpy(&RtpvrawDepayloader::buffer_in_[pixel], &stream->udpdata[os], length);
 
           last_packet += length;
           payload += length;
@@ -197,7 +225,7 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
       }
     }
 
-    stream->arg_tx.yuvframe = stream->buffer_in_.data();
+    stream->arg_tx.yuvframe = RtpvrawDepayloader::buffer_in_.data();
     new_rx_frame_ = true;
     receiving = true;
   }  // Recieve loop
@@ -216,7 +244,7 @@ void RtpvrawDepayloader::Stop() {
   }
 }
 
-bool RtpvrawDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
+bool RtpvrawDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) const {
   // Wait for completion
   if (timeout < 0) {
     while (!new_rx_frame_) {
@@ -244,7 +272,7 @@ bool RtpvrawDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
   }
 }
 
-bool RtpvrawDepayloader::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]) {
+bool RtpvrawDepayloader::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]) const {
   if (ingress_.port_no == 0) return false;
   if (ingress_.settings_valid == false) return false;
 

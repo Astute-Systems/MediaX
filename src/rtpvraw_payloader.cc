@@ -85,7 +85,7 @@ bool RtpvrawPayloader::Open() {
     memset(&server_addr_out_, 0, sizeof(server_addr_out_));
     server_addr_out_.sin_family = AF_INET;
     server_addr_out_.sin_addr.s_addr = inet_addr(egress_.hostname.c_str());
-    server_addr_out_.sin_port = htons(egress_.port_no);
+    server_addr_out_.sin_port = htons((uint16_t)egress_.port_no);
 
     // send the message to the server
     server_len_out_ = sizeof(server_addr_out_);
@@ -101,14 +101,6 @@ bool RtpvrawPayloader::Open() {
 }
 
 void RtpvrawPayloader::Close() {
-  sap::SAPListener::GetInstance().Stop();
-
-  if (egress_.port_no) {
-    close(egress_.sockfd);
-    egress_.sockfd = 0;
-    egress_.socket_open = false;
-  }
-
   if (egress_.port_no) {
     close(egress_.sockfd);
     egress_.sockfd = 0;

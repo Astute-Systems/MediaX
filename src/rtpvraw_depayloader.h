@@ -101,7 +101,7 @@ class RtpvrawDepayloader {
   ///
   /// \param sdp
   ///
-  static void SapCallback(sap::SDPMessage &sdp);
+  static void SapCallback(const sap::SDPMessage &sdp);
 
   ///
   /// \brief Configure at RTP input stream and  wait for the SAP/SDP announcement
@@ -115,7 +115,7 @@ class RtpvrawDepayloader {
   /// \return true
   /// \return false
   ///
-  bool Open();
+  bool Open() const;
 
   ///
   /// \brief Start the stream
@@ -133,16 +133,7 @@ class RtpvrawDepayloader {
   /// \brief Close the RTP stream
   ///
   ///
-  void Close();
-
-  ///
-  /// \brief Transmit an RGB buffer
-  ///
-  /// \param rgbframe pointer to the frame data
-  /// \param blocking defaults to true, will wait till frame has been transmitted
-  /// \return int
-  ///
-  int Transmit(uint8_t *rgbframe, bool blocking = true);
+  void Close() const;
 
   ///
   /// \brief Recieve a frame or timeout
@@ -152,7 +143,7 @@ class RtpvrawDepayloader {
   /// \return true when frame available
   /// \return false when no frame was received in the timeout
   ///
-  bool Receive(uint8_t **cpu, int32_t timeout = 0);
+  bool Receive(uint8_t **cpu, int32_t timeout = 0) const;
 
   ///
   /// \brief Get the Colour Space object of the incoming stream. \note This may be invalid id no SAP/SDP announcement
@@ -255,7 +246,7 @@ class RtpvrawDepayloader {
   /// \return true
   /// \return false
   ///
-  bool WaitForFrame(uint8_t **cpu, int32_t timeout);
+  bool WaitForFrame(uint8_t **cpu, int32_t timeout) const;
 
   ///
   /// \brief Get a 90Htz timestamp
@@ -263,6 +254,14 @@ class RtpvrawDepayloader {
   /// \return int32_t The current time stamp
   ///
   static int32_t GenerateTimestamp90kHz();
+
+  ///
+  /// \brief Read in a RTP packet and decode header
+  ///
+  /// \return true
+  /// \return false
+  ///
+  bool ReadRtpHeader(RtpvrawDepayloader *stream, RtpPacket *packet);
 };
 
 #endif  // __RTPVRAW_DEPAYLOADER_H
