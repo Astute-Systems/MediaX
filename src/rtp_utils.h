@@ -1,3 +1,18 @@
+//
+// Copyright (C) 2023 DefenceX PTY LTD. All rights reserved.
+//
+// This software is distributed under the included copyright license.
+// Any redistribution or reproduction, in part or in whole, in any form or medium, is strictly prohibited without the
+// prior written consent of DefenceX PTY LTD.
+//
+// For any inquiries or concerns, please contact:
+// DefenceX PTY LTD
+// Email: enquiries@defencex.ai
+//
+///
+/// \brief RTP utility functions
+///
+/// \file rtp_utils.h
 
 #ifndef RTP_UTILS_H
 #define RTP_UTILS_H

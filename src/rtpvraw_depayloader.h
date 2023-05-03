@@ -261,7 +261,7 @@ class RtpvrawDepayloader {
   /// \return true
   /// \return false
   ///
-  bool ReadRtpHeader(RtpvrawDepayloader *stream, RtpPacket *packet);
+  bool ReadRtpHeader(RtpvrawDepayloader *stream, RtpPacket *packet) const;
 };
 
 #endif  // __RTPVRAW_DEPAYLOADER_H

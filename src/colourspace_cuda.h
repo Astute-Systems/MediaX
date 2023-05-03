@@ -11,11 +11,11 @@
 //
 /// \brief Functions to convert between different colour spaces
 ///
-/// \file colourspace.h
+/// \file colourspace_cuda.h
 ///
 
-#ifndef COLOURSPACE_H
-#define COLOURSPACE_H
+#ifndef COLOURSPACE_CUDA_H
+#define COLOURSPACE_CUDA_H
 
 #include <stdint.h>
 

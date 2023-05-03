@@ -110,7 +110,7 @@ void RtpvrawDepayloader::Close() const {
   }
 }
 
-bool RtpvrawDepayloader::ReadRtpHeader(RtpvrawDepayloader *stream, RtpPacket *packet) {
+bool RtpvrawDepayloader::ReadRtpHeader(RtpvrawDepayloader *stream, RtpPacket *packet) const {
   int version;
   int payloadType;
 
