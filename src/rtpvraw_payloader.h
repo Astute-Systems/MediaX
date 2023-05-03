@@ -229,23 +229,6 @@ class RtpvrawPayloader {
   static void TransmitThread(RtpvrawPayloader *stream);
 
   ///
-  /// \brief Recieve RTP data to the network using a separate thread
-  ///
-  /// \param stream this object
-  ///
-  static void ReceiveThread(RtpvrawPayloader *stream);
-
-  ///
-  /// \brief Wait for a frame or timeout
-  ///
-  /// \param cpu
-  /// \param timeout
-  /// \return true
-  /// \return false
-  ///
-  bool WaitForFrame(uint8_t **cpu, int32_t timeout);
-
-  ///
   /// \brief Get a 90Htz timestamp
   ///
   /// \return int32_t The current time stamp

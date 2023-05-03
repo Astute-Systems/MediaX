@@ -61,30 +61,9 @@ void RtpvrawPayloader::RtpvrawPayloaderOut(std::string_view name, ColourspaceTyp
 }
 
 bool RtpvrawPayloader::Open() {
-  if (!egress_.port_no && !egress_.port_no) {
+  if (!egress_.port_no) {
     std::cerr << "No ports set, nothing to open";
     exit(-1);
-  }
-  if (egress_.port_no) {
-    struct sockaddr_in si_me;
-
-    // create a UDP socket
-    if ((egress_.sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
-      std::cerr << "ERROR opening socket\n";
-      exit(-1);
-    }
-    // zero out the structure
-    memset((char *)&si_me, 0, sizeof(si_me));
-
-    si_me.sin_family = AF_INET;
-    si_me.sin_port = htons(egress_.port_no);
-    si_me.sin_addr.s_addr = htonl(INADDR_ANY);
-    // bind socket to port
-    if (bind(egress_.sockfd, (struct sockaddr *)&si_me, sizeof(si_me)) == -1) {
-      std::cerr << "ERROR binding socket\n";
-      exit(-1);
-    }
-    egress_.socket_open = true;
   }
 
   if (egress_.port_no) {
