@@ -1,6 +1,7 @@
 project(mediax)
 
 include(FindPkgConfig)
+include(GNUInstallDirs)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "MSYS")
   message("Detected MSYS2...")
@@ -18,4 +19,5 @@ target_link_libraries(mediax_static png pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS
 target_include_directories(mediax_static PUBLIC ${SWSCALE_INCLUDE_DIRS})
 
 # Install 
-install(TARGETS mediax DESTINATION /usr/local/lib)
+install(TARGETS mediax DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS mediax_static DESTINATION ${CMAKE_INSTALL_LIBDIR})
