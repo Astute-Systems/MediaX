@@ -53,6 +53,8 @@
 #include <iostream>
 #include <vector>
 
+#include "colourspace.h"
+#include "colourspace_cuda.h"
 #include "pngget.h"
 #include "rtpvraw_payloader.h"
 
@@ -104,6 +106,7 @@ int main(int argc, char **argv) {
 
     // Convert the RGB data to YUV again
     video::RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
+    // video::cuda::RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
 
     if (rtp.Transmit(yuv.data(), true) < 0) break;
 

@@ -20,6 +20,8 @@
 #include <iostream>
 #include <string>
 
+#include "colourspace.h"
+#include "colourspace_cuda.h"
 #include "rtpvraw_depayloader.h"
 
 DEFINE_string(ipaddr, "239.192.1.1", "the IP address of the transmit stream");
