@@ -12,7 +12,7 @@
 ///
 /// \brief RTP streaming video class for uncompressed DEF-STAN 00-82 video streams
 ///
-/// \file rtp_stream.h
+/// \file rtpvraw_depayloader.h
 ///
 ///
 /// Example RTP packet from wireshark
@@ -39,8 +39,8 @@
 
 /// Use his program to stream data to the udpsrc example above on the tegra X1
 
-#ifndef __RTP_STREAM_H__
-#define __RTP_STREAM_H__
+#ifndef __RTPVRAW_DEPAYLOADER_H
+#define __RTPVRAW_DEPAYLOADER_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,26 +51,9 @@
 #include <chrono>
 #include <string>
 #include <thread>
-
 #if _WIN32
 #include <winsock2.h>
-// Swap bytes in 16 bit value.
-#define __bswap_constant_16(x) ((((x) >> 8) & 0xffu) | (((x)&0xffu) << 8))
-// Swap bytes in 32 bit value.
-#define __bswap_constant_32(x) \
-  ((((x)&0xff000000u) >> 24) | (((x)&0x00ff0000u) >> 8) | (((x)&0x0000ff00u) << 8) | (((x)&0x000000ffu) << 24))
-#define __bswap_32(x)                  \
-  (__extension__({                     \
-    register unsigned int __bsx = (x); \
-    __bswap_constant_32(__bsx);        \
-  }))
-#define __bswap_16(x)               \
-  (__extension__({                  \
-    unsigned short int __bsx = (x); \
-    __bswap_constant_16(__bsx);     \
-  }))
 #else
-#include <byteswap.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -78,35 +61,14 @@
 #endif
 #include <limits.h>
 
-#include "colourspace.h"
 #include "rtp_types.h"
 #include "sap_listener.h"
-
-/// Supported colour spaces
-enum class ColourspaceType { kColourspaceUndefined, kColourspaceRgb24, kColourspaceYuv, kColourspaceMono8 };
-
-/// Store common port information for ingress and egress ports
-struct PortType {
-  std::string hostname;
-  uint32_t port_no = 0;
-  int sockfd = 0;
-  std::string name = "unknown";
-  /// Height in pixels of stream
-  uint32_t height = 0;
-  /// Width in pixels of stream
-  uint32_t width = 0;
-  /// Intended update framerate
-  uint32_t framerate = 25;
-  ColourspaceType encoding;
-  bool socket_open = false;
-  bool settings_valid = false;  // Can be set when SAP/SDP arrives or gets deleted
-};
 
 ///
 /// \brief Manage an RTP stream
 ///
 ///
-class RtpStream {
+class RtpvrawDepayloader {
  public:
   /// The supported colour spaces
 
@@ -116,44 +78,39 @@ class RtpStream {
   /// \param height in pixels of the RTP stream
   /// \param width in pixels of the RTP stream
   ///
-  RtpStream();
+  RtpvrawDepayloader();
 
   ///
   /// \brief Destroy the Rtp Stream object
   ///
   ///
-  ~RtpStream();
-
-  ///
-  /// \brief Configure an RTP output stream
-  ///
-  /// \param hostname IP address i.e. 239.192.1.1 for multicast
-  /// \param port defaults to 5004
-  ///
-  void RtpStreamOut(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                    std::string_view hostname, const uint32_t port = 5004);
+  ~RtpvrawDepayloader();
 
   ///
   /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement
   ///
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
   /// \param port defaults to 5004
+  /// \param name The name of the stream
+  /// \param encoding The encoding of the stream
+  /// \param height The height of the stream in pixels
+  /// \param width The width of the stream in pixels
   ///
-  static void RtpStreamIn(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                          std::string_view hostname, const uint32_t port = 5004);
+  static void RtpvrawDepayloaderIn(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
+                                   std::string_view hostname, const uint32_t port = 5004);
 
   ///
   /// \brief Register a SAP callback to get updated
   ///
   /// \param sdp
   ///
-  static void SapCallback(sap::SDPMessage &sdp);
+  static void SapCallback(const sap::SDPMessage &sdp);
 
   ///
   /// \brief Configure at RTP input stream and  wait for the SAP/SDP announcement
   ///
   ///
-  void RtpStreamIn(std::string_view name) const;
+  void RtpvrawDepayloaderIn(std::string_view name) const;
 
   ///
   /// \brief Open the RTP stream
@@ -161,7 +118,7 @@ class RtpStream {
   /// \return true
   /// \return false
   ///
-  bool Open();
+  bool Open() const;
 
   ///
   /// \brief Start the stream
@@ -179,16 +136,7 @@ class RtpStream {
   /// \brief Close the RTP stream
   ///
   ///
-  void Close();
-
-  ///
-  /// \brief Transmit an RGB buffer
-  ///
-  /// \param rgbframe pointer to the frame data
-  /// \param blocking defaults to true, will wait till frame has been transmitted
-  /// \return int
-  ///
-  int Transmit(uint8_t *rgbframe, bool blocking = true);
+  void Close() const;
 
   ///
   /// \brief Recieve a frame or timeout
@@ -198,11 +146,58 @@ class RtpStream {
   /// \return true when frame available
   /// \return false when no frame was received in the timeout
   ///
-  bool Receive(uint8_t **cpu, int32_t timeout = 0);
+  bool Receive(uint8_t **cpu, int32_t timeout = 0) const;
+
+  ///
+  /// \brief Get the Colour Space object of the incoming stream. \note This may be invalid id no SAP/SDP announcement
+  /// has been received yet.
+  ///
+  /// \return ColourspaceType
+  ///
+  ColourspaceType GetColourSpace() const;
+
+  ///
+  /// \brief Get the Height object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
+  /// received yet.
+  ///
+  /// \return uint32_t
+  ///
+  uint32_t GetHeight() const;
+
+  ///
+  /// \brief Get the Width object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
+  /// received yet.
+  ///
+  /// \return uint32_t
+  ///
+  uint32_t GetWidth() const;
+
+  ///
+  /// \brief Get the Frame Rate of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
+  /// received yet.
+  ///
+  /// \return uint32_t
+  ///
+  uint32_t GetFrameRate() const;
+
+  ///
+  /// \brief Get the Ip Address of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
+  /// received yet.
+  ///
+  /// \return std::string
+  ///
+  std::string GetIpAddress() const;
+
+  ///
+  /// \brief Get the Port of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
+  /// received yet.
+  ///
+  /// \return uint32_t
+  ///
+  uint32_t GetPort() const;
 
  private:
   /// The incremental sequence numer for transmitting RTP packets
-  static uint32_t sequence_number_;
   static bool new_rx_frame_;
   static bool rx_thread_running_;
 
@@ -215,15 +210,11 @@ class RtpStream {
   // Ingress port
   static PortType ingress_;
 
-  // Egress port
-  PortType egress_;
-  struct addrinfo *server_out_;
-
-  struct sockaddr_in server_addr_out_;
-  socklen_t server_len_out_;
   pthread_mutex_t mutex_;
   std::array<uint8_t, kMaxUdpData> udpdata;
   static std::vector<uint8_t> buffer_in_;
+  // Arguments sent to thread
+  std::thread rx_thread_;
 
   ///
   /// \brief Populate the RTP header
@@ -241,14 +232,14 @@ class RtpStream {
   /// \param stream this object
   /// \return void
   ///
-  static void TransmitThread(RtpStream *stream);
+  static void TransmitThread(RtpvrawDepayloader *stream);
 
   ///
   /// \brief Recieve RTP data to the network using a separate thread
   ///
   /// \param stream this object
   ///
-  static void ReceiveThread(RtpStream *stream);
+  static void ReceiveThread(RtpvrawDepayloader *stream);
 
   ///
   /// \brief Wait for a frame or timeout
@@ -258,7 +249,7 @@ class RtpStream {
   /// \return true
   /// \return false
   ///
-  bool WaitForFrame(uint8_t **cpu, int32_t timeout);
+  bool WaitForFrame(uint8_t **cpu, int32_t timeout) const;
 
   ///
   /// \brief Get a 90Htz timestamp
@@ -266,9 +257,14 @@ class RtpStream {
   /// \return int32_t The current time stamp
   ///
   static int32_t GenerateTimestamp90kHz();
-  // Arguments sent to thread
-  std::thread rx_thread_;
-  std::thread tx_thread_;
+
+  ///
+  /// \brief Read in a RTP packet and decode header
+  ///
+  /// \return true
+  /// \return false
+  ///
+  bool ReadRtpHeader(RtpvrawDepayloader *stream, RtpPacket *packet) const;
 };
 
-#endif
+#endif  // __RTPVRAW_DEPAYLOADER_H

@@ -12,8 +12,8 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 add_executable(transmit-example transmit-example.cc pngget.cc)
 target_link_libraries(transmit-example mediax gflags)
 
-add_executable(recieve-example recieve-example.cc pngget.cc)
-target_link_libraries(recieve-example mediax gflags ${GTKMM_LIBRARIES} ${CAIRO_LIBRARIES} pthread)
+add_executable(receive-example receive-example.cc pngget.cc)
+target_link_libraries(receive-example mediax gflags ${GTKMM_LIBRARIES} ${CAIRO_LIBRARIES} pthread)
 
 add_executable(sap-example sap-example.cc)
 target_link_libraries(sap-example mediax pthread)

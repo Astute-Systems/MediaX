@@ -9,18 +9,20 @@
 // DefenceX PTY LTD
 // Email: enquiries@defencex.ai
 //
-/// \file recieve-example.cc
+/// \file receive-example.cc
 ///
 
 #include <cairo.h>
-#include <cairomm/cairomm.h>
+#include <cairo/cairo.h>
 #include <gflags/gflags.h>
 #include <gtk/gtk.h>
 
 #include <iostream>
 #include <string>
 
-#include "rtp_stream.h"
+#include "colourspace.h"
+#include "colourspace_cuda.h"
+#include "rtpvraw_depayloader.h"
 
 DEFINE_string(ipaddr, "239.192.1.1", "the IP address of the transmit stream");
 DEFINE_int32(port, 5004, "the port to use for the transmit stream");
@@ -38,13 +40,11 @@ struct OnDrawData {
   uint16_t port;
 };
 
-unsigned char *buffer = nullptr;  // Global variable to hold the RGB buffer
-
-static RtpStream rtp_;
+static RtpvrawDepayloader rtp_;
 
 static uint64_t m_frame_counter_ = 0;
 
-gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+gboolean on_draw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer user_data) {
   uint8_t *cpu_buffer;
   auto data = static_cast<OnDrawData *>(user_data);
 
@@ -54,7 +54,7 @@ gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     // Get the width and height of the surface
     int width = cairo_image_surface_get_width(data->surface);
     int height = cairo_image_surface_get_height(data->surface);
-    YuvToRgba(height, width, cpu_buffer, surface_data);
+    video::YuvToRgba(height, width, cpu_buffer, surface_data);
 
     // Mark the surface as dirty to ensure the data is properly updated
     cairo_surface_mark_dirty(data->surface);
@@ -86,11 +86,11 @@ int main(int argc, char *argv[]) {
   if (FLAGS_wait_sap) {
     // Just give the stream name and wait for SAP/SDP announcement
     std::cout << "Example RTP streaming to " << FLAGS_session_name << "\n";
-    rtp_.RtpStreamIn("TestVideo1");
+    rtp_.RtpvrawDepayloaderIn("TestVideo1");
   } else {
     std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
-    rtp_.RtpStreamIn("TestVideo1", ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
-                     (uint16_t)FLAGS_port);
+    RtpvrawDepayloader::RtpvrawDepayloaderIn("TestVideo1", ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width,
+                                             FLAGS_ipaddr, (uint16_t)FLAGS_port);
 
     // We have all the information so we can request the ports open now. No need to wait for SAP/SDP
     if (!rtp_.Open()) {
@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
   // Create a new window
   GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-  gtk_window_set_title(GTK_WINDOW(window), "recieve-example");
+  gtk_window_set_title(GTK_WINDOW(window), "receive-example");
   gtk_window_set_default_size(GTK_WINDOW(window), FLAGS_width, FLAGS_height);
 
   // Create a drawing area widget
@@ -130,11 +130,6 @@ int main(int argc, char *argv[]) {
   gtk_main();
 
   rtp_.Stop();
-
-  // Clean up
-  if (buffer != NULL) {
-    free(buffer);
-  }
 
   return 0;
 }

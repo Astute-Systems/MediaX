@@ -9,7 +9,7 @@
 // DefenceX PTY LTD
 // Email: enquiries@defencex.ai
 //
-///
+/// \brief Functions to convert between different colour spaces
 ///
 /// \file colourspace.cc
 ///
@@ -21,6 +21,8 @@
 extern "C" {
 #include "libswscale/swscale.h"
 }
+namespace video {
+
 void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) {
   if (!rgb || !yuv) {
     // Handle null pointers gracefully
@@ -120,3 +122,5 @@ void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) {
 
   sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
 }
+
+}  // namespace video

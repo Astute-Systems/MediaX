@@ -1,0 +1,128 @@
+\mainpage User Manual
+\par Table of Contents
+
+- \ref intro
+- \ref dep
+     - @ref install
+- \ref gst
+     - @ref examples
+
+\section intro Introduction
+This library provides functions for streaming video that conforms to DEF STAN 00-082.
+
+An example of a video sequence is shown below:
+
+@startuml
+
+   skinparam sequence {
+   ArrowColor DeepSkyBlue
+   ActorBorderColor DeepSkyBlue
+   LifeLineBorderColor blue
+   LifeLineBackgroundColor #A9DCDF
+
+   ParticipantBorderColor DeepSkyBlue
+   ParticipantBackgroundColor DodgerBlue
+   ParticipantFontName Impact
+   ParticipantFontSize 17
+   ParticipantFontColor #FFFFFF
+
+   ActorBackgroundColor aqua
+   ActorFontColor DeepSkyBlue
+   ActorFontSize 17
+   ActorFontName Aapex
+   }
+   participant Sender as Sender
+   participant Switch      as Switch
+   participant Receiver    as Receiver
+
+   Sender -> Sender :  RtpStreamOut("TestVideo1", height, width, framerate, ipaddr, port)
+   Sender -> Sender :  Open()
+   Sender -> Switch :  IGMP(join)
+   Sender --> Receiver :  SAP/SDP Announcement @ 1 Htz
+   note right: SAP announcements are broadcast every \n second on IP 224.2.127.254, Port 9875
+   Sender -> Sender :  Transmit(*rgb_data) @ 25Htz
+   Sender -> Switch :  RTP
+   note left: Many RTP packets sent to transmit the \nframe data, only showing one to simplify \nthe diagram 
+== some time later ==
+   Receiver -> Receiver : RtpStreamIn("TestVideo1")
+   note right: Will wait for SAP/SDP announcement\n containing this session name
+   Sender --> Receiver :  SAP/SDP Announcement @ 1 Htz
+   note right: SDP Contents:\nv=0\no=- 3394362021 3394362021 IN IP4 192.168.204.5 \ns=LSACamera5 \nc=IN IP4 239.192.1.5/15 \nt=0 0 m=video 5004 RTP/AVP 96 a=rtpmap:96 raw/90000 \na=fmtp:96 sampling=YCbCr-4:2:2; width=720; height=576; depth=8; colorimetry=BT601-5; interlace a=framerate:25 
+   Receiver -> Receiver : Open()
+   Receiver -> Switch :  IGMP(join)
+   Sender -> Sender :  Transmit(*rgb_data) @ 25Htz
+   Sender -> Receiver :  RTP
+   Receiver -> Receiver :  Receive(*rgb_data) @ 25Htz
+   Sender -> Sender :  Transmit(*rgb_data) @ 25Htz
+   Sender -> Receiver :  RTP
+   Receiver -> Receiver :  Receive(*rgb_data) @ 25Htz
+   Sender -> Sender : Close()
+   Sender -> Switch :  IGMP(leave)
+   Sender --> Receiver :  SAP/SDP Deletion
+   Receiver -> Receiver :  Close()
+   Receiver -> Switch :  IGMP(leave)
+@enduml
+
+MediaX implements RFC4421 RTP (Real Time Protocol) Payload Format for Uncompressed Video but is mandated by the UK MoD as part of DEF STAN 00-082 (VIVOE) uncompressed RTP video streaming protocol for real time video. If you are not familiar with the Generic Vehicle Architecture (DEF STAN 00-23) and VIVOE then you can read more [here](https://en.wikipedia.org/wiki/Generic_Vehicle_Architecture).
+
+Transmit streams emit a SAP/SDP announcement every second as per RFC 2974 and RFC 4566. Also referenced as in DEF STAN 00-082.
+
+
+\subsection examples Payloader example
+This is a RAW (YUV) Real Time Protocol pay-loader written in C++. This example is send only to receive the data you can use the gstreamer pipeline below.
+
+> **NOTE** : This example has been tested on 64 bit ARM. Target hardware was the Nvidia Jetson TX1/TX2/AGX/Orin.
+
+\section dep Dependencies
+The following dependencies need to me installed prior to building this project:
+```
+sudo apt install libswscale-dev libgflags-dev libgtkmm-3.0-dev
+```
+libswscale is required for RGB/RGBA to UYVY colour space conversion.
+\section install Installation
+Build the example
+```
+mkdir build
+cmake -DBUILD_CUDA=OFF ..
+```
+To enable CUDA acceleration set -DBUILD_CUDA to ON
+```
+./transmit-example
+```
+Command line arguments use **--help** and are listed below:
+```
+    -filename (the PNG file to use as the source of the video stream) type: string default: "testcard.png"
+    -height (the height of the image) type: int32 default: 480
+    -ipaddr (the IP address of the transmit stream) type: string default: "239.192.1.1"
+    -port (the port to use for the transmit stream) type: int32 default: 5004
+    -width (the width of the image) type: int32 default: 640
+
+```
+The receive example will display the stream (user **--help** for options):
+```
+./receive-example
+```
+Receiver has these additional receive command line options, see **--help** for more info:
+```
+    -session_name (the SAP/SDP session name) type: string default: "TestVideo1"
+    -wait_sap (wait for SAP/SDP announcement) type: bool default: false
+```
+
+Catch the stream using the gstreamer src pipeline in the section below. Following command line options are supported:
+
+> **NOTE** : This example uses the test image ./images/testcard.png as the source of the video stream, this has the default resolution of 640x480. You can replace the testcard with your own image or use another source for the video data.
+
+![test card image](testcard.png)
+
+\section gst Gstreamer examples
+The test scripts ./example/rtp-gst-test-rx.sh, ./example/rtp-gst-test-tx.sh runs the example program against gstreamer to ensure interoperability.
+
+Use this pipeline as a test payloader to make sure gstreamer is working:
+
+    gst-launch-1.0 videotestsrc ! video/x-raw, format=UYVY, framerate=25/1, width=640, height=480 ! queue ! rtpvrawpay ! udpsink host=127.0.0.1 port=5004
+
+Use this pipeline to capture the stream:
+
+    gst-launch-1.0 -v udpsrc port=5004 caps="application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)RAW, sampling=(string)YCbCr-4:2:2, depth=(string)8, width=(string)640, height=(string)480, payload=(int)96" ! queue ! rtpvrawdepay ! queue ! videoconvert ! ximagesink 
+
+You can also run the provided examples back to back using the script  ./example/rtp-test.sh 

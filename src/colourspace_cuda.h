@@ -11,15 +11,15 @@
 //
 /// \brief Functions to convert between different colour spaces
 ///
-/// \file colourspace.h
+/// \file colourspace_cuda.h
 ///
 
-#ifndef COLOURSPACE_H
-#define COLOURSPACE_H
+#ifndef COLOURSPACE_CUDA_H
+#define COLOURSPACE_CUDA_H
 
 #include <stdint.h>
 
-namespace video {
+namespace video::cuda {
 
 /// Helper functions for different colour space options
 
@@ -31,7 +31,7 @@ namespace video {
 /// \param yuv The YUV:422 image buffer
 /// \param rgba  The RGBA image buffer
 ///
-void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba);
+void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb);
 
 ///
 /// \brief Convert YUV to RGBA
@@ -48,10 +48,10 @@ void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv);
 ///
 /// \param width The width of the image
 /// \param height The height of the image
-/// \param rgba The RGB image buffer
+/// \param rgb The RGB image buffer
 /// \param yuv The YUV:422 image buffer
 ///
-void RgbaToYuv(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *yuv);
+void RgbaToYuv(uint32_t width, uint32_t height, uint8_t *rgb, uint8_t *yuv);
 
 ///
 /// \brief Convert YUV to RGBA
@@ -68,11 +68,11 @@ void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba);
 ///
 /// \param height The height of the image
 /// \param width The width of the image
-/// \param *yuv The YUV:422 image buffer
-/// \param *rgb The RGB image buffer
+/// \param yuv The YUV:422 image buffer
+/// \param rgb The RGB image buffer
 ///
 void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb);
 
-}  // namespace video
+}  // namespace video::cuda
 
 #endif  // COLOURSPACE_H

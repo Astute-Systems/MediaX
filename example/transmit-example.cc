@@ -53,8 +53,10 @@
 #include <iostream>
 #include <vector>
 
+#include "colourspace.h"
+#include "colourspace_cuda.h"
 #include "pngget.h"
-#include "rtp_stream.h"
+#include "rtpvraw_payloader.h"
 
 DEFINE_string(ipaddr, "239.192.1.1", "the IP address of the transmit stream");
 DEFINE_int32(port, 5004, "the port to use for the transmit stream");
@@ -82,9 +84,9 @@ int main(int argc, char **argv) {
   sleep(1);
 
   // Setup RTP streaming class
-  RtpStream rtp;
-  rtp.RtpStreamOut("TestVideo1", ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
-                   (uint16_t)FLAGS_port);
+  RtpvrawPayloader rtp;
+  rtp.RtpvrawPayloaderOut("TestVideo1", ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
+                          (uint16_t)FLAGS_port);
   rtp.Open();
 
   memset(rtb_test.data(), 0, kBuffSize);
@@ -103,7 +105,8 @@ int main(int argc, char **argv) {
     memset(yuv.data(), 0, kBuffSize);
 
     // Convert the RGB data to YUV again
-    RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
+    video::RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
+    // video::cuda::RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
 
     if (rtp.Transmit(yuv.data(), true) < 0) break;
 

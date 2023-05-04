@@ -9,7 +9,11 @@
 // DefenceX PTY LTD
 // Email: enquiries@defencex.ai
 //
-/// \file sap_listner.cc
+/// \brief Session Announcement Protocol (SDP) implementation for listening to announcements of stream data. The SAP
+/// packet contains the Session Description Protocol (SDP).
+///
+/// \file sap_listener.h
+///
 
 #ifndef __SAP_LISTNER_H__
 #define __SAP_LISTNER_H__
@@ -81,19 +85,31 @@ enum class SdpTypeEnum {
 // A simplified SDP message structure
 // sap_text contains the complete SDP announcement
 struct SDPMessage {
+  /// Protocol version
   uint32_t protocol_version;
+  /// Originator and session identifier
   std::string session_name;
+  /// Session IPV4 source address
   std::string ip_address_source;
+  /// Session IPV4 destination address
   std::string ip_address;
+  /// The IPV4 source port
   uint32_t port;
+  /// The height of the video stream
   uint32_t height;
+  /// The width of the video stream
   uint32_t width;
+  /// The sampling rate of the video stream
   std::string sampling;
+  /// The framerate of the video stream
   uint32_t framerate;
+  /// Set to true if the SDP message has been deleted
   bool deleted = false;
+  /// The complete SDP announcement
   std::string sdp_text;
 };
 
+/// \brief The SAPListener class is a singleton that listens for SAP/SDP announcements on the network
 using SapCallback = std::function<void(sap::SDPMessage &sdp)>;
 
 class SAPListener {
@@ -115,6 +131,7 @@ class SAPListener {
   /// \brief Register a callback for our session_name
   ///
   /// \param session_name Advertised session name
+  /// \param callback The callback to notify when SAP/SDP message received
   ///
   void RegisterSapListener(std::string_view session_name, const SapCallback &callback);
 

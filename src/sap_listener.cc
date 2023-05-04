@@ -9,7 +9,11 @@
 // DefenceX PTY LTD
 // Email: enquiries@defencex.ai
 //
+/// \brief Session Announcement Protocol (SDP) implementation for listening to announcements of stream data. The SAP
+/// packet contains the Session Description Protocol (SDP).
+///
 /// \file sap_listener.cc
+///
 
 #include "sap_listener.h"
 
@@ -254,10 +258,11 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
   announcements_[sdp.session_name] = sdp;
 
   // Check the callbacks
-  for (auto &cb : callbacks_) {
-    if (cb.first == sdp.session_name) {
+
+  for (const auto &[name, callback] : callbacks_) {
+    if (name == sdp.session_name) {
       // We have a match, hit the callback
-      cb.second(sdp);
+      callback(sdp);
     }
   }
 

@@ -7,7 +7,7 @@ IP_ADDRESS=127.0.0.1
 #===========================================
 
 echo 'Starting example application...'
-./build/bin/recieve-example -ipaddr=$IP_ADDRESS -height=480 -width=640 -port=5004  &
+./build/bin/receive-example -ipaddr=$IP_ADDRESS -height=480 -width=640 -port=5004  &
 
 sleep 1
 
@@ -17,7 +17,7 @@ gst-launch-1.0 videotestsrc ! video/x-raw, format=UYVY, framerate=25/1, width=64
 
 sleep 10
 
-pkill -f recieve-example 
+pkill -f receive-example 
 pkill -f gst-launch-1.0
 exit
 
