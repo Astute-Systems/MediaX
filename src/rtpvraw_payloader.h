@@ -60,7 +60,6 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #endif
-#include "colourspace.h"
 #include "rtp_types.h"
 #include "sap_listener.h"
 
@@ -91,6 +90,10 @@ class RtpvrawPayloader {
   ///
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
   /// \param port defaults to 5004
+  /// \param name The name of the stream
+  /// \param encoding The colour space of the stream
+  /// \param height The height of the stream in pixels
+  /// \param width The width of the stream in pixels
   ///
   void RtpvrawPayloaderOut(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
                            std::string_view hostname, const uint32_t port = 5004);

@@ -32,23 +32,38 @@
 namespace sap {
 
 struct SAPHeader {
-  uint8_t version;              // Protocol version
-  uint8_t hash;                 // Hash, must be unique for this announcement
-  uint32_t originating_source;  // Originating Source, IPV4
-
-  // Constructor
+  /// Protocol version
+  uint8_t version;
+  /// Hash, must be unique for this announcement
+  uint8_t hash;
+  /// Originating Source, IPV4
+  uint32_t originating_source;
+  ///
+  /// \brief Construct a new SAPHeader object
+  ///
+  /// \param version Protocol version
+  /// \param hash This must be unique for this announcement
+  /// \param originating_source The originating source identity
+  ///
   SAPHeader(uint8_t version, uint8_t hash, uint32_t originating_source)
       : version(version), hash(hash), originating_source(originating_source) {}
 };
 
 // A simplified SAP message structure
 struct SAPMessage {
+  /// The SDP session name
   std::string sessionName;
+  /// The IPV4 address as a string
   std::string ipAddress;
+  /// The IPV4 port number
   uint32_t port;
+  /// The stream height in pixels
   uint32_t height;
+  /// The stream width in pixels
   uint32_t width;
+  /// The stream framerate in frames / second
   uint32_t framerate;
+  /// Flag indicating the stream was deleted
   bool deleted = false;
 };
 
@@ -99,6 +114,11 @@ class SAPAnnouncer {
   ///
   void ListInterfaces(uint16_t select = 0);
 
+  ///
+  /// \brief Get the Streams object
+  ///
+  /// \return std::vector<SAPMessage>&
+  ///
   std::vector<SAPMessage> &GetStreams() { return streams_; }
 
  private:

@@ -19,26 +19,38 @@
 
 #include <stdint.h>
 
-// SAP/SDP constants
+/// SAP/SDP constants
 const std::string kIpaddr = "224.2.127.254";
+/// SAP/SDP port
 const uint16_t kPort = 9875;
 
 // RTP constants
-const uint32_t kGst1Fix = 1;
-const uint32_t kRtpVersion = 0x2;  // RFC 1889 Version 2
-const uint32_t kRtpPadding = 0x0;
+/// RFC 1889 Version 2
+const uint32_t kRtpVersion = 0x2;
+/// RTP Extension bit
 const uint32_t kRtpExtension = 0x0;
+/// RTP marker bit
 const uint32_t kRtpMarker = 0x0;
-const uint32_t kRtpPayloadType = 0x60;   // 96 Dynamic Type
-const uint32_t kRtpSource = 0x12345678;  // Should be unique
+/// 96 Dynamic Type
+const uint32_t kRtpPayloadType = 0x60;
+/// Should be unique
+const uint32_t kRtpSource = 0x12345678;
+/// 25 frames per second
 const uint32_t kRtpFramerate = 25;
+/// 90KHz clock
 const uint32_t Hz90 = 90000;
-const uint32_t kNumberLinesPerPacket = 10;     // can have more that one line in a packet
-const uint32_t kMaximumBufferSize = 1280 * 3;  // allow for RGB data upto 1280 pixels wide
-const uint32_t kMaxUdpData = 1500;             // enough space for three lines of UDP data MTU size should be checked
-const uint32_t kRtpCheck = 0;                  // 0 to disable RTP header checking
-const uint32_t kRtpThreaded = 1;               // transmit and recieve in a thread. RX thread blocks TX does not
-const uint32_t kPitch = 4;                     // RGBX processing kPitch
+/// can have more that one line in a packet
+const uint32_t kNumberLinesPerPacket = 10;
+/// allow for RGB data upto 1280 pixels wide
+const uint32_t kMaximumBufferSize = 1280 * 3;
+/// enough space for three lines of UDP data MTU size should be checked
+const uint32_t kMaxUdpData = 1500;
+/// 0 to disable RTP header checking
+const uint32_t kRtpCheck = 0;
+/// transmit and recieve in a thread. RX thread blocks TX does not
+const uint32_t kRtpThreaded = 1;
+/// RGBX processing kPitch
+const uint32_t kPitch = 4;
 
 void EndianSwap32(uint32_t *data, unsigned int length);
 void EndianSwap16(uint16_t *data, unsigned int length);

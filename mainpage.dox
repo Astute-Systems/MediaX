@@ -110,7 +110,9 @@ Receiver has these additional receive command line options, see **--help** for m
 
 Catch the stream using the gstreamer src pipeline in the section below. Following command line options are supported:
 
-> **NOTE** : This example uses the test image ([images/testcard.png](images/testcard.png)) as the source of the video stream. You can replace the testcard with your own image or use another source for the video data.
+> **NOTE** : This example uses the test image ./images/testcard.png as the source of the video stream, this has the default resolution of 640x480. You can replace the testcard with your own image or use another source for the video data.
+
+![test card image](testcard.png)
 
 \section gst Gstreamer examples
 The test scripts ./example/rtp-gst-test-rx.sh, ./example/rtp-gst-test-tx.sh runs the example program against gstreamer to ensure interoperability.

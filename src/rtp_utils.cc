@@ -16,6 +16,12 @@
 
 #include "rtp_utils.h"
 
+///
+/// \brief Swap the endianness of a 32-bit integer
+///
+/// \param data A pointer to the data
+/// \param length The length of the data
+///
 void EndianSwap32(uint32_t *data, unsigned int length) {
   // Check for Intel architecture
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
@@ -29,6 +35,12 @@ void EndianSwap32(uint32_t *data, unsigned int length) {
 #endif
 }
 
+///
+/// \brief Swap the endianness of a 16-bit integer
+///
+/// \param data A pointer to the data
+/// \param length The length of the data
+///
 void EndianSwap16(uint16_t *data, unsigned int length) {
   // Check for Intel architecture
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
