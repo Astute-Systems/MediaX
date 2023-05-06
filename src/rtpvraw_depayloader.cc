@@ -47,8 +47,8 @@ RtpvrawDepayloader::RtpvrawDepayloader() { pthread_mutex_init(&mutex_, nullptr);
 RtpvrawDepayloader::~RtpvrawDepayloader(void) = default;
 
 // Broadcast the stream to port i.e. 5004
-void RtpvrawDepayloader::RtpvrawDepayloaderIn(std::string_view name, ColourspaceType encoding, uint32_t height,
-                                              uint32_t width, std::string_view hostname, const uint32_t portno) {
+void RtpvrawDepayloader::SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
+                                       std::string_view hostname, const uint32_t portno) {
   ingress_.encoding = encoding;
   ingress_.height = height;
   ingress_.width = width;
@@ -60,11 +60,10 @@ void RtpvrawDepayloader::RtpvrawDepayloaderIn(std::string_view name, Colourspace
 }
 
 void RtpvrawDepayloader::SapCallback(const sap::SDPMessage &sdp) {
-  RtpvrawDepayloaderIn(sdp.session_name, ColourspaceType::kColourspaceYuv, sdp.height, sdp.width, sdp.ip_address,
-                       sdp.port);
+  SetStreamInfo(sdp.session_name, ColourspaceType::kColourspaceYuv, sdp.height, sdp.width, sdp.ip_address, sdp.port);
 }
 
-void RtpvrawDepayloader::RtpvrawDepayloaderIn(std::string_view name) const {
+void RtpvrawDepayloader::SetStreamInfo(std::string_view name) const {
   sap::SAPListener &sap = sap::SAPListener::GetInstance();
   sap.RegisterSapListener(name, SapCallback);
   sap::SAPListener::GetInstance().Start();

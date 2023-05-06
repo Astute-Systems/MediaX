@@ -47,8 +47,8 @@ RtpvrawPayloader::RtpvrawPayloader() { pthread_mutex_init(&mutex_, nullptr); }
 
 RtpvrawPayloader::~RtpvrawPayloader(void) = default;
 
-void RtpvrawPayloader::RtpvrawPayloaderOut(std::string_view name, ColourspaceType encoding, uint32_t height,
-                                           uint32_t width, std::string_view hostname, const uint32_t portno) {
+void RtpvrawPayloader::SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
+                                     std::string_view hostname, const uint32_t portno) {
   egress_.encoding = encoding;
   egress_.height = height;
   egress_.width = width;
