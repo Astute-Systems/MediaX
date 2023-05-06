@@ -148,6 +148,7 @@ class SAPListener {
   void Stop();
 
  private:
+  static SAPListener singleton_;
   ///
   /// \brief Construct a new SAPListener::SAPListener object
   ///

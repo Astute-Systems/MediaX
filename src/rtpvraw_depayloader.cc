@@ -72,7 +72,7 @@ void RtpvrawDepayloader::RtpvrawDepayloaderIn(std::string_view name) const {
 
 bool RtpvrawDepayloader::Open() const {
   if (!ingress_.port_no) {
-    std::cerr << "No ports set, nothing to open";
+    std::cerr << "RtpvrawDepayloader::Open() No ports set, nothing to open";
     exit(-1);
   }
   if (ingress_.port_no) {
@@ -80,7 +80,7 @@ bool RtpvrawDepayloader::Open() const {
 
     // create a UDP socket
     if ((ingress_.sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
-      std::cerr << "ERROR opening socket\n";
+      std::cerr << "RtpvrawDepayloader::Open() ERROR opening socket\n";
       exit(-1);
     }
     // zero out the structure
@@ -91,7 +91,7 @@ bool RtpvrawDepayloader::Open() const {
     si_me.sin_addr.s_addr = htonl(INADDR_ANY);
     // bind socket to port
     if (bind(ingress_.sockfd, (struct sockaddr *)&si_me, sizeof(si_me)) == -1) {
-      std::cerr << "ERROR binding socket\n";
+      std::cerr << "RtpvrawDepayloader::Open() ERROR binding socket\n";
       exit(-1);
     }
     ingress_.socket_open = true;
@@ -262,7 +262,7 @@ bool RtpvrawDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) const {
       auto end_time = std::chrono::high_resolution_clock::now();
       if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
           duration >= to) {
-        // Leave the thread to recieve the rest of the frame
+        // Leave the thread to receive the rest of the frame
         return false;
       }
     }
