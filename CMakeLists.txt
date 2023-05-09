@@ -12,4 +12,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -fPIC -Wall -Werror")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_subdirectory(src)
-add_subdirectory(example)
+
+option(EXAMPLES "Build examples" ON)
+if (EXAMPLES) 
+    add_subdirectory(example)
+endif()

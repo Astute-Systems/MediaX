@@ -67,17 +67,15 @@ SAPListener::SAPListener() {
 
   // bind socket to port
   if (bind(sockfd_, (struct sockaddr *)&multicast_addr_, sizeof(multicast_addr_)) == -1) {
-    std::cout << "ERROR binding socket\n";
+    std::cout << "SAPListener() ERROR binding socket " << kIpaddr << ":" << kPort << "\n";
     exit(-1);
   }
 }
 
 SAPListener::~SAPListener() { close(sockfd_); }
 
-SAPListener &SAPListener::GetInstance() {
-  static SAPListener singleton_;
-  return singleton_;
-}
+SAPListener SAPListener::singleton_;
+SAPListener &SAPListener::GetInstance() { return singleton_; }
 
 void SAPListener::SAPListenerThread(SAPListener *sap) {
   while (running_) {
@@ -102,7 +100,7 @@ void SAPListener::Start() {
 
 void SAPListener::Stop() {
   running_ = false;
-  thread_.join();
+  if (thread_.joinable()) thread_.join();
 }
 
 SdpTypeEnum SAPListener::GetType(std::string &line) const {
