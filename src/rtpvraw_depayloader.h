@@ -154,6 +154,12 @@ class RtpvrawDepayloader {
   ColourspaceType GetColourSpace() const;
 
   ///
+  /// \brief Set the Height attribute
+  ///
+  ///
+  void SetHeight(uint32_t height);
+
+  ///
   /// \brief Get the Height object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
   /// received yet.
   ///
@@ -162,12 +168,24 @@ class RtpvrawDepayloader {
   uint32_t GetHeight() const;
 
   ///
+  /// \brief Set the Width attribute
+  ///
+  ///
+  void SetWidth(uint32_t width);
+
+  ///
   /// \brief Get the Width object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
   /// received yet.
   ///
   /// \return uint32_t
   ///
   uint32_t GetWidth() const;
+
+  ///
+  /// \brief Set the Frame Rate object
+  ///
+  ///
+  void SetFramerate(uint32_t framerate);
 
   ///
   /// \brief Get the Frame Rate of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
@@ -184,6 +202,19 @@ class RtpvrawDepayloader {
   /// \return std::string
   ///
   std::string GetIpAddress() const;
+
+  ///
+  /// \brief Set the Ip Address attribute
+  ///
+  /// \param ip_address The IPV4 address of the video stream
+  ///
+  void SetIpAddress(std::string_view ip_address);
+
+  ///
+  /// \brief Set the Port object
+  ///
+  ///
+  void SetPort(uint32_t port);
 
   ///
   /// \brief Get the Port of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
