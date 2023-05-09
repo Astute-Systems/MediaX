@@ -1,13 +1,10 @@
 //
-// Copyright (C) 2023 DefenceX PTY LTD. All rights reserved.
+// Copyright (c) 2023, DefenceX PTY LTD
 //
-// This software is distributed under the included copyright license.
-// Any redistribution or reproduction, in part or in whole, in any form or medium, is strictly prohibited without the
-// prior written consent of DefenceX PTY LTD.
+// This file is part of the VivoeX project developed by DefenceX.
 //
-// For any inquiries or concerns, please contact:
-// DefenceX PTY LTD
-// Email: enquiries@defencex.ai
+// Licensed under the Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
+// License. See the LICENSE file in the project root for full license details.
 //
 ///
 /// \file pngget.cc
@@ -105,8 +102,7 @@ void Png::ReadPngFile(char* file_name) {
   FILE* fp = fopen(file_name, "rb");
   if (!fp) Abort("[read_png_file] File %s could not be opened for reading", file_name);
   if (fread(header, 1, 8, fp)) Abort("[read_png_file] File %s is not recognized as a PNG file", file_name);
-  if (png_sig_cmp((png_bytep)header, 0, 8))
-    Abort("[read_png_file] File %s is not recognized as a PNG file", file_name);
+  if (png_sig_cmp((png_bytep)header, 0, 8)) Abort("[read_png_file] File %s is not recognized as a PNG file", file_name);
 
   // initialize stuff
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);

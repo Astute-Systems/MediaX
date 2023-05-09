@@ -1,13 +1,10 @@
 //
-// Copyright (C) 2023 DefenceX PTY LTD. All rights reserved.
+// Copyright (c) 2023, DefenceX PTY LTD
 //
-// This software is distributed under the included copyright license.
-// Any redistribution or reproduction, in part or in whole, in any form or medium, is strictly prohibited without the
-// prior written consent of DefenceX PTY LTD.
+// This file is part of the VivoeX project developed by DefenceX.
 //
-// For any inquiries or concerns, please contact:
-// DefenceX PTY LTD
-// Email: enquiries@defencex.ai
+// Licensed under the Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
+// License. See the LICENSE file in the project root for full license details.
 //
 ///
 /// \brief RTP streaming video types
