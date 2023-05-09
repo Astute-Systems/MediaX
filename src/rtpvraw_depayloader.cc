@@ -291,24 +291,28 @@ bool RtpvrawDepayloader::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]
   return false;
 }
 
+void RtpvrawDepayloader::SetSessionName(std::string_view name) const { ingress_.name = name; }
+
+std::string RtpvrawDepayloader::GetSessionName() const { return ingress_.name; }
+
 ColourspaceType RtpvrawDepayloader::GetColourSpace() const { return ingress_.encoding; }
 
-void RtpvrawDepayloader::SetHeight(uint32_t height) { ingress_.height = height; }
+void RtpvrawDepayloader::SetHeight(uint32_t height) const { ingress_.height = height; }
 
 uint32_t RtpvrawDepayloader::GetHeight() const { return ingress_.height; }
 
-void RtpvrawDepayloader::SetWidth(uint32_t width) { ingress_.width = width; }
+void RtpvrawDepayloader::SetWidth(uint32_t width) const { ingress_.width = width; }
 
 uint32_t RtpvrawDepayloader::GetWidth() const { return ingress_.width; }
 
-void RtpvrawDepayloader::SetFramerate(uint32_t framerate) { ingress_.framerate = framerate; }
+void RtpvrawDepayloader::SetFramerate(uint32_t framerate) const { ingress_.framerate = framerate; }
 
 uint32_t RtpvrawDepayloader::GetFrameRate() const { return ingress_.framerate; }
 
-void RtpvrawDepayloader::SetIpAddress(std::string_view ip_address) { ingress_.hostname = ip_address; }
+void RtpvrawDepayloader::SetIpAddress(std::string_view ip_address) const { ingress_.hostname = ip_address; }
 
 std::string RtpvrawDepayloader::GetIpAddress() const { return ingress_.hostname; }
 
-void RtpvrawDepayloader::SetPort(uint32_t port) { ingress_.port_no = port; }
+void RtpvrawDepayloader::SetPort(uint32_t port) const { ingress_.port_no = port; }
 
 uint32_t RtpvrawDepayloader::GetPort() const { return ingress_.port_no; }

@@ -146,6 +146,20 @@ class RtpvrawDepayloader {
   bool Receive(uint8_t **cpu, int32_t timeout = 0) const;
 
   ///
+  /// \brief Set the Session Name attribute
+  ///
+  /// \param name The SAP/SDP session name
+  ///
+  void SetSessionName(std::string_view name) const;
+
+  ///
+  /// \brief Get the Session Name attribute
+  ///
+  /// \return std::string The SAP/SDP session name
+  ///
+  std::string GetSessionName() const;
+
+  ///
   /// \brief Get the Colour Space object of the incoming stream. \note This may be invalid id no SAP/SDP announcement
   /// has been received yet.
   ///
@@ -157,7 +171,7 @@ class RtpvrawDepayloader {
   /// \brief Set the Height attribute
   ///
   ///
-  void SetHeight(uint32_t height);
+  void SetHeight(uint32_t height) const;
 
   ///
   /// \brief Get the Height object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
@@ -171,7 +185,7 @@ class RtpvrawDepayloader {
   /// \brief Set the Width attribute
   ///
   ///
-  void SetWidth(uint32_t width);
+  void SetWidth(uint32_t width) const;
 
   ///
   /// \brief Get the Width object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
@@ -185,7 +199,7 @@ class RtpvrawDepayloader {
   /// \brief Set the Frame Rate object
   ///
   ///
-  void SetFramerate(uint32_t framerate);
+  void SetFramerate(uint32_t framerate) const;
 
   ///
   /// \brief Get the Frame Rate of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
@@ -208,13 +222,13 @@ class RtpvrawDepayloader {
   ///
   /// \param ip_address The IPV4 address of the video stream
   ///
-  void SetIpAddress(std::string_view ip_address);
+  void SetIpAddress(std::string_view ip_address) const;
 
   ///
   /// \brief Set the Port object
   ///
   ///
-  void SetPort(uint32_t port);
+  void SetPort(uint32_t port) const;
 
   ///
   /// \brief Get the Port of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
