@@ -13,7 +13,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_subdirectory(src)
 
-option(EXAMPLES "Build examples" ON)
+option(EXAMPLES "Build examples" OFF)
 if (EXAMPLES) 
     add_subdirectory(example)
 endif()
