@@ -22,7 +22,11 @@
 void EndianSwap32(uint32_t *data, unsigned int length) {
   // Check for Intel architecture
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-  for (uint32_t c = 0; c < length; c++) data[c] = __bswapq(data[c]);
+#ifdef _WIN32
+  for (uint32_t c = 0; c < length; c++) data[c] = _byteswap_ulong(data[c]);
+#else
+  for (uint32_t c = 0; c < length; c++) data[c] = __bswap_32(data[c]);
+#endif
   return;
 // Check for ARM architecture
 #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
