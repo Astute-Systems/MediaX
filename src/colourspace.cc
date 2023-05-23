@@ -15,6 +15,8 @@
 
 #include <memory>
 #include <vector>
+#include <array>
+
 extern "C" {
 #include "libswscale/swscale.h"
 }

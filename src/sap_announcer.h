@@ -15,11 +15,16 @@
 #ifndef __SAP_ANNOUNCER_H__
 #define __SAP_ANNOUNCER_H__
 
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
 #include <arpa/inet.h>
 #include <ifaddrs.h>
 #include <netinet/in.h>
-#include <stdint.h>
 #include <sys/socket.h>
+#endif
+#include <stdint.h>
 #include <unistd.h>
 
 #include <string>

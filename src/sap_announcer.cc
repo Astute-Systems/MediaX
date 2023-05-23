@@ -22,6 +22,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <array>
 
 #include "rtp_types.h"
 
@@ -122,7 +123,7 @@ void SAPAnnouncer::SendSAPPacket(const SAPMessage &message, bool deletion) const
 
   memcpy(&buffer[sizeof(SAPHeader)], sdp_msg.data(), sdp_msg.size());
 
-  ssize_t sent_bytes = sendto(sockfd_, buffer.data(), sizeof(SAPHeader) + sdp_msg.size(), 0,
+  ssize_t sent_bytes = sendto(sockfd_, reinterpret_cast<char*>(buffer.data()), sizeof(SAPHeader) + sdp_msg.size(), 0,
                               (const struct sockaddr *)(&multicast_addr_), sizeof(multicast_addr_));
   if (sent_bytes < 0) {
     perror("sendto failed");
@@ -144,6 +145,10 @@ void SAPAnnouncer::SetSourceInterface(uint16_t select) { SetAddressHelper(select
 void SAPAnnouncer::ListInterfaces(uint16_t select) { SetAddressHelper(select, true); }
 
 void SAPAnnouncer::SetAddressHelper(uint16_t select, bool helper) {
+
+#ifdef _WIN32
+#pragma message("TODO: Implement SetAddressHelper for Windows")
+#else
   struct ifaddrs *ifaddr;
 
   if (getifaddrs(&ifaddr) == -1) {
@@ -159,9 +164,13 @@ void SAPAnnouncer::SetAddressHelper(uint16_t select, bool helper) {
     CheckAddresses(ifa, helper, select);
   }
   freeifaddrs(ifaddr);
+#endif
 }
 
 void SAPAnnouncer::CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t select) {
+#ifdef _WIN32
+#pragma message("TODO: Implement CheckAddresses for Windows")
+#else
   uint16_t count_interfaces = 0;
   char addr_str[INET_ADDRSTRLEN];
 
@@ -183,6 +192,7 @@ void SAPAnnouncer::CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t sel
       count_interfaces++;
     }
   }
+#endif
 }
 
 }  // namespace sap

@@ -37,6 +37,13 @@ SAPListener::SAPListener() {
   }  // namespace sap
 
   // Set the socket to non-blocking mode
+#ifdef _WIN32
+  u_long mode = 1;
+  if (ioctlsocket(sockfd_, FIONBIO, &mode) != NO_ERROR) {
+    perror("ioctlsocket FIONBIO failed");
+    exit(EXIT_FAILURE);
+  }
+#else
   int flags = fcntl(sockfd_, F_GETFL, 0);
   if (flags == -1) {
     perror("fcntl F_GETFL failed");
@@ -47,6 +54,7 @@ SAPListener::SAPListener() {
     perror("fcntl F_SETFL O_NONBLOCK failed");
     exit(EXIT_FAILURE);
   }
+#endif
 
   memset(&multicast_addr_, 0, sizeof(multicast_addr_));
   multicast_addr_.sin_family = AF_INET;
@@ -57,7 +65,7 @@ SAPListener::SAPListener() {
   struct ip_mreq mreq;
   mreq.imr_multiaddr.s_addr = inet_addr(kIpaddr.c_str());
   mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-  if (setsockopt(sockfd_, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
+  if (setsockopt(sockfd_, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&mreq, sizeof(mreq)) < 0) {
     perror("setsockopt IP_ADD_MEMBERSHIP");
     exit(EXIT_FAILURE);
   }
@@ -76,7 +84,7 @@ SAPListener &SAPListener::GetInstance() { return singleton_; }
 
 void SAPListener::SAPListenerThread(SAPListener *sap) {
   while (running_) {
-    if (ssize_t bytes = recvfrom(sap->sockfd_, sap->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr); bytes <= 0) {
+    if (ssize_t bytes = recvfrom(sap->sockfd_, reinterpret_cast<char*>(sap->udpdata.data()), kMaxUdpData, 0, nullptr, nullptr); bytes <= 0) {
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
       continue;
     }
@@ -171,7 +179,7 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
   // convert to string IP address
   struct in_addr addr;
   addr.s_addr = htonl(*source);
-  EndianSwap32(&addr.s_addr, 1);
+  EndianSwap32((uint32_t *)&addr.s_addr, 1);
   sdp.ip_address_source = inet_ntoa(addr);
   // Loop through lines
   // Convert string to istringstream
