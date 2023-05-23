@@ -65,8 +65,8 @@ void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba);
 ///
 /// \param height The height of the image
 /// \param width The width of the image
-/// \param *yuv The YUV:422 image buffer
-/// \param *rgb The RGB image buffer
+/// \param yuv The YUV:422 image buffer
+/// \param rgb The RGB image buffer
 ///
 void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb);
 

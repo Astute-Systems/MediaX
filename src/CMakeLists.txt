@@ -26,7 +26,7 @@ set_target_properties(mediax PROPERTIES SOVERSION 1)
 set_target_properties(mediax PROPERTIES CUDA_ARCHITECTURES "75")
 
 
-add_library(mediax_static SHARED rtpvraw_payloader.cc rtpvraw_depayloader.cc rtp_utils.cc sap_announcer.cc sap_listener.cc colourspace.cc colourspace_cuda.cu)
+add_library(mediax_static STATIC rtpvraw_payloader.cc rtpvraw_depayloader.cc rtp_utils.cc sap_announcer.cc sap_listener.cc colourspace.cc colourspace_cuda.cu)
 target_link_libraries(mediax_static png pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS})
 target_include_directories(mediax_static PUBLIC ${SWSCALE_INCLUDE_DIRS})
 set_target_properties(mediax_static PROPERTIES SOVERSION 1)
