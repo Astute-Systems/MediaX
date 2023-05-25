@@ -30,18 +30,13 @@ set_target_properties(mediax PROPERTIES SOVERSION 1)
 # set_target_properties(mediax PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 set_target_properties(mediax PROPERTIES CUDA_ARCHITECTURES "75")
 
-
-<<<<<<< HEAD
 add_library(mediax_static STATIC rtpvraw_payloader.cc rtpvraw_depayloader.cc rtp_utils.cc sap_announcer.cc sap_listener.cc colourspace.cc colourspace_cuda.cu)
-target_link_libraries(mediax_static png pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS})
-=======
-add_library(mediax_static SHARED rtpvraw_payloader.cc rtpvraw_depayloader.cc rtp_utils.cc sap_announcer.cc sap_listener.cc colourspace.cc colourspace_cuda.cu)
 if (WIN32)
   target_link_libraries(mediax_static png pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} wsock32 ws2_32)
 else()
   target_link_libraries(mediax_static png pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS})
 endif()
->>>>>>> 36b7ea9bd8b8f6395e3bccb677233bc9880dec61
+
 target_include_directories(mediax_static PUBLIC ${SWSCALE_INCLUDE_DIRS})
 set_target_properties(mediax_static PROPERTIES SOVERSION 1)
 # set_property(TARGET mediax_static PROPERTY CUDA_SEPARABLE_COMPILATION ON)
@@ -59,7 +54,7 @@ install(FILES ${HEADER_FILES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 # Debian cpack
  
 set(CPACK_GENERATOR "DEB")
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Johan Ekenberg")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Ross Newman")
 set(CPACK_PACKAGE_VERSION_MAJOR "0")
 set(CPACK_PACKAGE_VERSION_MINOR "5")
 set(CPACK_PACKAGE_VERSION_PATCH "0")
@@ -68,7 +63,7 @@ set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 set(CPACK_DEBIAN_PACKAGE_GENERATE_SHLIBS ON)
 set(CPACK_DEBIAN_PACKAGE_GENERATE_SHLIBS_POLICY ">=")
-set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/debian/postinst;${CMAKE_CURRENT_SOURCE_DIR}/debian/prerm")
+set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_SOURCE_DIR}/scripts/debian/postinst;${CMAKE_SOURCE_DIR}/scripts/debian/prerm")
 set(CPACK_DEBIAN_PACKAGE_CONTROL_STRICT_PERMISSION TRUE)
 set(CPACK_DEBIAN_PACKAGE_SECTION "libs")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://defencex.ai")
