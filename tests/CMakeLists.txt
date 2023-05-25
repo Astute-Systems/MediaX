@@ -1,5 +1,3 @@
-enable_testing()
-
 include(FindPkgConfig)
 
 set(CMAKE_CXX_FLAGS --coverage)
@@ -9,9 +7,11 @@ set(
   ${CMAKE_SOURCE_DIR}/src
 )
 
+include_directories(${TEST_INCLUDES})
+
 add_executable(
   tests
-  colourspace.cc
+  colourspace_tests.cc
 )
 
 
@@ -27,3 +27,10 @@ target_include_directories(
 )
 
 include(GoogleTest)
+
+# define tests
+add_test(NAME hello COMMAND echo "Hello World")
+add_test(NAME GTests COMMAND ${CMAKE_BINARY_DIR}/bin/tests)
+
+gtest_discover_tests(tests)
+
