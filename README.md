@@ -4,11 +4,11 @@
 [![Action sonarscan](https://github.com/DefenceX/vivoe-lite/actions/workflows/sonarcloud.yaml/badge.svg)](https://sonarcloud.io/project/overview?id=DefenceX_MediaX)
 
 
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_VivoeX&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=DefenceX_vivoe-lite)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_VivoeX&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=DefenceX_vivoe-lite)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_VivoeX&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=DefenceX_vivoe-lite)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_VivoeX&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=DefenceX_vivoe-lite)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_VivoeX&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=DefenceX_VivoeX)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_MediaX&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=DefenceX_vivoe-lite)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_MediaX&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=DefenceX_vivoe-lite)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_MediaX&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=DefenceX_vivoe-lite)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_MediaX&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=DefenceX_vivoe-lite)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_MediaX&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=DefenceX_MediaX)
 
 
 [![License](https://img.shields.io/badge/licence-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
