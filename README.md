@@ -1,14 +1,14 @@
 
 
-[![Action cyclone](https://github.com/DefenceX/vivoe-media-framework/actions/workflows/build-ubuntu-amd64.yaml/badge.svg)](https://github.com/DefenceX/MediaX/actions/workflows/build-ubuntu-amd64.yaml)
+[![Action cyclone](https://github.com/DefenceX/VivoeX/actions/workflows/build-ubuntu-amd64.yaml/badge.svg)](https://github.com/DefenceX/MediaX/actions/workflows/build-ubuntu-amd64.yaml)
 [![Action sonarscan](https://github.com/DefenceX/vivoe-lite/actions/workflows/sonarcloud.yaml/badge.svg)](https://sonarcloud.io/project/overview?id=DefenceX_MediaX)
 
 
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_vivoe-media-framework&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=DefenceX_vivoe-lite)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_vivoe-media-framework&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=DefenceX_vivoe-lite)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_vivoe-media-framework&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=DefenceX_vivoe-lite)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_vivoe-media-framework&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=DefenceX_vivoe-lite)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_vivoe-media-framework&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=DefenceX_vivoe-media-framework)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_VivoeX&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=DefenceX_vivoe-lite)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_VivoeX&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=DefenceX_vivoe-lite)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_VivoeX&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=DefenceX_vivoe-lite)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_VivoeX&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=DefenceX_vivoe-lite)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_VivoeX&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=DefenceX_VivoeX)
 
 
 [![License](https://img.shields.io/badge/licence-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
