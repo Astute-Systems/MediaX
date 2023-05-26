@@ -83,7 +83,7 @@ libswscale is required for RGB/RGBA to UYVY colour space conversion.
 Build the example
 ```
 mkdir build
-cmake -DBUILD_CUDA=OFF -DEXAMPLES=ON ..
+cmake -DBUILD_CUDA=OFF -DEXAMPLES=ON -DTESTS=ON ..
 ```
 To enable CUDA acceleration set -DBUILD_CUDA to ON, examples can als be enabled
 ```
