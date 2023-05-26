@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0…3.16)
 project(mediax)
 
+include(CTest)
+
 # enable testing functionality
 enable_testing()
 
@@ -21,7 +23,6 @@ if (EXAMPLES)
     add_subdirectory(example)
 endif()
 
-option(TESTS "Build Tests" OFF)
-if (TESTS) 
+if (BUILD_TESTING) 
     add_subdirectory(tests)
 endif()
