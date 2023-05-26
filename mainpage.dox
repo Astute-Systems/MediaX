@@ -75,8 +75,13 @@ This is a RAW (YUV) Real Time Protocol pay-loader written in C++. This example i
 
 \section dep Dependencies
 The following dependencies need to me installed prior to building this project:
+Ubuntu 22.04
 ```
-sudo apt install libswscale-dev libgflags-dev libgtkmm-3.0-dev
+sudo apt install libswscale-dev libgtest-dev libgflags-dev libgtkmm-3.0-dev
+```
+CentOS Stream 8
+```
+sudo dnf install ffmpeg-libs gtest-devel gflags-devel
 ```
 libswscale is required for RGB/RGBA to UYVY colour space conversion.
 \section install Installation
