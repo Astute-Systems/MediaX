@@ -161,7 +161,7 @@ void RtpvrawPayloader::SendFrame(RtpvrawPayloader *stream) {
 
 void RtpvrawPayloader::TransmitThread(RtpvrawPayloader *stream) {
   // send a frame, once last thread has completed
-  std::lock_guard<std::mutex> lock(stream->mutex_);
+  std::scoped_lock lock(stream->mutex_);
   SendFrame(stream);
   return;
 }
