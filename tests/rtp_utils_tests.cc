@@ -43,7 +43,7 @@ TEST(Utilities, CreateColourBarTestCard) {
   std::array<uint8_t, kBuffSize> rtb_test = {0};
   CreateColourBarTestCard(rtb_test.data(), 640, 480);
   ASSERT_EQ(rtb_test[0], 0xFF);
-  ASSERT_EQ(rtb_test[1], 0xFF);
+  ASSERT_EQ(rtb_test[1], 0);
   ASSERT_EQ(rtb_test[2], 0x0);
 }
 
@@ -60,7 +60,16 @@ TEST(Utilities, CreateComplexTestCard) {
   const int kBuffSize = (640 * 480) * 3;
   std::array<uint8_t, kBuffSize> rtb_test = {0};
   CreateComplexTestCard(rtb_test.data(), 640, 480);
-  ASSERT_EQ(rtb_test[0], 0xFF);
+  ASSERT_EQ(rtb_test[0], 0);
   ASSERT_EQ(rtb_test[1], 0);
   ASSERT_EQ(rtb_test[2], 0);
+}
+
+TEST(Utilities, CreateCheckeredTestCard) {
+  const int kBuffSize = (640 * 480) * 3;
+  std::array<uint8_t, kBuffSize> rtb_test = {0};
+  CreateCheckeredTestCard(rtb_test.data(), 640, 480);
+  ASSERT_EQ(rtb_test[0], 0xFF);
+  ASSERT_EQ(rtb_test[1], 0xFF);
+  ASSERT_EQ(rtb_test[2], 0xFF);
 }
