@@ -194,7 +194,7 @@ class SAPListener {
   /// \param line
   /// \return std::map<std::string, std::string>
   ///
-  std::map<std::string, std::string, std::less<>> ParseAttributesEqual(std::string &line) const;
+  std::map<std::string, std::string, std::less<>> ParseAttributesEqual(const std::string &line) const;
 
   ///
   /// \brief Store or update the SAP data

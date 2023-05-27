@@ -144,19 +144,18 @@ std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributes(std
   return attributes;
 }
 
-std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributesEqual(std::string &line) const {
+std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributesEqual(const std::string &line) const {
   std::map<std::string, std::string, std::less<>> attributes;
   std::string key;
   std::string value;
   bool type = true;
 
-  // Step through characters
-  for (unsigned long int i = 0; i < line.length(); i++) {
-    if (line[i] == '=') {
+  for (char c : line) {
+    if (c == '=') {
       type = false;
       continue;
     }
-    if (line[i] == ';') {
+    if (c == ';') {
       type = true;
       attributes[key] = value;
       key = "";
@@ -164,9 +163,9 @@ std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributesEqua
       continue;
     }
     if (type) {
-      if (line[i] != ' ') key += line[i];
+      if (c != ' ') key += c;
     } else {
-      if (line[i] != ' ') value += line[i];
+      if (c != ' ') value += c;
     }
   }
   return attributes;
