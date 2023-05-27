@@ -55,4 +55,31 @@ void EndianSwap16(uint16_t *data, unsigned int length);
 ///
 void DumpHex(const void *data, size_t size);
 
+///
+/// \brief Create a Colour Bar Test Card object
+///
+/// \param data
+/// \param width
+/// \param height
+///
+void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height);
+
+///
+/// \brief Create a Grey Scale Bar Test Card object
+///
+/// \param data
+/// \param width
+/// \param height
+///
+void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height);
+
+///
+/// \brief Create a Smtpe Test Card object
+///
+/// \param data
+/// \param width
+/// \param height
+///
+void CreateSmtpeTestCard(uint8_t *data, uint32_t width, uint32_t height);
+
 #endif  // RTP_UTILS_H
