@@ -80,6 +80,15 @@ void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height);
 /// \param width
 /// \param height
 ///
-void CreateSmtpeTestCard(uint8_t *data, uint32_t width, uint32_t height);
+void CreateComplexTestCard(uint8_t *data, uint32_t width, uint32_t height);
+
+///
+/// \brief Create a Checkerd Test Card object
+///
+/// \param data
+/// \param width
+/// \param height
+///
+void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height);
 
 #endif  // RTP_UTILS_H

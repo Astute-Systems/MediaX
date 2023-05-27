@@ -107,6 +107,12 @@ Command line arguments use **--help** and are listed below:
     -ipaddr (the IP address of the transmit stream) type: string default: "239.192.1.1"
     -port (the port to use for the transmit stream) type: int32 default: 5004
     -width (the width of the image) type: int32 default: 640
+    -pattern (The test pattern (0-4)
+        0 - Use a PNG file (see -filename), default: 0
+        1 - Colour bars
+        2 - Greyscale bars
+        3 - Scaled RGB values
+        4 - Checkered test card) type: int32 default: 0
 
 ```
 The receive example will display the stream (user **--help** for options):

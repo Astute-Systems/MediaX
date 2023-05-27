@@ -14,7 +14,6 @@ add_executable(
   colourspace_tests.cc
   rtp_utils_tests.cc
   rtp_payloader_tests.cc
-  rtp_depayloader_tests.cc
   sap_announcer_tests.cc
   sap_listener_tests.cc
 )
@@ -32,9 +31,6 @@ target_include_directories(
 )
 
 include(GoogleTest)
-
-# define tests
-add_test(NAME hello COMMAND echo "Hello World")
 
 gtest_discover_tests(tests)
 

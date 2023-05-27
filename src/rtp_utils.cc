@@ -13,6 +13,7 @@
 
 #include "rtp_utils.h"
 
+#include <cmath>
 #include <iomanip>
 #include <iostream>
 
@@ -83,383 +84,119 @@ void DumpHex(const void *data, size_t size) {
 
 // Implementation of the CreateColourBarTestCard function
 void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height) {
-  uint32_t x, y;
-  uint8_t r, g, b;
-
-  // Iterate over each pixel in the image
-  for (y = 0; y < height; y++) {
-    for (x = 0; x < width; x++) {
-      // Set the RGB values of the pixel based on its position in the image
-      if (x < width / 7) {
+  for (uint32_t x = 0; x < width; x++) {
+    for (uint32_t y = 0; y < height; y++) {
+      uint8_t r, g, b;
+      // Set the color of each pixel based on its position in the image.
+      if (x < width / 8) {
         r = 255;
         g = 0;
         b = 0;
-      } else if (x < 2 * width / 7) {
+      } else if (x < width * 2 / 8) {
+        r = 255;
+        g = 127;
+        b = 0;
+      } else if (x < width * 3 / 8) {
         r = 255;
         g = 255;
         b = 0;
-      } else if (x < 3 * width / 7) {
+      } else if (x < width * 4 / 8) {
         r = 0;
         g = 255;
         b = 0;
-      } else if (x < 4 * width / 7) {
+      } else if (x < width * 5 / 8) {
         r = 0;
         g = 255;
         b = 255;
-      } else if (x < 5 * width / 7) {
+      } else if (x < width * 6 / 8) {
         r = 0;
         g = 0;
         b = 255;
-      } else if (x < 6 * width / 7) {
-        r = 255;
+      } else if (x < width * 7 / 8) {
+        r = 127;
         g = 0;
         b = 255;
       } else {
         r = 255;
         g = 0;
-        b = 0;
+        b = 255;
       }
-      // Set the RGB values of the pixel in the data array
-      *data++ = r;
-      *data++ = g;
-      *data++ = b;
+      // Set the color of the current pixel in the image data buffer.
+      uint32_t index = (y * width + x) * 3;
+      data[index] = r;
+      data[index + 1] = g;
+      data[index + 2] = b;
     }
   }
 }
 
 // Implementation of the CreateGreyScaleBarTestCard function
 void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height) {
-  uint32_t x, y;
-  uint8_t value;
-
-  // Iterate over each pixel in the image
-  for (y = 0; y < height; y++) {
-    for (x = 0; x < width; x++) {
-      // Set the grey scale value of the pixel based on its position in the image
-      value = (x * 255) / (width - 1);
-      // Set the grey scale value of the pixel in the data array
-      *data++ = value;
+  uint32_t bar_width = width / 8;
+  uint32_t bar_height = height;
+  uint8_t color = 0;
+  for (uint32_t i = 0; i < 8; i++) {
+    for (uint32_t y = 0; y < bar_height; y++) {
+      for (uint32_t x = i * bar_width; x < (i + 1) * bar_width; x++) {
+        data[(y * width + x) * 3] = color;      // Red channel
+        data[(y * width + x) * 3 + 1] = color;  // Green channel
+        data[(y * width + x) * 3 + 2] = color;  // Blue channel
+      }
     }
+    color += 32;
   }
 }
 
-void CreateSmtpeTestCard(uint8_t *data, uint32_t width, uint32_t height) {
-  uint32_t bytes_per_pixel = 3;  // RGB
-  uint32_t bytes_per_row = width * bytes_per_pixel;
-  uint8_t *pixel_ptr = data;
-
-  for (uint32_t y = 0; y < height; y++) {
-    for (uint32_t x = 0; x < width; x++) {
-      uint8_t r, g, b;
-
-      if (x < width / 8) {
-        // 75% color bars
-        auto color_bar = (uint8_t)(x / (width / 8));
-        switch (color_bar) {
-          case 0:
-            r = 0xFF;
-            g = 0x00;
-            b = 0x00;
-            break;  // red
-          case 1:
-            r = 0xFF;
-            g = 0xFF;
-            b = 0x00;
-            break;  // yellow
-          case 2:
-            r = 0x00;
-            g = 0xFF;
-            b = 0x00;
-            break;  // green
-          case 3:
-            r = 0x00;
-            g = 0xFF;
-            b = 0xFF;
-            break;  // cyan
-          case 4:
-            r = 0x00;
-            g = 0x00;
-            b = 0xFF;
-            break;  // blue
-          case 5:
-            r = 0xFF;
-            g = 0x00;
-            b = 0xFF;
-            break;  // magenta
-          case 6:
-            r = 0x80;
-            g = 0x80;
-            b = 0x80;
-            break;  // gray
-          default:
-            r = 0x00;
-            g = 0x00;
-            b = 0x00;
-            break;
-        }
-      } else if (x < width / 4) {
-        // 100% color bars
-        auto color_bar = (uint8_t)(x - width / 8) / (width / 16);
-        switch (color_bar) {
-          case 0:
-            r = 0xFF;
-            g = 0x00;
-            b = 0x00;
-            break;  // red
-          case 1:
-            r = 0xFF;
-            g = 0xFF;
-            b = 0x00;
-            break;  // yellow
-          case 2:
-            r = 0x00;
-            g = 0xFF;
-            b = 0x00;
-            break;  // green
-          case 3:
-            r = 0x00;
-            g = 0xFF;
-            b = 0xFF;
-            break;  // cyan
-          case 4:
-            r = 0x00;
-            g = 0x00;
-            b = 0xFF;
-            break;  // blue
-          case 5:
-            r = 0xFF;
-            g = 0x00;
-            b = 0xFF;
-            break;  // magenta
-          case 6:
-            r = 0x80;
-            g = 0x80;
-            b = 0x80;
-            break;  // gray
-          case 8:
-            r = 0xFF;
-            g = 0xFF;
-            b = 0xFF;
-            break;  // white
-          default:
-            r = 0x00;
-            g = 0x00;
-            b = 0x00;
-            break;
-        }
-      } else if (x < width / 2) {
-        // 100% bars with pluge
-        auto color_bar = (uint8_t)(x - width / 4) / (width / 16);
-        switch (color_bar) {
-          default:
-            r = 0x00;
-            g = 0x00;
-            b = 0x00;
-            break;
-        }
-      } else {
-        // 100% bars with pluge and color bars
-        auto color_bar = (uint8_t)(x - width / 2) / (width / 16);
-
-        if (y < height / 3) {
-          // 100% color bars
-          switch (color_bar) {
-            case 0:
-              r = 0xFF;
-              g = 0x00;
-              b = 0x00;
-              break;  // red
-            case 1:
-              r = 0xFF;
-              g = 0xFF;
-              b = 0x00;
-              break;  // yellow
-            case 2:
-              r = 0x00;
-              g = 0xFF;
-              b = 0x00;
-              break;  // green
-            case 3:
-              r = 0x00;
-              g = 0xFF;
-              b = 0xFF;
-              break;  // cyan
-            case 4:
-              r = 0x00;
-              g = 0x00;
-              b = 0xFF;
-              break;  // blue
-            case 5:
-              r = 0xFF;
-              g = 0x00;
-              b = 0xFF;
-              break;  // magenta
-            case 6:
-              r = 0x80;
-              g = 0x80;
-              b = 0x80;
-              break;  // gray
-            case 8:
-              r = 0xFF;
-              g = 0xFF;
-              b = 0xFF;
-              break;  // white
-            default:
-              r = 0x00;
-              g = 0x00;
-              b = 0x00;
-              break;
-          }
-        } else if (y < height * 2 / 3) {
-          // pluge
-          switch (color_bar) {
-            case 0:
-              r = 0x10;
-              g = 0x10;
-              b = 0x10;
-              break;  // black
-            case 1:
-              r = 0x20;
-              g = 0x20;
-              b = 0x20;
-              break;  // 3.5%
-            case 2:
-              r = 0x30;
-              g = 0x30;
-              b = 0x30;
-              break;  // 7%
-            case 3:
-              r = 0x40;
-              g = 0x40;
-              b = 0x40;
-              break;  // 10.5%
-            case 4:
-              r = 0x50;
-              g = 0x50;
-              b = 0x50;
-              break;  // 14%
-            case 5:
-              r = 0x60;
-              g = 0x60;
-              b = 0x60;
-              break;  // 17.5%
-            case 6:
-              r = 0x70;
-              g = 0x70;
-              b = 0x70;
-              break;  // 21%
-            case 7:
-              r = 0x80;
-              g = 0x80;
-              b = 0x80;
-              break;  // 24.5%
-            case 8:
-              r = 0x90;
-              g = 0x90;
-              b = 0x90;
-              break;  // 28%
-            case 9:
-              r = 0xA0;
-              g = 0xA0;
-              b = 0xA0;
-              break;  // 31.5%
-            case 10:
-              r = 0xB0;
-              g = 0xB0;
-              b = 0xB0;
-              break;  // 35%
-            case 11:
-              r = 0xC0;
-              g = 0xC0;
-              b = 0xC0;
-              break;  // 38.5%
-            case 12:
-              r = 0xD0;
-              g = 0xD0;
-              b = 0xD0;
-              break;  // 42%
-            case 13:
-              r = 0xE0;
-              g = 0xE0;
-              b = 0xE0;
-              break;  // 45.5%
-            case 14:
-              r = 0xF0;
-              g = 0xF0;
-              b = 0xF0;
-              break;  // 49%
-            case 15:
-              r = 0xFF;
-              g = 0xFF;
-              b = 0xFF;
-              break;  // white
-            default:
-              r = 0x00;
-              g = 0x00;
-              b = 0x00;
-              break;
-          }
-        } else {
-          // 100% color bars
-          switch (color_bar) {
-            case 0:
-              r = 0xFF;
-              g = 0x00;
-              b = 0x00;
-              break;  // red
-            case 1:
-              r = 0xFF;
-              g = 0xFF;
-              b = 0x00;
-              break;  // yellow
-            case 2:
-              r = 0x00;
-              g = 0xFF;
-              b = 0x00;
-              break;  // green
-            case 3:
-              r = 0x00;
-              g = 0xFF;
-              b = 0xFF;
-              break;  // cyan
-            case 4:
-              r = 0x00;
-              g = 0x00;
-              b = 0xFF;
-              break;  // blue
-            case 5:
-              r = 0xFF;
-              g = 0x00;
-              b = 0xFF;
-              break;  // magenta
-            case 6:
-              r = 0x80;
-              g = 0x80;
-              b = 0x80;
-              break;  // gray
-            case 7:
-              r = 0x00;
-              g = 0x00;
-              b = 0x00;
-              break;  // black
-            case 8:
-              r = 0xFF;
-              g = 0xFF;
-              b = 0xFF;
-              break;  // white
-            default:
-              r = 0x00;
-              g = 0x00;
-              b = 0x00;
-              break;
-          }
-        }
-      }
-
-      *pixel_ptr++ = r;
-      *pixel_ptr++ = g;
-      *pixel_ptr++ = b;
+void CreateComplexTestCard(uint8_t *data, uint32_t width, uint32_t height) {
+  uint32_t size = width * height * 3;
+  for (uint32_t i = 0; i < size; i += 3) {
+    uint32_t x = i / 3 % width;
+    uint32_t y = i / 3 / width;
+    double r, g, b;
+    if (x < width / 2 && y < height / 2) {
+      r = 0;
+      g = 0;
+      b = 0;
+    } else if (x >= width / 2 && y < height / 2) {
+      r = 255;
+      g = 0;
+      b = 0;
+    } else if (x < width / 2 && y >= height / 2) {
+      r = 0;
+      g = 255;
+      b = 0;
+    } else {
+      r = 0;
+      g = 0;
+      b = 255;
     }
-    pixel_ptr += bytes_per_row - bytes_per_pixel * width;
+    double t = (double)i / size * 2 * M_PI;
+    r *= 0.5 + 0.5 * sin(t);
+    g *= 0.5 + 0.5 * sin(t + 2 * M_PI / 3);
+    b *= 0.5 + 0.5 * sin(t + 4 * M_PI / 3);
+    data[i] = (uint8_t)r;
+    data[i + 1] = (uint8_t)g;
+    data[i + 2] = (uint8_t)b;
+  }
+}
+
+void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height) {
+  uint32_t size = width * height * 3;
+  for (uint32_t i = 0; i < size; i += 3) {
+    uint32_t x = i / 3 % width;
+    uint32_t y = i / 3 / width;
+    uint8_t r, g, b;
+    if ((x / 8 + y / 8) % 2 == 0) {
+      r = 255;
+      g = 255;
+      b = 255;
+    } else {
+      r = 0;
+      g = 0;
+      b = 0;
+    }
+    data[i] = r;
+    data[i + 1] = g;
+    data[i + 2] = b;
   }
 }

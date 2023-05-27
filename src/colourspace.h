@@ -41,6 +41,16 @@ void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv);
 void RgbaToYuv(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *yuv);
 
 ///
+/// \brief Convert RGBA to RGB
+///
+/// \param width
+/// \param height
+/// \param rgba
+/// \param rgb
+///
+void RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb);
+
+///
 /// \brief Convert YUV to RGBA
 ///
 /// \param height The height of the image

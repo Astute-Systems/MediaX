@@ -37,3 +37,30 @@ TEST(Utilities, EndianSwap32) {
   ASSERT_EQ(test[2], 0x78563412);
   ASSERT_EQ(test[3], 0xf0debc9a);
 }
+
+TEST(Utilities, CreateColourBarTestCard) {
+  const int kBuffSize = (640 * 480) * 3;
+  std::array<uint8_t, kBuffSize> rtb_test = {0};
+  CreateColourBarTestCard(rtb_test.data(), 640, 480);
+  ASSERT_EQ(rtb_test[0], 0xFF);
+  ASSERT_EQ(rtb_test[1], 0xFF);
+  ASSERT_EQ(rtb_test[2], 0x0);
+}
+
+TEST(Utilities, CreateGreyScaleBarTestCard) {
+  const int kBuffSize = (640 * 480) * 3;
+  std::array<uint8_t, kBuffSize> rtb_test = {0};
+  CreateGreyScaleBarTestCard(rtb_test.data(), 640, 480);
+  ASSERT_EQ(rtb_test[0], 0);
+  ASSERT_EQ(rtb_test[1], 0);
+  ASSERT_EQ(rtb_test[2], 0);
+}
+
+TEST(Utilities, CreateComplexTestCard) {
+  const int kBuffSize = (640 * 480) * 3;
+  std::array<uint8_t, kBuffSize> rtb_test = {0};
+  CreateComplexTestCard(rtb_test.data(), 640, 480);
+  ASSERT_EQ(rtb_test[0], 0xFF);
+  ASSERT_EQ(rtb_test[1], 0);
+  ASSERT_EQ(rtb_test[2], 0);
+}
