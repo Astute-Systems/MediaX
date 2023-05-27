@@ -14,6 +14,7 @@
 
 #include "sap_announcer.h"
 
+#include <array>
 #include <chrono>
 #include <cstring>
 #include <iostream>
@@ -22,7 +23,6 @@
 #include <string>
 #include <thread>
 #include <vector>
-#include <array>
 
 #include "rtp_types.h"
 
@@ -123,7 +123,7 @@ void SAPAnnouncer::SendSAPPacket(const SAPMessage &message, bool deletion) const
 
   memcpy(&buffer[sizeof(SAPHeader)], sdp_msg.data(), sdp_msg.size());
 
-  ssize_t sent_bytes = sendto(sockfd_, reinterpret_cast<char*>(buffer.data()), sizeof(SAPHeader) + sdp_msg.size(), 0,
+  ssize_t sent_bytes = sendto(sockfd_, buffer.data(), sizeof(SAPHeader) + sdp_msg.size(), 0,
                               (const struct sockaddr *)(&multicast_addr_), sizeof(multicast_addr_));
   if (sent_bytes < 0) {
     perror("sendto failed");
@@ -145,7 +145,6 @@ void SAPAnnouncer::SetSourceInterface(uint16_t select) { SetAddressHelper(select
 void SAPAnnouncer::ListInterfaces(uint16_t select) { SetAddressHelper(select, true); }
 
 void SAPAnnouncer::SetAddressHelper(uint16_t select, bool helper) {
-
 #ifdef _WIN32
 #pragma message("TODO: Implement SetAddressHelper for Windows")
 #else
@@ -172,15 +171,15 @@ void SAPAnnouncer::CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t sel
 #pragma message("TODO: Implement CheckAddresses for Windows")
 #else
   uint16_t count_interfaces = 0;
-  char addr_str[INET_ADDRSTRLEN];
+  std::array<char, INET_ADDRSTRLEN> addr_str;
 
   // Check for IPv4 address
   if (ifa->ifa_addr->sa_family == AF_INET) {
     auto sa = (struct sockaddr_in *)ifa->ifa_addr;
-    inet_ntop(AF_INET, &(sa->sin_addr), addr_str, INET_ADDRSTRLEN);
+    inet_ntop(AF_INET, &(sa->sin_addr), addr_str.data(), INET_ADDRSTRLEN);
 
     // Exclude the loopback address
-    if (strcmp(addr_str, "127.0.0.1") != 0) {
+    if (strcmp(addr_str.data(), "127.0.0.1") != 0) {
       std::string postfix;
       if (helper) std::cout << "Interface: " << ifa->ifa_name << std::endl;
       // save the last one
@@ -188,7 +187,7 @@ void SAPAnnouncer::CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t sel
         source_ipaddress_ = sa->sin_addr.s_addr;
         postfix = " <- selected";
       }
-      if (helper) std::cout << "IPv4 Address: " << addr_str << postfix << std::endl;
+      if (helper) std::cout << "IPv4 Address: " << addr_str.data() << postfix << std::endl;
       count_interfaces++;
     }
   }

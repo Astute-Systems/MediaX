@@ -47,7 +47,7 @@ void EndianSwap16(uint16_t *data, unsigned int length) {
 }
 
 void DumpHex(const void *data, size_t size) {
-  const unsigned char *p = static_cast<const unsigned char *>(data);
+  const auto p = static_cast<const unsigned char *>(data);
   std::cout << std::hex << std::setfill('0');
   for (size_t i = 0; i < size; ++i) {
     std::cout << std::setw(2) << static_cast<unsigned int>(p[i]) << ' ';

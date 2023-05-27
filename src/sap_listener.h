@@ -128,7 +128,7 @@ class SAPListener {
   ///
   /// \return The vectored list of SAP/SDP streams seen on the network
   ///
-  const std::map<std::string, SDPMessage> &GetSAPAnnouncements() const;
+  const std::map<std::string, SDPMessage, std::less<>> &GetSAPAnnouncements() const;
 
   ///
   /// \brief Register a callback for our session_name
@@ -204,8 +204,8 @@ class SAPListener {
   ///
   bool SapStore(std::array<uint8_t, kMaxUdpData> &udpdata);
 
-  std::map<std::string, SapCallback> callbacks_;
-  std::map<std::string, SDPMessage> announcements_;
+  std::map<std::string, SapCallback, std::less<>> callbacks_;
+  std::map<std::string, SDPMessage, std::less<>> announcements_;
   std::array<uint8_t, kMaxUdpData> udpdata;
   std::thread thread_;
   int sockfd_;

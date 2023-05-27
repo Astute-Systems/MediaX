@@ -147,8 +147,8 @@ void RtpvrawPayloader::TransmitThread(RtpvrawPayloader *stream) {
       EndianSwap16((uint16_t *)(&packet.head.payload), sizeof(PayloadHeader) / 2);
 
       memcpy((void *)&packet.head.payload.line[2], (void *)&stream->arg_tx.rgbframe[(c * stride) + 1], stride);
-      n = sendto(stream->egress_.sockfd, reinterpret_cast<const char *>(&packet), stride + 26, 0,
-                 (const sockaddr *)&stream->server_addr_out_, stream->server_len_out_);
+      n = sendto(stream->egress_.sockfd, &packet, stride + 26, 0, (const sockaddr *)&stream->server_addr_out_,
+                 stream->server_len_out_);
 
       if (n == 0) {
         std::cerr << "[RTP] Transmit socket failure fd=" << stream->egress_.sockfd << "\n";

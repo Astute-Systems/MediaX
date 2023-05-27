@@ -78,6 +78,12 @@ class SAPAnnouncer {
   static SAPAnnouncer &GetInstance();
 
   ///
+  /// \brief Construct a new SAPAnnouncer object, not used so deleted
+  ///
+  ///
+  SAPAnnouncer(SAPAnnouncer const &) = delete;
+
+  ///
   /// \brief Add a stream announcement
   ///
   /// \param message The stream details

@@ -26,6 +26,8 @@
 #include <thread>
 #include <vector>
 
+#include "rtp_utils.h"
+
 namespace sap {
 
 bool SAPListener::running_ = false;
@@ -84,7 +86,7 @@ SAPListener &SAPListener::GetInstance() { return singleton_; }
 
 void SAPListener::SAPListenerThread(SAPListener *sap) {
   while (running_) {
-    if (ssize_t bytes = recvfrom(sap->sockfd_, reinterpret_cast<char*>(sap->udpdata.data()), kMaxUdpData, 0, nullptr, nullptr); bytes <= 0) {
+    if (ssize_t bytes = recvfrom(sap->sockfd_, sap->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr); bytes <= 0) {
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
       continue;
     }
@@ -126,16 +128,16 @@ std::map<std::string, std::string> SAPListener::ParseAttributes(std::string &lin
   bool attribute_name = true;
 
   // Step through characters
-  for (unsigned long int i = 0; i < line.length(); i++) {
-    if (line[i] == ':') {
+  for (char c : line) {
+    if (c == ':') {
       attribute_name = false;
       continue;
     }
     if (attribute_name) {
-      if (line[i] != ' ') key += line[i];
+      if (c != ' ') key += c;
     } else {
       // attribute_value
-      if (line[i] != ' ') value += line[i];
+      if (c != ' ') value += c;
     }
   }
   attributes[key] = value;
@@ -272,6 +274,8 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
   return true;
 }
 
-const std::map<std::string, SDPMessage> &SAPListener::GetSAPAnnouncements() const { return announcements_; }
+const std::map<std::string, SDPMessage, std::less<>> &SAPListener::GetSAPAnnouncements() const {
+  return announcements_;
+}
 
 }  // namespace sap
