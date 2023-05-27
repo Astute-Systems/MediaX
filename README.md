@@ -9,6 +9,7 @@
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_MediaX&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=DefenceX_MediaX)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_MediaX&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=DefenceX_MediaX)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_MediaX&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=DefenceX_MediaX)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_MediaX&metric=coverage)](https://sonarcloud.io/summary/new_code?id=DefenceX_MediaX)
 
 
 # Real Time Protocol in C++
