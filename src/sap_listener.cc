@@ -121,8 +121,8 @@ SdpTypeEnum SAPListener::GetType(std::string &line) const {
   return SdpTypeEnum::kUnknown;
 }
 
-std::map<std::string, std::string> SAPListener::ParseAttributes(std::string &line) const {
-  std::map<std::string, std::string> attributes;
+std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributes(std::string &line) const {
+  std::map<std::string, std::string, std::less<>> attributes;
   std::string key;
   std::string value;
   bool attribute_name = true;
@@ -144,8 +144,8 @@ std::map<std::string, std::string> SAPListener::ParseAttributes(std::string &lin
   return attributes;
 }
 
-std::map<std::string, std::string> SAPListener::ParseAttributesEqual(std::string &line) const {
-  std::map<std::string, std::string> attributes;
+std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributesEqual(std::string &line) const {
+  std::map<std::string, std::string, std::less<>> attributes;
   std::string key;
   std::string value;
   bool type = true;
@@ -173,7 +173,7 @@ std::map<std::string, std::string> SAPListener::ParseAttributesEqual(std::string
 }
 
 bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
-  std::map<std::string, std::string> attributes_map;
+  std::map<std::string, std::string, std::less<>> attributes_map;
 
   const uint32_t *source = (uint32_t *)&udpdata[4];
   SDPMessage sdp;
@@ -229,7 +229,7 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
       case SdpTypeEnum::kBandwidthInformation:
         break;
       case SdpTypeEnum::kSessionAttribute: {
-        std::map<std::string, std::string> attributes_map_more = ParseAttributes(line);
+        std::map<std::string, std::string, std::less<>> attributes_map_more = ParseAttributes(line);
         attributes_map.insert(attributes_map_more.begin(), attributes_map_more.end());
       } break;
       case SdpTypeEnum::kTimeSessionActive:
@@ -251,7 +251,7 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
     }
   }
 
-  std::map<std::string, std::string> attributes_map_fmtp;
+  std::map<std::string, std::string, std::less<>> attributes_map_fmtp;
   attributes_map_fmtp = ParseAttributesEqual(attributes_map["fmtp"]);
   attributes_map.insert(attributes_map_fmtp.begin(), attributes_map_fmtp.end());
 
