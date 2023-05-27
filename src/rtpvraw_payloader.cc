@@ -40,9 +40,14 @@ uint32_t RtpvrawPayloader::sequence_number_ = 0;
 
 std::vector<uint8_t> RtpvrawPayloader::buffer_in_;
 
-RtpvrawPayloader::RtpvrawPayloader() { pthread_mutex_init(&mutex_, nullptr); }
+RtpvrawPayloader::RtpvrawPayloader() {}
 
-RtpvrawPayloader::~RtpvrawPayloader(void) = default;
+RtpvrawPayloader::~RtpvrawPayloader(void) {
+  if (egress_.sockfd) {
+    close(egress_.sockfd);
+  }
+  sleep(1);
+}
 
 void RtpvrawPayloader::SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
                                      std::string_view hostname, const uint32_t portno) {
@@ -156,9 +161,8 @@ void RtpvrawPayloader::SendFrame(RtpvrawPayloader *stream) {
 
 void RtpvrawPayloader::TransmitThread(RtpvrawPayloader *stream) {
   // send a frame, once last thread has completed
-  pthread_mutex_lock(&stream->mutex_);
+  std::lock_guard<std::mutex> lock(stream->mutex_);
   SendFrame(stream);
-  pthread_mutex_unlock(&stream->mutex_);
   return;
 }
 

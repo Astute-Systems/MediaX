@@ -47,6 +47,7 @@
 
 #include <array>
 #include <chrono>
+#include <mutex>
 #include <string>
 #include <thread>
 #if _WIN32
@@ -131,16 +132,6 @@ class RtpvrawPayloader {
   int Transmit(uint8_t *rgbframe, bool blocking = true);
 
   ///
-  /// \brief Recieve a frame or timeout
-  ///
-  /// \param cpu the fame buffer in CPU memory.
-  /// \param timeout zero will wait forever or a timeout in milliseconds
-  /// \return true when frame available
-  /// \return false when no frame was received in the timeout
-  ///
-  bool Receive(uint8_t **cpu, int32_t timeout = 0);
-
-  ///
   /// \brief Get the Colour Space object of the incoming stream. \note This may be invalid id no SAP/SDP announcement
   /// has been received yet.
   ///
@@ -196,27 +187,36 @@ class RtpvrawPayloader {
   ///
   static void SendFrame(RtpvrawPayloader *stream);
 
+  ///
+  /// \brief Get the Mutex object
+  ///
+  /// \return std::mutex&
+  ///
+  std::mutex &GetMutex() { return mutex_; }
+
  private:
   /// The incremental sequence numer for transmitting RTP packets
   static uint32_t sequence_number_;
-
   /// The encoded video type
   ColourspaceType encoding_ = ColourspaceType::kColourspaceUndefined;
-
   /// Transmit arguments used by the thread
   TxData arg_tx;
-
   // Egress port
   PortType egress_;
+  /// The sevrer address information
   struct addrinfo *server_out_;
-
+  /// The socket for the outgoing stream
   struct sockaddr_in server_addr_out_;
+  /// The length of the server address
   socklen_t server_len_out_;
-  pthread_mutex_t mutex_;
+  /// Teh UDP data
   std::array<uint8_t, kMaxUdpData> udpdata;
+  /// The buffer for the incoming RTP data
   static std::vector<uint8_t> buffer_in_;
-  // Arguments sent to thread
+  /// Arguments sent to thread
   std::thread tx_thread_;
+  /// The mutex for the transmit thread
+  std::mutex mutex_;
 
   ///
   /// \brief Populate the RTP header
