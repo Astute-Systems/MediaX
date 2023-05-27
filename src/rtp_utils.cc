@@ -86,7 +86,9 @@ void DumpHex(const void *data, size_t size) {
 void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height) {
   for (uint32_t x = 0; x < width; x++) {
     for (uint32_t y = 0; y < height; y++) {
-      uint8_t r, g, b;
+      uint8_t r;
+      uint8_t g;
+      uint8_t b;
       // Set the color of each pixel based on its position in the image.
       if (x < width / 8) {
         r = 255;
@@ -152,7 +154,9 @@ void CreateComplexTestCard(uint8_t *data, uint32_t width, uint32_t height) {
   for (uint32_t i = 0; i < size; i += 3) {
     uint32_t x = i / 3 % width;
     uint32_t y = i / 3 / width;
-    double r, g, b;
+    double r;
+    double g;
+    double b;
     if (x < width / 2 && y < height / 2) {
       r = 0;
       g = 0;
@@ -185,7 +189,9 @@ void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height) {
   for (uint32_t i = 0; i < size; i += 3) {
     uint32_t x = i / 3 % width;
     uint32_t y = i / 3 / width;
-    uint8_t r, g, b;
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
     if ((x / 8 + y / 8) % 2 == 0) {
       r = 255;
       g = 255;
