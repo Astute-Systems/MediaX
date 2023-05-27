@@ -178,7 +178,7 @@ class SAPListener {
   ///
   /// \return SdpTypeEnum attribute enum
   ///
-  SdpTypeEnum GetType(std::string &line) const;
+  SdpTypeEnum GetType(const std::string &line) const;
 
   ///
   /// \brief Parse any attributes
