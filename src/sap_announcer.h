@@ -129,6 +129,13 @@ class SAPAnnouncer {
   ///
   std::vector<SAPMessage> &GetStreams() { return streams_; }
 
+  ///
+  /// \brief Get the number of active streams
+  ///
+  /// \return uint32_t
+  ///
+  uint32_t GetActiveStreamCount() const { return streams_.size(); }
+
  private:
   ///
   /// \brief Construct a new SAPAnnouncer::SAPAnnouncer object

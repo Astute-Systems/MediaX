@@ -13,6 +13,7 @@ add_executable(
   tests
   colourspace_tests.cc
   rtp_utils_tests.cc
+  sap_announcer_tests.cc
 )
 
 
@@ -31,7 +32,6 @@ include(GoogleTest)
 
 # define tests
 add_test(NAME hello COMMAND echo "Hello World")
-add_test(NAME GTests COMMAND ${CMAKE_BINARY_DIR}/bin/tests)
 
 gtest_discover_tests(tests)
 
