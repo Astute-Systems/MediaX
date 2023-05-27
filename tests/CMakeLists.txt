@@ -12,6 +12,7 @@ include_directories(${TEST_INCLUDES})
 add_executable(
   tests
   colourspace_tests.cc
+  rtp_utils_tests.cc
 )
 
 

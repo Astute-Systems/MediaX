@@ -18,7 +18,9 @@ jobs:
       - name: Install sonar-scanner and build-wrapper
         uses: SonarSource/sonarcloud-github-c-cpp@v1
       - name: Apt Update
-        run: sudo apt-get update
+        run: |
+          sudo apt-get update
+          apt install gcovr -y
       - name: Apt Install
         run: |
           sudo apt-get --no-install-recommends install libswscale-dev libgflags-dev libgtkmm-3.0-dev cmake g++ libgtest-dev
