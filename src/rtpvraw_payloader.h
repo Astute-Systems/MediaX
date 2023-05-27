@@ -188,6 +188,14 @@ class RtpvrawPayloader {
   ///
   uint32_t GetPort() const;
 
+  ///
+  /// \brief Send a frame
+  ///
+  /// \param stream
+  /// \return int
+  ///
+  static void SendFrame(RtpvrawPayloader *stream);
+
  private:
   /// The incremental sequence numer for transmitting RTP packets
   static uint32_t sequence_number_;
