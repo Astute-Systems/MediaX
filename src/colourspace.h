@@ -21,16 +21,6 @@ namespace video {
 /// Helper functions for different colour space options
 
 ///
-/// \brief Convert YUV to RGB
-///
-/// \param height The height of the image
-/// \param width The width of the image
-/// \param yuv The YUV:422 image buffer
-/// \param rgba  The RGBA image buffer
-///
-void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba);
-
-///
 /// \brief Convert YUV to RGBA
 ///
 /// \param height The height of the image

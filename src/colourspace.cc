@@ -13,9 +13,9 @@
 
 #include "colourspace.h"
 
+#include <array>
 #include <memory>
 #include <vector>
-#include <array>
 
 extern "C" {
 #include "libswscale/swscale.h"
@@ -44,7 +44,7 @@ void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) {
   const std::array<int32_t, 1> inLinesize = {(int32_t)(width * 2)};
   std::array<int32_t, 1> outLinesize = {(int32_t)(width * 3)};
 
-  sws_scale(ctx.get(), inData.data(), inLinesize.data(), SWS_BICUBIC, height, outData.data(), outLinesize.data());
+  sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
 }
 
 void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) {

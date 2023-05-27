@@ -19,7 +19,8 @@
 // Swap bytes in 16 bit value.
 #define __bswap_constant_16(x) ((((x) >> 8) & 0xffu) | (((x)&0xffu) << 8))
 // Swap bytes in 32 bit value.
-#define __bswap_constant_32(x) ((((x) >> 24) & 0xffu) | (((x)&0xff0000u) >> 8) | (((x)&0xff00u) << 8) | (((x)&0xffu) << 24))
+#define __bswap_constant_32(x) \
+  ((((x) >> 24) & 0xffu) | (((x)&0xff0000u) >> 8) | (((x)&0xff00u) << 8) | (((x)&0xffu) << 24))
 #define __bswap_16(x) __bswap_constant_16(x)
 #else
 #include <byteswap.h>
@@ -30,7 +31,28 @@
 #endif
 #include <stdint.h>
 
+///
+/// \brief Swap the endianness of a 32-bit integer
+///
+/// \param data A pointer to the data
+/// \param length The length of the data
+///
 void EndianSwap32(uint32_t *data, unsigned int length);
+
+///
+/// \brief Swap the endianness of a 16-bit integer
+///
+/// \param data A pointer to the data
+/// \param length The length of the data
+///
 void EndianSwap16(uint16_t *data, unsigned int length);
+
+///
+/// \brief Dump a hex representation of a buffer
+///
+/// \param data
+/// \param size
+///
+void DumpHex(const void *data, size_t size);
 
 #endif  // RTP_UTILS_H

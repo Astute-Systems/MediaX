@@ -15,6 +15,10 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -fPIC -Wall -Werror")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+option(COVERAGE "Enable coverage reporting" OFF)
+if (COVERAGE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+endif()
 
 add_subdirectory(src)
 

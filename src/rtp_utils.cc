@@ -13,12 +13,9 @@
 
 #include "rtp_utils.h"
 
-///
-/// \brief Swap the endianness of a 32-bit integer
-///
-/// \param data A pointer to the data
-/// \param length The length of the data
-///
+#include <iomanip>
+#include <iostream>
+
 void EndianSwap32(uint32_t *data, unsigned int length) {
   // Check for Intel architecture
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
@@ -36,12 +33,6 @@ void EndianSwap32(uint32_t *data, unsigned int length) {
 #endif
 }
 
-///
-/// \brief Swap the endianness of a 16-bit integer
-///
-/// \param data A pointer to the data
-/// \param length The length of the data
-///
 void EndianSwap16(uint16_t *data, unsigned int length) {
   // Check for Intel architecture
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
@@ -53,4 +44,39 @@ void EndianSwap16(uint16_t *data, unsigned int length) {
 #else
 #error "Unknown byte order"
 #endif
+}
+
+void DumpHex(const void *data, size_t size) {
+  const unsigned char *p = static_cast<const unsigned char *>(data);
+  std::cout << std::hex << std::setfill('0');
+  for (size_t i = 0; i < size; ++i) {
+    std::cout << std::setw(2) << static_cast<unsigned int>(p[i]) << ' ';
+    if ((i + 1) % 16 == 0) {
+      std::cout << "  ";
+      for (size_t j = i - 15; j <= i; ++j) {
+        if (std::isprint(p[j])) {
+          std::cout << static_cast<char>(p[j]);
+        } else {
+          std::cout << '.';
+        }
+      }
+      std::cout << std::endl;
+    }
+  }
+  if (size % 16 != 0) {
+    size_t remaining = size % 16;
+    for (size_t i = 0; i < 16 - remaining; ++i) {
+      std::cout << "   ";
+    }
+    std::cout << "  ";
+    for (size_t i = size - remaining; i < size; ++i) {
+      if (std::isprint(p[i])) {
+        std::cout << static_cast<char>(p[i]);
+      } else {
+        std::cout << '.';
+      }
+    }
+    std::cout << std::endl;
+  }
+  std::cout << std::dec << std::endl;
 }
