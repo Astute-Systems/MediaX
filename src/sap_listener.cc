@@ -121,7 +121,7 @@ SdpTypeEnum SAPListener::GetType(const std::string &line) const {
   return SdpTypeEnum::kUnknown;
 }
 
-std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributes(std::string &line) const {
+std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributes(const std::string &line) const {
   std::map<std::string, std::string, std::less<>> attributes;
   std::string key;
   std::string value;
