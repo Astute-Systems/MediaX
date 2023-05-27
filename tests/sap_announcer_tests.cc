@@ -17,6 +17,7 @@
 
 TEST(SAPAnnouncerTest, AddSAPAnnouncement) {
   sap::SAPAnnouncer &announcer = sap::SAPAnnouncer::GetInstance();
+  announcer.DeleteAllSAPAnnouncements();
   sap::SAPMessage message = {"HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, false};
   announcer.AddSAPAnnouncement(message);
   ASSERT_EQ(announcer.GetActiveStreamCount(), 1);
