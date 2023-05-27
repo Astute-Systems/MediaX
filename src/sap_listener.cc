@@ -110,7 +110,7 @@ void SAPListener::Stop() {
   if (thread_.joinable()) thread_.join();
 }
 
-SdpTypeEnum SAPListener::GetType(const std::string &line) const {
+SdpTypeEnum SAPListener::GetType(const std::string_view &line) const {
   if (line.substr(0, 2).compare("v=") == 0) return SdpTypeEnum::kProtocolVersion;
   if (line.substr(0, 2).compare("o=") == 0) return SdpTypeEnum::kOriginatorSessionIdentifier;
   if (line.substr(0, 2).compare("s=") == 0) return SdpTypeEnum::kSessionName;
@@ -121,7 +121,7 @@ SdpTypeEnum SAPListener::GetType(const std::string &line) const {
   return SdpTypeEnum::kUnknown;
 }
 
-std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributes(const std::string &line) const {
+std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributes(const std::string_view &line) const {
   std::map<std::string, std::string, std::less<>> attributes;
   std::string key;
   std::string value;

@@ -178,7 +178,7 @@ class SAPListener {
   ///
   /// \return SdpTypeEnum attribute enum
   ///
-  SdpTypeEnum GetType(const std::string &line) const;
+  SdpTypeEnum GetType(const std::string_view &line) const;
 
   ///
   /// \brief Parse any attributes
@@ -186,7 +186,7 @@ class SAPListener {
   /// \param line
   /// \return std::map<std::string, std::string>
   ///
-  std::map<std::string, std::string, std::less<>> ParseAttributes(const std::string &line) const;
+  std::map<std::string, std::string, std::less<>> ParseAttributes(const std::string_view &line) const;
 
   ///
   /// \brief Parse attributes with equals
