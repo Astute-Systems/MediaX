@@ -14,6 +14,7 @@ add_executable(
   colourspace_tests.cc
   rtp_utils_tests.cc
   sap_announcer_tests.cc
+  sap_listener_tests.cc
 )
 
 

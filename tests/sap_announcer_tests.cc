@@ -24,6 +24,7 @@ TEST(SAPAnnouncerTest, AddSAPAnnouncement) {
 
 TEST(SAPAnnouncerTest, AddMultipleSAPAnnouncements) {
   sap::SAPAnnouncer &announcer = sap::SAPAnnouncer::GetInstance();
+  announcer.DeleteAllSAPAnnouncements();
   sap::SAPMessage message1 = {"HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, false};
   sap::SAPMessage message2 = {"SD Stream", "239.192.6.1", 5004, 1280, 720, 30, false};
   announcer.AddSAPAnnouncement(message1);
@@ -33,6 +34,7 @@ TEST(SAPAnnouncerTest, AddMultipleSAPAnnouncements) {
 
 TEST(SAPAnnouncerTest, DeleteAllSAPAnnouncements) {
   sap::SAPAnnouncer &announcer = sap::SAPAnnouncer::GetInstance();
+  announcer.DeleteAllSAPAnnouncements();
   sap::SAPMessage message1 = {"HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, false};
   sap::SAPMessage message2 = {"SD Stream 1", "239.192.6.1", 5004, 1280, 720, 30, false};
   sap::SAPMessage message3 = {"SD Stream 2", "239.192.6.2", 5004, 1280, 720, 30, false};

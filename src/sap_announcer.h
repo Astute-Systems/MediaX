@@ -134,7 +134,7 @@ class SAPAnnouncer {
   ///
   /// \return uint32_t
   ///
-  uint32_t GetActiveStreamCount() const { return streams_.size(); }
+  uint32_t GetActiveStreamCount() const { return (uint32_t)streams_.size(); }
 
  private:
   ///
