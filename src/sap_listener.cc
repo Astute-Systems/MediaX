@@ -150,7 +150,7 @@ std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributesEqua
   std::string value;
   bool type = true;
 
-  for (char c : line) {
+  for (const char c : line) {
     if (c == '=') {
       type = false;
       continue;
@@ -180,7 +180,7 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
   // convert to string IP address
   struct in_addr addr;
   addr.s_addr = htonl(*source);
-  EndianSwap32((uint32_t *)&addr.s_addr, 1);
+  EndianSwap32(&addr.s_addr, 1);
   sdp.ip_address_source = inet_ntoa(addr);
   // Loop through lines
   // Convert string to istringstream
