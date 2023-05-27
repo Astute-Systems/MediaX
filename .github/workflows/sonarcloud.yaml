@@ -20,7 +20,7 @@ jobs:
       - name: Apt Update
         run: |
           sudo apt-get update
-          apt install gcovr -y
+          sudo apt install gcovr -y
       - name: Apt Install
         run: |
           sudo apt-get --no-install-recommends install libswscale-dev libgflags-dev libgtkmm-3.0-dev cmake g++ libgtest-dev
