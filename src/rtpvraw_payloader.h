@@ -131,16 +131,6 @@ class RtpvrawPayloader {
   int Transmit(uint8_t *rgbframe, bool blocking = true);
 
   ///
-  /// \brief Recieve a frame or timeout
-  ///
-  /// \param cpu the fame buffer in CPU memory.
-  /// \param timeout zero will wait forever or a timeout in milliseconds
-  /// \return true when frame available
-  /// \return false when no frame was received in the timeout
-  ///
-  bool Receive(uint8_t **cpu, int32_t timeout = 0);
-
-  ///
   /// \brief Get the Colour Space object of the incoming stream. \note This may be invalid id no SAP/SDP announcement
   /// has been received yet.
   ///
