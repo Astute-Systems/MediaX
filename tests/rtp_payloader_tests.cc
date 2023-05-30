@@ -27,6 +27,6 @@ TEST(RTPDepayloaderTest, SendOneFrame) {
   ASSERT_EQ(rtp.GetIpAddress(), "127.0.0.1");
   ASSERT_EQ(rtp.GetPort(), 5004);
   rtp.Open();
-  // rtp.Transmit(rtb_test.data(), true);
+  rtp.Transmit(rtb_test.data(), true);
   rtp.Close();
 }

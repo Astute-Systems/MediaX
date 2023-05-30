@@ -185,20 +185,16 @@ class RtpvrawPayloader {
  private:
   /// The incremental sequence numer for transmitting RTP packets
   static uint32_t sequence_number_;
-  /// The encoded video type
-  ColourspaceType encoding_ = ColourspaceType::kColourspaceUndefined;
   /// Transmit arguments used by the thread
   TxData arg_tx;
   // Egress port
   PortType egress_;
-  /// The sevrer address information
+  /// The server address information
   struct addrinfo *server_out_;
   /// The socket for the outgoing stream
   struct sockaddr_in server_addr_out_;
   /// The length of the server address
   socklen_t server_len_out_;
-  /// Teh UDP data
-  std::array<uint8_t, kMaxUdpData> udpdata;
   /// The buffer for the incoming RTP data
   static std::vector<uint8_t> buffer_in_;
   /// Arguments sent to thread
