@@ -103,6 +103,7 @@ bool RtpvrawPayloader::Open() {
 }
 
 void RtpvrawPayloader::Close() {
+  sap::SAPAnnouncer::GetInstance().Stop();
   if (egress_.port_no) {
     close(egress_.sockfd);
     egress_.sockfd = 0;
