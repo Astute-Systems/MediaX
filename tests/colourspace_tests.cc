@@ -123,4 +123,23 @@ TEST(Colourspace, RgbaToYuvTest) {
   DumpHex(yuv, 16);
 }
 
+TEST(Colourspace, RgbaToRgbTest) {
+  // Create a 4x4 RGB buffer
+  const uint32_t width = 4;
+  const uint32_t height = 4;
+  const uint32_t bufferSize = width * height * 4;
+  uint8_t rgba[bufferSize] = {0};
+
+  // Fill the expected RGB buffer with a red color
+  for (int i = 0; i < width * height * 4; i += 4) {
+    rgba[i] = 0xFF;  // R component
+  }
+
+  // Call the function you want to test
+  uint8_t rgb[bufferSize * 2] = {0};
+  video::RgbaToRgb(height, width, rgba, rgb);
+
+  DumpHex(rgb, 16);
+}
+
 }  // namespace gva
