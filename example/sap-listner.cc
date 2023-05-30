@@ -29,7 +29,7 @@ int main() {
   sleep(5);
   sap.Stop();
 
-  const std::map<std::string, sap::SDPMessage>& announcements = sap.GetSAPAnnouncements();
+  const std::map<std::string, sap::SDPMessage, std::less<>>& announcements = sap.GetSAPAnnouncements();
 
   std::cout << ">>>>>>>>> List of SAP announcements :\n";
   for (const auto& announcement : announcements) {

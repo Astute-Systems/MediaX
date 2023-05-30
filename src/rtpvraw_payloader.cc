@@ -40,9 +40,14 @@ uint32_t RtpvrawPayloader::sequence_number_ = 0;
 
 std::vector<uint8_t> RtpvrawPayloader::buffer_in_;
 
-RtpvrawPayloader::RtpvrawPayloader() { pthread_mutex_init(&mutex_, nullptr); }
+RtpvrawPayloader::RtpvrawPayloader() {}
 
-RtpvrawPayloader::~RtpvrawPayloader(void) = default;
+RtpvrawPayloader::~RtpvrawPayloader(void) {
+  if (egress_.sockfd) {
+    close(egress_.sockfd);
+  }
+  if (tx_thread_.joinable()) tx_thread_.join();
+}
 
 void RtpvrawPayloader::SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
                                      std::string_view hostname, const uint32_t portno) {
@@ -103,6 +108,7 @@ void RtpvrawPayloader::Close() {
     egress_.sockfd = 0;
     egress_.socket_open = false;
   }
+  if (tx_thread_.joinable()) tx_thread_.join();
 }
 
 void RtpvrawPayloader::UpdateHeader(Header *packet, int line, int last, int32_t timestamp, int32_t source) const {
@@ -126,7 +132,7 @@ void RtpvrawPayloader::UpdateHeader(Header *packet, int line, int last, int32_t 
   sequence_number_++;
 }
 
-void RtpvrawPayloader::TransmitThread(RtpvrawPayloader *stream) {
+void RtpvrawPayloader::SendFrame(RtpvrawPayloader *stream) {
   RtpPacket packet;
 
   ssize_t n = 0;
@@ -134,29 +140,30 @@ void RtpvrawPayloader::TransmitThread(RtpvrawPayloader *stream) {
 
   int32_t stride = stream->egress_.width * 2;
 
-  // send a frame, once last thread has completed
-  pthread_mutex_lock(&stream->mutex_);
-  {
-    for (uint32_t c = 0; c < (stream->egress_.height); c++) {
-      uint32_t last = 0;
+  for (uint32_t c = 0; c < (stream->egress_.height); c++) {
+    uint32_t last = 0;
 
-      if (c == stream->egress_.height - 1) last = 1;
-      stream->UpdateHeader((Header *)&packet, c, last, timestamp, kRtpSource);
+    if (c == stream->egress_.height - 1) last = 1;
+    stream->UpdateHeader((Header *)&packet, c, last, timestamp, kRtpSource);
 
-      EndianSwap32((uint32_t *)(&packet), sizeof(RtpHeader) / 4);
-      EndianSwap16((uint16_t *)(&packet.head.payload), sizeof(PayloadHeader) / 2);
+    EndianSwap32((uint32_t *)(&packet), sizeof(RtpHeader) / 4);
+    EndianSwap16((uint16_t *)(&packet.head.payload), sizeof(PayloadHeader) / 2);
 
-      memcpy((void *)&packet.head.payload.line[2], (void *)&stream->arg_tx.rgbframe[(c * stride) + 1], stride);
-      n = sendto(stream->egress_.sockfd, reinterpret_cast<const char *>(&packet), stride + 26, 0,
-                 (const sockaddr *)&stream->server_addr_out_, stream->server_len_out_);
+    memcpy((void *)&packet.head.payload.line[2], (void *)&stream->arg_tx.rgbframe[(c * stride) + 1], stride);
+    n = sendto(stream->egress_.sockfd, &packet, stride + 26, 0, (const sockaddr *)&stream->server_addr_out_,
+               stream->server_len_out_);
 
-      if (n == 0) {
-        std::cerr << "[RTP] Transmit socket failure fd=" << stream->egress_.sockfd << "\n";
-        return;
-      }
+    if (n == 0) {
+      std::cerr << "[RTP] Transmit socket failure fd=" << stream->egress_.sockfd << "\n";
+      return;
     }
   }
-  pthread_mutex_unlock(&stream->mutex_);
+}
+
+void RtpvrawPayloader::TransmitThread(RtpvrawPayloader *stream) {
+  // send a frame, once last thread has completed
+  std::scoped_lock lock(stream->mutex_);
+  SendFrame(stream);
   return;
 }
 
@@ -166,6 +173,8 @@ int RtpvrawPayloader::Transmit(uint8_t *rgbframe, bool blocking) {
   if (egress_.port_no == 0) return -1;
 
   if (kRtpThreaded) {
+    // Wait for the last thread to finish
+    // if (tx_thread_.joinable()) tx_thread_.join();
     // Start a thread so we can start capturing the next frame while transmitting the data
     tx_thread_ = std::thread(TransmitThread, this);
     if (blocking) {

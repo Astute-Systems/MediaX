@@ -18,17 +18,28 @@ jobs:
       - name: Install sonar-scanner and build-wrapper
         uses: SonarSource/sonarcloud-github-c-cpp@v1
       - name: Apt Update
-        run: sudo apt-get update
+        run: |
+          sudo apt-get update
+          sudo apt install gcovr -y
       - name: Apt Install
         run: |
-          sudo apt-get --no-install-recommends install libswscale-dev libgflags-dev libgtkmm-3.0-dev cmake g++
+          sudo apt-get --no-install-recommends install libswscale-dev libgflags-dev libgtkmm-3.0-dev cmake g++ libgtest-dev
       - name: Run build-wrapper
         run: |
-          cmake -S . -B build
+          cmake -S . -B build -DCOVERAGE=ON -DCMAKE_BUILD_TYPE=Debug 
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build ./build/ --config Release
+      - name: Run tests to generate coverage statistics
+        run: |
+          cd ./build && ctest --rerun-failed --output-on-failure
+      - name: Collect coverage into one XML report
+        run: |
+          gcovr --sonarqube > coverage.xml
       - name: Run sonar-scanner
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          sonar-scanner --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
+          sonar-scanner \
+          --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" \
+          --define sonar.coverageReportPaths=coverage.xml \
+          --define sonar.python.version=3

@@ -114,7 +114,7 @@ bool RtpvrawDepayloader::ReadRtpHeader(RtpvrawDepayloader *stream, RtpPacket *pa
   // Read in the RTP data
   //
   if (ssize_t bytes =
-          recvfrom(RtpvrawDepayloader::ingress_.sockfd, reinterpret_cast<char*>(stream->udpdata.data()), kMaxUdpData, 0, nullptr, nullptr);
+          recvfrom(RtpvrawDepayloader::ingress_.sockfd, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
       bytes <= 0) {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     return false;
@@ -157,7 +157,7 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
         // Read in the RTP data
         //
         if (ssize_t bytes =
-                recvfrom(RtpvrawDepayloader::ingress_.sockfd, reinterpret_cast<char*>(stream->udpdata.data()), kMaxUdpData, 0, nullptr, nullptr);
+                recvfrom(RtpvrawDepayloader::ingress_.sockfd, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
             bytes <= 0) {
           std::this_thread::sleep_for(std::chrono::milliseconds(100));
           continue;
@@ -224,7 +224,7 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
     stream->arg_tx.yuvframe = RtpvrawDepayloader::buffer_in_.data();
     new_rx_frame_ = true;
     receiving = true;
-  }  // Recieve loop
+  }  // Receive loop
   return;
 }
 

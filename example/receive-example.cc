@@ -19,13 +19,14 @@
 
 #include "colourspace.h"
 #include "colourspace_cuda.h"
+#include "example.h"
 #include "rtpvraw_depayloader.h"
 
-DEFINE_string(ipaddr, "239.192.1.1", "the IP address of the transmit stream");
-DEFINE_int32(port, 5004, "the port to use for the transmit stream");
-DEFINE_int32(height, 480, "the height of the image");
-DEFINE_int32(width, 640, "the width of the image");
-DEFINE_string(session_name, "TestVideo1", "the SAP/SDP session name");
+DEFINE_string(ipaddr, kIpAddressDefault, "the IP address of the transmit stream");
+DEFINE_int32(port, kPortDefault, "the port to use for the transmit stream");
+DEFINE_int32(height, kHeightDefault, "the height of the image");
+DEFINE_int32(width, kWidthDefault, "the width of the image");
+DEFINE_string(session_name, kSessionName, "the SAP/SDP session name");
 DEFINE_bool(wait_sap, false, "wait for SAP/SDP announcement");
 
 struct OnDrawData {

@@ -78,6 +78,12 @@ class SAPAnnouncer {
   static SAPAnnouncer &GetInstance();
 
   ///
+  /// \brief Construct a new SAPAnnouncer object, not used so deleted
+  ///
+  ///
+  SAPAnnouncer(SAPAnnouncer const &) = delete;
+
+  ///
   /// \brief Add a stream announcement
   ///
   /// \param message The stream details
@@ -122,6 +128,13 @@ class SAPAnnouncer {
   /// \return std::vector<SAPMessage>&
   ///
   std::vector<SAPMessage> &GetStreams() { return streams_; }
+
+  ///
+  /// \brief Get the number of active streams
+  ///
+  /// \return uint32_t
+  ///
+  uint32_t GetActiveStreamCount() const { return (uint32_t)streams_.size(); }
 
  private:
   ///

@@ -16,6 +16,8 @@
 
 #include <stdint.h>
 
+#include <array>
+
 /// SAP/SDP constants
 const std::string kIpaddr = "224.2.127.254";
 /// SAP/SDP port
@@ -48,9 +50,6 @@ const uint32_t kRtpCheck = 0;
 const uint32_t kRtpThreaded = 1;
 /// RGBX processing kPitch
 const uint32_t kPitch = 4;
-
-void EndianSwap32(uint32_t *data, unsigned int length);
-void EndianSwap16(uint16_t *data, unsigned int length);
 
 struct float4 {
   float x;
@@ -96,7 +95,7 @@ struct PortType {
 
 struct PayloadHeader {
   int16_t extended_sequence_number;
-  LineHeader line[kNumberLinesPerPacket];  // This can be multiline min the future
+  std::array<LineHeader, kNumberLinesPerPacket> line;  // This can be multiline min the future
 };
 
 struct Header {
@@ -106,7 +105,7 @@ struct Header {
 
 struct RtpPacket {
   Header head;
-  int8_t data[kMaximumBufferSize];
+  std::array<int8_t, kMaximumBufferSize> data;
 };
 
 //

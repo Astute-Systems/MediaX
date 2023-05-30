@@ -47,19 +47,28 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <array>
 #include <csignal>
 #include <iostream>
+#include <ostream>
 #include <vector>
 
 #include "colourspace.h"
 #include "colourspace_cuda.h"
+#include "example.h"
 #include "pngget.h"
+#include "rtp_utils.h"
 #include "rtpvraw_payloader.h"
 
-DEFINE_string(ipaddr, "239.192.1.1", "the IP address of the transmit stream");
-DEFINE_int32(port, 5004, "the port to use for the transmit stream");
-DEFINE_int32(height, 480, "the height of the image");
-DEFINE_int32(width, 640, "the width of the image");
+DEFINE_string(ipaddr, kIpAddressDefault, "the IP address of the transmit stream");
+DEFINE_int32(port, kPortDefault, "the port to use for the transmit stream");
+DEFINE_int32(height, kHeightDefault, "the height of the image");
+DEFINE_int32(width, kWidthDefault, "the width of the image");
+DEFINE_int32(pattern, 0,
+             "The test pattern (0-4)\n\t0 - Use a PNG file (see -filename)\n\t1 - Colour bars\n\t2 - Greyscale "
+             "bars\n\t3 - Scaled RGB "
+             "values\n\t4 - "
+             "Checkered test card");
 DEFINE_string(filename, "testcard.png", "the PNG file to use as the source of the video stream");
 
 static bool application_running = true;
@@ -67,15 +76,14 @@ static bool application_running = true;
 void signalHandler(int signum [[maybe_unused]]) { application_running = false; }
 
 int main(int argc, char **argv) {
+  gflags::ParseCommandLineFlags(&argc, &argv, true);
   uint32_t frame = 0;
-  const int kBuffSize = (640 * 480) * 3;
+  const int kBuffSize = (640 * 480) * 3;  // Maximum is HD
   std::array<uint8_t, kBuffSize> yuv;
   std::array<uint8_t, kBuffSize> rtb_test;
 
   // register signal SIGINT and signal handler
   signal(SIGINT, signalHandler);
-
-  gflags::ParseCommandLineFlags(&argc, &argv, true);
 
   std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
 
@@ -83,36 +91,72 @@ int main(int argc, char **argv) {
 
   // Setup RTP streaming class
   RtpvrawPayloader rtp;
-  rtp.SetStreamInfo("TestVideo1", ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
+  rtp.SetStreamInfo(kSessionName, ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
                     (uint16_t)FLAGS_port);
   rtp.Open();
 
   memset(rtb_test.data(), 0, kBuffSize);
-  Png image_reader;
-  std::vector<uint8_t> rgb = image_reader.ReadPngRgb24(FLAGS_filename);
-  if (rgb.empty()) {
-    std::cout << "Failed to read png file (" << FLAGS_filename << ")";
-    return -1;
+
+  // Read the PNG file
+  std::vector<uint8_t> rgb;
+  switch (FLAGS_pattern) {
+    case 1:
+      rgb.resize(kBuffSize);
+      CreateColourBarTestCard(rgb.data(), FLAGS_width, FLAGS_height);
+      std::cout << "Creating colour bar test card\n";
+      break;
+    case 2:
+      rgb.resize(kBuffSize);
+      CreateGreyScaleBarTestCard(rgb.data(), FLAGS_width, FLAGS_height);
+      std::cout << "Creating greyscale test card\n";
+      break;
+    case 3:
+      rgb.resize(kBuffSize);
+      CreateComplexTestCard(rgb.data(), FLAGS_width, FLAGS_height);
+      std::cout << "Creating scaled RGB values\n";
+      break;
+    case 4:
+      rgb.resize(kBuffSize);
+      CreateCheckeredTestCard(rgb.data(), FLAGS_width, FLAGS_height);
+      std::cout << "Creating checkered test card\n";
+      break;
+    default:
+      Png image_reader;
+      rgb = image_reader.ReadPngRgb24(FLAGS_filename);
+      if (rgb.empty()) {
+        std::cout << "Failed to read png file (" << FLAGS_filename << ")";
+        return -1;
+      }
+      /// Make it RGB
+      video::RgbaToRgb(FLAGS_height, FLAGS_width, rgb.data(), rgb.data());
+      break;
   }
 
   // Convert all the scan lines
 
   // Loop frames forever
   while (application_running) {
+    // Timestamp start
+    auto start = std::chrono::high_resolution_clock::now();
     // Clear the YUV buffer
     memset(yuv.data(), 0, kBuffSize);
 
     // Convert the RGB data to YUV again
-    video::RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
+    video::RgbToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
     // video::cuda::RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
 
     if (rtp.Transmit(yuv.data(), true) < 0) break;
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    if (duration < 40) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(40 - duration));
+    }
 
-    // approximately 24 frames a second
-    // delay 40ms
-    nanosleep((const struct timespec[]){{0, 1000000000L / kRtpFramerate}}, nullptr);
     frame++;
+    std::cout << "Frame: " << frame << "\r" << std::flush;
   }
+  std::cout << "\n";
+
   rtp.Close();
 
   std::cout << "Example terminated...\n";

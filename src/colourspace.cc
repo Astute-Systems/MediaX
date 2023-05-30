@@ -13,9 +13,9 @@
 
 #include "colourspace.h"
 
+#include <array>
 #include <memory>
 #include <vector>
-#include <array>
 
 extern "C" {
 #include "libswscale/swscale.h"
@@ -44,7 +44,7 @@ void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) {
   const std::array<int32_t, 1> inLinesize = {(int32_t)(width * 2)};
   std::array<int32_t, 1> outLinesize = {(int32_t)(width * 3)};
 
-  sws_scale(ctx.get(), inData.data(), inLinesize.data(), SWS_BICUBIC, height, outData.data(), outLinesize.data());
+  sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
 }
 
 void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) {
@@ -68,6 +68,31 @@ void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) {
   // Use static_cast instead of C-style cast
   const std::array<int32_t, 1> inLinesize = {(int32_t)(width * 2)};
   std::array<int32_t, 1> outLinesize = {(int32_t)(width * 4)};
+
+  sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
+}
+
+void RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) {
+  if (!rgba || !rgb) {
+    // Handle null pointers gracefully
+    return;
+  }
+
+  std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
+      sws_getContext(width, height, AV_PIX_FMT_RGBA, width, height, AV_PIX_FMT_RGB24, SWS_BICUBIC, nullptr, nullptr,
+                     nullptr),
+      &sws_freeContext);
+  if (!ctx) {
+    // Handle allocation failure gracefully
+    return;
+  }
+
+  const std::array<uint8_t *, 1> inData = {rgba};
+  std::array<uint8_t *, 1> outData = {rgb};
+
+  // Use static_cast instead of C-style cast
+  const std::array<int32_t, 1> inLinesize = {(int32_t)(width * 4)};
+  std::array<int32_t, 1> outLinesize = {(int32_t)(width * 3)};
 
   sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
 }

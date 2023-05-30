@@ -26,6 +26,8 @@
 #include <thread>
 #include <vector>
 
+#include "rtp_utils.h"
+
 namespace sap {
 
 bool SAPListener::running_ = false;
@@ -84,7 +86,7 @@ SAPListener &SAPListener::GetInstance() { return singleton_; }
 
 void SAPListener::SAPListenerThread(SAPListener *sap) {
   while (running_) {
-    if (ssize_t bytes = recvfrom(sap->sockfd_, reinterpret_cast<char*>(sap->udpdata.data()), kMaxUdpData, 0, nullptr, nullptr); bytes <= 0) {
+    if (ssize_t bytes = recvfrom(sap->sockfd_, sap->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr); bytes <= 0) {
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
       continue;
     }
@@ -108,7 +110,7 @@ void SAPListener::Stop() {
   if (thread_.joinable()) thread_.join();
 }
 
-SdpTypeEnum SAPListener::GetType(std::string &line) const {
+SdpTypeEnum SAPListener::GetType(const std::string_view &line) const {
   if (line.substr(0, 2).compare("v=") == 0) return SdpTypeEnum::kProtocolVersion;
   if (line.substr(0, 2).compare("o=") == 0) return SdpTypeEnum::kOriginatorSessionIdentifier;
   if (line.substr(0, 2).compare("s=") == 0) return SdpTypeEnum::kSessionName;
@@ -119,42 +121,41 @@ SdpTypeEnum SAPListener::GetType(std::string &line) const {
   return SdpTypeEnum::kUnknown;
 }
 
-std::map<std::string, std::string> SAPListener::ParseAttributes(std::string &line) const {
-  std::map<std::string, std::string> attributes;
+std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributes(const std::string_view &line) const {
+  std::map<std::string, std::string, std::less<>> attributes;
   std::string key;
   std::string value;
   bool attribute_name = true;
 
   // Step through characters
-  for (unsigned long int i = 0; i < line.length(); i++) {
-    if (line[i] == ':') {
+  for (char c : line) {
+    if (c == ':') {
       attribute_name = false;
       continue;
     }
     if (attribute_name) {
-      if (line[i] != ' ') key += line[i];
+      if (c != ' ') key += c;
     } else {
       // attribute_value
-      if (line[i] != ' ') value += line[i];
+      if (c != ' ') value += c;
     }
   }
   attributes[key] = value;
   return attributes;
 }
 
-std::map<std::string, std::string> SAPListener::ParseAttributesEqual(std::string &line) const {
-  std::map<std::string, std::string> attributes;
+std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributesEqual(const std::string &line) const {
+  std::map<std::string, std::string, std::less<>> attributes;
   std::string key;
   std::string value;
   bool type = true;
 
-  // Step through characters
-  for (unsigned long int i = 0; i < line.length(); i++) {
-    if (line[i] == '=') {
+  for (const char c : line) {
+    if (c == '=') {
       type = false;
       continue;
     }
-    if (line[i] == ';') {
+    if (c == ';') {
       type = true;
       attributes[key] = value;
       key = "";
@@ -162,16 +163,16 @@ std::map<std::string, std::string> SAPListener::ParseAttributesEqual(std::string
       continue;
     }
     if (type) {
-      if (line[i] != ' ') key += line[i];
+      if (c != ' ') key += c;
     } else {
-      if (line[i] != ' ') value += line[i];
+      if (c != ' ') value += c;
     }
   }
   return attributes;
 }
 
 bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
-  std::map<std::string, std::string> attributes_map;
+  std::map<std::string, std::string, std::less<>> attributes_map;
 
   const uint32_t *source = (uint32_t *)&udpdata[4];
   SDPMessage sdp;
@@ -179,7 +180,7 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
   // convert to string IP address
   struct in_addr addr;
   addr.s_addr = htonl(*source);
-  EndianSwap32((uint32_t *)&addr.s_addr, 1);
+  EndianSwap32(&addr.s_addr, 1);
   sdp.ip_address_source = inet_ntoa(addr);
   // Loop through lines
   // Convert string to istringstream
@@ -227,7 +228,7 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
       case SdpTypeEnum::kBandwidthInformation:
         break;
       case SdpTypeEnum::kSessionAttribute: {
-        std::map<std::string, std::string> attributes_map_more = ParseAttributes(line);
+        std::map<std::string, std::string, std::less<>> attributes_map_more = ParseAttributes(line);
         attributes_map.insert(attributes_map_more.begin(), attributes_map_more.end());
       } break;
       case SdpTypeEnum::kTimeSessionActive:
@@ -249,7 +250,7 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
     }
   }
 
-  std::map<std::string, std::string> attributes_map_fmtp;
+  std::map<std::string, std::string, std::less<>> attributes_map_fmtp;
   attributes_map_fmtp = ParseAttributesEqual(attributes_map["fmtp"]);
   attributes_map.insert(attributes_map_fmtp.begin(), attributes_map_fmtp.end());
 
@@ -272,6 +273,8 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
   return true;
 }
 
-const std::map<std::string, SDPMessage> &SAPListener::GetSAPAnnouncements() const { return announcements_; }
+const std::map<std::string, SDPMessage, std::less<>> &SAPListener::GetSAPAnnouncements() const {
+  return announcements_;
+}
 
 }  // namespace sap

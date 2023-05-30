@@ -21,16 +21,6 @@ namespace video {
 /// Helper functions for different colour space options
 
 ///
-/// \brief Convert YUV to RGB
-///
-/// \param height The height of the image
-/// \param width The width of the image
-/// \param yuv The YUV:422 image buffer
-/// \param rgba  The RGBA image buffer
-///
-void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba);
-
-///
 /// \brief Convert YUV to RGBA
 ///
 /// \param height The height of the image
@@ -49,6 +39,16 @@ void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv);
 /// \param yuv The YUV:422 image buffer
 ///
 void RgbaToYuv(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *yuv);
+
+///
+/// \brief Convert RGBA to RGB
+///
+/// \param width
+/// \param height
+/// \param rgba
+/// \param rgb
+///
+void RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb);
 
 ///
 /// \brief Convert YUV to RGBA

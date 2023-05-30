@@ -128,7 +128,7 @@ class SAPListener {
   ///
   /// \return The vectored list of SAP/SDP streams seen on the network
   ///
-  const std::map<std::string, SDPMessage> &GetSAPAnnouncements() const;
+  const std::map<std::string, SDPMessage, std::less<>> &GetSAPAnnouncements() const;
 
   ///
   /// \brief Register a callback for our session_name
@@ -178,7 +178,7 @@ class SAPListener {
   ///
   /// \return SdpTypeEnum attribute enum
   ///
-  SdpTypeEnum GetType(std::string &line) const;
+  SdpTypeEnum GetType(const std::string_view &line) const;
 
   ///
   /// \brief Parse any attributes
@@ -186,7 +186,7 @@ class SAPListener {
   /// \param line
   /// \return std::map<std::string, std::string>
   ///
-  std::map<std::string, std::string> ParseAttributes(std::string &line) const;
+  std::map<std::string, std::string, std::less<>> ParseAttributes(const std::string_view &line) const;
 
   ///
   /// \brief Parse attributes with equals
@@ -194,7 +194,7 @@ class SAPListener {
   /// \param line
   /// \return std::map<std::string, std::string>
   ///
-  std::map<std::string, std::string> ParseAttributesEqual(std::string &line) const;
+  std::map<std::string, std::string, std::less<>> ParseAttributesEqual(const std::string &line) const;
 
   ///
   /// \brief Store or update the SAP data
@@ -204,8 +204,8 @@ class SAPListener {
   ///
   bool SapStore(std::array<uint8_t, kMaxUdpData> &udpdata);
 
-  std::map<std::string, SapCallback> callbacks_;
-  std::map<std::string, SDPMessage> announcements_;
+  std::map<std::string, SapCallback, std::less<>> callbacks_;
+  std::map<std::string, SDPMessage, std::less<>> announcements_;
   std::array<uint8_t, kMaxUdpData> udpdata;
   std::thread thread_;
   int sockfd_;
