@@ -35,6 +35,7 @@
 
 namespace sap {
 
+/// The SAP header structure
 struct SAPHeader {
   /// Protocol version
   uint8_t version;
@@ -53,7 +54,7 @@ struct SAPHeader {
       : version(version), hash(hash), originating_source(originating_source) {}
 };
 
-// A simplified SAP message structure
+/// A simplified SAP message structure
 struct SAPMessage {
   /// The SDP session name
   std::string sessionName;
@@ -73,6 +74,7 @@ struct SAPMessage {
   bool deleted = false;
 };
 
+/// Class definition for the SAPAnnouncer
 class SAPAnnouncer {
  public:
   ///

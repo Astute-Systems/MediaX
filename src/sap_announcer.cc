@@ -88,6 +88,8 @@ void SAPAnnouncer::SendSAPDeletion(const SAPMessage &message) const { SendSAPPac
 
 // Function to send a SAP announcement
 void SAPAnnouncer::SendSAPPacket(const SAPMessage &message, bool deletion) const {
+  std::string depth = "8";
+  if (message.encoding == ColourspaceType::kColourspaceMono16) depth = "16";
   // Prepare SDP message
   std::string sdp_msg =
       "v=0\r\n"
@@ -104,10 +106,13 @@ void SAPAnnouncer::SendSAPPacket(const SAPMessage &message, bool deletion) const
       "m=video " +
       std::to_string(message.port) +
       " RTP/AVP 96\r\n"
-      "a=rtpmap:96 raw/90000\r\n"
-      "a=fmtp:96 sampling=YCbCr-4:2:2; width=" +
-      std::to_string(message.width) + "; height=" + std::to_string(message.height) +
-      "; depth=8; colorimetry=BT601-5; progressive\r\n"
+      "a=rtpmap:96 " +
+      kRtpMap.at(message.encoding) +
+      "/90000\r\n"
+      "a=fmtp:96 sampling=" +
+      kColourspace.at(message.encoding) + "; width=" + std::to_string(message.width) +
+      "; height=" + std::to_string(message.height) + "; depth=" + depth +
+      "; colorimetry=BT601-5; progressive\r\n"
       "a=framerate:" +
       std::to_string(message.framerate) + "\r\n";
 

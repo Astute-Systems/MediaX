@@ -8,7 +8,7 @@
 // License. See the LICENSE file in the project root for full license details.
 //
 ///
-/// \file rtph264_dedepayloader.h
+/// \file rtph264_depayloader.h
 
 #ifndef RTPH264_DEPAYLOADER_H
 #define RTPH264_DEPAYLOADER_H
