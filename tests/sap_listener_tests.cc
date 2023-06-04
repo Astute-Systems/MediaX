@@ -27,7 +27,8 @@ TEST(SAPListenerTest, RegisterSapListenerTest) {
   /// Now make an announcement
   sap::SAPAnnouncer& announcer = sap::SAPAnnouncer::GetInstance();
   announcer.DeleteAllSAPAnnouncements();
-  sap::SAPMessage message = {"test_session_name", "127.0.0.1", 5004, 1920, 1080, 30, false};
+  sap::SAPMessage message = {
+      "test_session_name", "127.0.0.1", 5004, 1920, 1080, 30, ColourspaceType::kColourspaceYuv, false};
   announcer.AddSAPAnnouncement(message);
   announcer.Start();
   ASSERT_EQ(announcer.GetActiveStreamCount(), 1);

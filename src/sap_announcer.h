@@ -31,6 +31,8 @@
 #include <thread>
 #include <vector>
 
+#include "rtp_types.h"
+
 namespace sap {
 
 struct SAPHeader {
@@ -65,6 +67,8 @@ struct SAPMessage {
   uint32_t width;
   /// The stream framerate in frames / second
   uint32_t framerate;
+  /// Colourspace encoding
+  ColourspaceType encoding;
   /// Flag indicating the stream was deleted
   bool deleted = false;
 };
