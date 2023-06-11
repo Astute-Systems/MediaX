@@ -127,10 +127,9 @@ int main(int argc, char *argv[]) {
 
   gtk_main();
 
-  std::cout << "Terminating\n";
-
   rtp_.Stop();
-  std::cout << "Stoped\n";
+
+  std::cout << "Example terminated...\n";
 
   return 0;
 }
