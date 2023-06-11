@@ -7,6 +7,9 @@
 // License. See the LICENSE file in the project root for full license details.
 //
 ///
-/// \file rtph264_depayloader.cc
+/// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
+///
+/// \file rtph264_payloader.cc
+///
 
 #include "rtph264_depayloader.h"
