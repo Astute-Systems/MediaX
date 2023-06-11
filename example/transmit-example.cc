@@ -64,7 +64,7 @@ DEFINE_string(ipaddr, kIpAddressDefault, "the IP address of the transmit stream"
 DEFINE_int32(port, kPortDefault, "the port to use for the transmit stream");
 DEFINE_int32(height, kHeightDefault, "the height of the image");
 DEFINE_int32(width, kWidthDefault, "the width of the image");
-DEFINE_int32(pattern, 0,
+DEFINE_int32(pattern, 1,
              "The test pattern (0-4)\n\t0 - Use a PNG file (see -filename)\n\t1 - Colour bars\n\t2 - Greyscale "
              "bars\n\t3 - Scaled RGB "
              "values\n\t4 - "

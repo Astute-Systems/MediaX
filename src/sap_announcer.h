@@ -204,8 +204,9 @@ class SAPAnnouncer {
   /// \brief Check all the network interfaces
   ///
   /// \param addr_str
+  /// \return bool True if the interface is valid
   ///
-  void CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t selected);
+  bool CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t selected);
 
   /// The SAPAnnouncer singleton
   static SAPAnnouncer singleton_;
