@@ -162,13 +162,13 @@ void SAPAnnouncer::SetAddressHelper(uint16_t select, bool helper) {
     return;
   }
   for (struct ifaddrs *ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
-    if (CheckAddresses(ifa, helper, select)) return;
+    if (CheckAddresses(ifa, helper)) return;
   }
   freeifaddrs(ifaddr);
 #endif
 }
 
-bool SAPAnnouncer::CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t select) {
+bool SAPAnnouncer::CheckAddresses(struct ifaddrs *ifa, bool helper) {
 #ifdef _WIN32
 #pragma message("TODO: Implement CheckAddresses for Windows")
 #else

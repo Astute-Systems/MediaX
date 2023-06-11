@@ -267,7 +267,7 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
     sdp.width = std::stoi(attributes_map["width"]);
     sdp.framerate = std::stoi(attributes_map["framerate"]);
     sdp.sampling = attributes_map["96sampling"];
-  } catch (const std::invalid_argument &e) {
+  } catch (const std::invalid_argument &e [[maybe_unused]]) {
     return false;
   }
 

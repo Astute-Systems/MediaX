@@ -164,13 +164,13 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
         //
         // Read in the RTP data
         //
-        ssize_t bytes =
-            recvfrom(RtpvrawDepayloader::ingress_.sockfd, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
-        if (bytes <= 0) {
+
+        if (ssize_t bytes =
+                recvfrom(RtpvrawDepayloader::ingress_.sockfd, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
+            bytes <= 0) {
           std::this_thread::sleep_for(std::chrono::milliseconds(2));
           continue;
         }
-        // std::cout << "bytes: " << bytes << "\n";
         packet = (RtpPacket *)(stream->udpdata.data());
         EndianSwap32((uint32_t *)(packet), sizeof(RtpHeader) / 4);
 
@@ -212,7 +212,6 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
           uint32_t os;
           uint32_t pixel;
           uint32_t length;
-          // std::cout << "line: " << std::to_string(packet->head.payload.line[c].line_number) << "\n";
 
           os = payload_offset + payload;
           if (packet->head.payload.line[c].line_number == 0) {

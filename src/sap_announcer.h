@@ -206,7 +206,7 @@ class SAPAnnouncer {
   /// \param addr_str
   /// \return bool True if the interface is valid
   ///
-  bool CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t selected);
+  bool CheckAddresses(struct ifaddrs *ifa, bool helper);
 
   /// The SAPAnnouncer singleton
   static SAPAnnouncer singleton_;
