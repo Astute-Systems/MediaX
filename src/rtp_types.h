@@ -17,6 +17,7 @@
 #include <stdint.h>
 
 #include <array>
+#include <map>
 
 /// SAP/SDP constants
 const std::string kIpaddr = "224.2.127.254";
@@ -51,35 +52,77 @@ const uint32_t kRtpThreaded = 1;
 /// RGBX processing kPitch
 const uint32_t kPitch = 4;
 
+/// 4 byte float
 struct float4 {
+  /// x position
   float x;
+  /// y position
   float y;
+  /// z position
   float z;
+  /// w position
   float w;
 };
 
-// 12 byte RTP Raw video header
+/// 12 byte RTP Raw video header
 struct RtpHeader {
+  /// RTP version
   int32_t protocol : 32;
+  /// sent timestamp
   int32_t timestamp : 32;
+  /// source identifier
   int32_t source : 32;
 };
 
-#pragma pack(1)
-
+/// Line header
 struct LineHeader {
+  /// Length of line in bytes
   int16_t length;
+  /// Line number
   int16_t line_number;
+  /// Offset in bytes from start of line
   int16_t offset;
 };
 
 /// Supported colour spaces
-enum class ColourspaceType { kColourspaceUndefined, kColourspaceRgb24, kColourspaceYuv, kColourspaceMono8 };
+enum class ColourspaceType {
+  kColourspaceUndefined,
+  kColourspaceRgb24,
+  kColourspaceYuv,
+  kColourspaceMono8,
+  kColourspaceMono16,
+  kColourspaceJpeg2000,
+  kColourspaceH264Part4,
+  kColourspaceH264Part10
+};
+
+/// The bits per pixel
+const std::map<ColourspaceType, uint8_t> kColourspaceBytes = {
+    {ColourspaceType::kColourspaceUndefined, 0}, {ColourspaceType::kColourspaceRgb24, 3},
+    {ColourspaceType::kColourspaceYuv, 2},       {ColourspaceType::kColourspaceMono8, 1},
+    {ColourspaceType::kColourspaceMono16, 1},    {ColourspaceType::kColourspaceJpeg2000, 3},
+    {ColourspaceType::kColourspaceH264Part4, 3}, {ColourspaceType::kColourspaceH264Part10, 3}};
+
+/// SDP encoding type
+const std::map<ColourspaceType, std::string> kRtpMap = {
+    {ColourspaceType::kColourspaceUndefined, "unknown"}, {ColourspaceType::kColourspaceRgb24, "raw"},
+    {ColourspaceType::kColourspaceYuv, "raw"},           {ColourspaceType::kColourspaceMono8, "raw"},
+    {ColourspaceType::kColourspaceMono16, "raw"},        {ColourspaceType::kColourspaceJpeg2000, "jpeg2000"},
+    {ColourspaceType::kColourspaceH264Part4, "H264"},    {ColourspaceType::kColourspaceH264Part10, "MP4V-ES"}};
+/// SDP colourspace if applicable
+const std::map<ColourspaceType, std::string> kColourspace = {
+    {ColourspaceType::kColourspaceUndefined, "unknown"}, {ColourspaceType::kColourspaceRgb24, "RGB"},
+    {ColourspaceType::kColourspaceYuv, "YCbCr-4:2:2"},   {ColourspaceType::kColourspaceMono8, "GRAYSCALE"},
+    {ColourspaceType::kColourspaceMono16, "GRAYSCALE"},  {ColourspaceType::kColourspaceJpeg2000, "YCbCr-4:2:2"},
+    {ColourspaceType::kColourspaceH264Part4, ""},        {ColourspaceType::kColourspaceH264Part10, ""}};
 
 /// Store common port information for ingress and egress ports
 struct PortType {
+  /// Hostname or IP address
   std::string hostname;
+  /// Port number
   uint32_t port_no = 0;
+  /// Socket file descriptor
   int sockfd = 0;
   std::string name = "unknown";
   /// Height in pixels of stream
@@ -88,36 +131,49 @@ struct PortType {
   uint32_t width = 0;
   /// Intended update framerate
   uint32_t framerate = 25;
+  /// Encoding type
   ColourspaceType encoding;
+  /// Socket open flag
   bool socket_open = false;
-  bool settings_valid = false;  // Can be set when SAP/SDP arrives or gets deleted
+  /// Can be set when SAP/SDP arrives or gets deleted
+  bool settings_valid = false;
 };
 
+/// RTP Payload header
 struct PayloadHeader {
+  /// Extended sequence number
   int16_t extended_sequence_number;
+  /// Line header/s
   std::array<LineHeader, kNumberLinesPerPacket> line;  // This can be multiline min the future
 };
 
+/// RTP packet structure
 struct Header {
+  /// RTP header
   RtpHeader rtp;
+  /// RTP payload header
   PayloadHeader payload;
 };
 
+/// RTP packet structure
 struct RtpPacket {
+  /// RTP header
   Header head;
+  /// RTP payload
   std::array<int8_t, kMaximumBufferSize> data;
 };
 
-//
-// Transmit data structure
-// Battlefield Management System (BMS) state definition
+/// Transmit data structure
+/// Battlefield Management System (BMS) state definition
 struct TxData {
-  uint8_t *rgbframe;
-  uint8_t *yuvframe;
+  /// RGB frame
+  uint8_t *rgb_frame;
+  /// Encoded frame See ColourspaceType
+  uint8_t *encoded_frame;
+  /// Height of frame
   uint32_t width;
+  /// Width of frame
   uint32_t height;
 };
-
-#pragma pack()
 
 #endif  // __RTP_TYPES_H__

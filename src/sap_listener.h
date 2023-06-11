@@ -85,8 +85,8 @@ enum class SdpTypeEnum {
   kUnknown
 };
 
-// A simplified SDP message structure
-// sap_text contains the complete SDP announcement
+/// A simplified SDP message structure
+/// \brief sap_text contains the complete SDP announcement
 struct SDPMessage {
   /// Protocol version
   uint32_t protocol_version;
@@ -115,6 +115,7 @@ struct SDPMessage {
 /// \brief The SAPListener class is a singleton that listens for SAP/SDP announcements on the network
 using SapCallback = std::function<void(sap::SDPMessage &sdp)>;
 
+/// Class definition of the SAPListener
 class SAPListener {
  public:
   ///

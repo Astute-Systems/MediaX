@@ -13,12 +13,12 @@ sleep 1
 
 echo 'Starting reciever...'
 
-./build/bin/recieve-example -wait-sap=true &
+./build/bin/receive-example -wait-sap=true &
 
 sleep 10
 
 pkill -f transmit-example 
-pkill -f recieve-example
+pkill -f receive-example
 exit
 
 

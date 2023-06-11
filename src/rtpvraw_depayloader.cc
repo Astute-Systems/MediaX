@@ -53,7 +53,7 @@ void RtpvrawDepayloader::SetStreamInfo(std::string_view name, ColourspaceType en
   ingress_.hostname = hostname;
   ingress_.port_no = portno;
   ingress_.settings_valid = true;
-  buffer_in_.resize(height * width * 2);
+  buffer_in_.resize(height * width * kColourspaceBytes.at(ingress_.encoding));
 }
 
 void RtpvrawDepayloader::SapCallback(const sap::SDPMessage &sdp) {
@@ -205,8 +205,9 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
           uint32_t length;
 
           os = payload_offset + payload;
-          pixel = ((packet->head.payload.line[c].offset & 0x7FFF) * 2) +
-                  ((packet->head.payload.line[c].line_number & 0x7FFF) * (RtpvrawDepayloader::ingress_.width * 2));
+          pixel = ((packet->head.payload.line[c].offset & 0x7FFF) * kColourspaceBytes.at(ingress_.encoding)) +
+                  (((packet->head.payload.line[c].line_number - 1) & 0x7FFF) *
+                   (RtpvrawDepayloader::ingress_.width * kColourspaceBytes.at(ingress_.encoding)));
           length = packet->head.payload.line[c].length & 0xFFFF;
 
           memcpy(&RtpvrawDepayloader::buffer_in_[pixel], &stream->udpdata[os], length);
@@ -221,7 +222,7 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
       }
     }
 
-    stream->arg_tx.yuvframe = RtpvrawDepayloader::buffer_in_.data();
+    stream->arg_tx.encoded_frame = RtpvrawDepayloader::buffer_in_.data();
     new_rx_frame_ = true;
     receiving = true;
   }  // Receive loop

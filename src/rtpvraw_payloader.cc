@@ -40,7 +40,7 @@ uint32_t RtpvrawPayloader::sequence_number_ = 0;
 
 std::vector<uint8_t> RtpvrawPayloader::buffer_in_;
 
-RtpvrawPayloader::RtpvrawPayloader() {}
+RtpvrawPayloader::RtpvrawPayloader() = default;
 
 RtpvrawPayloader::~RtpvrawPayloader(void) {
   if (egress_.sockfd) {
@@ -94,8 +94,9 @@ bool RtpvrawPayloader::Open() {
     egress_.socket_open = true;
 
     // Lastly start a SAP announcement
-    sap::SAPAnnouncer::GetInstance().AddSAPAnnouncement(
-        {egress_.name, egress_.hostname, egress_.port_no, egress_.height, egress_.width, egress_.framerate, false});
+    sap::SAPAnnouncer::GetInstance().AddSAPAnnouncement({egress_.name, egress_.hostname, egress_.port_no,
+                                                         egress_.height, egress_.width, egress_.framerate,
+                                                         ColourspaceType::kColourspaceYuv, false});
     sap::SAPAnnouncer::GetInstance().Start();
   }
 
@@ -139,18 +140,19 @@ void RtpvrawPayloader::SendFrame(RtpvrawPayloader *stream) {
   ssize_t n = 0;
   uint32_t timestamp = GenerateTimestamp90kHz();
 
-  int32_t stride = stream->egress_.width * 2;
+  int32_t stride = stream->egress_.width * kColourspaceBytes.at(stream->egress_.encoding);
 
-  for (uint32_t c = 0; c < (stream->egress_.height); c++) {
+  /// Note DEF-STAN 00-082 starts line numbers at 1, gstreamer starts at 0 for raw video
+  for (uint32_t c = 1; c < (stream->egress_.height); c++) {
     uint32_t last = 0;
 
-    if (c == stream->egress_.height - 1) last = 1;
+    if (c == stream->egress_.height) last = 1;
     stream->UpdateHeader((Header *)&packet, c, last, timestamp, kRtpSource);
 
     EndianSwap32((uint32_t *)(&packet), sizeof(RtpHeader) / 4);
     EndianSwap16((uint16_t *)(&packet.head.payload), sizeof(PayloadHeader) / 2);
 
-    memcpy((void *)&packet.head.payload.line[2], (void *)&stream->arg_tx.rgbframe[(c * stride) + 1], stride);
+    memcpy((void *)&packet.head.payload.line[2], (void *)&stream->arg_tx.rgb_frame[(c * stride) + 1], stride);
     n = sendto(stream->egress_.sockfd, &packet, stride + 26, 0, (const sockaddr *)&stream->server_addr_out_,
                stream->server_len_out_);
 
@@ -169,7 +171,7 @@ void RtpvrawPayloader::TransmitThread(RtpvrawPayloader *stream) {
 }
 
 int RtpvrawPayloader::Transmit(uint8_t *rgbframe, bool blocking) {
-  arg_tx.rgbframe = rgbframe;
+  arg_tx.rgb_frame = rgbframe;
 
   if (egress_.port_no == 0) return -1;
 
