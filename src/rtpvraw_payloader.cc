@@ -79,7 +79,7 @@ bool RtpvrawPayloader::Open() {
     // gethostbyname: get the server's DNS entry
     getaddrinfo(egress_.hostname.c_str(), nullptr, nullptr, &server_out_);
     if (server_out_ == nullptr) {
-      fprintf(stderr, "ERROR, no such host as %s\n", egress_.hostname.c_str());
+      std::cerr << "ERROR, no such host as " << egress_.hostname << "\n";
       exit(-1);
     }
 
@@ -143,7 +143,7 @@ void RtpvrawPayloader::SendFrame(RtpvrawPayloader *stream) {
   int32_t stride = stream->egress_.width * kColourspaceBytes.at(stream->egress_.encoding);
 
   /// Note DEF-STAN 00-082 starts line numbers at 1, gstreamer starts at 0 for raw video
-  for (uint32_t c = 1; c < (stream->egress_.height); c++) {
+  for (uint32_t c = 1; c <= (stream->egress_.height); c++) {
     uint32_t last = 0;
 
     if (c == stream->egress_.height) last = 1;
@@ -157,7 +157,7 @@ void RtpvrawPayloader::SendFrame(RtpvrawPayloader *stream) {
                stream->server_len_out_);
 
     if (n == 0) {
-      std::cerr << "[RTP] Transmit socket failure fd=" << stream->egress_.sockfd << "\n";
+      std::cerr << "Transmit socket failure fd=" << stream->egress_.sockfd << "\n";
       return;
     }
   }

@@ -18,8 +18,8 @@ target_link_libraries(receive-example mediax gflags ${GTKMM_LIBRARIES} ${CAIRO_L
 add_executable(sap-example sap-example.cc)
 target_link_libraries(sap-example mediax pthread)
 
-add_executable(sap-listner sap-listner.cc)
-target_link_libraries(sap-listner mediax pthread)
+add_executable(sap-listener sap-listener.cc)
+target_link_libraries(sap-listener mediax pthread)
 
 # Copy testcard.png to the build directory so that it can be found when running example
 file(COPY ${CMAKE_SOURCE_DIR}/images/testcard.png DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

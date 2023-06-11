@@ -129,5 +129,7 @@ int main(int argc, char *argv[]) {
 
   rtp_.Stop();
 
+  std::cout << "Example terminated...\n";
+
   return 0;
 }

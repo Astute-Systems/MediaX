@@ -9,9 +9,13 @@
 /// \file sap-example.cc
 ///
 
+#include <iostream>
+
 #include "sap_announcer.h"
 
-int main() {
+int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
+  std::cout << argv[0] << " starting\n";
+
   sap::SAPAnnouncer &sap = sap::SAPAnnouncer::GetInstance();
 
   // Choose a source interface

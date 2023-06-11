@@ -11,7 +11,7 @@
 
 #ifndef EXAMPLE_H
 #define EXAMPLE_H
-const int kHeightDefault = 400;
+const int kHeightDefault = 480;
 const int kWidthDefault = 640;
 const int kPortDefault = 5004;
 // const std::string kIpAddressDefault = "239.192.1.1";

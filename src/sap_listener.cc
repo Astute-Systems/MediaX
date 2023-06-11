@@ -9,7 +9,7 @@
 /// \brief Session Announcement Protocol (SDP) implementation for listening to announcements of stream data. The SAP
 /// packet contains the Session Description Protocol (SDP).
 ///
-/// \file sap_listener.cc
+/// \file sap_listener.h
 ///
 
 #include "sap_listener.h"
@@ -74,25 +74,33 @@ SAPListener::SAPListener() {
 
   // bind socket to port
   if (bind(sockfd_, (struct sockaddr *)&multicast_addr_, sizeof(multicast_addr_)) == -1) {
-    std::cout << "SAPListener() ERROR binding socket " << kIpaddr << ":" << kPort << "\n";
+    std::cout << "SAPListener() " << std::string(strerror(errno)) << " " << kIpaddr << ":" << kPort << "\n";
     exit(-1);
   }
 }
 
 SAPListener::~SAPListener() { close(sockfd_); }
 
-SAPListener SAPListener::singleton_;
-SAPListener &SAPListener::GetInstance() { return singleton_; }
+std::unique_ptr<SAPListener> SAPListener::singleton_;
+SAPListener &SAPListener::GetInstance() {
+  if (!singleton_) singleton_ = std::make_unique<SAPListener>();
+  return *singleton_;
+}
 
 void SAPListener::SAPListenerThread(SAPListener *sap) {
+  struct timeval read_timeout;
+  read_timeout.tv_sec = 0;
+  read_timeout.tv_usec = 10;
+  setsockopt(sap->sockfd_, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
+
   while (running_) {
     if (ssize_t bytes = recvfrom(sap->sockfd_, sap->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr); bytes <= 0) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
       continue;
     }
     // Process SAP here
     sap->SapStore(sap->udpdata);
-    std::this_thread::sleep_for(std::chrono::seconds(1));
   }
 }
 
@@ -193,7 +201,7 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
     // Get the SDP type for this line
     SdpTypeEnum line_type = GetType(line);
 
-    if (line_type == SdpTypeEnum::kUnknown) return false;
+    if (line_type == SdpTypeEnum::kUnknown) continue;
 
     /// Remove the first two characters now we know the type
     line = line.substr(2);
@@ -254,10 +262,14 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
   attributes_map_fmtp = ParseAttributesEqual(attributes_map["fmtp"]);
   attributes_map.insert(attributes_map_fmtp.begin(), attributes_map_fmtp.end());
 
-  sdp.height = std::stoi(attributes_map["height"]);
-  sdp.width = std::stoi(attributes_map["width"]);
-  sdp.framerate = std::stoi(attributes_map["framerate"]);
-  sdp.sampling = attributes_map["96sampling"];
+  try {
+    sdp.height = std::stoi(attributes_map["height"]);
+    sdp.width = std::stoi(attributes_map["width"]);
+    sdp.framerate = std::stoi(attributes_map["framerate"]);
+    sdp.sampling = attributes_map["96sampling"];
+  } catch (const std::invalid_argument &e) {
+    return false;
+  }
 
   announcements_[sdp.session_name] = sdp;
 
