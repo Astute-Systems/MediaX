@@ -79,7 +79,7 @@ bool RtpvrawPayloader::Open() {
     // gethostbyname: get the server's DNS entry
     getaddrinfo(egress_.hostname.c_str(), nullptr, nullptr, &server_out_);
     if (server_out_ == nullptr) {
-      fprintf(stderr, "ERROR, no such host as %s\n", egress_.hostname.c_str());
+      std::cerr << "ERROR, no such host as " << egress_.hostname << "\n";
       exit(-1);
     }
 
