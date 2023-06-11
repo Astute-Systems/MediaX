@@ -207,11 +207,19 @@ class SAPAnnouncer {
   ///
   void CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t selected);
 
+  /// The SAPAnnouncer singleton
+  static SAPAnnouncer singleton_;
+  /// List of SAP streams
   std::vector<SAPMessage> streams_;
+  /// The SAP/SDP transmit thread
   std::thread thread_;
+  /// The source IP address
   uint32_t source_ipaddress_;
+  /// The socket file descriptor
   int sockfd_;
+  /// The multicast address
   struct sockaddr_in multicast_addr_;
+  /// Flag indicating that the thread is running
   static bool running_;
 };
 

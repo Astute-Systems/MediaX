@@ -30,6 +30,8 @@ namespace sap {
 
 bool SAPAnnouncer::running_ = false;
 
+SAPAnnouncer SAPAnnouncer::singleton_;
+
 SAPAnnouncer::SAPAnnouncer() {
   if ((sockfd_ = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
     perror("socket creation failed");
@@ -50,10 +52,7 @@ SAPAnnouncer::~SAPAnnouncer() {
   close(sockfd_);
 }
 
-SAPAnnouncer &SAPAnnouncer::GetInstance() {
-  static SAPAnnouncer singleton_;
-  return singleton_;
-}
+SAPAnnouncer &SAPAnnouncer::GetInstance() { return singleton_; }
 
 void SAPAnnouncer::Start() {
   if (running_) return;

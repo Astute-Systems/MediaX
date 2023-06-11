@@ -7,7 +7,7 @@ IP_ADDRESS=127.0.0.1
 #===========================================
 
 echo 'Starting example application...'
-./build/bin/transmit-example -filename images/testcard.png -ipaddr=$IP_ADDRESS -height=480 -width=640 -port=5004  &
+./build/bin/transmit-example -pattern=1 -ipaddr=$IP_ADDRESS -height=480 -width=640 -port=5004  &
 
 sleep 1
 
