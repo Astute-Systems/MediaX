@@ -143,7 +143,7 @@ void RtpvrawPayloader::SendFrame(RtpvrawPayloader *stream) {
   int32_t stride = stream->egress_.width * kColourspaceBytes.at(stream->egress_.encoding);
 
   /// Note DEF-STAN 00-082 starts line numbers at 1, gstreamer starts at 0 for raw video
-  for (uint32_t c = 1; c < (stream->egress_.height); c++) {
+  for (uint32_t c = 1; c <= (stream->egress_.height); c++) {
     uint32_t last = 0;
 
     if (c == stream->egress_.height) last = 1;

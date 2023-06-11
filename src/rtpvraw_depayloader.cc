@@ -216,8 +216,7 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
 
           os = payload_offset + payload;
           if (packet->head.payload.line[c].line_number == 0) {
-            std::cerr << "ERROR: line_number (" << std::to_string(packet->head.payload.line[c].line_number)
-                      << ") > invalid, are you using gstreamer?\n";
+            // Line numbers start at 1 in DEF-STAN 00-82, gstreamer starts at zero so drop those lines
             break;
           }
           pixel = ((packet->head.payload.line[c].offset & 0x7FFF) * kColourspaceBytes.at(ingress_.encoding)) +
