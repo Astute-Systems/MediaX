@@ -74,7 +74,7 @@ SAPListener::SAPListener() {
 
   // bind socket to port
   if (bind(sockfd_, (struct sockaddr *)&multicast_addr_, sizeof(multicast_addr_)) == -1) {
-    std::cout << "SAPListener() ERROR binding socket " << kIpaddr << ":" << kPort << "\n";
+    std::cout << "SAPListener() " << std::string(strerror(errno)) << kIpaddr << ":" << kPort << "\n";
     exit(-1);
   }
 }
