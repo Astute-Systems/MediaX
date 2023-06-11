@@ -157,7 +157,7 @@ void RtpvrawPayloader::SendFrame(RtpvrawPayloader *stream) {
                stream->server_len_out_);
 
     if (n == 0) {
-      std::cerr << "[RTP] Transmit socket failure fd=" << stream->egress_.sockfd << "\n";
+      std::cerr << "Transmit socket failure fd=" << stream->egress_.sockfd << "\n";
       return;
     }
   }

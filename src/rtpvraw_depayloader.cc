@@ -53,7 +53,10 @@ void RtpvrawDepayloader::SetStreamInfo(std::string_view name, ColourspaceType en
   ingress_.hostname = hostname;
   ingress_.port_no = portno;
   ingress_.settings_valid = true;
-  buffer_in_.resize(height * width * kColourspaceBytes.at(ingress_.encoding));
+  std::cout << "RtpvrawDepayloader::SetStreamInfo() " << ingress_.name << " " << ingress_.hostname << " "
+            << ingress_.port_no << " " << ingress_.height << " " << ingress_.width << " "
+            << std::to_string((int)ingress_.encoding) << "\n";
+  buffer_in_.resize((height * width) * kColourspaceBytes.at(ingress_.encoding));
 }
 
 void RtpvrawDepayloader::SapCallback(const sap::SDPMessage &sdp) {
@@ -167,6 +170,7 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
           std::this_thread::sleep_for(std::chrono::milliseconds(2));
           continue;
         }
+        // std::cout << "bytes: " << bytes << "\n";
         packet = (RtpPacket *)(stream->udpdata.data());
         EndianSwap32((uint32_t *)(packet), sizeof(RtpHeader) / 4);
 
@@ -208,8 +212,14 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
           uint32_t os;
           uint32_t pixel;
           uint32_t length;
+          // std::cout << "line: " << std::to_string(packet->head.payload.line[c].line_number) << "\n";
 
           os = payload_offset + payload;
+          if (packet->head.payload.line[c].line_number == 0) {
+            std::cerr << "ERROR: line_number (" << std::to_string(packet->head.payload.line[c].line_number)
+                      << ") > invalid, are you using gstreamer?\n";
+            break;
+          }
           pixel = ((packet->head.payload.line[c].offset & 0x7FFF) * kColourspaceBytes.at(ingress_.encoding)) +
                   (((packet->head.payload.line[c].line_number - 1) & 0x7FFF) *
                    (RtpvrawDepayloader::ingress_.width * kColourspaceBytes.at(ingress_.encoding)));
