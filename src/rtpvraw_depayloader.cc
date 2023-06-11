@@ -141,8 +141,13 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
   int scan_count = 0;
   int last_packet;
 
+  struct timeval read_timeout;
+  read_timeout.tv_sec = 0;
+  read_timeout.tv_usec = 10;
+  setsockopt(RtpvrawDepayloader::ingress_.sockfd, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
+
   while (rx_thread_running_) {
-    while (receiving) {
+    while (receiving && rx_thread_running_) {
       int marker;
 
       int version;
@@ -152,14 +157,14 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
       //
       // Read data until we get the next RTP header
       //
-      while (!valid) {
+      while (!valid && rx_thread_running_) {
         //
         // Read in the RTP data
         //
-        if (ssize_t bytes =
-                recvfrom(RtpvrawDepayloader::ingress_.sockfd, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
-            bytes <= 0) {
-          std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        ssize_t bytes =
+            recvfrom(RtpvrawDepayloader::ingress_.sockfd, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
+        if (bytes <= 0) {
+          std::this_thread::sleep_for(std::chrono::milliseconds(2));
           continue;
         }
         packet = (RtpPacket *)(stream->udpdata.data());
@@ -235,8 +240,9 @@ void RtpvrawDepayloader::Start() {
 }
 
 void RtpvrawDepayloader::Stop() {
+  rx_thread_running_ = false;
+
   if (rx_thread_.joinable()) {
-    rx_thread_running_ = false;
     rx_thread_.join();
   }
 }
