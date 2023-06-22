@@ -5,7 +5,8 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTKMM gtkmm-3.0 REQUIRED)
 pkg_check_modules(CAIRO cairo REQUIRED)
 
-include_directories(${GTKMM_INCLUDE_DIRS} ${CAIRO_INCLUDE_DIRS})
+include_directories(${GTKMM_INCLUDE_DIRS} ${CAIRO_INCLUDE_DIRS} ${CMAKE_BINARY_DIR}/include)
+
 link_directories(${GTKMM_LIBRARY_DIRS} ${CAIRO_LIBRARY_DIRS})
 
 include_directories(${CMAKE_SOURCE_DIR}/src)

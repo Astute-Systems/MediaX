@@ -57,6 +57,7 @@
 #include "pngget.h"
 #include "rtp_utils.h"
 #include "rtpvraw_payloader.h"
+#include "version.h"
 
 DEFINE_string(ipaddr, "239.192.1.1", "the IP address of the transmit stream");
 DEFINE_int32(port, 5004, "the port to use for the transmit stream");
@@ -75,7 +76,15 @@ static bool application_running = true;
 void signalHandler(int signum [[maybe_unused]]) { application_running = false; }
 
 int main(int argc, char **argv) {
+  gflags::SetVersionString(kVersion);
+  gflags::SetUsageMessage(
+      "Transmit a video stream using RTP\n"
+      "Usage:\n"
+      "    transmit-example [options]\n"
+      "Example:\n"
+      "    transmit-example -ipaddr 127.0.0.1 -port 5004 -height 480 -width 640 -pattern 1\n");
   gflags::ParseCommandLineFlags(&argc, &argv, true);
+
   uint32_t frame = 0;
   const int kBuffSize = (640 * 480) * 3;  // Maximum is HD
   std::array<uint8_t, kBuffSize> yuv;

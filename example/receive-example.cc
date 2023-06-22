@@ -20,6 +20,7 @@
 #include "colourspace.h"
 #include "colourspace_cuda.h"
 #include "rtpvraw_depayloader.h"
+#include "version.h"
 
 DEFINE_string(ipaddr, "239.192.1.1", "the IP address of the transmit stream");
 DEFINE_int32(port, 5004, "the port to use for the transmit stream");
@@ -75,6 +76,13 @@ gboolean update_callback(gpointer user_data) {
 }
 
 int main(int argc, char *argv[]) {
+  gflags::SetVersionString(kVersion);
+  gflags::SetUsageMessage(
+      "Example RTP receiver\n"
+      "Usage:\n"
+      "  receive-example [OPTION]...\n"
+      "Example:\n"
+      "  receive-example -ipaddr=127.0.0.1 --port=5004 --height=480 --width=640\n");
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
   gtk_init(&argc, &argv);
