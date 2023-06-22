@@ -83,10 +83,10 @@ int main(int argc, char *argv[]) {
   if (FLAGS_wait_sap) {
     // Just give the stream name and wait for SAP/SDP announcement
     std::cout << "Example RTP streaming to " << FLAGS_session_name << "\n";
-    rtp_.SetStreamInfo("TestVideo1");
+    rtp_.SetStreamInfo(FLAGS_session_name);
   } else {
     std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
-    RtpvrawDepayloader::SetStreamInfo("TestVideo1", ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width,
+    RtpvrawDepayloader::SetStreamInfo(FLAGS_session_name, ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width,
                                       FLAGS_ipaddr, (uint16_t)FLAGS_port);
 
     // We have all the information so we can request the ports open now. No need to wait for SAP/SDP
@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
   gtk_widget_set_size_request(drawing_area, FLAGS_width, FLAGS_height);
   g_object_set_data(G_OBJECT(drawing_area), "surface", surface);
 
-  OnDrawData data = {"TestVideo1", surface, FLAGS_height, FLAGS_width, FLAGS_ipaddr, (uint16_t)FLAGS_port};
+  OnDrawData data = {FLAGS_session_name, surface, FLAGS_height, FLAGS_width, FLAGS_ipaddr, (uint16_t)FLAGS_port};
 
   // Connect to the "draw" signal of the drawing area
   g_signal_connect(G_OBJECT(drawing_area), "draw", G_CALLBACK(on_draw), &data);

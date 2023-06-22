@@ -68,6 +68,7 @@ DEFINE_int32(pattern, 0,
              "values\n\t4 - "
              "Checkered test card");
 DEFINE_string(filename, "testcard.png", "the PNG file to use as the source of the video stream");
+DEFINE_string(session_name, "TestVideo1", "the SAP/SDP session name");
 
 static bool application_running = true;
 
@@ -89,7 +90,7 @@ int main(int argc, char **argv) {
 
   // Setup RTP streaming class
   RtpvrawPayloader rtp;
-  rtp.SetStreamInfo("TestVideo1", ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
+  rtp.SetStreamInfo(FLAGS_filename, ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
                     (uint16_t)FLAGS_port);
   rtp.Open();
 
