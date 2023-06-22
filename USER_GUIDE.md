@@ -103,7 +103,7 @@ A class is provided to grab video from live sources using v4l2 drivers. See v4l2
 \section uncompressed RTP uncompressed
 There are three RTP methods for streaming video, these are described in the sections below.
 
-\section yuv YUV422
+\subsection yuv YUV422
 YUV422 is a digital video format that represents color using brightness (luma) and two color difference signals (chroma). The YUV color model separates the image into three components: Y (luma) represents the brightness information, while U and V (chroma) represent the color information. In YUV422, the chroma information is sampled at half the horizontal resolution compared to the luma information. It is often used in video encoding and transmission, and it provides a good balance between image quality and data size.
 
 \subsection rgb24 RGB24
