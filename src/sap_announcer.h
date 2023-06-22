@@ -31,8 +31,11 @@
 #include <thread>
 #include <vector>
 
+#include "rtp_types.h"
+
 namespace sap {
 
+/// The SAP header structure
 struct SAPHeader {
   /// Protocol version
   uint8_t version;
@@ -51,7 +54,7 @@ struct SAPHeader {
       : version(version), hash(hash), originating_source(originating_source) {}
 };
 
-// A simplified SAP message structure
+/// A simplified SAP message structure
 struct SAPMessage {
   /// The SDP session name
   std::string sessionName;
@@ -65,10 +68,13 @@ struct SAPMessage {
   uint32_t width;
   /// The stream framerate in frames / second
   uint32_t framerate;
+  /// Colourspace encoding
+  ColourspaceType encoding;
   /// Flag indicating the stream was deleted
   bool deleted = false;
 };
 
+/// Class definition for the SAPAnnouncer
 class SAPAnnouncer {
  public:
   ///
@@ -198,14 +204,23 @@ class SAPAnnouncer {
   /// \brief Check all the network interfaces
   ///
   /// \param addr_str
+  /// \return bool True if the interface is valid
   ///
-  void CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t selected);
+  bool CheckAddresses(struct ifaddrs *ifa, bool helper);
 
+  /// The SAPAnnouncer singleton
+  static SAPAnnouncer singleton_;
+  /// List of SAP streams
   std::vector<SAPMessage> streams_;
+  /// The SAP/SDP transmit thread
   std::thread thread_;
+  /// The source IP address
   uint32_t source_ipaddress_;
+  /// The socket file descriptor
   int sockfd_;
+  /// The multicast address
   struct sockaddr_in multicast_addr_;
+  /// Flag indicating that the thread is running
   static bool running_;
 };
 

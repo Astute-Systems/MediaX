@@ -12,8 +12,8 @@
 /// \file sap_listener.h
 ///
 
-#ifndef __SAP_LISTNER_H__
-#define __SAP_LISTNER_H__
+#ifndef __SAP_LISTENER_H__
+#define __SAP_LISTENER_H__
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -85,8 +85,8 @@ enum class SdpTypeEnum {
   kUnknown
 };
 
-// A simplified SDP message structure
-// sap_text contains the complete SDP announcement
+/// A simplified SDP message structure
+/// \brief sap_text contains the complete SDP announcement
 struct SDPMessage {
   /// Protocol version
   uint32_t protocol_version;
@@ -115,8 +115,21 @@ struct SDPMessage {
 /// \brief The SAPListener class is a singleton that listens for SAP/SDP announcements on the network
 using SapCallback = std::function<void(sap::SDPMessage &sdp)>;
 
+/// Class definition of the SAPListener
 class SAPListener {
  public:
+  ///
+  /// \brief Construct a new SAPListener::SAPListener object
+  ///
+  ///
+  SAPListener();
+
+  ///
+  /// \brief Destroy the SAPListener::SAPListener object
+  ///
+  ///
+  ~SAPListener();
+
   ///
   /// \brief A Singleton get method
   ///
@@ -151,18 +164,7 @@ class SAPListener {
   void Stop();
 
  private:
-  static SAPListener singleton_;
-  ///
-  /// \brief Construct a new SAPListener::SAPListener object
-  ///
-  ///
-  SAPListener();
-
-  ///
-  /// \brief Destroy the SAPListener::SAPListener object
-  ///
-  ///
-  ~SAPListener();
+  static std::unique_ptr<SAPListener> singleton_;
 
   ///
   /// \brief Function to broadcast SAP announcements for a list of streams
@@ -215,4 +217,4 @@ class SAPListener {
 
 }  // namespace sap
 
-#endif  // __SAP_ANNOUNCER_H__
+#endif  // __SAP_LISTENER_H__

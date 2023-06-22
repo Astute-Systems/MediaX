@@ -40,13 +40,13 @@ uint32_t RtpvrawPayloader::sequence_number_ = 0;
 
 std::vector<uint8_t> RtpvrawPayloader::buffer_in_;
 
-RtpvrawPayloader::RtpvrawPayloader() {}
+RtpvrawPayloader::RtpvrawPayloader() = default;
 
 RtpvrawPayloader::~RtpvrawPayloader(void) {
   if (egress_.sockfd) {
     close(egress_.sockfd);
   }
-  sleep(1);
+  if (tx_thread_.joinable()) tx_thread_.join();
 }
 
 void RtpvrawPayloader::SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
@@ -79,7 +79,7 @@ bool RtpvrawPayloader::Open() {
     // gethostbyname: get the server's DNS entry
     getaddrinfo(egress_.hostname.c_str(), nullptr, nullptr, &server_out_);
     if (server_out_ == nullptr) {
-      fprintf(stderr, "ERROR, no such host as %s\n", egress_.hostname.c_str());
+      std::cerr << "ERROR, no such host as " << egress_.hostname << "\n";
       exit(-1);
     }
 
@@ -94,8 +94,9 @@ bool RtpvrawPayloader::Open() {
     egress_.socket_open = true;
 
     // Lastly start a SAP announcement
-    sap::SAPAnnouncer::GetInstance().AddSAPAnnouncement(
-        {egress_.name, egress_.hostname, egress_.port_no, egress_.height, egress_.width, egress_.framerate, false});
+    sap::SAPAnnouncer::GetInstance().AddSAPAnnouncement({egress_.name, egress_.hostname, egress_.port_no,
+                                                         egress_.height, egress_.width, egress_.framerate,
+                                                         ColourspaceType::kColourspaceYuv, false});
     sap::SAPAnnouncer::GetInstance().Start();
   }
 
@@ -103,11 +104,13 @@ bool RtpvrawPayloader::Open() {
 }
 
 void RtpvrawPayloader::Close() {
+  sap::SAPAnnouncer::GetInstance().Stop();
   if (egress_.port_no) {
     close(egress_.sockfd);
     egress_.sockfd = 0;
     egress_.socket_open = false;
   }
+  if (tx_thread_.joinable()) tx_thread_.join();
 }
 
 void RtpvrawPayloader::UpdateHeader(Header *packet, int line, int last, int32_t timestamp, int32_t source) const {
@@ -137,23 +140,24 @@ void RtpvrawPayloader::SendFrame(RtpvrawPayloader *stream) {
   ssize_t n = 0;
   uint32_t timestamp = GenerateTimestamp90kHz();
 
-  int32_t stride = stream->egress_.width * 2;
+  int32_t stride = stream->egress_.width * kColourspaceBytes.at(stream->egress_.encoding);
 
-  for (uint32_t c = 0; c < (stream->egress_.height); c++) {
+  /// Note DEF-STAN 00-082 starts line numbers at 1, gstreamer starts at 0 for raw video
+  for (uint32_t c = 1; c <= (stream->egress_.height); c++) {
     uint32_t last = 0;
 
-    if (c == stream->egress_.height - 1) last = 1;
+    if (c == stream->egress_.height) last = 1;
     stream->UpdateHeader((Header *)&packet, c, last, timestamp, kRtpSource);
 
     EndianSwap32((uint32_t *)(&packet), sizeof(RtpHeader) / 4);
     EndianSwap16((uint16_t *)(&packet.head.payload), sizeof(PayloadHeader) / 2);
 
-    memcpy((void *)&packet.head.payload.line[2], (void *)&stream->arg_tx.rgbframe[(c * stride) + 1], stride);
+    memcpy((void *)&packet.head.payload.line[2], (void *)&stream->arg_tx.rgb_frame[(c * stride) + 1], stride);
     n = sendto(stream->egress_.sockfd, &packet, stride + 26, 0, (const sockaddr *)&stream->server_addr_out_,
                stream->server_len_out_);
 
     if (n == 0) {
-      std::cerr << "[RTP] Transmit socket failure fd=" << stream->egress_.sockfd << "\n";
+      std::cerr << "Transmit socket failure fd=" << stream->egress_.sockfd << "\n";
       return;
     }
   }
@@ -167,11 +171,13 @@ void RtpvrawPayloader::TransmitThread(RtpvrawPayloader *stream) {
 }
 
 int RtpvrawPayloader::Transmit(uint8_t *rgbframe, bool blocking) {
-  arg_tx.rgbframe = rgbframe;
+  arg_tx.rgb_frame = rgbframe;
 
   if (egress_.port_no == 0) return -1;
 
   if (kRtpThreaded) {
+    // Wait for the last thread to finish
+    // if (tx_thread_.joinable()) tx_thread_.join();
     // Start a thread so we can start capturing the next frame while transmitting the data
     tx_thread_ = std::thread(TransmitThread, this);
     if (blocking) {

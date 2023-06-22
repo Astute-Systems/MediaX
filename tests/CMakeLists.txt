@@ -1,7 +1,5 @@
 include(FindPkgConfig)
 
-set(CMAKE_CXX_FLAGS --coverage)
-
 set(
   TEST_INCLUDES
   ${CMAKE_SOURCE_DIR}/src

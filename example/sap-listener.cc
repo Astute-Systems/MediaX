@@ -6,34 +6,33 @@
 // Licensed under the Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
 // License. See the LICENSE file in the project root for full license details.
 //
-/// \file sap-example.cc
+/// \file sap-listener.cc
 ///
 
 #include <iostream>
 
 #include "sap_listener.h"
 
-int main() {
+int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[]) {
+  std::cout << argv[0] << " starting\n";
+
   sap::SAPListener& sap = sap::SAPListener::GetInstance();
 
-  // Start all the streams for 10 seconds
-  sap.Start();
-  sleep(10);
-  sap.Stop();
+  std::cout << "Waiting for 2 seconds for all SAP/SDP announcements \n";
 
-  // Thread is running but all streams stopped at this point for 2 seconds
+  // Listen for 2 seconds and dump out the SAP announcements seen
+  sap.Start();
   sleep(2);
-
-  // Re-start all the streams for 5 seconds
-  sap.Start();
-  sleep(5);
   sap.Stop();
 
   const std::map<std::string, sap::SDPMessage, std::less<>>& announcements = sap.GetSAPAnnouncements();
 
-  std::cout << ">>>>>>>>> List of SAP announcements :\n";
-  for (const auto& announcement : announcements) {
-    sap::SDPMessage sdp = announcement.second;
+  if (announcements.empty()) {
+    std::cout << "No SAP/SDP announcements seen\n";
+    return 0;
+  }
+
+  for (const auto& [name, sdp] : announcements) {
     std::cout << "SDP> name: " << sdp.session_name << ", source: " << sdp.ip_address_source
               << ", ipaddr: " << sdp.ip_address << ":" << sdp.port << ", height: " << sdp.height
               << ", width: " << sdp.width << ", framerate: " << sdp.framerate << ", sampling: " << sdp.sampling << "\n";

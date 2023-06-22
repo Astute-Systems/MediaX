@@ -31,7 +31,7 @@ TEST(Colourspace, YuvToRgbTest) {
   uint8_t rgb_recieve[width * height * 3] = {0};  // Initialize to all zeros
 
   // Fill the YUV buffer with a red color
-  for (int i = 0; i < (width * height * 2) / 2; i += 4) {
+  for (uint32_t i = 0; i < (width * height * 2) / 2; i += 4) {
     yuv[i] = 0x51;      // Y component
     yuv[i + 1] = 0x5a;  // U component
     yuv[i + 2] = 0x51;  // Y component
@@ -39,7 +39,7 @@ TEST(Colourspace, YuvToRgbTest) {
   }
 
   // Fill the expected RGB buffer with a red color
-  for (int i = 0; i < width * height * 3; i += 3) {
+  for (uint32_t i = 0; i < width * height * 3; i += 3) {
     rgb[i] = 0xFC;  // R component
   }
 
@@ -49,7 +49,7 @@ TEST(Colourspace, YuvToRgbTest) {
   DumpHex(rgb_recieve, 16);
 
   // Check that the RGB buffer matches the expected buffer
-  for (int i = 0; i < width * height; i++) {
+  for (uint32_t i = 0; i < width * height; i++) {
     EXPECT_EQ(rgb[i], rgb_recieve[i]);
   }
 }
@@ -63,7 +63,7 @@ TEST(Colourspace, YuvToRgbaTest) {
   uint8_t rgba_recieve[width * height * 4] = {0};  // Initialize to all zeros
 
   // Fill the YUV buffer with a red color
-  for (int i = 0; i < (width * height * 2); i += 4) {
+  for (uint32_t i = 0; i < (width * height * 2); i += 4) {
     yuv[i] = 0x51;      // Y component
     yuv[i + 1] = 0x5a;  // U component
     yuv[i + 2] = 0x51;  // Y component
@@ -72,7 +72,7 @@ TEST(Colourspace, YuvToRgbaTest) {
   DumpHex(yuv, 16);
 
   // Fill the expected RGB buffer with a red color
-  for (int i = 0; i < width * height * 4; i += 4) {
+  for (uint32_t i = 0; i < width * height * 4; i += 4) {
     rgba[i] = 0xFC;  // R component
   }
   // Call the function you want to test
@@ -93,7 +93,7 @@ TEST(Colourspace, RgbToYuvTest) {
   uint8_t rgb[bufferSize] = {0};
 
   // Fill the expected RGB buffer with a red color
-  for (int i = 0; i < width * height * 3; i += 3) {
+  for (uint32_t i = 0; i < width * height * 3; i += 3) {
     rgb[i] = 0xFF;  // R component
   }
 
@@ -112,7 +112,7 @@ TEST(Colourspace, RgbaToYuvTest) {
   uint8_t rgba[bufferSize] = {0};
 
   // Fill the expected RGB buffer with a red color
-  for (int i = 0; i < width * height * 4; i += 4) {
+  for (uint32_t i = 0; i < width * height * 4; i += 4) {
     rgba[i] = 0xFF;  // R component
   }
 
@@ -121,6 +121,25 @@ TEST(Colourspace, RgbaToYuvTest) {
   video::RgbaToYuv(height, width, rgba, yuv);
 
   DumpHex(yuv, 16);
+}
+
+TEST(Colourspace, RgbaToRgbTest) {
+  // Create a 4x4 RGB buffer
+  const uint32_t width = 4;
+  const uint32_t height = 4;
+  const uint32_t bufferSize = width * height * 4;
+  uint8_t rgba[bufferSize] = {0};
+
+  // Fill the expected RGB buffer with a red color
+  for (uint32_t i = 0; i < width * height * 4; i += 4) {
+    rgba[i] = 0xFF;  // R component
+  }
+
+  // Call the function you want to test
+  uint8_t rgb[bufferSize * 2] = {0};
+  video::RgbaToRgb(height, width, rgba, rgb);
+
+  DumpHex(rgb, 16);
 }
 
 }  // namespace gva

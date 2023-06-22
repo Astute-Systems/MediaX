@@ -50,20 +50,22 @@
 #include <array>
 #include <csignal>
 #include <iostream>
+#include <ostream>
 #include <vector>
 
 #include "colourspace.h"
 #include "colourspace_cuda.h"
+#include "example.h"
 #include "pngget.h"
 #include "rtp_utils.h"
 #include "rtpvraw_payloader.h"
 #include "version.h"
 
-DEFINE_string(ipaddr, "239.192.1.1", "the IP address of the transmit stream");
-DEFINE_int32(port, 5004, "the port to use for the transmit stream");
-DEFINE_int32(height, 480, "the height of the image");
-DEFINE_int32(width, 640, "the width of the image");
-DEFINE_int32(pattern, 0,
+DEFINE_string(ipaddr, kIpAddressDefault, "the IP address of the transmit stream");
+DEFINE_int32(port, kPortDefault, "the port to use for the transmit stream");
+DEFINE_int32(height, kHeightDefault, "the height of the image");
+DEFINE_int32(width, kWidthDefault, "the width of the image");
+DEFINE_int32(pattern, 1,
              "The test pattern (0-4)\n\t0 - Use a PNG file (see -filename)\n\t1 - Colour bars\n\t2 - Greyscale "
              "bars\n\t3 - Scaled RGB "
              "values\n\t4 - "
@@ -144,6 +146,8 @@ int main(int argc, char **argv) {
 
   // Loop frames forever
   while (application_running) {
+    // Timestamp start
+    auto start = std::chrono::high_resolution_clock::now();
     // Clear the YUV buffer
     memset(yuv.data(), 0, kBuffSize);
 
@@ -152,12 +156,17 @@ int main(int argc, char **argv) {
     // video::cuda::RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
 
     if (rtp.Transmit(yuv.data(), true) < 0) break;
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    if (duration < 40) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(40 - duration));
+    }
 
-    // approximately 24 frames a second
-    // delay 40ms
-    nanosleep((const struct timespec[]){{0, 1000000000L / kRtpFramerate}}, nullptr);
     frame++;
+    std::cout << "Frame: " << frame << "\r" << std::flush;
   }
+  std::cout << "\n";
+
   rtp.Close();
 
   std::cout << "Example terminated...\n";

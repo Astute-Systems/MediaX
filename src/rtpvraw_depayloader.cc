@@ -53,7 +53,10 @@ void RtpvrawDepayloader::SetStreamInfo(std::string_view name, ColourspaceType en
   ingress_.hostname = hostname;
   ingress_.port_no = portno;
   ingress_.settings_valid = true;
-  buffer_in_.resize(height * width * 2);
+  std::cout << "RtpvrawDepayloader::SetStreamInfo() " << ingress_.name << " " << ingress_.hostname << " "
+            << ingress_.port_no << " " << ingress_.height << " " << ingress_.width << " "
+            << std::to_string((int)ingress_.encoding) << "\n";
+  buffer_in_.resize((height * width) * kColourspaceBytes.at(ingress_.encoding));
 }
 
 void RtpvrawDepayloader::SapCallback(const sap::SDPMessage &sdp) {
@@ -141,8 +144,13 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
   int scan_count = 0;
   int last_packet;
 
+  struct timeval read_timeout;
+  read_timeout.tv_sec = 0;
+  read_timeout.tv_usec = 10;
+  setsockopt(RtpvrawDepayloader::ingress_.sockfd, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
+
   while (rx_thread_running_) {
-    while (receiving) {
+    while (receiving && rx_thread_running_) {
       int marker;
 
       int version;
@@ -152,14 +160,15 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
       //
       // Read data until we get the next RTP header
       //
-      while (!valid) {
+      while (!valid && rx_thread_running_) {
         //
         // Read in the RTP data
         //
+
         if (ssize_t bytes =
                 recvfrom(RtpvrawDepayloader::ingress_.sockfd, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
             bytes <= 0) {
-          std::this_thread::sleep_for(std::chrono::milliseconds(100));
+          std::this_thread::sleep_for(std::chrono::milliseconds(2));
           continue;
         }
         packet = (RtpPacket *)(stream->udpdata.data());
@@ -205,8 +214,13 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
           uint32_t length;
 
           os = payload_offset + payload;
-          pixel = ((packet->head.payload.line[c].offset & 0x7FFF) * 2) +
-                  ((packet->head.payload.line[c].line_number & 0x7FFF) * (RtpvrawDepayloader::ingress_.width * 2));
+          if (packet->head.payload.line[c].line_number == 0) {
+            // Line numbers start at 1 in DEF-STAN 00-82, gstreamer starts at zero so drop those lines
+            break;
+          }
+          pixel = ((packet->head.payload.line[c].offset & 0x7FFF) * kColourspaceBytes.at(ingress_.encoding)) +
+                  (((packet->head.payload.line[c].line_number - 1) & 0x7FFF) *
+                   (RtpvrawDepayloader::ingress_.width * kColourspaceBytes.at(ingress_.encoding)));
           length = packet->head.payload.line[c].length & 0xFFFF;
 
           memcpy(&RtpvrawDepayloader::buffer_in_[pixel], &stream->udpdata[os], length);
@@ -221,7 +235,7 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
       }
     }
 
-    stream->arg_tx.yuvframe = RtpvrawDepayloader::buffer_in_.data();
+    stream->arg_tx.encoded_frame = RtpvrawDepayloader::buffer_in_.data();
     new_rx_frame_ = true;
     receiving = true;
   }  // Receive loop
@@ -234,8 +248,9 @@ void RtpvrawDepayloader::Start() {
 }
 
 void RtpvrawDepayloader::Stop() {
+  rx_thread_running_ = false;
+
   if (rx_thread_.joinable()) {
-    rx_thread_running_ = false;
     rx_thread_.join();
   }
 }

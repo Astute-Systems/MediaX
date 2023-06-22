@@ -29,6 +29,7 @@
 namespace sap {
 
 bool SAPAnnouncer::running_ = false;
+SAPAnnouncer SAPAnnouncer::singleton_;
 
 SAPAnnouncer::SAPAnnouncer() {
   if ((sockfd_ = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -50,10 +51,7 @@ SAPAnnouncer::~SAPAnnouncer() {
   close(sockfd_);
 }
 
-SAPAnnouncer &SAPAnnouncer::GetInstance() {
-  static SAPAnnouncer singleton_;
-  return singleton_;
-}
+SAPAnnouncer &SAPAnnouncer::GetInstance() { return singleton_; }
 
 void SAPAnnouncer::Start() {
   if (running_) return;
@@ -88,6 +86,8 @@ void SAPAnnouncer::SendSAPDeletion(const SAPMessage &message) const { SendSAPPac
 
 // Function to send a SAP announcement
 void SAPAnnouncer::SendSAPPacket(const SAPMessage &message, bool deletion) const {
+  std::string depth = "8";
+  if (message.encoding == ColourspaceType::kColourspaceMono16) depth = "16";
   // Prepare SDP message
   std::string sdp_msg =
       "v=0\r\n"
@@ -104,12 +104,19 @@ void SAPAnnouncer::SendSAPPacket(const SAPMessage &message, bool deletion) const
       "m=video " +
       std::to_string(message.port) +
       " RTP/AVP 96\r\n"
-      "a=rtpmap:96 raw/90000\r\n"
-      "a=fmtp:96 sampling=YCbCr-4:2:2; width=" +
-      std::to_string(message.width) + "; height=" + std::to_string(message.height) +
-      "; depth=8; colorimetry=BT601-5; progressive\r\n"
-      "a=framerate:" +
-      std::to_string(message.framerate) + "\r\n";
+      "a=rtpmap:96 " +
+      kRtpMap.at(message.encoding) +
+      "/90000\r\n"
+      "a=fmtp:96";
+  if ((message.encoding != ColourspaceType::kColourspaceH264Part4) &&
+      (message.encoding != ColourspaceType::kColourspaceH264Part10)) {
+    sdp_msg += " sampling=" + kColourspace.at(message.encoding) + ";";
+  }
+  sdp_msg += " width=" + std::to_string(message.width) + "; height=" + std::to_string(message.height) +
+             "; depth=" + depth +
+             "; colorimetry=BT601-5; progressive\r\n"
+             "a=framerate:" +
+             std::to_string(message.framerate) + "\r\n";
 
   // Oversized 4k buffer for SAP/SDP
   std::array<uint8_t, 4069> buffer;
@@ -151,28 +158,21 @@ void SAPAnnouncer::SetAddressHelper(uint16_t select, bool helper) {
   struct ifaddrs *ifaddr;
 
   if (getifaddrs(&ifaddr) == -1) {
-    std::cerr << "Error getting local IP addresses" << std::endl;
+    std::cerr << "Error getting local IP addresses\n";
     return;
   }
-
   for (struct ifaddrs *ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
-    if (ifa->ifa_addr == nullptr) {
-      continue;
-    }
-
-    CheckAddresses(ifa, helper, select);
+    if (CheckAddresses(ifa, helper)) return;
   }
   freeifaddrs(ifaddr);
 #endif
 }
 
-void SAPAnnouncer::CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t select) {
+bool SAPAnnouncer::CheckAddresses(struct ifaddrs *ifa, bool helper) {
 #ifdef _WIN32
 #pragma message("TODO: Implement CheckAddresses for Windows")
 #else
-  uint16_t count_interfaces = 0;
   std::array<char, INET_ADDRSTRLEN> addr_str;
-
   // Check for IPv4 address
   if (ifa->ifa_addr->sa_family == AF_INET) {
     auto sa = (struct sockaddr_in *)ifa->ifa_addr;
@@ -181,17 +181,18 @@ void SAPAnnouncer::CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t sel
     // Exclude the loopback address
     if (strcmp(addr_str.data(), "127.0.0.1") != 0) {
       std::string postfix;
-      if (helper) std::cout << "Interface: " << ifa->ifa_name << std::endl;
       // save the last one
-      if (count_interfaces == select) {
-        source_ipaddress_ = sa->sin_addr.s_addr;
-        postfix = " <- selected";
+      source_ipaddress_ = sa->sin_addr.s_addr;
+      postfix = " <- selected";
+      if (helper) {
+        std::cout << "Interface: " << ifa->ifa_name << "\n";
+        std::cout << "IPv4 Address: " << addr_str.data() << postfix << "\n";
       }
-      if (helper) std::cout << "IPv4 Address: " << addr_str.data() << postfix << std::endl;
-      count_interfaces++;
+      return true;
     }
   }
 #endif
+  return false;
 }
 
 }  // namespace sap

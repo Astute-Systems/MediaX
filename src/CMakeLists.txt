@@ -18,7 +18,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "MSYS")
   set(MSYS_LIBS ws2_32 mingwex)
 endif()
 
-add_library(mediax SHARED rtpvraw_payloader.cc rtpvraw_depayloader.cc rtp_utils.cc sap_announcer.cc sap_listener.cc colourspace.cc colourspace_cuda.cu)
+add_library(mediax SHARED rtpvraw_payloader.cc rtpvraw_depayloader.cc rtph264_payloader.cc rtph264_depayloader.cc rtp_utils.cc sap_announcer.cc sap_listener.cc colourspace.cc colourspace_cuda.cu)
 pkg_check_modules(SWSCALE REQUIRED libswscale)
 if (WIN32)
   message(STATUS "Adding windows socket libs")
