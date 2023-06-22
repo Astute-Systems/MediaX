@@ -100,6 +100,8 @@ Use this pipeline to capture the stream:
 
 You can also run the provided examples back to back using the script  ./example/rtp-test.sh 
 
+> CAUTION: Gstreamer will number scan lines from 0 whereas DEF-STAN 00-082 will start at 1, this is a known incompatibility and when mixed will appear to be one scan line out on a GVA display.
+
 \section v4l2 Video 4 Linux 2
 A class is provided to grab video from live sources using v4l2 drivers. See v4l2_source.cc.
 
