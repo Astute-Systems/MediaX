@@ -18,56 +18,7 @@ This library provides functions for streaming video that conforms to DEF STAN 00
 
 An example of a video sequence is shown below:
 
-@startuml
-
-   skinparam sequence {
-   ArrowColor DeepSkyBlue
-   ActorBorderColor DeepSkyBlue
-   LifeLineBorderColor blue
-   LifeLineBackgroundColor #A9DCDF
-
-   ParticipantBorderColor DeepSkyBlue
-   ParticipantBackgroundColor DodgerBlue
-   ParticipantFontName Impact
-   ParticipantFontSize 17
-   ParticipantFontColor #FFFFFF
-
-   ActorBackgroundColor aqua
-   ActorFontColor DeepSkyBlue
-   ActorFontSize 17
-   ActorFontName Aapex
-   }
-   participant Sender as Sender
-   participant Switch      as Switch
-   participant Receiver    as Receiver
-
-   Sender -> Sender :  RtpStreamOut("TestVideo1", height, width, framerate, ipaddr, port)
-   Sender -> Sender :  Open()
-   Sender -> Switch :  IGMP(join)
-   Sender --> Receiver :  SAP/SDP Announcement @ 1 Htz
-   note right: SAP announcements are broadcast every \n second on IP 224.2.127.254, Port 9875
-   Sender -> Sender :  Transmit(*rgb_data) @ 25Htz
-   Sender -> Switch :  RTP
-   note left: Many RTP packets sent to transmit the \nframe data, only showing one to simplify \nthe diagram 
-== some time later ==
-   Receiver -> Receiver : RtpStreamIn("TestVideo1")
-   note right: Will wait for SAP/SDP announcement\n containing this session name
-   Sender --> Receiver :  SAP/SDP Announcement @ 1 Htz
-   note right: SDP Contents:\nv=0\no=- 3394362021 3394362021 IN IP4 192.168.204.5 \ns=LSACamera5 \nc=IN IP4 239.192.1.5/15 \nt=0 0 m=video 5004 RTP/AVP 96 a=rtpmap:96 raw/90000 \na=fmtp:96 sampling=YCbCr-4:2:2; width=720; height=576; depth=8; colorimetry=BT601-5; interlace a=framerate:25 
-   Receiver -> Receiver : Open()
-   Receiver -> Switch :  IGMP(join)
-   Sender -> Sender :  Transmit(*rgb_data) @ 25Htz
-   Sender -> Receiver :  RTP
-   Receiver -> Receiver :  Receive(*rgb_data) @ 25Htz
-   Sender -> Sender :  Transmit(*rgb_data) @ 25Htz
-   Sender -> Receiver :  RTP
-   Receiver -> Receiver :  Receive(*rgb_data) @ 25Htz
-   Sender -> Sender : Close()
-   Sender -> Switch :  IGMP(leave)
-   Sender --> Receiver :  SAP/SDP Deletion
-   Receiver -> Receiver :  Close()
-   Receiver -> Switch :  IGMP(leave)
-@enduml
+![SAPDiagram](/images/plant_sap.png)
 
 MediaX implements RFC4421 RTP (Real Time Protocol) Payload Format for Uncompressed Video but is mandated by the UK MoD as part of DEF STAN 00-082 (VIVOE) uncompressed RTP video streaming protocol for real time video. If you are not familiar with the Generic Vehicle Architecture (DEF STAN 00-23) and VIVOE then you can read more [here](https://en.wikipedia.org/wiki/Generic_Vehicle_Architecture).
 

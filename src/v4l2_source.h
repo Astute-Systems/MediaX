@@ -19,6 +19,7 @@
 
 #include <iostream>
 
+/// Class for Video 4 Linux 2 (V4L2) capture
 class V4L2Capture {
  public:
   ///
@@ -43,7 +44,7 @@ class V4L2Capture {
   /// \return true
   /// \return false
   ///
-  bool CaptureFrame(uint8_t* buffer);
+  bool CaptureFrame(uint8_t* buffer) const;
 
  private:
   /// \brief The file descriptor for the V4L2 device

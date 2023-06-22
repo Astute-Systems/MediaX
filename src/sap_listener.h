@@ -164,6 +164,7 @@ class SAPListener {
   void Stop();
 
  private:
+  /// The pointer to the SAPListener singleton
   static std::unique_ptr<SAPListener> singleton_;
 
   ///
@@ -171,7 +172,7 @@ class SAPListener {
   ///
   /// Only needs to be called once to start the broadcast thread
   ///
-  /// \param streams
+  /// \param sap SAPListener object
   ///
   static void SAPListenerThread(SAPListener *sap);
 
@@ -206,12 +207,19 @@ class SAPListener {
   ///
   bool SapStore(std::array<uint8_t, kMaxUdpData> &udpdata);
 
+  /// The list of SAP/SDP announcement callbacks
   std::map<std::string, SapCallback, std::less<>> callbacks_;
+  /// The list of SAP/SDP announcements
   std::map<std::string, SDPMessage, std::less<>> announcements_;
+  /// The buffer for the UDP data
   std::array<uint8_t, kMaxUdpData> udpdata;
+  /// The thread for the SAP/SDP announcements
   std::thread thread_;
+  /// The socket for the SAP/SDP announcements
   int sockfd_;
+  /// The multicast address for the SAP/SDP announcements
   struct sockaddr_in multicast_addr_;
+  /// The SAP/SDP announcements thread running flag
   static bool running_;
 };
 

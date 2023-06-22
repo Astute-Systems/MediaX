@@ -187,7 +187,7 @@ class RtpvrawPayloader {
   static uint32_t sequence_number_;
   /// Transmit arguments used by the thread
   TxData arg_tx;
-  // Egress port
+  /// Egress port
   PortType egress_;
   /// The server address information
   struct addrinfo *server_out_;

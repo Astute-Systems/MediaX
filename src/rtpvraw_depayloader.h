@@ -241,21 +241,21 @@ class RtpvrawDepayloader {
  private:
   /// The incremental sequence numer for transmitting RTP packets
   static bool new_rx_frame_;
+  /// Flag indicating the thread is running
   static bool rx_thread_running_;
-
   /// The encoded video type
   ColourspaceType encoding_ = ColourspaceType::kColourspaceUndefined;
-
   /// Transmit arguments used by the thread
   TxData arg_tx;
-
-  // Ingress port
+  /// Ingress port
   static PortType ingress_;
-
+  /// thread mutex
   pthread_mutex_t mutex_;
+  /// UDP data buffer
   std::array<uint8_t, kMaxUdpData> udpdata;
+  /// UDP data buffer
   static std::vector<uint8_t> buffer_in_;
-  // Arguments sent to thread
+  /// Arguments sent to thread
   std::thread rx_thread_;
 
   ///

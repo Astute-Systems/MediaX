@@ -107,7 +107,7 @@ V4L2Capture::~V4L2Capture() {
   }
 }
 
-bool V4L2Capture::CaptureFrame(uint8_t* buffer) {
+bool V4L2Capture::CaptureFrame(uint8_t* buffer) const {
   struct v4l2_buffer buf = {0};
   buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
   buf.memory = V4L2_MEMORY_MMAP;

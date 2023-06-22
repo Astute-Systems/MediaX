@@ -19,6 +19,12 @@
 
 #include "rtp_types.h"
 
+///
+/// \brief Get the Sdp Colourspace object
+///
+/// \param colourspace The colourspace to get the SDP string for
+/// \return std::string
+///
 std::string GetSdpColourspace(ColourspaceType colourspace);
 
 #endif  // __SAP_UTILS_H__

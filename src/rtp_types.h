@@ -124,6 +124,7 @@ struct PortType {
   uint32_t port_no = 0;
   /// Socket file descriptor
   int sockfd = 0;
+  /// The session name
   std::string name = "unknown";
   /// Height in pixels of stream
   uint32_t height = 0;

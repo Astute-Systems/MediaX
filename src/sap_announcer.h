@@ -35,6 +35,7 @@
 
 namespace sap {
 
+/// Class to announce the stream details using the SAP protocol
 struct SAPHeader {
   /// Protocol version
   uint8_t version;
@@ -53,7 +54,7 @@ struct SAPHeader {
       : version(version), hash(hash), originating_source(originating_source) {}
 };
 
-// A simplified SAP message structure
+/// A simplified SAP message structure
 struct SAPMessage {
   /// The SDP session name
   std::string sessionName;
@@ -73,6 +74,7 @@ struct SAPMessage {
   bool deleted = false;
 };
 
+/// Class to announce the stream details using the SAP protocol
 class SAPAnnouncer {
  public:
   ///
@@ -158,7 +160,7 @@ class SAPAnnouncer {
   ///
   /// Only needs to be called once to start the broadcast thread
   ///
-  /// \param streams
+  /// \param sap The SAPAnnouncer object
   ///
   static void SAPAnnouncementThread(SAPAnnouncer *sap);
 
@@ -199,17 +201,25 @@ class SAPAnnouncer {
   void DeleteAllStreams();
 
   ///
-  /// \brief Check all the network interfaces
+  /// \brief Check the interface addresses
   ///
-  /// \param addr_str
+  /// \param ifa the IPV4 interface address
+  /// \param helper output helper messages
+  /// \param selected the selected interface
   ///
   void CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t selected);
 
+  /// A list of active SAP streams
   std::vector<SAPMessage> streams_;
+  /// The SAP/SDP transmission thread
   std::thread thread_;
+  /// The IPV4 source address
   uint32_t source_ipaddress_;
+  /// The open socket file descriptor
   int sockfd_;
+  /// The multicast address
   struct sockaddr_in multicast_addr_;
+  /// The flag indicating the SAP thread is active
   static bool running_;
 };
 
