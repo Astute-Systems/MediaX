@@ -46,6 +46,9 @@ class V4L2Capture {
   ///
   bool CaptureFrame(uint8_t* buffer) const;
 
+  /// \brief Delete the copy constructor
+  V4L2Capture(const V4L2Capture&) = delete;
+
  private:
   /// \brief The file descriptor for the V4L2 device
   int fd_ = -1;
