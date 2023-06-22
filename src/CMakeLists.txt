@@ -26,6 +26,7 @@ set(SOURCES
   rtp_utils.cc 
   sap_announcer.cc 
   sap_listener.cc 
+  sap_utils.cc 
   colourspace.cc 
   colourspace_cuda.cu
   v4l2_source.cc
