@@ -25,9 +25,11 @@ MediaX implements RFC4421 RTP (Real Time Protocol) Payload Format for Uncompress
 
 Transmit streams emit a SAP/SDP announcement every second as per RFC 2974 and RFC 4566. Also referenced as in DEF STAN 00-082.
 
-\section examples Payloader example
+\section examples Payloader examples
 
-This is a RAW (YUV) Real Time Protocol pay-loader written in C++. This example is send only to receive the data you can use the gstreamer pipeline below.
+RAW Real Time Protocol (RTP) payloader and de-payloader samples are written in C++ and can be found in the examples directory. The receive-example.cc and transmit-example.cc send and receive the data and can be ran back to back.
+
+The examples directory also contains helper scripts to run various demos.
 
 > **NOTE** : This example has been tested on 64 bit ARM. Target hardware was the Nvidia Jetson TX1/TX2/AGX/Orin.
 
