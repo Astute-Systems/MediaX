@@ -18,7 +18,20 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "MSYS")
   set(MSYS_LIBS ws2_32 mingwex)
 endif()
 
-add_library(mediax SHARED rtpvraw_payloader.cc rtpvraw_depayloader.cc rtph264_payloader.cc rtph264_depayloader.cc rtp_utils.cc sap_announcer.cc sap_listener.cc colourspace.cc colourspace_cuda.cu)
+set(SOURCES
+  rtpvraw_payloader.cc 
+  rtpvraw_depayloader.cc 
+  rtph264_payloader.cc 
+  rtph264_depayloader.cc 
+  rtp_utils.cc 
+  sap_announcer.cc 
+  sap_listener.cc 
+  colourspace.cc 
+  colourspace_cuda.cu
+  v4l2_source.cc
+)
+
+add_library(mediax SHARED ${SOURCES})
 pkg_check_modules(SWSCALE REQUIRED libswscale)
 if (WIN32)
   message(STATUS "Adding windows socket libs")
@@ -32,7 +45,7 @@ set_target_properties(mediax PROPERTIES SOVERSION 1)
 # set_target_properties(mediax PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 set_target_properties(mediax PROPERTIES CUDA_ARCHITECTURES "75")
 
-add_library(mediax_static STATIC rtpvraw_payloader.cc rtpvraw_depayloader.cc rtp_utils.cc sap_announcer.cc sap_listener.cc colourspace.cc colourspace_cuda.cu)
+add_library(mediax_static STATIC ${SOURCES})
 if (WIN32)
   target_link_libraries(mediax_static png pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} wsock32 ws2_32)
 else()

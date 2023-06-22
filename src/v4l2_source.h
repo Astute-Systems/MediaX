@@ -34,7 +34,7 @@ class V4L2Capture {
   /// \brief Destroy the V4L2Capture::V4L2Capture object
   ///
   ///
-  V4L2Capture::~V4L2Capture();
+  ~V4L2Capture();
 
   ///
   /// \brief Capture a frame from the V4L2 device
@@ -43,7 +43,7 @@ class V4L2Capture {
   /// \return true
   /// \return false
   ///
-  bool V4L2Capture::CaptureFrame(uint8_t* buffer);
+  bool CaptureFrame(uint8_t* buffer);
 
  private:
   /// \brief The file descriptor for the V4L2 device

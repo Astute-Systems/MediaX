@@ -14,6 +14,10 @@
 
 #include "v4l2_source.h"
 
+#include <sys/mman.h>
+
+#include <cstring>
+
 V4L2Capture::V4L2Capture(const char* device, int width, int height) : width_(width), height_(height) {
   fd_ = open(device, O_RDWR);
   if (fd_ == -1) {
