@@ -25,14 +25,6 @@ MediaX implements RFC4421 RTP (Real Time Protocol) Payload Format for Uncompress
 
 Transmit streams emit a SAP/SDP announcement every second as per RFC 2974 and RFC 4566. Also referenced as in DEF STAN 00-082.
 
-\section examples Payloader examples
-
-RAW Real Time Protocol (RTP) payloader and de-payloader samples are written in C++ and can be found in the examples directory. The receive-example.cc and transmit-example.cc send and receive the data and can be ran back to back.
-
-The examples directory also contains helper scripts to run various demos.
-
-> **NOTE** : This example has been tested on 64 bit ARM. Target hardware was the Nvidia Jetson TX1/TX2/AGX/Orin.
-
 \section dep Dependencies
 
 The following dependencies need to me installed prior to building this project:
@@ -45,6 +37,7 @@ CentOS Stream 8
 sudo dnf install ffmpeg-libs gtest-devel gflags-devel
 ```
 libswscale is required for RGB/RGBA to UYVY colour space conversion.
+
 \section install Installation
 Build the example
 ```
@@ -52,6 +45,14 @@ mkdir build
 cmake -DBUILD_CUDA=OFF -DEXAMPLES=ON -DBUILD_TESTING=ON ..
 ```
 To enable CUDA acceleration set -DBUILD_CUDA to ON, examples can als be enabled
+
+\section examples Examples
+
+RAW Real Time Protocol (RTP) payloader and de-payloader samples are written in C++ and can be found in the examples directory. The receive-example.cc and transmit-example.cc send and receive the data and can be ran back to back.
+
+The examples directory also contains helper scripts to run various demos.
+
+> **NOTE** : This example has been tested on 64 bit ARM. Target hardware was the Nvidia Jetson TX1/TX2/AGX/Orin.
 ```
 ./transmit-example
 ```
