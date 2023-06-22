@@ -6,6 +6,7 @@
      - @ref install
 - \ref gst
      - @ref examples
+- \ref v4l2
 - \ref uncompressed
      - @ref yuv
      - @ref rgb24
@@ -95,6 +96,9 @@ Use this pipeline to capture the stream:
     gst-launch-1.0 -v udpsrc port=5004 caps="application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)RAW, sampling=(string)YCbCr-4:2:2, depth=(string)8, width=(string)640, height=(string)480, payload=(int)96" ! queue ! rtpvrawdepay ! queue ! videoconvert ! ximagesink 
 
 You can also run the provided examples back to back using the script  ./example/rtp-test.sh 
+
+\section v4l2 Video 4 Linux 2
+A class is provided to grab video from live sources using v4l2 drivers. See v4l2_source.cc.
 
 \section uncompressed RTP uncompressed
 There are three RTP methods for streaming video, these are described in the sections below.
