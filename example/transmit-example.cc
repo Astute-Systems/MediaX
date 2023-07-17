@@ -66,10 +66,15 @@ DEFINE_int32(port, kPortDefault, "the port to use for the transmit stream");
 DEFINE_int32(height, kHeightDefault, "the height of the image");
 DEFINE_int32(width, kWidthDefault, "the width of the image");
 DEFINE_int32(pattern, 1,
-             "The test pattern (0-4)\n\t0 - Use a PNG file (see -filename)\n\t1 - Colour bars\n\t2 - Greyscale "
-             "bars\n\t3 - Scaled RGB "
-             "values\n\t4 - "
-             "Checkered test card");
+             "The test pattern (0-4)\n\t0 - Use a PNG file (see -filename)\n\t"
+             "1 - Colour bars\n\t2 - Greyscale bars\n\t"
+             "3 - Scaled RGB values\n\t"
+             "4 - Checkered test card"
+             "5 - Solid white\n\t"
+             "6 - Solid black\n\t"
+             "7 - Solid red\n\t"
+             "8 - Solid green\n\t"
+             "9 - Solid blue\n\t");
 DEFINE_string(filename, "testcard.png", "the PNG file to use as the source of the video stream");
 DEFINE_string(session_name, "TestVideo1", "the SAP/SDP session name");
 
@@ -129,6 +134,31 @@ int main(int argc, char **argv) {
       rgb.resize(kBuffSize);
       CreateCheckeredTestCard(rgb.data(), FLAGS_width, FLAGS_height);
       std::cout << "Creating checkered test card\n";
+      break;
+    case 5:  // Solid white
+      rgb.resize(kBuffSize);
+      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 255, 255, 255);
+      std::cout << "Creating solid white test card\n";
+      break;
+    case 6:  // Solid black
+      rgb.resize(kBuffSize);
+      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 0, 0);
+      std::cout << "Creating solid black test card\n";
+      break;
+    case 7:  // Solid red
+      rgb.resize(kBuffSize);
+      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 255, 0, 0);
+      std::cout << "Creating solid red test card\n";
+      break;
+    case 8:  // Solid green
+      rgb.resize(kBuffSize);
+      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 255, 0);
+      std::cout << "Creating solid green test card\n";
+      break;
+    case 9:  // Solid blue
+      rgb.resize(kBuffSize);
+      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 0, 255);
+      std::cout << "Creating solid blue test card\n";
       break;
     default:
       Png image_reader;

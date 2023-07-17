@@ -206,3 +206,12 @@ void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height) {
     data[i + 2] = b;
   }
 }
+
+void CreateSolidTestCard(uint8_t *data, uint32_t width, uint32_t height, uint8_t red, uint8_t green, uint8_t blue) {
+  uint32_t size = width * height * 3;
+  for (uint32_t i = 0; i < size; i += 3) {
+    data[i] = red;
+    data[i + 1] = green;
+    data[i + 2] = blue;
+  }
+}

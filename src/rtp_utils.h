@@ -50,45 +50,57 @@ void EndianSwap16(uint16_t *data, unsigned int length);
 ///
 /// \brief Dump a hex representation of a buffer
 ///
-/// \param data
-/// \param size
+/// \param data the buffer to write the test card to
+/// \param size the size of the buffer
 ///
 void DumpHex(const void *data, size_t size);
 
 ///
 /// \brief Create a Colour Bar Test Card object
 ///
-/// \param data
-/// \param width
-/// \param height
+/// \param data the buffer to write the test card to
+/// \param width the image width in pixels
+/// \param height the image height in pixels
 ///
 void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height);
 
 ///
 /// \brief Create a Grey Scale Bar Test Card object
 ///
-/// \param data
-/// \param width
-/// \param height
+/// \param data the buffer to write the test card to
+/// \param width the image width in pixels
+/// \param height the image height in pixels
 ///
 void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height);
 
 ///
 /// \brief Create a Smtpe Test Card object
 ///
-/// \param data
-/// \param width
-/// \param height
+/// \param data the buffer to write the test card to
+/// \param width the image width in pixels
+/// \param height the image height in pixels
 ///
 void CreateComplexTestCard(uint8_t *data, uint32_t width, uint32_t height);
 
 ///
 /// \brief Create a Checkerd Test Card object
 ///
-/// \param data
-/// \param width
-/// \param height
+/// \param data the buffer to write the test card to
+/// \param width the image width in pixels
+/// \param height the image height in pixels
 ///
 void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height);
+
+///
+/// \brief Create a Solid Test Card object
+///
+/// \param data the buffer to write the test card to
+/// \param width the image width in pixels
+/// \param height the image height in pixels
+/// \param red RGB value
+/// \param green RGB value
+/// \param blue RGB value
+///
+void CreateSolidTestCard(uint8_t *data, uint32_t width, uint32_t height, uint8_t red, uint8_t green, uint8_t blue);
 
 #endif  // RTP_UTILS_H
