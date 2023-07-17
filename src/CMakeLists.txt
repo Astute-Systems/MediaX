@@ -33,7 +33,7 @@ set(SOURCES
 )
 
 add_library(mediax SHARED ${SOURCES})
-pkg_check_modules(SWSCALE REQUIRED libswscale)
+pkg_check_modules(SWSCALE REQUIRED libswscale libavutil) # libavformat libavcodec
 if (WIN32)
   message(STATUS "Adding windows socket libs")
   target_link_libraries(mediax png pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} wsock32 ws2_32)

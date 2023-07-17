@@ -73,6 +73,7 @@ void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) {
 }
 
 void RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) {
+  av_log_set_level(AV_LOG_ERROR);
   if (!rgba || !rgb) {
     // Handle null pointers gracefully
     return;
