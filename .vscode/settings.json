@@ -33,6 +33,7 @@
         "libgtest",
         "libgtkmm",
         "libswscale",
+        "lsource",
         "mainpage",
         "payloader",
         "pixbuf",

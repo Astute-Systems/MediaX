@@ -29,6 +29,7 @@ TEST(Colourspace, YuvToRgbTest) {
   uint8_t yuv[width * height * 2] = {0};          // Initialize to all zeros
   uint8_t rgb[width * height * 3] = {0};          // Initialize to all zeros
   uint8_t rgb_recieve[width * height * 3] = {0};  // Initialize to all zeros
+  video::ColourSpace convert;
 
   // Fill the YUV buffer with a red color
   for (uint32_t i = 0; i < (width * height * 2) / 2; i += 4) {
@@ -45,7 +46,7 @@ TEST(Colourspace, YuvToRgbTest) {
 
   // Call the function being tested
   DumpHex(yuv, 16);
-  video::YuvToRgb(height, width, yuv, rgb_recieve);
+  convert.YuvToRgb(height, width, yuv, rgb_recieve);
   DumpHex(rgb_recieve, 16);
 
   // Check that the RGB buffer matches the expected buffer
@@ -61,6 +62,7 @@ TEST(Colourspace, YuvToRgbaTest) {
   uint8_t yuv[width * height * 2] = {0};           // Initialize to all zeros
   uint8_t rgba[width * height * 4] = {0};          // Initialize to all zeros
   uint8_t rgba_recieve[width * height * 4] = {0};  // Initialize to all zeros
+  video::ColourSpace convert;
 
   // Fill the YUV buffer with a red color
   for (uint32_t i = 0; i < (width * height * 2); i += 4) {
@@ -76,7 +78,7 @@ TEST(Colourspace, YuvToRgbaTest) {
     rgba[i] = 0xFC;  // R component
   }
   // Call the function you want to test
-  video::YuvToRgba(height, width, yuv, rgba_recieve);
+  convert.YuvToRgba(height, width, yuv, rgba_recieve);
   DumpHex(rgba_recieve, 16);
 
   // Check that the RGB buffer matches the expected buffer
@@ -91,6 +93,7 @@ TEST(Colourspace, RgbToYuvTest) {
   const uint32_t height = 4;
   const uint32_t bufferSize = width * height * 3;
   uint8_t rgb[bufferSize] = {0};
+  video::ColourSpace convert;
 
   // Fill the expected RGB buffer with a red color
   for (uint32_t i = 0; i < width * height * 3; i += 3) {
@@ -99,7 +102,7 @@ TEST(Colourspace, RgbToYuvTest) {
 
   // Call the function you want to test
   uint8_t yuv[bufferSize * 2] = {0};
-  video::RgbToYuv(height, width, rgb, yuv);
+  convert.RgbToYuv(height, width, rgb, yuv);
 
   DumpHex(yuv, 16);
 }
@@ -110,6 +113,7 @@ TEST(Colourspace, RgbaToYuvTest) {
   const uint32_t height = 4;
   const uint32_t bufferSize = width * height * 4;
   uint8_t rgba[bufferSize] = {0};
+  video::ColourSpace convert;
 
   // Fill the expected RGB buffer with a red color
   for (uint32_t i = 0; i < width * height * 4; i += 4) {
@@ -118,7 +122,7 @@ TEST(Colourspace, RgbaToYuvTest) {
 
   // Call the function you want to test
   uint8_t yuv[bufferSize * 2] = {0};
-  video::RgbaToYuv(height, width, rgba, yuv);
+  convert.RgbaToYuv(height, width, rgba, yuv);
 
   DumpHex(yuv, 16);
 }
@@ -129,6 +133,7 @@ TEST(Colourspace, RgbaToRgbTest) {
   const uint32_t height = 4;
   const uint32_t bufferSize = width * height * 4;
   uint8_t rgba[bufferSize] = {0};
+  video::ColourSpace convert;
 
   // Fill the expected RGB buffer with a red color
   for (uint32_t i = 0; i < width * height * 4; i += 4) {
@@ -137,7 +142,7 @@ TEST(Colourspace, RgbaToRgbTest) {
 
   // Call the function you want to test
   uint8_t rgb[bufferSize * 2] = {0};
-  video::RgbaToRgb(height, width, rgba, rgb);
+  convert.RgbaToRgb(height, width, rgba, rgb);
 
   DumpHex(rgb, 16);
 }

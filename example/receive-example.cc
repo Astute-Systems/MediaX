@@ -46,6 +46,7 @@ static uint64_t m_frame_counter_ = 0;
 gboolean on_draw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer user_data) {
   uint8_t *cpu_buffer;
   auto data = static_cast<OnDrawData *>(user_data);
+  video::ColourSpace convert;
 
   // Fill the surface with video data if available
   if (rtp_.Receive(&cpu_buffer, 80) == true) {
@@ -53,7 +54,7 @@ gboolean on_draw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer
     // Get the width and height of the surface
     int width = cairo_image_surface_get_width(data->surface);
     int height = cairo_image_surface_get_height(data->surface);
-    video::YuvToRgba(height, width, cpu_buffer, surface_data);
+    convert.YuvToRgba(height, width, cpu_buffer, surface_data);
 
     // Mark the surface as dirty to ensure the data is properly updated
     cairo_surface_mark_dirty(data->surface);

@@ -29,7 +29,7 @@ class V4L2Capture {
   /// \param width The width of the frame
   /// \param height The height of the frame
   ///
-  V4L2Capture(const char* device, int width, int height);
+  V4L2Capture(std::string_view device, int width, int height);
 
   ///
   /// \brief Destroy the V4L2Capture::V4L2Capture object

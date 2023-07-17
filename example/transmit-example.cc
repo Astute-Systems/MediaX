@@ -59,23 +59,28 @@
 #include "pngget.h"
 #include "rtp_utils.h"
 #include "rtpvraw_payloader.h"
+#include "v4l2_source.h"
 #include "version.h"
 
 DEFINE_string(ipaddr, kIpAddressDefault, "the IP address of the transmit stream");
 DEFINE_int32(port, kPortDefault, "the port to use for the transmit stream");
 DEFINE_int32(height, kHeightDefault, "the height of the image");
 DEFINE_int32(width, kWidthDefault, "the width of the image");
-DEFINE_int32(pattern, 1,
-             "The test pattern (0-4)\n\t0 - Use a PNG file (see -filename)\n\t"
-             "1 - Colour bars\n\t2 - Greyscale bars\n\t"
-             "3 - Scaled RGB values\n\t"
-             "4 - Checkered test card"
-             "5 - Solid white\n\t"
-             "6 - Solid black\n\t"
-             "7 - Solid red\n\t"
-             "8 - Solid green\n\t"
-             "9 - Solid blue\n\t");
-DEFINE_string(filename, "testcard.png", "the PNG file to use as the source of the video stream");
+DEFINE_int32(source, 0,
+             "The video source (0-10)\n\t"
+             "0 - Use a PNG file (see -filename)\n\t"
+             "1 - v4l2src\n\t"
+             "2 - Colour bars\n\t"
+             "3 - Greyscale bars\n\t"
+             "4 - Scaled RGB values\n\t"
+             "5 - Checkered test card\n\t"
+             "6 - Solid white\n\t"
+             "7 - Solid black\n\t"
+             "8 - Solid red\n\t"
+             "9 - Solid green\n\t"
+             "10 - Solid blue\n\t");
+DEFINE_string(filename, "testcard.png", "the PNG file to use as the source of the video stream (only with -source 0)");
+DEFINE_string(device, "/dev/video0", "the V4L2 device source (only with -source 1)");
 DEFINE_string(session_name, "TestVideo1", "the SAP/SDP session name");
 
 static bool application_running = true;
@@ -83,24 +88,27 @@ static bool application_running = true;
 void signalHandler(int signum [[maybe_unused]]) { application_running = false; }
 
 int main(int argc, char **argv) {
+  video::ColourSpace convert;
+
   gflags::SetVersionString(kVersion);
   gflags::SetUsageMessage(
       "Transmit a video stream using RTP\n"
       "Usage:\n"
       "    transmit-example [options]\n"
       "Example:\n"
-      "    transmit-example -ipaddr 127.0.0.1 -port 5004 -height 480 -width 640 -pattern 1\n");
+      "    transmit-example -ipaddr 127.0.0.1 -port 5004 -height 480 -width 640 -source 0\n");
   gflags::ParseCommandLineFlags(&argc, &argv, true);
-
   uint32_t frame = 0;
-  const int kBuffSize = (640 * 480) * 3;  // Maximum is HD
-  std::array<uint8_t, kBuffSize> yuv;
-  std::array<uint8_t, kBuffSize> rtb_test;
+  const uint32_t kBuffSize = FLAGS_height * FLAGS_width;
+  const uint32_t kBuffSizeRGB = kBuffSize * 3;
+  std::array<uint8_t, (640 * 480) * 2> yuv;       // Maximum is HD
+  std::array<uint8_t, (640 * 480) * 3> rtb_test;  // Maximum is HD
 
   // register signal SIGINT and signal handler
   signal(SIGINT, signalHandler);
 
-  std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
+  std::cout << "Example RTP streaming (" << FLAGS_width << "x" << FLAGS_height << ") to " << FLAGS_ipaddr.c_str() << ":"
+            << FLAGS_port << "\n";
 
   sleep(1);
 
@@ -110,53 +118,61 @@ int main(int argc, char **argv) {
                     (uint16_t)FLAGS_port);
   rtp.Open();
 
-  memset(rtb_test.data(), 0, kBuffSize);
+  memset(rtb_test.data(), 0, kBuffSize * 3);
 
   // Read the PNG file
   std::vector<uint8_t> rgb;
-  switch (FLAGS_pattern) {
+  switch (FLAGS_source) {
     case 1:
-      rgb.resize(kBuffSize);
+      rgb.resize(kBuffSizeRGB);
+      {
+        auto v4lsource = V4L2Capture(FLAGS_device, FLAGS_width, FLAGS_height);
+        // v4lsource.CaptureFrame(rgb.data());
+      }
+      std::cout << "Creating V4l2 source device=" + FLAGS_device + "\n";
+      break;
+    case 2:
+      rgb.resize(kBuffSizeRGB);
       CreateColourBarTestCard(rgb.data(), FLAGS_width, FLAGS_height);
       std::cout << "Creating colour bar test card\n";
       break;
-    case 2:
-      rgb.resize(kBuffSize);
+    case 3:
+      rgb.resize(kBuffSizeRGB);
       CreateGreyScaleBarTestCard(rgb.data(), FLAGS_width, FLAGS_height);
       std::cout << "Creating greyscale test card\n";
       break;
-    case 3:
-      rgb.resize(kBuffSize);
+    case 4:
+      rgb.resize(kBuffSizeRGB);
       CreateComplexTestCard(rgb.data(), FLAGS_width, FLAGS_height);
       std::cout << "Creating scaled RGB values\n";
       break;
-    case 4:
-      rgb.resize(kBuffSize);
+    case 5:
+      rgb.resize(kBuffSizeRGB);
       CreateCheckeredTestCard(rgb.data(), FLAGS_width, FLAGS_height);
       std::cout << "Creating checkered test card\n";
       break;
-    case 5:  // Solid white
-      rgb.resize(kBuffSize);
+    case 6:  // Solid white
+      rgb.resize(kBuffSizeRGB);
       CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 255, 255, 255);
       std::cout << "Creating solid white test card\n";
       break;
-    case 6:  // Solid black
-      rgb.resize(kBuffSize);
+    case 7:  // Solid black
+      rgb.resize(kBuffSizeRGB);
       CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 0, 0);
       std::cout << "Creating solid black test card\n";
       break;
-    case 7:  // Solid red
-      rgb.resize(kBuffSize);
+    case 8:  // Solid red
+      rgb.resize(kBuffSizeRGB);
       CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 255, 0, 0);
       std::cout << "Creating solid red test card\n";
       break;
-    case 8:  // Solid green
-      rgb.resize(kBuffSize);
+    case 9:  // Solid green
+      rgb.resize(kBuffSizeRGB);
       CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 255, 0);
       std::cout << "Creating solid green test card\n";
       break;
-    case 9:  // Solid blue
-      rgb.resize(kBuffSize);
+    case 10:  // Solid blue
+      rgb.resize(kBuffSizeRGB);
       CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 0, 255);
       std::cout << "Creating solid blue test card\n";
       break;
@@ -168,21 +184,20 @@ int main(int argc, char **argv) {
         return -1;
       }
       /// Make it RGB
-      video::RgbaToRgb(FLAGS_height, FLAGS_width, rgb.data(), rgb.data());
+      convert.RgbaToRgb(FLAGS_height, FLAGS_width, rgb.data(), rgb.data());
       break;
   }
 
   // Convert all the scan lines
-
   // Loop frames forever
   while (application_running) {
     // Timestamp start
     auto start = std::chrono::high_resolution_clock::now();
     // Clear the YUV buffer
-    memset(yuv.data(), 0, kBuffSize);
+    // memset(yuv.data(), 0, kBuffSize);
 
     // Convert the RGB data to YUV again
-    video::RgbToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
+    convert.RgbToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
     // video::cuda::RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
 
     if (rtp.Transmit(yuv.data(), true) < 0) break;
