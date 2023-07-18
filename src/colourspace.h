@@ -35,7 +35,7 @@ class ColourSpace {
   /// \param rgb The RGB image buffer
   /// \param yuv The YUV:422 image buffer
   ///
-  void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv);
+  void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) const;
 
   ///
   /// \brief Convert RGBA to YUV
@@ -45,7 +45,7 @@ class ColourSpace {
   /// \param rgba The RGB image buffer
   /// \param yuv The YUV:422 image buffer
   ///
-  void RgbaToYuv(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *yuv);
+  void RgbaToYuv(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *yuv) const;
 
   ///
   /// \brief Convert RGBA to RGB
@@ -55,7 +55,7 @@ class ColourSpace {
   /// \param rgba
   /// \param rgb
   ///
-  void RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb);
+  void RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const;
 
   ///
   /// \brief Convert YUV to RGBA
@@ -65,7 +65,7 @@ class ColourSpace {
   /// \param yuv The YUV:422 image buffer
   /// \param rgba The RGBA image buffer
   ///
-  void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba);
+  void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const;
 
   ///
   /// \brief Convert YUV to RGB
@@ -75,7 +75,7 @@ class ColourSpace {
   /// \param yuv The YUV:422 image buffer
   /// \param rgb The RGB image buffer
   ///
-  void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb);
+  void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const;
 };
 
 }  // namespace video

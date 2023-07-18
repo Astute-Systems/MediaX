@@ -24,7 +24,7 @@ namespace video {
 
 ColourSpace::ColourSpace() { av_log_set_level(AV_LOG_ERROR); };
 
-void ColourSpace::YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) {
+void ColourSpace::YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const {
   if (!rgb || !yuv) {
     // Handle null pointers gracefully
     return;
@@ -49,7 +49,7 @@ void ColourSpace::YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_
   sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
 }
 
-void ColourSpace::YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) {
+void ColourSpace::YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const {
   if (!rgba || !yuv) {
     // Handle null pointers gracefully
     return;
@@ -74,7 +74,7 @@ void ColourSpace::YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8
   sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
 }
 
-void ColourSpace::RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) {
+void ColourSpace::RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const {
   if (!rgba || !rgb) {
     // Handle null pointers gracefully
     return;
@@ -99,7 +99,7 @@ void ColourSpace::RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint
   sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
 }
 
-void ColourSpace::RgbaToYuv(uint32_t height, uint32_t width, uint8_t *rgba, uint8_t *yuv) {
+void ColourSpace::RgbaToYuv(uint32_t height, uint32_t width, uint8_t *rgba, uint8_t *yuv) const {
   if (!rgba || !yuv) {
     // Handle null pointers gracefully
     return;
@@ -124,7 +124,7 @@ void ColourSpace::RgbaToYuv(uint32_t height, uint32_t width, uint8_t *rgba, uint
   sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
 }
 
-void ColourSpace::RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) {
+void ColourSpace::RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) const {
   if (!rgb || !yuv) {
     // Handle null pointers gracefully
     return;

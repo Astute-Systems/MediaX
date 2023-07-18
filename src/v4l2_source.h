@@ -32,6 +32,13 @@ class V4L2Capture {
   V4L2Capture(std::string_view device, int width, int height);
 
   ///
+  /// \brief Delete the assignment operator
+  ///
+  /// \return V4L2Capture&
+  ///
+  V4L2Capture& operator=(const V4L2Capture&) = delete;
+
+  ///
   /// \brief Destroy the V4L2Capture::V4L2Capture object
   ///
   ///
