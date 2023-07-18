@@ -50,6 +50,7 @@
 #include <array>
 #include <csignal>
 #include <iostream>
+#include <memory>
 #include <ostream>
 #include <vector>
 
@@ -89,6 +90,7 @@ void signalHandler(int signum [[maybe_unused]]) { application_running = false; }
 
 int main(int argc, char **argv) {
   video::ColourSpace convert;
+  std::unique_ptr<V4L2Capture> v4lsource;
 
   gflags::SetVersionString(kVersion);
   gflags::SetUsageMessage(
@@ -125,10 +127,8 @@ int main(int argc, char **argv) {
   switch (FLAGS_source) {
     case 1:
       rgb.resize(kBuffSizeRGB);
-      {
-        auto v4lsource = V4L2Capture(FLAGS_device, FLAGS_width, FLAGS_height);
-        // v4lsource.CaptureFrame(rgb.data());
-      }
+      v4lsource = std::make_unique<V4L2Capture>(FLAGS_device, FLAGS_height, FLAGS_width);
+      v4lsource->CaptureFrame(rgb.data());
       std::cout << "Creating V4l2 source device=" + FLAGS_device + "\n";
       break;
     case 2:
@@ -194,7 +194,10 @@ int main(int argc, char **argv) {
     // Timestamp start
     auto start = std::chrono::high_resolution_clock::now();
     // Clear the YUV buffer
-    // memset(yuv.data(), 0, kBuffSize);
+    if (FLAGS_source == 1) {
+      v4lsource->CaptureFrame(rgb.data());
+    }
+    memset(yuv.data(), 0, kBuffSize);
 
     // Convert the RGB data to YUV again
     convert.RgbToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());

@@ -93,6 +93,14 @@ V4L2Capture::V4L2Capture(std::string_view device, int width, int height) : width
     fd_ = -1;
     return;
   }
+
+  struct v4l2_buffer buffer_info = {0};
+  buffer_info.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+  buffer_info.memory = V4L2_MEMORY_MMAP;
+  buffer_info.index = 0;
+  if (ioctl(fd_, VIDIOC_QBUF, &buffer_info) == -1) {
+    std::cerr << "Failed to queue buffer" << std::endl;
+  }
 }
 
 V4L2Capture::~V4L2Capture() {
@@ -117,17 +125,18 @@ bool V4L2Capture::CaptureFrame(uint8_t* buffer) const {
   buffer_info.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
   buffer_info.memory = V4L2_MEMORY_MMAP;
 
-  if (ioctl(fd_, VIDIOC_QBUF, &buffer_info) == -1) {
-    std::cerr << "Failed to queue buffer" << std::endl;
-    return false;
-  }
-
   if (ioctl(fd_, VIDIOC_DQBUF, &buffer_info) == -1) {
     std::cerr << "Failed to dequeue buffer" << std::endl;
     return false;
   }
 
   std::memcpy(buffer, buffer_, width_ * height_ * 3);
+
+  // Re-enqueue the buffer.
+  if (ioctl(fd_, VIDIOC_QBUF, &buffer_info) == -1) {
+    std::cerr << "Failed to queue buffer" << std::endl;
+    return false;
+  }
 
   return true;
 }
