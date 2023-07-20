@@ -4,8 +4,10 @@
 - \ref intro
 - \ref dep
      - @ref install
+- \ref examples
 - \ref gst
-     - @ref examples
+     - @ref gstuncompressed
+     - @ref gstrtph264gst
 - \ref uncompressed
      - @ref yuv
      - @ref rgb24
@@ -133,6 +135,8 @@ Catch the stream using the gstreamer src pipeline in the section below. Followin
 ![test card image](testcard.png)
 
 \section gst Gstreamer examples
+
+\subsection gstuncompressed RTP uncompressed
 The test scripts ./example/rtp-gst-test-rx.sh, ./example/rtp-gst-test-tx.sh runs the example program against gstreamer to ensure interoperability.
 
 Use this pipeline as a test payloader to make sure gstreamer is working:
@@ -144,6 +148,11 @@ Use this pipeline to capture the stream:
     gst-launch-1.0 -v udpsrc port=5004 caps="application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)RAW, sampling=(string)YCbCr-4:2:2, depth=(string)8, width=(string)640, height=(string)480, payload=(int)96" ! queue ! rtpvrawdepay ! queue ! videoconvert ! ximagesink 
 
 You can also run the provided examples back to back using the script  ./example/rtp-test.sh 
+
+\subsection gstrtph264 RTP H.264
+Below is an example of how to stream RTP H.264 for Intel devices that support VAAPI (Video Acceleration API). This pipeline will stream the video from the camera and display it on the screen.
+
+    gst-launch-1.0 -v videotestsrc horizontal-speed=1 ! video/x-raw, format=UYVY, framerate=50/1, width=1920, height=1080 ! queue ! vaapih264enc ! rtph264pay ! udpsink host=239.182.1.1 port=5004
 
 \section uncompressed RTP uncompressed
 There are three RTP methods for streaming video, these are described in the sections below.
