@@ -58,6 +58,7 @@
 #endif
 #include <limits.h>
 
+#include "rtp_depayloader.h"
 #include "rtp_types.h"
 #include "sap_listener.h"
 
@@ -65,7 +66,7 @@
 /// \brief Manage an RTP stream
 ///
 ///
-class RtpvrawDepayloader {
+class RtpvrawDepayloader : RtpDepayloader {
  public:
   /// The supported colour spaces
 
@@ -247,8 +248,6 @@ class RtpvrawDepayloader {
   ColourspaceType encoding_ = ColourspaceType::kColourspaceUndefined;
   /// Transmit arguments used by the thread
   TxData arg_tx;
-  /// Ingress port
-  static PortType ingress_;
   /// thread mutex
   pthread_mutex_t mutex_;
   /// UDP data buffer

@@ -19,6 +19,8 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "MSYS")
 endif()
 
 set(SOURCES
+  rtp_payloader.cc 
+  rtp_depayloader.cc 
   rtpvraw_payloader.cc 
   rtpvraw_depayloader.cc 
   rtph264_payloader.cc 

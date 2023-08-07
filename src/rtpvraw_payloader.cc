@@ -210,15 +210,3 @@ int32_t RtpvrawPayloader::GenerateTimestamp90kHz() {
 
   return static_cast<int32_t>(num_90kHz_units);
 }
-
-ColourspaceType RtpvrawPayloader::GetColourSpace() const { return egress_.encoding; }
-
-uint32_t RtpvrawPayloader::GetHeight() const { return egress_.height; }
-
-uint32_t RtpvrawPayloader::GetWidth() const { return egress_.width; }
-
-uint32_t RtpvrawPayloader::GetFrameRate() const { return egress_.framerate; }
-
-std::string RtpvrawPayloader::GetIpAddress() const { return egress_.hostname; }
-
-uint32_t RtpvrawPayloader::GetPort() const { return egress_.port_no; }

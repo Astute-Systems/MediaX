@@ -36,7 +36,6 @@
 #include "rtpvraw_depayloader.h"
 #include "sap_announcer.h"
 
-PortType RtpvrawDepayloader::ingress_;
 std::vector<uint8_t> RtpvrawDepayloader::buffer_in_;
 
 RtpvrawDepayloader::RtpvrawDepayloader() { pthread_mutex_init(&mutex_, nullptr); }

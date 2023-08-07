@@ -58,6 +58,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #endif
+#include "rtp_payloader.h"
 #include "rtp_types.h"
 #include "sap_listener.h"
 
@@ -65,7 +66,7 @@
 /// \brief Manage an RTP stream
 ///
 ///
-class RtpvrawPayloader {
+class RtpvrawPayloader : public RtpPayloader {
  public:
   /// The supported colour spaces
 
@@ -94,7 +95,7 @@ class RtpvrawPayloader {
   /// \param width The width of the stream in pixels
   ///
   void SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                     std::string_view hostname, const uint32_t port = 5004);
+                     std::string_view hostname, const uint32_t port = 5004) final;
 
   ///
   /// \brief Open the RTP stream
@@ -102,13 +103,13 @@ class RtpvrawPayloader {
   /// \return true
   /// \return false
   ///
-  bool Open();
+  bool Open() final;
 
   ///
   /// \brief Close the RTP stream
   ///
   ///
-  void Close();
+  void Close() final;
 
   ///
   /// \brief Transmit an RGB buffer
@@ -117,55 +118,7 @@ class RtpvrawPayloader {
   /// \param blocking defaults to true, will wait till frame has been transmitted
   /// \return int
   ///
-  int Transmit(uint8_t *rgbframe, bool blocking = true);
-
-  ///
-  /// \brief Get the Colour Space object of the incoming stream. \note This may be invalid id no SAP/SDP announcement
-  /// has been received yet.
-  ///
-  /// \return ColourspaceType
-  ///
-  ColourspaceType GetColourSpace() const;
-
-  ///
-  /// \brief Get the Height object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
-  /// received yet.
-  ///
-  /// \return uint32_t
-  ///
-  uint32_t GetHeight() const;
-
-  ///
-  /// \brief Get the Width object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
-  /// received yet.
-  ///
-  /// \return uint32_t
-  ///
-  uint32_t GetWidth() const;
-
-  ///
-  /// \brief Get the Frame Rate of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
-  /// received yet.
-  ///
-  /// \return uint32_t
-  ///
-  uint32_t GetFrameRate() const;
-
-  ///
-  /// \brief Get the Ip Address of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
-  /// received yet.
-  ///
-  /// \return std::string
-  ///
-  std::string GetIpAddress() const;
-
-  ///
-  /// \brief Get the Port of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
-  /// received yet.
-  ///
-  /// \return uint32_t
-  ///
-  uint32_t GetPort() const;
+  int Transmit(uint8_t *rgbframe, bool blocking = true) final;
 
   ///
   /// \brief Send a frame
@@ -187,8 +140,6 @@ class RtpvrawPayloader {
   static uint32_t sequence_number_;
   /// Transmit arguments used by the thread
   TxData arg_tx;
-  /// Egress port
-  PortType egress_;
   /// The server address information
   struct addrinfo *server_out_;
   /// The socket for the outgoing stream
