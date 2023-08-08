@@ -66,7 +66,7 @@
 /// \brief Manage an RTP stream
 ///
 ///
-class RtpvrawDepayloader : RtpDepayloader {
+class RtpvrawDepayloader : public RtpDepayloader {
  public:
   /// The supported colour spaces
 
@@ -82,7 +82,7 @@ class RtpvrawDepayloader : RtpDepayloader {
   /// \brief Destroy the Rtp Stream object
   ///
   ///
-  ~RtpvrawDepayloader();
+  ~RtpvrawDepayloader() final;
 
   ///
   /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement
@@ -101,7 +101,7 @@ class RtpvrawDepayloader : RtpDepayloader {
   /// \brief Configure at RTP input stream and  wait for the SAP/SDP announcement
   ///
   ///
-  void SetStreamInfo(std::string_view name) const;
+  void SetStreamInfo(std::string_view name) const final;
 
   ///
   /// \brief Register a SAP callback to get updated
@@ -116,25 +116,25 @@ class RtpvrawDepayloader : RtpDepayloader {
   /// \return true
   /// \return false
   ///
-  bool Open() const;
+  bool Open() const final;
 
   ///
   /// \brief Start the stream
   ///
   ///
-  void Start();
+  void Start() final;
 
   ///
   /// \brief Stop the stream, can be quickly re-started
   ///
   ///
-  void Stop();
+  void Stop() final;
 
   ///
   /// \brief Close the RTP stream
   ///
   ///
-  void Close() const;
+  void Close() const final;
 
   ///
   /// \brief Recieve a frame or timeout
@@ -144,100 +144,7 @@ class RtpvrawDepayloader : RtpDepayloader {
   /// \return true when frame available
   /// \return false when no frame was received in the timeout
   ///
-  bool Receive(uint8_t **cpu, int32_t timeout = 0) const;
-
-  ///
-  /// \brief Set the Session Name attribute
-  ///
-  /// \param name The SAP/SDP session name
-  ///
-  void SetSessionName(std::string_view name) const;
-
-  ///
-  /// \brief Get the Session Name attribute
-  ///
-  /// \return std::string The SAP/SDP session name
-  ///
-  std::string GetSessionName() const;
-
-  ///
-  /// \brief Get the Colour Space object of the incoming stream. \note This may be invalid id no SAP/SDP announcement
-  /// has been received yet.
-  ///
-  /// \return ColourspaceType
-  ///
-  ColourspaceType GetColourSpace() const;
-
-  ///
-  /// \brief Set the Height attribute
-  ///
-  ///
-  void SetHeight(uint32_t height) const;
-
-  ///
-  /// \brief Get the Height object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
-  /// received yet.
-  ///
-  /// \return uint32_t
-  ///
-  uint32_t GetHeight() const;
-
-  ///
-  /// \brief Set the Width attribute
-  ///
-  ///
-  void SetWidth(uint32_t width) const;
-
-  ///
-  /// \brief Get the Width object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
-  /// received yet.
-  ///
-  /// \return uint32_t
-  ///
-  uint32_t GetWidth() const;
-
-  ///
-  /// \brief Set the Frame Rate object
-  ///
-  ///
-  void SetFramerate(uint32_t framerate) const;
-
-  ///
-  /// \brief Get the Frame Rate of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
-  /// received yet.
-  ///
-  /// \return uint32_t
-  ///
-  uint32_t GetFrameRate() const;
-
-  ///
-  /// \brief Get the Ip Address of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
-  /// received yet.
-  ///
-  /// \return std::string
-  ///
-  std::string GetIpAddress() const;
-
-  ///
-  /// \brief Set the Ip Address attribute
-  ///
-  /// \param ip_address The IPV4 address of the video stream
-  ///
-  void SetIpAddress(std::string_view ip_address) const;
-
-  ///
-  /// \brief Set the Port object
-  ///
-  ///
-  void SetPort(uint32_t port) const;
-
-  ///
-  /// \brief Get the Port of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
-  /// received yet.
-  ///
-  /// \return uint32_t
-  ///
-  uint32_t GetPort() const;
+  bool Receive(uint8_t **cpu, int32_t timeout = 0) const final;
 
  private:
   /// The incremental sequence numer for transmitting RTP packets
