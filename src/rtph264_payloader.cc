@@ -12,4 +12,31 @@
 /// \file rtph264_payloader.cc
 ///
 
+#include "rtph264_payloader.h"
+
 #include "rtph264_depayloader.h"
+
+RtpH264Payloader::RtpH264Payloader() = default;
+
+RtpH264Payloader::~RtpH264Payloader() {}
+
+void RtpH264Payloader::SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
+                                     std::string_view hostname, const uint32_t portno) {
+  egress_.encoding = encoding;
+  egress_.height = height;
+  egress_.width = width;
+  egress_.framerate = 25;
+  egress_.name = name;
+  egress_.hostname = hostname;
+  egress_.port_no = portno;
+}
+
+int RtpH264Payloader::Transmit(unsigned char*, bool) { return 0; }
+
+bool RtpH264Payloader::Open() { return true; }
+
+void RtpH264Payloader::Close() {}
+
+void RtpH264Payloader::Start() {}
+
+void RtpH264Payloader::Stop() {}

@@ -59,6 +59,18 @@ class RtpPayloader {
   virtual void Close() = 0;
 
   ///
+  /// \brief Stop a stream so it can be quickly restarted. Do not close
+  ///
+  ///
+  virtual void Stop();
+
+  ///
+  /// \brief Restart a stopped stream
+  ///
+  ///
+  virtual void Start();
+
+  ///
   /// \brief Transmit an RGB buffer
   ///
   /// \param rgbframe pointer to the frame data

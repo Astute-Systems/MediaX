@@ -82,7 +82,7 @@ class RtpvrawPayloader : public RtpPayloader {
   /// \brief Destroy the Rtp Stream object
   ///
   ///
-  ~RtpvrawPayloader();
+  ~RtpvrawPayloader() final;
 
   ///
   /// \brief Configure an RTP output stream
