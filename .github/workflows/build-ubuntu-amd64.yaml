@@ -24,7 +24,6 @@ jobs:
 
       - name: Apt Install
         run: |
-          sudo apt-get --no-install-recommends install libswscale-dev libgflags-dev libgtkmm-3.0-dev cmake g++ libgtest-dev && \
           ./scripts/init_build_machine.sh
 
       - name: CMake and Build
