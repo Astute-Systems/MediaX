@@ -24,7 +24,7 @@ jobs:
 
       - name: Apt Install
         run: |
-          ./scripts/init_build_machine.sh
+          sudo ./scripts/init_build_machine.sh
 
       - name: CMake and Build
         run: mkdir build && cd build && cmake .. && make

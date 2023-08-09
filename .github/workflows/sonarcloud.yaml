@@ -23,7 +23,7 @@ jobs:
           sudo apt install gcovr -y
       - name: Apt Install
         run: |
-          ./scripts/init_build_machine.sh
+          sudo ./scripts/init_build_machine.sh
       - name: Run build-wrapper
         run: |
           cmake -S . -B build -DCOVERAGE=ON -DCMAKE_BUILD_TYPE=Debug 
