@@ -3,14 +3,14 @@
 
 - \ref intro
 - \ref dep
-     - @ref install
+  - @ref install
 - \ref gst
-     - @ref examples
+  - @ref examples
 - \ref v4l2
 - \ref uncompressed
-     - @ref yuv
-     - @ref rgb24
-     - @ref mono8
+  - @ref yuv
+  - @ref rgb24
+  - @ref mono8
 - \ref h264
 - \ref mjpeg
 
@@ -29,22 +29,28 @@ Transmit streams emit a SAP/SDP announcement every second as per RFC 2974 and RF
 
 The following dependencies need to me installed prior to building this project:
 Ubuntu 22.04
+
 ```
 sudo apt install libswscale-dev libgtest-dev libgflags-dev libgtkmm-3.0-dev
 ```
+
 CentOS Stream 8
+
 ```
 sudo dnf install ffmpeg-libs gtest-devel gflags-devel
 ```
+
 libswscale is required for RGB/RGBA to UYVY colour space conversion.
 
 \section install Installation
 Build the example
+
 ```
 mkdir build
-cmake -DBUILD_CUDA=OFF -DEXAMPLES=ON -DBUILD_TESTING=ON ..
+cmake -DBUILD_CUDA=OFF -DEXAMPLES=ON -DBUILD_TESTING=ON VAAPI=ON ..
 ```
-To enable CUDA acceleration set -DBUILD_CUDA to ON, examples can als be enabled
+
+ > NOTE: To enable Intel H.264 acceleration set -DVAAPI to ON, this requires the Intel Media SDK to be installed. To enable CUDA acceleration set -DBUILD_CUDA to ON, examples can als be enabled
 
 \section examples Examples
 
@@ -53,10 +59,13 @@ RAW Real Time Protocol (RTP) payloader and de-payloader samples are written in C
 The examples directory also contains helper scripts to run various demos.
 
 > **NOTE** : This example has been tested on 64 bit ARM. Target hardware was the Nvidia Jetson TX1/TX2/AGX/Orin.
+
 ```
 ./transmit-example
 ```
+
 Command line arguments use **--help** and are listed below:
+
 ```
     -filename (the PNG file to use as the source of the video stream) type: string default: "testcard.png"
     -height (the height of the image) type: int32 default: 480
@@ -71,11 +80,15 @@ Command line arguments use **--help** and are listed below:
         4 - Checkered test card) type: int32 default: 0
 
 ```
+
 The receive example will display the stream (user **--help** for options):
+
 ```
 ./receive-example
 ```
+
 Receiver has these additional receive command line options, see **--help** for more info:
+
 ```
     -session_name (the SAP/SDP session name) type: string default: "TestVideo1"
     -wait_sap (wait for SAP/SDP announcement) type: bool default: false
@@ -98,7 +111,7 @@ Use this pipeline to capture the stream:
 
     gst-launch-1.0 -v udpsrc port=5004 caps="application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)RAW, sampling=(string)YCbCr-4:2:2, depth=(string)8, width=(string)640, height=(string)480, payload=(int)96" ! queue ! rtpvrawdepay ! queue ! videoconvert ! ximagesink 
 
-You can also run the provided examples back to back using the script  ./example/rtp-test.sh 
+You can also run the provided examples back to back using the script  ./example/rtp-test.sh
 
 > CAUTION: Gstreamer will number scan lines from 0 whereas DEF-STAN 00-082 will start at 1, this is a known incompatibility and when mixed will appear to be one scan line out on a GVA display.
 

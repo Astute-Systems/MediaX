@@ -23,8 +23,7 @@ set(SOURCES
   rtp_depayloader.cc 
   rtpvraw_payloader.cc 
   rtpvraw_depayloader.cc 
-  rtph264_payloader.cc 
-  rtph264_depayloader.cc 
+
   rtp_utils.cc 
   sap_announcer.cc 
   sap_listener.cc 
@@ -33,6 +32,13 @@ set(SOURCES
   colourspace_cuda.cu
   v4l2_source.cc
 )
+
+if (VAAPI) 
+  list(APPEND SOURCES   
+    rtph264_payloader.cc 
+    rtph264_depayloader.cc
+  )
+endif()
 
 add_library(mediax SHARED ${SOURCES})
 pkg_check_modules(SWSCALE REQUIRED libswscale libavutil) # libavformat libavcodec
