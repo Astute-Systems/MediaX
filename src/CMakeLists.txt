@@ -59,7 +59,7 @@ else()
   target_link_libraries(mediax_static png pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS})
 endif()
 
-target_include_directories(mediax_static PUBLIC ${CMAKE_SOURCE_DIR}/src ${SWSCALE_INCLUDE_DIRS})
+target_include_directories(mediax_static PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src ${SWSCALE_INCLUDE_DIRS})
 set_target_properties(mediax_static PROPERTIES SOVERSION 1)
 # set_property(TARGET mediax_static PROPERTY CUDA_SEPARABLE_COMPILATION ON)
 # set_target_properties(mediax_static PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
