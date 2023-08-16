@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.10)
-
 option(BUILD_CUDA OFF)
 
 if (BUILD_CUDA)
