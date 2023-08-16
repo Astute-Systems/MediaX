@@ -1,11 +1,6 @@
 include(FindPkgConfig)
 
-set(
-  TEST_INCLUDES
-  ${CMAKE_SOURCE_DIR}/src
-)
-
-include_directories(${TEST_INCLUDES})
+include_directories(${CMAKE_SOURCE_DIR}/src)
 
 add_executable(
   tests
