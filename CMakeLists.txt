@@ -10,6 +10,8 @@ add_subdirectory(src)
 
 include(scripts/cmake/version.cmake)
 include(scripts/cmake/cpp.cmake)
+include(scripts/cmake/cpplint.cmake)
+# include(scripts/cmake/linters.cmake)
 include(scripts/cmake/cpack.cmake)
 
 option(EXAMPLES "Build examples" OFF)
@@ -20,6 +22,9 @@ endif()
 if (BUILD_TESTING) 
     add_subdirectory(tests)
 endif()
+
+# cpplint setup
+cpplint_add_subdirectory(src)
 
 # Uninstall target
 if(NOT TARGET uninstall)

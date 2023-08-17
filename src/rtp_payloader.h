@@ -15,7 +15,7 @@
 #ifndef __RTP_PAYLOADER_H
 #define __RTP_PAYLOADER_H
 
-#include <string>
+#include <string_view>
 
 #include "rtp_types.h"
 

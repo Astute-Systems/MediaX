@@ -18,6 +18,7 @@
 
 #include <array>
 #include <map>
+#include <string>
 
 /// SAP/SDP constants
 const std::string kIpaddr = "224.2.127.254";

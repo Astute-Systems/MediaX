@@ -13,6 +13,8 @@
 
 #include "rtp_payloader.h"
 
+#include <string>
+
 ColourspaceType RtpPayloader::GetColourSpace() const { return egress_.encoding; };
 
 uint32_t RtpPayloader::GetHeight() const { return egress_.height; };
