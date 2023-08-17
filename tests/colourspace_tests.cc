@@ -26,9 +26,9 @@ namespace gva {
 TEST(Colourspace, YuvToRgbTest) {
   uint32_t height = 4;
   uint32_t width = 4;
-  uint8_t yuv[width * height * 2] = {0};          // Initialize to all zeros
-  uint8_t rgb[width * height * 3] = {0};          // Initialize to all zeros
-  uint8_t rgb_recieve[width * height * 3] = {0};  // Initialize to all zeros
+  uint8_t yuv[width * height * 2] = {};          // Initialize to all zeros
+  uint8_t rgb[width * height * 3] = {};          // Initialize to all zeros
+  uint8_t rgb_recieve[width * height * 3] = {};  // Initialize to all zeros
   video::ColourSpace convert;
 
   // Fill the YUV buffer with a red color
