@@ -15,117 +15,75 @@
 
 #include "rtph264_depayloader.h"
 
-#include <va/va.h>
-#include <va/va_drm.h>
-#include <va/va_x11.h>
+#include <gst/gst.h>
 
-#define VA_MAX_PLANES 3
+#include <iostream>
+#include <string>
 
-void DecodeFrame(VADisplay va_display, VAContextID va_context, VASurfaceID va_surface, const uint8_t *frame_data,
-                 int frame_size) {
-  VAConfigID va_config;
-  VAStatus va_status;
-  VABufferID va_buffer;
-  VASurfaceStatus va_surface_status;
-  VAImage va_image;
-  void *va_image_data;
-  uint32_t va_image_data_size;
-  uint32_t va_image_pitch;
-  uint32_t va_image_height;
+#include "rtph264_depayloader.h"
 
-  va_status = vaCreateConfig(va_display, VAProfileH264High, VAEntrypointVLD, nullptr, 0, &va_config);
-  if (va_status != VA_STATUS_SUCCESS) {
-    throw std::runtime_error("Failed to create VA config");
+RtpH264rawDepayloader::RtpH264rawDepayloader() {
+  // Initialize GStreamer
+  gst_init(nullptr, nullptr);
+
+  // Create a pipeline
+  GstElement *pipeline = gst_pipeline_new("rtp-h264-pipeline");
+
+  // Create a udpsrc element to receive the RTP stream
+  GstElement *udpsrc = gst_element_factory_make("udpsrc", "rtp-h264-udpsrc");
+  g_object_set(G_OBJECT(udpsrc), "port", 5000, NULL);
+
+  // Create a capsfilter element to set the caps for the RTP stream
+  GstElement *capsfilter = gst_element_factory_make("capsfilter", "rtp-h264-capsfilter");
+  GstCaps *caps =
+      gst_caps_from_string("application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264");
+  g_object_set(G_OBJECT(capsfilter), "caps", caps, NULL);
+  gst_caps_unref(caps);
+
+  // Create a rtph264depay element to depayload the RTP stream
+  GstElement *rtph264depay = gst_element_factory_make("rtph264depay", "rtp-h264-depay");
+
+  // Create a custom appsrc element to receive the H.264 stream
+  GstElement *appsrc = gst_element_factory_make("appsrc", "rtp-h264-appsrc");
+  g_object_set(G_OBJECT(appsrc), "stream-type", 0, "format", GST_FORMAT_TIME, NULL);
+
+  // Add all elements to the pipeline
+  gst_bin_add_many(GST_BIN(pipeline), udpsrc, capsfilter, rtph264depay, appsrc, NULL);
+
+  // Link the elements
+  gst_element_link_many(udpsrc, capsfilter, rtph264depay, NULL);
+
+  // Set the callback function for the appsrc element
+  // GstAppSrcCallbacks callbacks = {NULL, NULL, NULL};
+  // callbacks.need_data = [](GstAppSrc *appsrc, guint size, gpointer user_data) -> gboolean {
+  //   RtpH264Payloader *payloader = static_cast<RtpH264Payloader *>(user_data);
+  //   GstBuffer *buffer = payloader->GetNextFrame();
+  //   if (buffer != NULL) {
+  //     GstFlowReturn ret;
+  //     g_signal_emit_by_name(appsrc, "push-buffer", buffer, &ret);
+  //     gst_buffer_unref(buffer);
+  //     return TRUE;
+  //   } else {
+  //     return FALSE;
+  //   }
+  // };
+  // gst_app_src_set_callbacks(GST_APP_SRC(appsrc), &callbacks, &payloader, NULL);
+
+  // Start the pipeline
+  gst_element_set_state(pipeline, GST_STATE_PLAYING);
+
+  // Wait for the pipeline to finish
+  GstBus *bus = gst_element_get_bus(pipeline);
+  GstMessage *msg =
+      gst_bus_timed_pop_filtered(bus, GST_CLOCK_TIME_NONE, GstMessageType(GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
+  if (msg != NULL) {
+    gst_message_unref(msg);
   }
 
-  auto type = (VABufferType)0;
-  va_status = vaCreateBuffer(va_display, va_context, type, 0, 0, nullptr, &va_buffer);
-  if (va_status != VA_STATUS_SUCCESS) {
-    throw std::runtime_error("Failed to create VA buffer");
-  }
+  // Stop the pipeline
+  gst_element_set_state(pipeline, GST_STATE_NULL);
 
-  va_status = vaCreateSurfaces(va_display, VA_RT_FORMAT_YUV420, 640, 480, &va_surface, 1, nullptr, 0);
-  if (va_status != VA_STATUS_SUCCESS) {
-    throw std::runtime_error("Failed to create VA surface");
-  }
-
-  va_status = vaCreateContext(va_display, va_config, 0, 0, 0, &va_surface, 1, &va_context);
-  if (va_status != VA_STATUS_SUCCESS) {
-    throw std::runtime_error("Failed to create VA context");
-  }
-
-  va_status = vaBeginPicture(va_display, va_context, va_surface);
-  if (va_status != VA_STATUS_SUCCESS) {
-    throw std::runtime_error("Failed to begin VA picture");
-  }
-
-  va_status = vaCreateBuffer(va_display, va_context, VASliceDataBufferType, frame_size, 1,
-                             const_cast<uint8_t *>(frame_data), &va_buffer);
-  if (va_status != VA_STATUS_SUCCESS) {
-    throw std::runtime_error("Failed to create VA buffer");
-  }
-
-  va_status = vaRenderPicture(va_display, va_context, &va_buffer, 1);
-  if (va_status != VA_STATUS_SUCCESS) {
-    throw std::runtime_error("Failed to render VA picture");
-  }
-
-  va_status = vaEndPicture(va_display, va_context);
-  if (va_status != VA_STATUS_SUCCESS) {
-    throw std::runtime_error("Failed to end VA picture");
-  }
-
-  va_status = vaSyncSurface(va_display, va_surface);
-  if (va_status != VA_STATUS_SUCCESS) {
-    throw std::runtime_error("Failed to sync VA surface");
-  }
-
-  va_status = vaDeriveImage(va_display, va_surface, &va_image);
-  if (va_status != VA_STATUS_SUCCESS) {
-    throw std::runtime_error("Failed to derive VA image");
-  }
-
-  va_status = vaMapBuffer(va_display, va_image.buf, &va_image_data);
-  if (va_status != VA_STATUS_SUCCESS) {
-    throw std::runtime_error("Failed to map VA buffer");
-  }
-
-  // va_status = vaQueryImage(va_display, va_image.image_id, &va_image_fourcc, &va_image_width, &va_image_height);
-  // if (va_status != VA_STATUS_SUCCESS) {
-  //   throw std::runtime_error("Failed to query VA image");
-  // }
-
-  va_image_pitch = va_image.pitches[0];
-
-  // Do something with the decoded image data
-
-  va_status = vaUnmapBuffer(va_display, va_image.buf);
-  if (va_status != VA_STATUS_SUCCESS) {
-    throw std::runtime_error("Failed to unmap VA buffer");
-  }
-
-  va_status = vaDestroyImage(va_display, va_image.image_id);
-  if (va_status != VA_STATUS_SUCCESS) {
-    throw std::runtime_error("Failed to destroy VA image");
-  }
-
-  va_status = vaDestroyBuffer(va_display, va_buffer);
-  if (va_status != VA_STATUS_SUCCESS) {
-    throw std::runtime_error("Failed to destroy VA buffer");
-  }
-
-  va_status = vaDestroyContext(va_display, va_context);
-  if (va_status != VA_STATUS_SUCCESS) {
-    throw std::runtime_error("Failed to destroy VA context");
-  }
-
-  va_status = vaDestroySurfaces(va_display, &va_surface, 1);
-  if (va_status != VA_STATUS_SUCCESS) {
-    throw std::runtime_error("Failed to destroy VA surface");
-  }
-
-  va_status = vaDestroyConfig(va_display, va_config);
-  if (va_status != VA_STATUS_SUCCESS) {
-    throw std::runtime_error("Failed to destroy VA config");
-  }
+  // Free resources
+  gst_object_unref(bus);
+  gst_object_unref(pipeline);
 }

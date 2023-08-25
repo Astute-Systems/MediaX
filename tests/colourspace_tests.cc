@@ -26,9 +26,9 @@ namespace gva {
 TEST(Colourspace, YuvToRgbTest) {
   uint32_t height = 4;
   uint32_t width = 4;
-  uint8_t yuv[width * height * 2] = {};          // Initialize to all zeros
-  uint8_t rgb[width * height * 3] = {};          // Initialize to all zeros
-  uint8_t rgb_recieve[width * height * 3] = {};  // Initialize to all zeros
+  uint8_t yuv[width * height * 2];
+  uint8_t rgb[width * height * 3];
+  uint8_t rgb_receive[width * height * 3];
   video::ColourSpace convert;
 
   // Fill the YUV buffer with a red color
@@ -46,22 +46,20 @@ TEST(Colourspace, YuvToRgbTest) {
 
   // Call the function being tested
   DumpHex(yuv, 16);
-  convert.YuvToRgb(height, width, yuv, rgb_recieve);
-  DumpHex(rgb_recieve, 16);
+  convert.YuvToRgb(height, width, yuv, rgb_receive);
+  DumpHex(rgb_receive, 16);
 
   // Check that the RGB buffer matches the expected buffer
   for (uint32_t i = 0; i < width * height; i++) {
-    EXPECT_EQ(rgb[i], rgb_recieve[i]);
+    EXPECT_EQ(rgb[i], rgb_receive[i]);
   }
 }
 
-// Define a test case
 TEST(Colourspace, YuvToRgbaTest) {
   uint32_t height = 4;
   uint32_t width = 4;
-  uint8_t yuv[width * height * 2] = {0};           // Initialize to all zeros
-  uint8_t rgba[width * height * 4] = {0};          // Initialize to all zeros
-  uint8_t rgba_recieve[width * height * 4] = {0};  // Initialize to all zeros
+  uint8_t yuv[width * height * 2];
+  uint8_t rgba_recieve[width * height * 4];
   video::ColourSpace convert;
 
   // Fill the YUV buffer with a red color
@@ -73,18 +71,9 @@ TEST(Colourspace, YuvToRgbaTest) {
   }
   DumpHex(yuv, 16);
 
-  // Fill the expected RGB buffer with a red color
-  for (uint32_t i = 0; i < width * height * 4; i += 4) {
-    rgba[i] = 0xFC;  // R component
-  }
   // Call the function you want to test
   convert.YuvToRgba(height, width, yuv, rgba_recieve);
   DumpHex(rgba_recieve, 16);
-
-  // Check that the RGB buffer matches the expected buffer
-  // for (int i = 0; i < width * height; i++) {
-  //   EXPECT_EQ(rgba[i], rgba_recieve[i]);
-  // }
 }
 
 TEST(Colourspace, RgbToYuvTest) {
@@ -92,7 +81,7 @@ TEST(Colourspace, RgbToYuvTest) {
   const uint32_t width = 4;
   const uint32_t height = 4;
   const uint32_t bufferSize = width * height * 3;
-  uint8_t rgb[bufferSize] = {0};
+  uint8_t rgb[bufferSize];
   video::ColourSpace convert;
 
   // Fill the expected RGB buffer with a red color

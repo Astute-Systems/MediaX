@@ -11,6 +11,10 @@ endif()
 include(FindPkgConfig)
 include(GNUInstallDirs)
 
+# find GStreamer
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GST REQUIRED gstreamer-1.0 gstreamer-app-1.0 gstreamer-video-1.0)
+
 if (${CMAKE_SYSTEM_NAME} MATCHES "MSYS")
   message("Detected MSYS2...")
   set(MSYS_LIBS ws2_32 mingwex)
@@ -21,7 +25,6 @@ set(SOURCES
   rtp_depayloader.cc 
   rtpvraw_payloader.cc 
   rtpvraw_depayloader.cc 
-
   rtp_utils.cc 
   sap_announcer.cc 
   sap_listener.cc 
@@ -31,12 +34,10 @@ set(SOURCES
   v4l2_source.cc
 )
 
-if (VAAPI) 
-  list(APPEND SOURCES   
-    rtph264_payloader.cc 
-    rtph264_depayloader.cc
-  )
-endif()
+list(APPEND SOURCES   
+  rtph264_payloader.cc 
+  rtph264_depayloader.cc
+)
 
 add_library(mediax SHARED ${SOURCES})
 pkg_check_modules(SWSCALE REQUIRED libswscale libavutil) # libavformat libavcodec
@@ -46,7 +47,7 @@ if (WIN32)
 else()
   target_link_libraries(mediax png pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS})
 endif()
-target_include_directories(mediax PUBLIC ${SWSCALE_INCLUDE_DIRS})
+target_include_directories(mediax PUBLIC ${SWSCALE_INCLUDE_DIRS} ${GST_INCLUDE_DIRS})
 set_target_properties(mediax PROPERTIES SOVERSION 1)
 # set_property(TARGET mediax PROPERTY CUDA_SEPARABLE_COMPILATION ON)
 # set_target_properties(mediax PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
@@ -54,12 +55,12 @@ set_target_properties(mediax PROPERTIES CUDA_ARCHITECTURES "75")
 
 add_library(mediax_static STATIC ${SOURCES})
 if (WIN32)
-  target_link_libraries(mediax_static png pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} wsock32 ws2_32)
+  target_link_libraries(mediax_static png pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} ${GST_LIBRARIES} wsock32 ws2_32)
 else()
-  target_link_libraries(mediax_static png pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS})
+  target_link_libraries(mediax_static png pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} ${GST_LIBRARIES})
 endif()
 
-target_include_directories(mediax_static PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src ${SWSCALE_INCLUDE_DIRS})
+target_include_directories(mediax_static PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src ${SWSCALE_INCLUDE_DIRS} ${GST_INCLUDE_DIRS})
 set_target_properties(mediax_static PROPERTIES SOVERSION 1)
 # set_property(TARGET mediax_static PROPERTY CUDA_SEPARABLE_COMPILATION ON)
 # set_target_properties(mediax_static PROPERTIES CUDA_SEPARABLE_COMPILATION ON)

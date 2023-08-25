@@ -11,7 +11,7 @@ add_subdirectory(src)
 include(scripts/cmake/version.cmake)
 include(scripts/cmake/cpp.cmake)
 include(scripts/cmake/cpplint.cmake)
-# include(scripts/cmake/linters.cmake)
+include(scripts/cmake/linters.cmake)
 include(scripts/cmake/cpack.cmake)
 
 option(EXAMPLES "Build examples" OFF)

@@ -13,4 +13,64 @@
 #ifndef RTPH264_DEPAYLOADER_H
 #define RTPH264_DEPAYLOADER_H
 
+#include "rtp_depayloader.h"
+
+class RtpH264rawDepayloader : public RtpDepayloader {
+ public:
+  ///
+  /// \brief Construct a new Rtpvraw Depayloader object
+  ///
+  ///
+  RtpH264rawDepayloader();
+
+  ///
+  /// \brief Destroy the Rtpvraw Depayloader object
+  ///
+  ///
+  ~RtpH264rawDepayloader() final = default;
+
+  ///
+  /// \brief Set the Stream Info object
+  ///
+  /// \param name
+  ///
+  void SetStreamInfo(std::string_view name);
+
+  ///
+  /// \brief Open the RTP stream
+  ///
+  /// \return true
+  /// \return false
+  ///
+  bool Open() const final;
+
+  ///
+  /// \brief Start the stream
+  ///
+  ///
+  void Start() final;
+
+  ///
+  /// \brief Stop the stream, can be quickly re-started
+  ///
+  ///
+  void Stop() final;
+
+  ///
+  /// \brief Close the RTP stream
+  ///
+  ///
+  void Close() const final;
+
+  ///
+  /// \brief Recieve a frame or timeout
+  ///
+  /// \param cpu the fame buffer in CPU memory.
+  /// \param timeout zero will wait forever or a timeout in milliseconds
+  /// \return true when frame available
+  /// \return false when no frame was received in the timeout
+  ///
+  bool Receive(uint8_t **cpu, int32_t timeout = 0) const = 0;
+};
+
 #endif  // RTPH264_DEPAYLOADER_H
