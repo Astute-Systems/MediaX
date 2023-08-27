@@ -13,7 +13,7 @@
 /// \file rtph264_depayloader.cc
 ///
 
-#include "src/vaapi/rtph264_depayloader.h"
+#include "vaapi/rtph264_depayloader.h"
 
 #include <va/va.h>
 #include <va/va_drm.h>

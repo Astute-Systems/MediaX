@@ -17,8 +17,6 @@
 #include <iomanip>
 #include <iostream>
 
-namespace mediax {
-
 void EndianSwap32(uint32_t *data, unsigned int length) {
   // Check for Intel architecture
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
@@ -217,5 +215,3 @@ void CreateSolidTestCard(uint8_t *data, uint32_t width, uint32_t height, uint8_t
     data[i + 2] = blue;
   }
 }
-
-}  // namespace mediax

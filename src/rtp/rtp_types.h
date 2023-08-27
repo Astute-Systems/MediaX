@@ -23,7 +23,7 @@
 namespace mediax {
 
 /// SAP/SDP constants
-const char *kIpaddr = "224.2.127.254";
+#define kIpaddr "224.2.127.254"
 
 /// SAP/SDP port
 const uint16_t kPort = 9875;

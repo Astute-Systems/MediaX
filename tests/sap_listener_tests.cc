@@ -17,18 +17,20 @@
 #include "sap/sap_listener.h"
 
 TEST(SAPListenerTest, RegisterSapListenerTest) {
-  sap::SAPListener& listener = sap::SAPListener::GetInstance();
+  mediax::sap::SAPListener& listener = mediax::sap::SAPListener::GetInstance();
   std::string session_name = "test_session_name";
   bool callback_called = false;
-  sap::SapCallback callback = [&](const sap::SDPMessage& message [[maybe_unused]]) { callback_called = true; };
+  mediax::sap::SapCallback callback = [&](const mediax::sap::SDPMessage& message [[maybe_unused]]) {
+    callback_called = true;
+  };
   listener.RegisterSapListener(session_name, callback);
   listener.Start();
 
   /// Now make an announcement
-  sap::SAPAnnouncer& announcer = sap::SAPAnnouncer::GetInstance();
+  mediax::sap::SAPAnnouncer& announcer = mediax::sap::SAPAnnouncer::GetInstance();
   announcer.DeleteAllSAPAnnouncements();
-  sap::SAPMessage message = {
-      "test_session_name", "127.0.0.1", 5004, 1920, 1080, 30, ColourspaceType::kColourspaceYuv, false};
+  mediax::sap::SAPMessage message = {
+      "test_session_name", "127.0.0.1", 5004, 1920, 1080, 30, mediax::ColourspaceType::kColourspaceYuv, false};
   announcer.AddSAPAnnouncement(message);
   announcer.Start();
   ASSERT_EQ(announcer.GetActiveStreamCount(), 1);
