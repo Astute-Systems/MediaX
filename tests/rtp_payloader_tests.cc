@@ -13,7 +13,7 @@
 #include <gtest/gtest.h>
 #include <unistd.h>
 
-#include "rtpvraw_payloader.h"
+#include "raw/rtpvraw_payloader.h"
 
 TEST(RTPDepayloaderTest, SendOneFrame) {
   const int kBuffSize = (640 * 480) * 3;

@@ -1,3 +1,4 @@
+
 //
 // Copyright (c) 2023, DefenceX PTY LTD
 //
@@ -6,14 +7,10 @@
 // Licensed under the Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
 // License. See the LICENSE file in the project root for full license details.
 //
-/// \file example.h
 ///
+/// \file rtph264_depayloader.h
 
-#ifndef EXAMPLE_H
-#define EXAMPLE_H
-const int kHeightDefault = 480;
-const int kWidthDefault = 640;
-const int kPortDefault = 5004;
-const char* kIpAddressDefault = "127.0.0.1";
-const std::string kSessionName = "test_session_name";
-#endif  // EXAMPLE_H
+#ifndef VAAPI_RTPH264_DEPAYLOADER_H_
+#define VAAPI_RTPH264_DEPAYLOADER_H_
+
+#endif  // VAAPI_RTPH264_DEPAYLOADER_H_

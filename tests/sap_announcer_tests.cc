@@ -13,7 +13,7 @@
 #include <gtest/gtest.h>
 #include <unistd.h>
 
-#include "sap_announcer.h"
+#include "sap/sap_announcer.h"
 
 TEST(SAPAnnouncerTest, AddSAPAnnouncement) {
   sap::SAPAnnouncer &announcer = sap::SAPAnnouncer::GetInstance();

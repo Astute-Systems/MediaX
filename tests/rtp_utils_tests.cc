@@ -13,7 +13,7 @@
 #include <gtest/gtest.h>
 #include <unistd.h>
 
-#include "rtp_utils.h"
+#include "rtp/rtp_utils.h"
 
 TEST(Utilities, DumpHex) {
   std::string test = "This is a test string, it is 32 characters long";

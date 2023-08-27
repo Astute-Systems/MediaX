@@ -21,24 +21,22 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "MSYS")
 endif()
 
 set(SOURCES
-  rtp_payloader.cc 
-  rtp_depayloader.cc 
-  rtpvraw_payloader.cc 
-  rtpvraw_depayloader.cc 
-  rtp_utils.cc 
-  sap_announcer.cc 
-  sap_listener.cc 
-  sap_utils.cc 
-  colourspace.cc 
-  colourspace_cuda.cu
-  v4l2_source.cc
+  rtp/rtp_utils.cc 
+  rtp/rtp_payloader.cc 
+  rtp/rtp_depayloader.cc 
+  raw/rtpvraw_payloader.cc 
+  raw/rtpvraw_depayloader.cc 
+  sap/sap_announcer.cc 
+  sap/sap_listener.cc 
+  sap/sap_utils.cc 
+  utils/colourspace.cc 
+  utils/colourspace_cuda.cu
+  v4l2/v4l2_source.cc
+  h264/rtph264_payloader.cc 
+  h264/rtph264_depayloader.cc
 )
 
-list(APPEND SOURCES   
-  rtph264_payloader.cc 
-  rtph264_depayloader.cc
-)
-
+include_directories(${CMAKE_SOURCE_DIR}/src)
 add_library(mediax SHARED ${SOURCES})
 pkg_check_modules(SWSCALE REQUIRED libswscale libavutil) # libavformat libavcodec
 if (WIN32)

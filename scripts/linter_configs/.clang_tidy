@@ -1,0 +1,2 @@
+FormatStyle:     google
+AnalyzeTemporaryDtors: false

@@ -1,0 +1,6 @@
+*:_deps/*
+*:*/_deps/*
+*:*glog*
+*:*gtest*
+*:*gmock*
+*:*/examples/*

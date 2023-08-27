@@ -10,22 +10,22 @@ add_custom_command(
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
 ## Clang Tidy setup (issue on ARM builds using gcc 9.1.0, disabling for now)
-find_program(CMAKE_CXX_CLANG_TIDY NAMES clang-tidy)
-set(CMAKE_CXX_CLANG_TIDY clang-tidy )
-# if (CMAKE_CXX_CLANG_TIDY)
-#     list(
-#         APPEND CMAKE_CXX_CLANG_TIDY 
-#             "--checks=*"
-#             "-p=${CMAKE_BINARY_DIR}"
-#             "--config-file=${CMAKE_SOURCE_DIR}/scripts/linter_configs/.clang_tidy"
-#             ## Below defines lines to lint (not exclude)
-#             "--line-filter=[{\"name\":\"gtest-all.cc\",\"lines\":[[1,1]]},{\"name\":\"statx.h\",\"lines\":[[9999,9999]]}]"
-#             "--quiet"
-#             #"--std=c++17"
-#             "--format-style=${CODE_STYLE}"
-#             "-extra-arg=-I${CMAKE_BINARY_DIR}/_deps"     
-#     )
-# endif()
+# find_program(CMAKE_CXX_CLANG_TIDY NAMES clang-tidy)
+# set(CMAKE_CXX_CLANG_TIDY clang-tidy )
+if (CMAKE_CXX_CLANG_TIDY)
+    list(
+        APPEND CMAKE_CXX_CLANG_TIDY 
+            "--checks=*"
+            "-p=${CMAKE_BINARY_DIR}"
+            "--config-file=${CMAKE_SOURCE_DIR}/scripts/linter_configs/.clang_tidy"
+            ## Below defines lines to lint (not exclude)
+            "--line-filter=[{\"name\":\"gtest-all.cc\",\"lines\":[[1,1]]},{\"name\":\"statx.h\",\"lines\":[[9999,9999]]}]"
+            "--quiet"
+            "--std=c++17"
+            "--format-style=${CODE_STYLE}"
+            "-extra-arg=-I${CMAKE_BINARY_DIR}/_deps"     
+    )
+endif()
 
 # CPP Check setup
 set(CMAKE_CXX_CPPCHECK cppcheck)
@@ -39,12 +39,14 @@ if (CMAKE_CXX_CPPCHECK)
             # "--force" 
             "--inline-suppr"
             "--std=c++17"
-            "--quiet"
+            # "--quiet"
             # "--enable=information"
             # "--check-config"
+            "--enable=all"
+            # "--suppress=missingIncludeSystem ."
             # "--dump"
             "--verbose"
-            "--suppressions-list=${CMAKE_SOURCE_DIR}/scripts/linter_configs/suppressions.txt"
+            # "--suppressions-list=${CMAKE_SOURCE_DIR}/scripts/linter_configs/suppressions.txt"
     )
 endif()
 # Make the cppcheck hash directory if it does not already exist

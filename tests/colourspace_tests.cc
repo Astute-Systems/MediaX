@@ -18,8 +18,8 @@
 #include <iostream>
 #include <string>
 
-#include "colourspace.h"
-#include "rtp_utils.h"
+#include "rtp/rtp_utils.h"
+#include "utils/colourspace.h"
 
 namespace gva {
 

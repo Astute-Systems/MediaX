@@ -13,8 +13,8 @@
 #include <gtest/gtest.h>
 #include <unistd.h>
 
-#include "sap_announcer.h"
-#include "sap_listener.h"
+#include "sap/sap_announcer.h"
+#include "sap/sap_listener.h"
 
 TEST(SAPListenerTest, RegisterSapListenerTest) {
   sap::SAPListener& listener = sap::SAPListener::GetInstance();

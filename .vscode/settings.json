@@ -38,6 +38,7 @@
         "libswscale",
         "lsource",
         "mainpage",
+        "mediax",
         "payloader",
         "pixbuf",
         "pngget",
@@ -163,5 +164,6 @@
     "terminal.integrated.shellArgs.windows": [
         "--login",
         "-i"
-    ]
+    ],
+    "C_Cpp.clang_format_sortIncludes": true
 }

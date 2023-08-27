@@ -82,16 +82,10 @@ function(cpplint_add_subdirectory DIR)
         set(FILES_TO_CHECK   ${FILES_TO_CHECK} ${ABSOLUTE_DIR}/*.h)
     endif()
 
-    # add *.cpp files
+    # add *.cc files
     if(CPPLINT_TEST_CPP_FILES)
         set(EXTENSIONS       ${EXTENSIONS}cc,)
         set(FILES_TO_CHECK   ${FILES_TO_CHECK} ${ABSOLUTE_DIR}/*.cc)
-    endif()
-
-    # add *.hpp files
-    if(CPPLINT_TEST_HPP_FILES)
-        set(EXTENSIONS       ${EXTENSIONS}h,)
-        set(FILES_TO_CHECK   ${FILES_TO_CHECK} ${ABSOLUTE_DIR}/*.)
     endif()
   
     # find all source files inside project
@@ -110,7 +104,6 @@ function(cpplint_add_subdirectory DIR)
                            "--exclude=_deps/*"
                            "--exclude=${CMAKE_BINARY_DIR}/*"
                            "--quiet"
-                           "--std=c++17"
                            "--filter=-build/c++11"
                            ${LIST_OF_FILES}
         DEPENDS ${LIST_OF_FILES}
