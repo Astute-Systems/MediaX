@@ -1,4 +1,4 @@
-name: "Build Ubuntu Intel"
+name: "Ubuntu Intel"
 
 on:
   push:
