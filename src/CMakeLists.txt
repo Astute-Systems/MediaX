@@ -1,11 +1,15 @@
 option(BUILD_CUDA OFF)
 
-if (BUILD_CUDA)
-  project(mediax-with-cuda LANGUAGES CXX CUDA)
-  enable_language(CUDA)
+project(mediax 
+  LANGUAGES CXX
+  HOMEPAGE_URL https://github.com/DefenceX/MediaX
+  DESCRIPTION "MediaX Library"
+  VERSION "${MEDIAX_VERSION}"
+)
 
+if (BUILD_CUDA)
+  enable_language(CUDA)
 else()
-  project(mediax-without-cuda LANGUAGES CXX)
 endif()
 
 include(FindPkgConfig)
@@ -63,5 +67,7 @@ set_target_properties(mediax_static PROPERTIES SOVERSION 1)
 # set_property(TARGET mediax_static PROPERTY CUDA_SEPARABLE_COMPILATION ON)
 # set_target_properties(mediax_static PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 set_target_properties(mediax_static PROPERTIES CUDA_ARCHITECTURES "75")
+
+configure_file(${CMAKE_SOURCE_DIR}/scripts/cmake/mediax.pc.in ${CMAKE_BINARY_DIR}/mediax.pc @ONLY) 
 
 

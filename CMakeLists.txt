@@ -2,20 +2,18 @@ cmake_minimum_required(VERSION 3.0…3.16)
 project(mediax)
 
 include(CTest)
+include(scripts/cmake/version.cmake)
 
 # enable testing functionality
 enable_testing()
 
 add_subdirectory(src)
 
-include(scripts/cmake/version.cmake)
 include(scripts/cmake/cpp.cmake)
 include(scripts/cmake/cpplint.cmake)
 include(scripts/cmake/linters.cmake)
 include(scripts/cmake/cpack.cmake)
 include(scripts/cmake/githooks.cmake)
-include(scripts/cmake/package.cmake)
-include(scripts/cmake/code_coverage.cmake)
 
 option(EXAMPLES "Build examples" OFF)
 if (EXAMPLES) 
@@ -40,6 +38,8 @@ file(GLOB_RECURSE MEDIAX_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/utils/*.h)
 install(FILES ${MEDIAX_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mediax/utils)
 file(GLOB_RECURSE MEDIAX_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/v4l2/*.h)
 install(FILES ${MEDIAX_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mediax/v4l2)
+#install package config file
+install(FILES ${CMAKE_BINARY_DIR}/mediax.pc DESTINATION  ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 # cpplint setup
 cpplint_add_subdirectory(src)
