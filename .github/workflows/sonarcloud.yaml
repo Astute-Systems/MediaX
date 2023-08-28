@@ -41,6 +41,7 @@ jobs:
           gcovr --sonarqube > coverage.xml
           cd build
           make lcov
+          make gcov
       - name: Run sonar-scanner
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
