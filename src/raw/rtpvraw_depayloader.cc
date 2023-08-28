@@ -87,7 +87,7 @@ bool RtpvrawDepayloader::Open() const {
       exit(-1);
     }
     // zero out the structure
-    memset(reinterpret_cast<char *>(&si_me), 0, sizeof(si_me));
+    memset(&si_me, 0, sizeof(si_me));
 
     si_me.sin_family = AF_INET;
     si_me.sin_port = htons((uint16_t)ingress_.port_no);
