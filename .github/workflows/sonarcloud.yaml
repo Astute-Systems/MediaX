@@ -38,8 +38,6 @@ jobs:
           ./build/bin/tests
       - name: Collect coverage into one XML report
         run: |
-          gcovr --sonarqube > coverage.xml
-          cd build
           make lcov
           make gcov
       - name: Run sonar-scanner
