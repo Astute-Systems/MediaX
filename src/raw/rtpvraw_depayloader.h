@@ -97,14 +97,6 @@ class RtpvrawDepayloader : public RtpDepayloader {
   RtpvrawDepayloader(const RtpvrawDepayloader &other);
 
   ///
-  /// \brief Copy operator
-  ///
-  /// \param other
-  /// \return RtpvrawDepayloader&
-  ///
-  RtpvrawDepayloader &operator=(const RtpvrawDepayloader &other);
-
-  ///
   /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement
   ///
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
