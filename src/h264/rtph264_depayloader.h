@@ -32,13 +32,6 @@ class RtpH264rawDepayloader : public RtpDepayloader {
   ~RtpH264rawDepayloader() final = default;
 
   ///
-  /// \brief Set the Stream Info object
-  ///
-  /// \param name
-  ///
-  void SetStreamInfo(std::string_view name);
-
-  ///
   /// \brief Open the RTP stream
   ///
   /// \return true

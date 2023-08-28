@@ -13,7 +13,8 @@
                 "/usr/include/gdk-pixbuf-2.0",
                 "/usr/include/graphene-1.0",
                 "/usr/local/cuda-12.1/targets/x86_64-linux/include",
-                "${workspaceFolder}/build/include"
+                "${workspaceFolder}/build/include",
+                "/usr/include/gstreamer-1.0"
             ],
             "defines": [
                 "_DEBUG",

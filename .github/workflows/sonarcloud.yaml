@@ -26,8 +26,8 @@ jobs:
           sudo bash +x ./scripts/init_build_machine.sh
       - name: Run build-wrapper
         run: |
-          cmake -S . -B build -DCOVERAGE=ON -DCMAKE_BUILD_TYPE=Debug 
-          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build ./build/ --config Release
+          # cmake -S . -B build -DCOVERAGE=ON -DCMAKE_BUILD_TYPE=Debug 
+          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build ./build/ --config Debug
       - name: Run tests to generate coverage statistics
         run: |
           cd ./build && ctest --rerun-failed --output-on-failure
