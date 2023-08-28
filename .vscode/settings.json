@@ -170,5 +170,11 @@
         "--login",
         "-i"
     ],
-    "C_Cpp.clang_format_sortIncludes": true
+    "C_Cpp.clang_format_sortIncludes": true,
+    "terminal.integrated.env.linux": {
+        "GTEST_COLOR": "1",
+        "TERM": "xterm-color",
+        "PATH": "${env:PATH}",
+        "WORKSPACE_ROOT": "${workspaceFolder}"
+    }
 }

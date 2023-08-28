@@ -13,6 +13,7 @@ include(scripts/cmake/cpp.cmake)
 include(scripts/cmake/cpplint.cmake)
 include(scripts/cmake/linters.cmake)
 include(scripts/cmake/cpack.cmake)
+include(scripts/cmake/githooks.cmake)
 
 option(EXAMPLES "Build examples" OFF)
 if (EXAMPLES) 
