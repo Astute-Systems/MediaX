@@ -63,9 +63,6 @@ void RtpvrawDepayloader::SetStreamInfo(std::string_view name, ColourspaceType en
   ingress_.hostname = hostname;
   ingress_.port_no = portno;
   ingress_.settings_valid = true;
-  std::cout << "RtpvrawDepayloader::SetStreamInfo() " << ingress_.name << " " << ingress_.hostname << " "
-            << ingress_.port_no << " " << ingress_.height << " " << ingress_.width << " "
-            << std::to_string(static_cast<int>(ingress_.encoding)) << "\n";
   buffer_in_.resize((height * width) * kColourspaceBytes.at(ingress_.encoding));
 }
 
