@@ -9,6 +9,15 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -fPIC -Wall -Werror")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(VAAPI "Enable VAAPI support" OFF)
 option(COVERAGE "Enable coverage reporting" OFF)
-if (COVERAGE)
+
+if(CMAKE_BUILD_TYPE)
+    message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+else()
+    message(STATUS "Build type: Release")
+    set(CMAKE_BUILD_TYPE "Release")
+endif()
+
+# Check if Debug build
+if(CMAKE_BUILD_TYPE MATCHES Debug)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
 endif()
