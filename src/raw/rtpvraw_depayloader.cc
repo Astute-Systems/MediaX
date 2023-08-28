@@ -46,9 +46,9 @@ RtpvrawDepayloader::RtpvrawDepayloader() { pthread_mutex_init(&mutex_, nullptr);
 
 RtpvrawDepayloader::~RtpvrawDepayloader(void) = default;
 
-RtpvrawDepayloader &RtpvrawDepayloader::operator=(const RtpvrawDepayloader &other) {
+RtpvrawDepayloader::RtpvrawDepayloader(const RtpvrawDepayloader &other) {
   *this = other;
-  return *this;
+  pthread_mutex_init(&mutex_, nullptr);
 }
 
 // Broadcast the stream to port i.e. 5004
