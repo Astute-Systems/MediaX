@@ -213,7 +213,7 @@ class SAPListener {
   /// The list of SAP/SDP announcements
   std::map<std::string, SDPMessage, std::less<>> announcements_;
   /// The buffer for the UDP data
-  std::array<uint8_t, kMaxUdpData> udpdata;
+  std::array<uint8_t, kMaxUdpData> udpdata_;
   /// The thread for the SAP/SDP announcements
   std::thread thread_;
   /// The socket for the SAP/SDP announcements

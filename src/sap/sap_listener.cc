@@ -26,6 +26,7 @@
 #include <thread>
 #include <vector>
 
+#include "glog/logging.h"
 #include "rtp/rtp_utils.h"
 
 namespace mediax::sap {
@@ -93,18 +94,22 @@ void SAPListener::SAPListenerThread(SAPListener *sap) {
   read_timeout.tv_usec = 10;
   setsockopt(sap->sockfd_, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
 
+  LOG(INFO) << "SAP packet received " << kIpaddr << ":" << kPort;
+
   while (running_) {
-    if (ssize_t bytes = recvfrom(sap->sockfd_, sap->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr); bytes <= 0) {
+    if (ssize_t bytes = recvfrom(sap->sockfd_, sap->udpdata_.data(), kMaxUdpData, 0, nullptr, nullptr); bytes <= 0) {
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
       continue;
     }
+
     // Process SAP here
-    sap->SapStore(&sap->udpdata);
+    sap->SapStore(&sap->udpdata_);
   }
 }
 
 void SAPListener::RegisterSapListener(std::string_view session_name, const SapCallback &callback) {
+  LOG(INFO) << "Register SAP listener with session-name=" << session_name;
   callbacks_[std::string(session_name)] = callback;
 }
 
@@ -181,10 +186,9 @@ std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributesEqua
 
 bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> *rawdata) {
   std::map<std::string, std::string, std::less<>> attributes_map;
-
-  const uint32_t *source = reinterpret_cast<uint32_t *>(&udpdata[4]);
+  const uint32_t *source = (uint32_t *)(&rawdata[4]);
   SDPMessage sdp;
-  sdp.sdp_text = reinterpret_cast<char *>(&rawdata[8]);
+  sdp.sdp_text.append(rawdata->begin() + 8, rawdata->end());
   // convert to string IP address
   struct in_addr addr;
   addr.s_addr = htonl(*source);
@@ -268,9 +272,12 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> *rawdata) {
     sdp.framerate = std::stoi(attributes_map["framerate"]);
     sdp.sampling = attributes_map["96sampling"];
   } catch (const std::invalid_argument &e [[maybe_unused]]) {
+    LOG(ERROR) << "Invalid argument in SAP message. SDP text = " << sdp.sdp_text;
     return false;
   }
 
+  LOG(INFO) << "Store " << sdp.session_name << " " << sdp.ip_address << ":" << sdp.port << " " << sdp.height << "x"
+            << sdp.width << " " << sdp.framerate << "fps " << sdp.sampling;
   announcements_[sdp.session_name] = sdp;
 
   // Check the callbacks
