@@ -39,7 +39,7 @@ jobs:
       - name: Collect coverage into one XML report
         run: |
           cd build
-          make lcov
+          # make lcov
           make gcov
       - name: Run sonar-scanner
         env:

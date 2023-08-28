@@ -46,7 +46,10 @@ RtpvrawDepayloader::RtpvrawDepayloader() { pthread_mutex_init(&mutex_, nullptr);
 
 RtpvrawDepayloader::~RtpvrawDepayloader(void) = default;
 
-RtpvrawDepayloader &RtpvrawDepayloader::operator=(const RtpvrawDepayloader &other) { return *this; }
+RtpvrawDepayloader &RtpvrawDepayloader::operator=(const RtpvrawDepayloader &other) {
+  *this = other;
+  return *this;
+}
 
 // Broadcast the stream to port i.e. 5004
 void RtpvrawDepayloader::SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
@@ -287,7 +290,7 @@ bool RtpvrawDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
   }
 }
 
-bool RtpvrawDepayloader::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]) {
+bool RtpvrawDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   if (ingress_.port_no == 0) return false;
   if (ingress_.settings_valid == false) return false;
 

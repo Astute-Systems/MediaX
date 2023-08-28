@@ -97,7 +97,7 @@ class RtpvrawDepayloader : public RtpDepayloader {
   RtpvrawDepayloader(const RtpvrawDepayloader &other);
 
   ///
-  /// \brief Comapre objects
+  /// \brief Copy operator
   ///
   /// \param other
   /// \return RtpvrawDepayloader&
@@ -164,7 +164,7 @@ class RtpvrawDepayloader : public RtpDepayloader {
   /// \return true when frame available
   /// \return false when no frame was received in the timeout
   ///
-  bool Receive(uint8_t **cpu, int32_t timeout = 0);
+  bool Receive(uint8_t **cpu, int32_t timeout = 0) final;
 
  private:
   /// The incremental sequence numer for transmitting RTP packets
