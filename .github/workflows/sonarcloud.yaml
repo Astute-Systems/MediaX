@@ -20,6 +20,9 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.8
+      - name: Apt Install
+        run: |
+          sudo ./scripts/init_build_machine.sh
       - name: install gcovr 5.0
         run: |
           pip install gcovr==5.0 # 5.1 is not supported
