@@ -9,7 +9,6 @@
 ///
 /// \file pngget.cc
 ///
-
 #include "pngget.h"
 
 #include <png.h>

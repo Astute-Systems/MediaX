@@ -11,25 +11,30 @@
 
 #include <iostream>
 
-#include "sap_announcer.h"
+#include "sap/sap_announcer.h"
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   std::cout << argv[0] << " starting\n";
 
-  sap::SAPAnnouncer &sap = sap::SAPAnnouncer::GetInstance();
+  mediax::sap::SAPAnnouncer &sap = mediax::sap::SAPAnnouncer::GetInstance();
 
   // Choose a source interface
   sap.ListInterfaces(0);
 
-  sap.AddSAPAnnouncement({"Stream 1", "192.168.1.1", 5000, 480, 640, 25, ColourspaceType::kColourspaceYuv, false});
-  sap.AddSAPAnnouncement({"Stream 2", "192.168.1.2", 6000, 800, 600, 30, ColourspaceType::kColourspaceYuv, false});
-  sap.AddSAPAnnouncement({"Stream 3", "192.168.1.3", 7000, 1920, 1024, 60, ColourspaceType::kColourspaceYuv, false});
-  sap.AddSAPAnnouncement({"Stream 4", "192.168.1.4", 8000, 1920, 1024, 60, ColourspaceType::kColourspaceRgb24, false});
-  sap.AddSAPAnnouncement({"Stream 5", "192.168.1.5", 9000, 1920, 1024, 60, ColourspaceType::kColourspaceMono8, false});
   sap.AddSAPAnnouncement(
-      {"Stream 6", "192.168.1.6", 10000, 1920, 1024, 60, ColourspaceType::kColourspaceJpeg2000, false});
+      {"Stream 1", "192.168.1.1", 5000, 480, 640, 25, mediax::ColourspaceType::kColourspaceYuv, false});
   sap.AddSAPAnnouncement(
-      {"Stream 7", "192.168.1.7", 20000, 1920, 1024, 60, ColourspaceType::kColourspaceH264Part10, false});
+      {"Stream 2", "192.168.1.2", 6000, 800, 600, 30, mediax::ColourspaceType::kColourspaceYuv, false});
+  sap.AddSAPAnnouncement(
+      {"Stream 3", "192.168.1.3", 7000, 1920, 1024, 60, mediax::ColourspaceType::kColourspaceYuv, false});
+  sap.AddSAPAnnouncement(
+      {"Stream 4", "192.168.1.4", 8000, 1920, 1024, 60, mediax::ColourspaceType::kColourspaceRgb24, false});
+  sap.AddSAPAnnouncement(
+      {"Stream 5", "192.168.1.5", 9000, 1920, 1024, 60, mediax::ColourspaceType::kColourspaceMono8, false});
+  sap.AddSAPAnnouncement(
+      {"Stream 6", "192.168.1.6", 10000, 1920, 1024, 60, mediax::ColourspaceType::kColourspaceJpeg2000, false});
+  sap.AddSAPAnnouncement(
+      {"Stream 7", "192.168.1.7", 20000, 1920, 1024, 60, mediax::ColourspaceType::kColourspaceH264Part10, false});
 
   // Start all the streams for 10 seconds
   sap.Start();

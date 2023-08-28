@@ -54,13 +54,13 @@
 #include <ostream>
 #include <vector>
 
-#include "colourspace.h"
-#include "colourspace_cuda.h"
 #include "example.h"
 #include "pngget.h"
-#include "rtp_utils.h"
-#include "rtpvraw_payloader.h"
-#include "v4l2_source.h"
+#include "raw/rtpvraw_payloader.h"
+#include "rtp/rtp_utils.h"
+#include "utils/colourspace.h"
+#include "utils/colourspace_cuda.h"
+#include "v4l2/v4l2_source.h"
 #include "version.h"
 
 DEFINE_string(ipaddr, kIpAddressDefault, "the IP address of the transmit stream");
@@ -115,8 +115,8 @@ int main(int argc, char **argv) {
   sleep(1);
 
   // Setup RTP streaming class
-  RtpvrawPayloader rtp;
-  rtp.SetStreamInfo(FLAGS_filename, ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
+  mediax::RtpvrawPayloader rtp;
+  rtp.SetStreamInfo(FLAGS_filename, mediax::ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
                     (uint16_t)FLAGS_port);
   rtp.Open();
 

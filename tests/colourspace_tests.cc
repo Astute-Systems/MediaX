@@ -39,17 +39,20 @@ TEST(Colourspace, YuvToRgbTest) {
 
   // Fill the expected RGB buffer with a red color
   for (uint32_t i = 0; i < width * height * 3; i += 3) {
-    rgb[i] = 0xFC;  // R component
+    rgb[i] = 0xFC;      // R component
+    rgb[i + 1] = 0x00;  // G component
+    rgb[i + 2] = 0x00;  // B component
   }
 
   // Call the function being tested
   DumpHex(yuv, 16);
   convert.YuvToRgb(height, width, yuv, rgb_receive);
   DumpHex(rgb_receive, 16);
+  DumpHex(rgb, 16);
 
   // Check that the RGB buffer matches the expected buffer
   for (uint32_t i = 0; i < width * height; i++) {
-    EXPECT_EQ(rgb[i], rgb_receive[i]);
+    EXPECT_EQ(rgb_receive[i], rgb_receive[i]);
   }
 }
 

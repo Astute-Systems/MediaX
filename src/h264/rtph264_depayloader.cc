@@ -88,6 +88,11 @@ RtpH264rawDepayloader::RtpH264rawDepayloader() {
   gst_object_unref(pipeline);
 }
 
+bool RtpH264rawDepayloader::Open() const {
+  // TODO(Ross): Yet to implement
+  return true;
+}
+
 void RtpH264rawDepayloader::Start() {
   // TODO(Ross): Yet to implement
 }

@@ -17,10 +17,10 @@
 #include <iostream>
 #include <string>
 
-#include "colourspace.h"
-#include "colourspace_cuda.h"
 #include "example.h"
-#include "rtpvraw_depayloader.h"
+#include "raw/rtpvraw_depayloader.h"
+#include "utils/colourspace.h"
+#include "utils/colourspace_cuda.h"
 #include "version.h"
 
 DEFINE_string(ipaddr, kIpAddressDefault, "the IP address of the transmit stream");
@@ -39,7 +39,7 @@ struct OnDrawData {
   uint16_t port;
 };
 
-static RtpvrawDepayloader rtp_;
+static mediax::RtpvrawDepayloader rtp_;
 
 static uint64_t m_frame_counter_ = 0;
 
@@ -96,8 +96,8 @@ int main(int argc, char *argv[]) {
     rtp_.SetStreamInfo(FLAGS_session_name);
   } else {
     std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
-    RtpvrawDepayloader::SetStreamInfo(FLAGS_session_name, ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width,
-                                      FLAGS_ipaddr, (uint16_t)FLAGS_port);
+    mediax::RtpvrawDepayloader::SetStreamInfo(FLAGS_session_name, mediax::ColourspaceType::kColourspaceYuv,
+                                              FLAGS_height, FLAGS_width, FLAGS_ipaddr, (uint16_t)FLAGS_port);
 
     // We have all the information so we can request the ports open now. No need to wait for SAP/SDP
     if (!rtp_.Open()) {

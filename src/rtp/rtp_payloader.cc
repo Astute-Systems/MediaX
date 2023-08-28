@@ -29,8 +29,12 @@ std::string RtpPayloader::GetIpAddress() const { return egress_.hostname; }
 
 uint32_t RtpPayloader::GetPort() const { return egress_.port_no; }
 
-void RtpPayloader::Start() {}
+void RtpPayloader::Start() {
+  // Nothing to do for base class
+}
 
-void RtpPayloader::Stop() {}
+void RtpPayloader::Stop() {
+  // Nothing to do for base class
+}
 
 }  // namespace mediax
