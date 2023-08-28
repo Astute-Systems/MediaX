@@ -94,7 +94,7 @@ void SAPListener::SAPListenerThread(SAPListener *sap) {
   read_timeout.tv_usec = 10;
   setsockopt(sap->sockfd_, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
 
-  LOG(INFO) << "SAP packet received " << kIpaddr << ":" << kPort;
+  DLOG(INFO) << "SAP packet received " << kIpaddr << ":" << kPort;
 
   while (running_) {
     if (ssize_t bytes = recvfrom(sap->sockfd_, sap->udpdata_.data(), kMaxUdpData, 0, nullptr, nullptr); bytes <= 0) {
@@ -109,7 +109,7 @@ void SAPListener::SAPListenerThread(SAPListener *sap) {
 }
 
 void SAPListener::RegisterSapListener(std::string_view session_name, const SapCallback &callback) {
-  LOG(INFO) << "Register SAP listener with session-name=" << session_name;
+  DLOG(INFO) << "Register SAP listener with session-name=" << session_name;
   callbacks_[std::string(session_name)] = callback;
 }
 
@@ -272,12 +272,12 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> *rawdata) {
     sdp.framerate = std::stoi(attributes_map["framerate"]);
     sdp.sampling = attributes_map["96sampling"];
   } catch (const std::invalid_argument &e [[maybe_unused]]) {
-    LOG(ERROR) << "Invalid argument in SAP message. SDP text = " << sdp.sdp_text;
+    DLOG(ERROR) << "Invalid argument in SAP message. SDP text = " << sdp.sdp_text;
     return false;
   }
 
-  LOG(INFO) << "Store " << sdp.session_name << " " << sdp.ip_address << ":" << sdp.port << " " << sdp.height << "x"
-            << sdp.width << " " << sdp.framerate << "fps " << sdp.sampling;
+  DLOG(INFO) << "Store " << sdp.session_name << " " << sdp.ip_address << ":" << sdp.port << " " << sdp.height << "x"
+             << sdp.width << " " << sdp.framerate << "fps " << sdp.sampling;
   announcements_[sdp.session_name] = sdp;
 
   // Check the callbacks
