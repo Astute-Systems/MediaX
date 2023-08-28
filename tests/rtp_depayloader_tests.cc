@@ -15,6 +15,12 @@
 
 #include "rtpvraw_depayloader.h"
 
+TEST(RTPDepayloaderTest, Copy) {
+  mediax::RtpvrawDepayloader rtp;
+  mediax::RtpvrawDepayloader rtp2;
+  rtp = rtp2;
+}
+
 TEST(RTPDepayloaderTest, Timeout) {
   const int kBuffSize = (640 * 480) * 3;
   uint8_t* yuv_test;

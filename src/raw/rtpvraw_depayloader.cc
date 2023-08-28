@@ -46,6 +46,8 @@ RtpvrawDepayloader::RtpvrawDepayloader() { pthread_mutex_init(&mutex_, nullptr);
 
 RtpvrawDepayloader::~RtpvrawDepayloader(void) = default;
 
+RtpvrawDepayloader &RtpvrawDepayloader::operator=(const RtpvrawDepayloader &other) { return *this; }
+
 // Broadcast the stream to port i.e. 5004
 void RtpvrawDepayloader::SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
                                        std::string_view hostname, const uint32_t portno) {
@@ -140,8 +142,6 @@ bool RtpvrawDepayloader::ReadRtpHeader(RtpvrawDepayloader *stream, RtpPacket *pa
   return false;
 }
 
-bool RtpvrawDepayloader::new_rx_frame_ = false;
-bool RtpvrawDepayloader::rx_thread_running_ = true;
 void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
   RtpPacket *packet{};
   bool receiving = true;
@@ -153,8 +153,8 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
   read_timeout.tv_usec = 10;
   setsockopt(RtpDepayloader::ingress_.sockfd, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
 
-  while (rx_thread_running_) {
-    while (receiving && rx_thread_running_) {
+  while (stream->rx_thread_running_) {
+    while (receiving && stream->rx_thread_running_) {
       int marker;
 
       int version;
@@ -164,7 +164,7 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
       //
       // Read data until we get the next RTP header
       //
-      while (!valid && rx_thread_running_) {
+      while (!valid && stream->rx_thread_running_) {
         //
         // Read in the RTP data
         //
@@ -240,7 +240,7 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
     }
 
     stream->arg_tx.encoded_frame = RtpvrawDepayloader::buffer_in_.data();
-    new_rx_frame_ = true;
+    stream->new_rx_frame_ = true;
     receiving = true;
   }  // Receive loop
   return;
@@ -259,7 +259,7 @@ void RtpvrawDepayloader::Stop() {
   }
 }
 
-bool RtpvrawDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) const {
+bool RtpvrawDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
   // Wait for completion
   if (timeout < 0) {
     while (!new_rx_frame_) {
@@ -287,7 +287,7 @@ bool RtpvrawDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) const {
   }
 }
 
-bool RtpvrawDepayloader::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]) const {
+bool RtpvrawDepayloader::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]) {
   if (ingress_.port_no == 0) return false;
   if (ingress_.settings_valid == false) return false;
 

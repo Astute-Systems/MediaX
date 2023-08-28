@@ -88,6 +88,23 @@ class RtpvrawDepayloader : public RtpDepayloader {
   ~RtpvrawDepayloader() final;
 
   ///
+  /// \brief The copy constructor
+  ///
+  /// \param other
+  /// \return true
+  /// \return false
+  ///
+  RtpvrawDepayloader(const RtpvrawDepayloader &other);
+
+  ///
+  /// \brief Comapre objects
+  ///
+  /// \param other
+  /// \return RtpvrawDepayloader&
+  ///
+  RtpvrawDepayloader &operator=(const RtpvrawDepayloader &other);
+
+  ///
   /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement
   ///
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
@@ -147,13 +164,13 @@ class RtpvrawDepayloader : public RtpDepayloader {
   /// \return true when frame available
   /// \return false when no frame was received in the timeout
   ///
-  bool Receive(uint8_t **cpu, int32_t timeout = 0) const final;
+  bool Receive(uint8_t **cpu, int32_t timeout = 0);
 
  private:
   /// The incremental sequence numer for transmitting RTP packets
-  static bool new_rx_frame_;
+  bool new_rx_frame_ = false;
   /// Flag indicating the thread is running
-  static bool rx_thread_running_;
+  bool rx_thread_running_ = true;
   /// The encoded video type
   ColourspaceType encoding_ = ColourspaceType::kColourspaceUndefined;
   /// Transmit arguments used by the thread
@@ -200,7 +217,7 @@ class RtpvrawDepayloader : public RtpDepayloader {
   /// \return true
   /// \return false
   ///
-  bool WaitForFrame(uint8_t **cpu, int32_t timeout) const;
+  bool WaitForFrame(uint8_t **cpu, int32_t timeout);
 
   ///
   /// \brief Get a 90Htz timestamp
