@@ -12,7 +12,7 @@
 /// \file rtpvraw_depayloader.cc
 ///
 /// Might need to add a route here (hint to send out multicast traffic):
-///	sudo route add -net 239.0.0.0 netmask 255.0.0.0 eth1
+/// sudo route add -net 239.0.0.0 netmask 255.0.0.0 eth1
 ///
 
 #include <pthread.h>
@@ -58,12 +58,13 @@ void RtpvrawDepayloader::SetStreamInfo(std::string_view name, ColourspaceType en
   ingress_.settings_valid = true;
   std::cout << "RtpvrawDepayloader::SetStreamInfo() " << ingress_.name << " " << ingress_.hostname << " "
             << ingress_.port_no << " " << ingress_.height << " " << ingress_.width << " "
-            << std::to_string((int)ingress_.encoding) << "\n";
+            << std::to_string(static_cast<int>(ingress_.encoding)) << "\n";
   buffer_in_.resize((height * width) * kColourspaceBytes.at(ingress_.encoding));
 }
 
-void RtpvrawDepayloader::SapCallback(const sap::SDPMessage &sdp) {
-  SetStreamInfo(sdp.session_name, ColourspaceType::kColourspaceYuv, sdp.height, sdp.width, sdp.ip_address, sdp.port);
+void RtpvrawDepayloader::SapCallback(const sap::SDPMessage *sdp) {
+  SetStreamInfo(sdp->session_name, ColourspaceType::kColourspaceYuv, sdp->height, sdp->width, sdp->ip_address,
+                sdp->port);
 }
 
 void RtpvrawDepayloader::SetStreamInfo(std::string_view name) const {
@@ -86,7 +87,7 @@ bool RtpvrawDepayloader::Open() const {
       exit(-1);
     }
     // zero out the structure
-    memset((char *)&si_me, 0, sizeof(si_me));
+    memset(reinterpret_cast<char *>(&si_me), 0, sizeof(si_me));
 
     si_me.sin_family = AF_INET;
     si_me.sin_port = htons((uint16_t)ingress_.port_no);
@@ -174,8 +175,8 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
           std::this_thread::sleep_for(std::chrono::milliseconds(2));
           continue;
         }
-        packet = (RtpPacket *)(stream->udpdata.data());
-        EndianSwap32((uint32_t *)(packet), sizeof(RtpHeader) / 4);
+        packet = reinterpret_cast<RtpPacket *>(stream->udpdata.data());
+        EndianSwap32(reinterpret_cast<uint32_t *>(packet), sizeof(RtpHeader) / 4);
 
         //
         // Decode Header bits and confirm RTP packet
@@ -198,7 +199,7 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
         //
         while (scan_line) {
           int more;
-          EndianSwap16((uint16_t *)(&packet->head.payload.line[scan_count]), sizeof(LineHeader) / 2);
+          EndianSwap16(reinterpret_cast<uint16_t *>(&packet->head.payload.line[scan_count]), sizeof(LineHeader) / 2);
           more = (packet->head.payload.line[scan_count].offset & 0x8000) >> 15;
           !more ? scan_line = false : scan_line = true;  // The last scan_line
           scan_count++;
@@ -309,4 +310,4 @@ bool RtpvrawDepayloader::Receive(uint8_t **cpu, int32_t timeout [[maybe_unused]]
   return false;
 }
 
-}
+}  // namespace mediax

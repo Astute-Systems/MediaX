@@ -114,7 +114,7 @@ struct SDPMessage {
 };
 
 /// \brief The SAPListener class is a singleton that listens for SAP/SDP announcements on the network
-using SapCallback = std::function<void(sap::SDPMessage &sdp)>;
+using SapCallback = std::function<void(sap::SDPMessage *sdp)>;
 
 /// Class definition of the SAPListener
 class SAPListener {
@@ -206,7 +206,7 @@ class SAPListener {
   /// \return true
   /// \return false
   ///
-  bool SapStore(std::array<uint8_t, kMaxUdpData> &udpdata);
+  bool SapStore(std::array<uint8_t, kMaxUdpData> *udpdata);
 
   /// The list of SAP/SDP announcement callbacks
   std::map<std::string, SapCallback, std::less<>> callbacks_;

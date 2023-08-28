@@ -12,13 +12,14 @@
 /// \file rtpvraw_payloader.cc
 ///
 /// Might need to add a route here (hint to send out multicast traffic):
-///	sudo route add -net 239.0.0.0 netmask 255.0.0.0 eth1
+/// sudo route add -net 239.0.0.0 netmask 255.0.0.0 eth1
 ///
 
 #include <pthread.h>
 #include <sched.h>
 
 #include <iostream>
+#include <limits>
 #include <string>
 #include <vector>
 #if _WIN32
@@ -116,7 +117,7 @@ void RtpvrawPayloader::Close() {
 }
 
 void RtpvrawPayloader::UpdateHeader(Header *packet, int line, int last, int32_t timestamp, int32_t source) const {
-  memset((char *)packet, 0, sizeof(Header));
+  memset(reinterpret_cast<char *>(packet), 0, sizeof(Header));
   packet->rtp.protocol = kRtpVersion << 30;
   packet->rtp.protocol = packet->rtp.protocol | kRtpExtension << 28;
   packet->rtp.protocol = packet->rtp.protocol | kRtpPayloadType << 16;
@@ -149,13 +150,13 @@ void RtpvrawPayloader::SendFrame(RtpvrawPayloader *stream) {
     uint32_t last = 0;
 
     if (c == stream->egress_.height) last = 1;
-    stream->UpdateHeader((Header *)&packet, c, last, timestamp, kRtpSource);
+    stream->UpdateHeader(reinterpret_cast<Header *>(&packet), c, last, timestamp, kRtpSource);
 
     EndianSwap32(reinterpret_cast<uint32_t *>(&packet), sizeof(RtpHeader) / 4);
     EndianSwap16(reinterpret_cast<uint16_t *>(&packet.head.payload), sizeof(PayloadHeader) / 2);
 
-    memcpy(reinterpret_cast<void *>(&packet.head.payload.line[2]), (void *)&stream->arg_tx.rgb_frame[(c * stride) + 1],
-           stride);
+    memcpy(reinterpret_cast<void *>(&packet.head.payload.line[2]),
+           reinterpret_cast<void *>(&stream->arg_tx.rgb_frame[(c * stride) + 1]), stride);
     n = sendto(stream->egress_.sockfd, &packet, stride + 26, 0, (const sockaddr *)&stream->server_addr_out_,
                stream->server_len_out_);
 

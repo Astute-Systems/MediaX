@@ -13,14 +13,12 @@
 /// \file rtph264_depayloader.cc
 ///
 
-#include "rtph264_depayloader.h"
+#include "h264/rtph264_depayloader.h"
 
 #include <gst/gst.h>
 
 #include <iostream>
 #include <string>
-
-#include "rtph264_depayloader.h"
 
 namespace mediax {
 
@@ -91,15 +89,15 @@ RtpH264rawDepayloader::RtpH264rawDepayloader() {
 }
 
 void RtpH264rawDepayloader::Start() {
-  // TODO (Ross) : Yet to implement
+  // TODO(Ross): Yet to implement
 }
 
 void RtpH264rawDepayloader::Stop() {
-  // TODO (Ross) : Yet to implement
+  // TODO(Ross): Yet to implement
 }
 
 void RtpH264rawDepayloader::Close() const {
-  // TODO (Ross) : Yet to implement
+  // TODO(Ross): Yet to implement
 }
 
 }  // namespace mediax

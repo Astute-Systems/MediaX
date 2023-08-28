@@ -9,8 +9,8 @@
 ///
 /// \file rtph264_payloader.h
 
-#ifndef RTPH264_DEPAYLOADER_H
-#define RTPH264_DEPAYLOADER_H
+#ifndef H264_RTPH264_PAYLOADER_H_
+#define H264_RTPH264_PAYLOADER_H_
 
 #include "rtp/rtp_payloader.h"
 
@@ -80,4 +80,4 @@ class RtpH264Payloader : public RtpPayloader {
 
 }  // namespace mediax
 
-#endif  // RTPH264_DEPAYLOADER_H
+#endif  // H264_RTPH264_PAYLOADER_H_

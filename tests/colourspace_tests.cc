@@ -21,8 +21,6 @@
 #include "rtp/rtp_utils.h"
 #include "utils/colourspace.h"
 
-namespace gva {
-
 TEST(Colourspace, YuvToRgbTest) {
   uint32_t height = 4;
   uint32_t width = 4;
@@ -135,5 +133,3 @@ TEST(Colourspace, RgbaToRgbTest) {
 
   DumpHex(rgb, 16);
 }
-
-}  // namespace gva

@@ -100,7 +100,7 @@ void SAPListener::SAPListenerThread(SAPListener *sap) {
       continue;
     }
     // Process SAP here
-    sap->SapStore(sap->udpdata);
+    sap->SapStore(&sap->udpdata);
   }
 }
 
@@ -179,12 +179,12 @@ std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributesEqua
   return attributes;
 }
 
-bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
+bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> *rawdata) {
   std::map<std::string, std::string, std::less<>> attributes_map;
 
-  const uint32_t *source = (uint32_t *)&udpdata[4];
+  const uint32_t *source = reinterpret_cast<uint32_t *>(&udpdata[4]);
   SDPMessage sdp;
-  sdp.sdp_text = (char *)&rawdata[8];
+  sdp.sdp_text = reinterpret_cast<char *>(&rawdata[8]);
   // convert to string IP address
   struct in_addr addr;
   addr.s_addr = htonl(*source);
@@ -278,7 +278,7 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> &rawdata) {
   for (const auto &[name, callback] : callbacks_) {
     if (name == sdp.session_name) {
       // We have a match, hit the callback
-      callback(sdp);
+      callback(&sdp);
     }
   }
 

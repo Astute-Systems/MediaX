@@ -36,8 +36,8 @@
 
 /// Use his program to stream data to the udpsrc example above on the tegra X1
 
-#ifndef RTPVRAW_DEPAYLOADER_H_
-#define RTPVRAW_DEPAYLOADER_H_
+#ifndef RAW_RTPVRAW_DEPAYLOADER_H_
+#define RAW_RTPVRAW_DEPAYLOADER_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -56,7 +56,8 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #endif
-#include <limits.h>
+#include <limits>
+#include <vector>
 
 #include "rtp/rtp_depayloader.h"
 #include "rtp/rtp_types.h"
@@ -110,7 +111,7 @@ class RtpvrawDepayloader : public RtpDepayloader {
   ///
   /// \param sdp
   ///
-  static void SapCallback(const sap::SDPMessage &sdp);
+  static void SapCallback(const sap::SDPMessage *sdp);
 
   ///
   /// \brief Open the RTP stream
@@ -219,4 +220,4 @@ class RtpvrawDepayloader : public RtpDepayloader {
 
 }  // namespace mediax
 
-#endif  // RTPVRAW_DEPAYLOADER_H_
+#endif  // RAW_RTPVRAW_DEPAYLOADER_H_

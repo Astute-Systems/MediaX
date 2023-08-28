@@ -12,14 +12,14 @@
 /// \file rtpv_payloader.h
 ///
 
-#ifndef __RTP_PAYLOADER_H
-#define __RTP_PAYLOADER_H
+#ifndef RTP_RTP_PAYLOADER_H_
+#define RTP_RTP_PAYLOADER_H_
 
 #include <iostream>
 #include <string>
 #include <string_view>
 
-#include "rtp_types.h"
+#include "rtp/rtp_types.h"
 
 namespace mediax {
 
@@ -137,4 +137,4 @@ class RtpPayloader {
 
 }  // namespace mediax
 
-#endif  // __RTP_PAYLOADER_H
+#endif  // RTP_RTP_PAYLOADER_H_

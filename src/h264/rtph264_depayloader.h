@@ -10,8 +10,8 @@
 ///
 /// \file rtph264_depayloader.h
 
-#ifndef RTPH264_DEPAYLOADER_H_
-#define RTPH264_DEPAYLOADER_H_
+#ifndef H264_RTPH264_DEPAYLOADER_H_
+#define H264_RTPH264_DEPAYLOADER_H_
 
 #include "rtp/rtp_depayloader.h"
 
@@ -77,4 +77,4 @@ class RtpH264rawDepayloader : public RtpDepayloader {
 
 }  // namespace mediax
 
-#endif  // RTPH264_DEPAYLOADER_H_
+#endif  // H264_RTPH264_DEPAYLOADER_H_

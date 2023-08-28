@@ -20,7 +20,7 @@ TEST(SAPListenerTest, RegisterSapListenerTest) {
   mediax::sap::SAPListener& listener = mediax::sap::SAPListener::GetInstance();
   std::string session_name = "test_session_name";
   bool callback_called = false;
-  mediax::sap::SapCallback callback = [&](const mediax::sap::SDPMessage& message [[maybe_unused]]) {
+  mediax::sap::SapCallback callback = [&](const mediax::sap::SDPMessage* message [[maybe_unused]]) {
     callback_called = true;
   };
   listener.RegisterSapListener(session_name, callback);
