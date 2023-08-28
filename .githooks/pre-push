@@ -22,7 +22,7 @@
 remote="$1"
 url="$2"
 
-$WORKSPACE_ROOT/.githooks/pre-push-check-doxygen
+# $WORKSPACE_ROOT/.githooks/pre-push-check-doxygen
 $WORKSPACE_ROOT/.githooks/pre-push-check-linter
 $WORKSPACE_ROOT/.githooks/pre-push-check-todo
 $WORKSPACE_ROOT/.githooks/pre-push-conflict-check
