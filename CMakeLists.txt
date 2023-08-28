@@ -14,6 +14,7 @@ include(scripts/cmake/cpplint.cmake)
 include(scripts/cmake/linters.cmake)
 include(scripts/cmake/cpack.cmake)
 include(scripts/cmake/githooks.cmake)
+include(scripts/cmake/code_coverage.cmake)
 
 option(EXAMPLES "Build examples" OFF)
 if (EXAMPLES) 
