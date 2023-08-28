@@ -22,7 +22,6 @@
 remote="$1"
 url="$2"
 
-$WORKSPACE_ROOT/.githooks/pre-push-reset-sql
 $WORKSPACE_ROOT/.githooks/pre-push-check-doxygen
 $WORKSPACE_ROOT/.githooks/pre-push-check-linter
 $WORKSPACE_ROOT/.githooks/pre-push-check-todo
