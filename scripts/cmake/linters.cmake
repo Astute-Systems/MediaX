@@ -41,6 +41,7 @@ if (CMAKE_CXX_CPPCHECK)
             "--std=c++17"
             "--quiet"
             "--enable=information"
+            "--suppress=missingIncludeSystem"
             "--check-config"
             "--enable=all"
             # "--dump"
