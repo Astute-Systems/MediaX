@@ -186,7 +186,7 @@ std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributesEqua
 
 bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> *rawdata) {
   std::map<std::string, std::string, std::less<>> attributes_map;
-  const uint32_t *source = (uint32_t *)(&rawdata[4]);
+  const uint32_t *source = reinterpret_cast<uint32_t *>(&rawdata[4]);
   SDPMessage sdp;
   sdp.sdp_text.append(rawdata->begin() + 8, rawdata->end());
   // convert to string IP address
