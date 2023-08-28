@@ -127,7 +127,7 @@ int main(int argc, char *argv[]) {
 
   // Connect to the "draw" signal of the drawing area
   g_signal_connect(G_OBJECT(drawing_area), "draw", G_CALLBACK(on_draw), &data);
-  g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+  g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), nullptr);
 
   // Start the update timer
   g_timeout_add(40, update_callback, drawing_area);  // 25 Hz = 40ms interval

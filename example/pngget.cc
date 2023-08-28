@@ -104,7 +104,7 @@ void Png::ReadPngFile(char* file_name) {
   if (png_sig_cmp((png_bytep)header, 0, 8)) Abort("[read_png_file] File %s is not recognized as a PNG file", file_name);
 
   // initialize stuff
-  png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 
   if (!png_ptr) Abort("[read_png_file] png_create_read_struct failed");
 
