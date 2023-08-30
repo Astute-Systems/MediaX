@@ -66,17 +66,6 @@ void RtpvrawDepayloader::SetStreamInfo(std::string_view name, ColourspaceType en
   buffer_in_.resize((height * width) * kColourspaceBytes.at(ingress_.encoding));
 }
 
-void RtpvrawDepayloader::SapCallback(const sap::SDPMessage *sdp) {
-  SetStreamInfo(sdp->session_name, ColourspaceType::kColourspaceYuv, sdp->height, sdp->width, sdp->ip_address,
-                sdp->port);
-}
-
-void RtpvrawDepayloader::SetStreamInfo(std::string_view name) const {
-  sap::SAPListener &sap = sap::SAPListener::GetInstance();
-  sap.RegisterSapListener(name, SapCallback);
-  sap::SAPListener::GetInstance().Start();
-}
-
 bool RtpvrawDepayloader::Open() const {
   if (!ingress_.port_no) {
     std::cerr << "RtpvrawDepayloader::Open() No ports set, nothing to open";

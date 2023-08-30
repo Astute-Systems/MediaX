@@ -38,6 +38,7 @@
 
 #include <byteswap.h>
 #include <gflags/gflags.h>
+#include <limits.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -48,6 +49,7 @@
 #include <unistd.h>
 
 #include <array>
+#include <climits>
 #include <csignal>
 #include <iostream>
 #include <memory>

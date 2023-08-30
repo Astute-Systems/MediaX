@@ -93,11 +93,14 @@ int main(int argc, char *argv[]) {
   if (FLAGS_wait_sap) {
     // Just give the stream name and wait for SAP/SDP announcement
     std::cout << "Example RTP streaming to " << FLAGS_session_name << "\n";
-    rtp_.SetStreamInfo(FLAGS_session_name);
+    // Add SAP callback here
+    rtp_.SetStreamInfo(FLAGS_session_name, mediax::ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width,
+                       FLAGS_ipaddr, (uint16_t)FLAGS_port);
+
   } else {
     std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
-    mediax::RtpvrawDepayloader::SetStreamInfo(FLAGS_session_name, mediax::ColourspaceType::kColourspaceYuv,
-                                              FLAGS_height, FLAGS_width, FLAGS_ipaddr, (uint16_t)FLAGS_port);
+    rtp_.SetStreamInfo(FLAGS_session_name, mediax::ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width,
+                       FLAGS_ipaddr, (uint16_t)FLAGS_port);
 
     // We have all the information so we can request the ports open now. No need to wait for SAP/SDP
     if (!rtp_.Open()) {

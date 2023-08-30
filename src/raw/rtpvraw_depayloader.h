@@ -114,21 +114,8 @@ class RtpvrawDepayloader : public RtpDepayloader {
   /// \param height The height of the stream in pixels
   /// \param width The width of the stream in pixels
   ///
-  static void SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                            std::string_view hostname, const uint32_t port = 5004);
-
-  ///
-  /// \brief Configure at RTP input stream and  wait for the SAP/SDP announcement
-  ///
-  ///
-  void SetStreamInfo(std::string_view name) const final;
-
-  ///
-  /// \brief Register a SAP callback to get updated
-  ///
-  /// \param sdp
-  ///
-  static void SapCallback(const sap::SDPMessage *sdp);
+  void SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
+                     std::string_view hostname, const uint32_t port = 5004);
 
   ///
   /// \brief Open the RTP stream

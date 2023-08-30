@@ -12,6 +12,7 @@
 #ifndef PNGGET_H
 #define PNGGET_H
 
+#include <limits.h>
 #include <png.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -44,4 +45,5 @@ class Png {
 
   void Abort(const char* s, ...);
 };
-#endif
+
+#endif  // PNGGET_H

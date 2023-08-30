@@ -34,12 +34,6 @@ class RtpDepayloader {
   virtual ~RtpDepayloader() = default;
 
   ///
-  /// \brief Configure at RTP input stream and  wait for the SAP/SDP announcement
-  ///
-  ///
-  virtual void SetStreamInfo(std::string_view name) const = 0;
-
-  ///
   /// \brief Open the RTP stream
   ///
   /// \return true

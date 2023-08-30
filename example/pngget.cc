@@ -11,6 +11,7 @@
 ///
 #include "pngget.h"
 
+#include <limits.h>
 #include <png.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -18,6 +19,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <climits>
 #include <cstdint>
 #include <iostream>
 #include <memory>
