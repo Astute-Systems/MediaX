@@ -22,12 +22,12 @@
 
 namespace mediax {
 
-RtpH264rawDepayloader::RtpH264rawDepayloader() {
-  // Initialize GStreamer
-  gst_init(nullptr, nullptr);
+RtpH264rawDepayloader::RtpH264rawDepayloader() {}
 
+bool RtpH264rawDepayloader::Open() {
+  // Open the pipeline
   // Create a pipeline
-  GstElement *pipeline = gst_pipeline_new("rtp-h264-pipeline");
+  pipeline_ = gst_pipeline_new("rtp-h264-pipeline");
 
   // Create a udpsrc element to receive the RTP stream
   GstElement *udpsrc = gst_element_factory_make("udpsrc", "rtp-h264-udpsrc");
@@ -48,16 +48,16 @@ RtpH264rawDepayloader::RtpH264rawDepayloader() {
   g_object_set(G_OBJECT(appsrc), "stream-type", 0, "format", GST_FORMAT_TIME, nullptr);
 
   // Add all elements to the pipeline
-  gst_bin_add_many(GST_BIN(pipeline), udpsrc, capsfilter, rtph264depay, appsrc, nullptr);
+  gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, rtph264depay, appsrc, nullptr);
 
   // Link the elements
   gst_element_link_many(udpsrc, capsfilter, rtph264depay, nullptr);
 
   // Start the pipeline
-  gst_element_set_state(pipeline, GST_STATE_PLAYING);
+  gst_element_set_state(pipeline_, GST_STATE_PLAYING);
 
   // Wait for the pipeline to finish
-  GstBus *bus = gst_element_get_bus(pipeline);
+  GstBus *bus = gst_element_get_bus(pipeline_);
   GstMessage *msg =
       gst_bus_timed_pop_filtered(bus, GST_CLOCK_TIME_NONE, GstMessageType(GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
   if (msg != nullptr) {
@@ -65,28 +65,28 @@ RtpH264rawDepayloader::RtpH264rawDepayloader() {
   }
 
   // Stop the pipeline
-  gst_element_set_state(pipeline, GST_STATE_NULL);
+  gst_element_set_state(pipeline_, GST_STATE_NULL);
 
   // Free resources
   gst_object_unref(bus);
-  gst_object_unref(pipeline);
-}
+  gst_object_unref(pipeline_);
 
-bool RtpH264rawDepayloader::Open() const {
-  // TODO(Ross): Yet to implement
   return true;
 }
 
 void RtpH264rawDepayloader::Start() {
-  // TODO(Ross): Yet to implement
+  // Start the pipeline
+  gst_element_set_state(pipeline_, GST_STATE_PLAYING);
 }
 
 void RtpH264rawDepayloader::Stop() {
-  // TODO(Ross): Yet to implement
+  // Stop the pipeline
+  gst_element_set_state(pipeline_, GST_STATE_NULL);
 }
 
 void RtpH264rawDepayloader::Close() const {
-  // TODO(Ross): Yet to implement
+  // Destroy the pipeline
+  gst_object_unref(pipeline_);
 }
 
 }  // namespace mediax

@@ -25,6 +25,8 @@ namespace mediax {
 /// SAP/SDP constants
 #define kIpaddr "224.2.127.254"
 
+enum class StatusCode { kStatusOk = 0, kStatusError };
+
 /// SAP/SDP port
 const uint16_t kPort = 9875;
 

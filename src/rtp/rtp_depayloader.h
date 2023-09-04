@@ -39,7 +39,7 @@ class RtpDepayloader {
   /// \return true
   /// \return false
   ///
-  virtual bool Open() const = 0;
+  virtual bool Open() = 0;
 
   ///
   /// \brief Start the stream

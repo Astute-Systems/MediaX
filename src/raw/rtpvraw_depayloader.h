@@ -123,7 +123,7 @@ class RtpvrawDepayloader : public RtpDepayloader {
   /// \return true
   /// \return false
   ///
-  bool Open() const final;
+  bool Open() final;
 
   ///
   /// \brief Start the stream

@@ -66,7 +66,7 @@ void RtpvrawDepayloader::SetStreamInfo(std::string_view name, ColourspaceType en
   buffer_in_.resize((height * width) * kColourspaceBytes.at(ingress_.encoding));
 }
 
-bool RtpvrawDepayloader::Open() const {
+bool RtpvrawDepayloader::Open() {
   if (!ingress_.port_no) {
     std::cerr << "RtpvrawDepayloader::Open() No ports set, nothing to open";
     exit(-1);

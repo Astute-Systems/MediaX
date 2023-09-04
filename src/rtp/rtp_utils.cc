@@ -13,9 +13,24 @@
 
 #include "rtp/rtp_utils.h"
 
+#if GST_SUPPORTED
+#include <gst/gst.h>
+#endif
+
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+
+namespace mediax {
+
+void RtpInit(int argc, char *argv[]) {
+#if GST_SUPPORTED
+  // Initialize GStreamer
+  gst_init(&argc, &argv);
+#endif
+}
+
+}  // namespace mediax
 
 void EndianSwap32(uint32_t *data, unsigned int length) {
   // Check for Intel architecture

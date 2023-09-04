@@ -13,6 +13,8 @@
 #ifndef H264_GST_RTPH264_DEPAYLOADER_H_
 #define H264_GST_RTPH264_DEPAYLOADER_H_
 
+#include <gst/gst.h>
+
 #include "rtp/rtp_depayloader.h"
 
 namespace mediax {
@@ -37,7 +39,7 @@ class RtpH264rawDepayloader : public RtpDepayloader {
   /// \return true
   /// \return false
   ///
-  bool Open() const final;
+  bool Open() final;
 
   ///
   /// \brief Start the stream
@@ -66,6 +68,9 @@ class RtpH264rawDepayloader : public RtpDepayloader {
   /// \return false when no frame was received in the timeout
   ///
   bool Receive(uint8_t **cpu, int32_t timeout = 0) final = 0;
+
+ private:
+  GstElement *pipeline_;
 };
 
 }  // namespace mediax

@@ -36,11 +36,19 @@ set(SOURCES
   utils/colourspace.cc 
   utils/colourspace_cuda.cu
   v4l2/v4l2_source.cc
-  h264/gst/rtph264_payloader.cc 
-  h264/gst/rtph264_depayloader.cc
+
   h264/vaapi/rtph264_payloader.cc 
   h264/vaapi/rtph264_depayloader.cc
 )
+option(GST_SUPPORTED "GStreamer support" ON)
+if (GST_SUPPORTED)
+  message(STATUS "Adding GST support")
+    list(APPEND SOURCES
+    h264/gst/rtph264_payloader.cc 
+    h264/gst/rtph264_depayloader.cc
+  )
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGST_SUPPORTED")
+endif()
 
 include_directories(${CMAKE_SOURCE_DIR}/src)
 add_library(mediax SHARED ${SOURCES})

@@ -31,6 +31,18 @@
 #endif
 #include <stdint.h>
 
+namespace mediax {
+
+///
+/// \brief Initialize the RTP library, mainly needed for GStreamer support
+///
+/// \param argc
+/// \param argv
+///
+void RtpInit(int argc, char *argv[]);
+
+}  // namespace mediax
+
 ///
 /// \brief Swap the endianness of a 32-bit integer
 ///

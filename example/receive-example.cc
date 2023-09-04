@@ -19,6 +19,7 @@
 
 #include "example.h"
 #include "raw/rtpvraw_depayloader.h"
+#include "rtp/rtp_utils.h"
 #include "utils/colourspace.h"
 #include "utils/colourspace_cuda.h"
 #include "version.h"
@@ -29,6 +30,7 @@ DEFINE_int32(height, kHeightDefault, "the height of the image");
 DEFINE_int32(width, kWidthDefault, "the width of the image");
 DEFINE_string(session_name, kSessionName, "the SAP/SDP session name");
 DEFINE_bool(wait_sap, false, "wait for SAP/SDP announcement");
+DEFINE_bool(uncompressed, true, "Uncompressed video stream");
 
 struct OnDrawData {
   std::string name;
@@ -39,7 +41,7 @@ struct OnDrawData {
   uint16_t port;
 };
 
-static mediax::RtpvrawDepayloader rtp_;
+std::shared_ptr<mediax::RtpDepayloader> rtp_;
 
 static uint64_t m_frame_counter_ = 0;
 
@@ -49,7 +51,7 @@ gboolean on_draw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer
   video::ColourSpace convert;
 
   // Fill the surface with video data if available
-  if (rtp_.Receive(&cpu_buffer, 80) == true) {
+  if (rtp_->Receive(&cpu_buffer, 80) == true) {
     unsigned char *surface_data = cairo_image_surface_get_data(data->surface);
     // Get the width and height of the surface
     int width = cairo_image_surface_get_width(data->surface);
@@ -77,6 +79,33 @@ gboolean update_callback(gpointer user_data) {
   return TRUE;
 }
 
+void SetupUncompressed() {
+  auto rtp_uncompressed = std::make_shared<mediax::RtpvrawDepayloader>();
+  rtp_ = rtp_uncompressed;
+  // Setup stream
+  if (FLAGS_wait_sap) {
+    // Just give the stream name and wait for SAP/SDP announcement
+    std::cout << "Example RTP streaming to " << FLAGS_session_name << "\n";
+    // Add SAP callback here
+    rtp_uncompressed->SetStreamInfo(FLAGS_session_name, mediax::ColourspaceType::kColourspaceYuv, FLAGS_height,
+                                    FLAGS_width, FLAGS_ipaddr, (uint16_t)FLAGS_port);
+  } else {
+    std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
+    rtp_uncompressed->SetStreamInfo(FLAGS_session_name, mediax::ColourspaceType::kColourspaceYuv, FLAGS_height,
+                                    FLAGS_width, FLAGS_ipaddr, (uint16_t)FLAGS_port);
+
+    // We have all the information so we can request the ports open now. No need to wait for SAP/SDP
+    if (!rtp_->Open()) {
+      std::cerr << "Could not open stream, quitting";
+      exit(1);
+    }
+  }
+
+  rtp_->Start();
+}
+
+void SetupH264() {}
+
 int main(int argc, char *argv[]) {
   gflags::SetVersionString(kVersion);
   gflags::SetUsageMessage(
@@ -89,27 +118,13 @@ int main(int argc, char *argv[]) {
 
   gtk_init(&argc, &argv);
 
-  // Setup stream
-  if (FLAGS_wait_sap) {
-    // Just give the stream name and wait for SAP/SDP announcement
-    std::cout << "Example RTP streaming to " << FLAGS_session_name << "\n";
-    // Add SAP callback here
-    rtp_.SetStreamInfo(FLAGS_session_name, mediax::ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width,
-                       FLAGS_ipaddr, (uint16_t)FLAGS_port);
+  mediax::RtpInit(argc, argv);
 
+  if (FLAGS_uncompressed) {
+    SetupUncompressed();
   } else {
-    std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
-    rtp_.SetStreamInfo(FLAGS_session_name, mediax::ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width,
-                       FLAGS_ipaddr, (uint16_t)FLAGS_port);
-
-    // We have all the information so we can request the ports open now. No need to wait for SAP/SDP
-    if (!rtp_.Open()) {
-      std::cerr << "Could not open stream, quitting";
-      return -1;
-    }
+    SetupH264();
   }
-
-  rtp_.Start();
 
   // Create a new window
   GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -139,7 +154,7 @@ int main(int argc, char *argv[]) {
 
   gtk_main();
 
-  rtp_.Stop();
+  rtp_->Stop();
 
   std::cout << "Example terminated...\n";
 

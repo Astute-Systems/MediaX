@@ -19,6 +19,7 @@
         "depay",
         "depayload",
         "depayloader",
+        "Destory",
         "devel",
         "DEXAMPLES",
         "Doxygen",
@@ -169,7 +170,8 @@
         "unordered_set": "cpp",
         "future": "cpp",
         "typeindex": "cpp",
-        "climits": "cpp"
+        "climits": "cpp",
+        "__config": "cpp"
     },
     "terminal.integrated.shell.windows": "C:\\msys64\\usr\\bin\\bash.exe",
     "terminal.integrated.shellArgs.windows": [
