@@ -36,8 +36,10 @@ set(SOURCES
   utils/colourspace.cc 
   utils/colourspace_cuda.cu
   v4l2/v4l2_source.cc
-  h264/rtph264_payloader.cc 
-  h264/rtph264_depayloader.cc
+  h264/gst/rtph264_payloader.cc 
+  h264/gst/rtph264_depayloader.cc
+  h264/vaapi/rtph264_payloader.cc 
+  h264/vaapi/rtph264_depayloader.cc
 )
 
 include_directories(${CMAKE_SOURCE_DIR}/src)

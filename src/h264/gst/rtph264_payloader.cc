@@ -12,9 +12,9 @@
 /// \file rtph264_payloader.cc
 ///
 
-#include "h264/rtph264_payloader.h"
+#include "h264/gst/rtph264_payloader.h"
 
-#include "h264/rtph264_depayloader.h"
+#include "h264/gst/rtph264_depayloader.h"
 
 namespace mediax {
 

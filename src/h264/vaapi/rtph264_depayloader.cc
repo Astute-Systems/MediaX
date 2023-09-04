@@ -13,11 +13,13 @@
 /// \file rtph264_depayloader.cc
 ///
 
-#include "vaapi/rtph264_depayloader.h"
+#include "h264/vaapi/rtph264_depayloader.h"
 
 #include <va/va.h>
 #include <va/va_drm.h>
 #include <va/va_x11.h>
+
+#include <stdexcept>
 
 #define VA_MAX_PLANES 3
 

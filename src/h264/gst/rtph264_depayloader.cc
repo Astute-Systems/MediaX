@@ -13,7 +13,7 @@
 /// \file rtph264_depayloader.cc
 ///
 
-#include "h264/rtph264_depayloader.h"
+#include "h264/gst/rtph264_depayloader.h"
 
 #include <gst/gst.h>
 
