@@ -14,7 +14,16 @@
 #include <unistd.h>
 
 #include "rtp/rtp.h"
+#include "rtp/rtp_utils.h"
 
 TEST(Rtp, Init) { mediax::RtpInit(0, nullptr); }
 
 TEST(Rtp, CleanUp) { mediax::RtpCleanup(); }
+
+TEST(Rtp, Bits) {
+  EXPECT_EQ(mediax::BitsPerPixel(mediax::ColourspaceType::kColourspaceRgba), 32);
+  EXPECT_EQ(mediax::BitsPerPixel(mediax::ColourspaceType::kColourspaceRgb24), 24);
+  EXPECT_EQ(mediax::BitsPerPixel(mediax::ColourspaceType::kColourspaceYuv), 16);
+  EXPECT_EQ(mediax::BitsPerPixel(mediax::ColourspaceType::kColourspaceMono16), 16);
+  EXPECT_EQ(mediax::BitsPerPixel(mediax::ColourspaceType::kColourspaceMono8), 8);
+}
