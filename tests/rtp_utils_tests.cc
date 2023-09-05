@@ -13,6 +13,7 @@
 #include <gtest/gtest.h>
 #include <unistd.h>
 
+#include "rtp/rtp_types.h"
 #include "rtp/rtp_utils.h"
 
 TEST(Utilities, DumpHex) {
@@ -41,7 +42,7 @@ TEST(Utilities, EndianSwap32) {
 TEST(Utilities, CreateColourBarTestCard) {
   const int kBuffSize = (640 * 480) * 3;
   std::array<uint8_t, kBuffSize> rtb_test = {0};
-  CreateColourBarTestCard(rtb_test.data(), 640, 480);
+  CreateColourBarTestCard(rtb_test.data(), 640, 480, mediax::ColourspaceType::kColourspaceRgb24);
   ASSERT_EQ(rtb_test[0], 0xFF);
   ASSERT_EQ(rtb_test[1], 0);
   ASSERT_EQ(rtb_test[2], 0x0);
@@ -50,7 +51,7 @@ TEST(Utilities, CreateColourBarTestCard) {
 TEST(Utilities, CreateGreyScaleBarTestCard) {
   const int kBuffSize = (640 * 480) * 3;
   std::array<uint8_t, kBuffSize> rtb_test = {0};
-  CreateGreyScaleBarTestCard(rtb_test.data(), 640, 480);
+  CreateGreyScaleBarTestCard(rtb_test.data(), 640, 480, mediax::ColourspaceType::kColourspaceRgb24);
   ASSERT_EQ(rtb_test[0], 0);
   ASSERT_EQ(rtb_test[1], 0);
   ASSERT_EQ(rtb_test[2], 0);
@@ -59,7 +60,7 @@ TEST(Utilities, CreateGreyScaleBarTestCard) {
 TEST(Utilities, CreateComplexTestCard) {
   const int kBuffSize = (640 * 480) * 3;
   std::array<uint8_t, kBuffSize> rtb_test = {0};
-  CreateComplexTestCard(rtb_test.data(), 640, 480);
+  CreateComplexTestCard(rtb_test.data(), 640, 480, mediax::ColourspaceType::kColourspaceRgb24);
   ASSERT_EQ(rtb_test[0], 0);
   ASSERT_EQ(rtb_test[1], 0);
   ASSERT_EQ(rtb_test[2], 0);
@@ -68,7 +69,7 @@ TEST(Utilities, CreateComplexTestCard) {
 TEST(Utilities, CreateCheckeredTestCard) {
   const int kBuffSize = (640 * 480) * 3;
   std::array<uint8_t, kBuffSize> rtb_test = {0};
-  CreateCheckeredTestCard(rtb_test.data(), 640, 480);
+  CreateCheckeredTestCard(rtb_test.data(), 640, 480, mediax::ColourspaceType::kColourspaceRgb24);
   ASSERT_EQ(rtb_test[0], 0xFF);
   ASSERT_EQ(rtb_test[1], 0xFF);
   ASSERT_EQ(rtb_test[2], 0xFF);

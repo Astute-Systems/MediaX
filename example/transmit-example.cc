@@ -167,32 +167,33 @@ int main(int argc, char **argv) {
       break;
     case 2:
       rgb.resize(kBuffSizeRGB);
-      CreateColourBarTestCard(rgb.data(), FLAGS_width, FLAGS_height);
+      CreateColourBarTestCard(rgb.data(), FLAGS_width, FLAGS_height, mediax::ColourspaceType::kColourspaceRgb24);
       LOG(INFO) << "Creating colour bar test card";
       break;
     case 3:
       rgb.resize(kBuffSizeRGB);
-      CreateGreyScaleBarTestCard(rgb.data(), FLAGS_width, FLAGS_height);
+      CreateGreyScaleBarTestCard(rgb.data(), FLAGS_width, FLAGS_height, mediax::ColourspaceType::kColourspaceRgb24);
       LOG(INFO) << "Creating greyscale test card";
       break;
     case 4:
       rgb.resize(kBuffSizeRGB);
-      CreateComplexTestCard(rgb.data(), FLAGS_width, FLAGS_height);
+      CreateComplexTestCard(rgb.data(), FLAGS_width, FLAGS_height, mediax::ColourspaceType::kColourspaceRgb24);
       LOG(INFO) << "Creating scaled RGB values";
       break;
     case 5:
       rgb.resize(kBuffSizeRGB);
-      CreateCheckeredTestCard(rgb.data(), FLAGS_width, FLAGS_height);
+      CreateCheckeredTestCard(rgb.data(), FLAGS_width, FLAGS_height, mediax::ColourspaceType::kColourspaceRgb24);
       LOG(INFO) << "Creating checkered test card";
       break;
     case 6:  // Solid white
       rgb.resize(kBuffSizeRGB);
-      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 255, 255, 255);
+      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 255, 255, 255,
+                          mediax::ColourspaceType::kColourspaceRgb24);
       LOG(INFO) << "Creating solid white test card";
       break;
     case 7:  // Solid black
       rgb.resize(kBuffSizeRGB);
-      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 0, 0);
+      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 0, 0, mediax::ColourspaceType::kColourspaceRgb24);
       LOG(INFO) << "Creating solid black test card";
       break;
     case 8:  // Solid red

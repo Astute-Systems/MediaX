@@ -199,4 +199,15 @@ void ColourSpaceCpu::RgbToMono16(uint32_t height, uint32_t width, uint8_t *rgb, 
   sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
 }
 
+void ColourSpaceCpu::RgbToRgba(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const {
+  uint32_t stride = 0;
+  for (uint32_t i = 0; i < width * height * 3; i += 3) {
+    rgba[stride] = rgb[i];
+    rgba[stride + 1] = rgb[i + 1];
+    rgba[stride + 2] = rgb[i + 2];
+    rgba[stride + 3] = 0x00;
+    stride += 4;
+  }
+}
+
 }  // namespace video

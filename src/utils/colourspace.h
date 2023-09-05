@@ -76,12 +76,22 @@ class ColourSpace {
   ///
   /// \brief Convert RGBA to RGB
   ///
-  /// \param width
-  /// \param height
-  /// \param rgba
-  /// \param rgb
+  /// \param width The height of the image
+  /// \param height The width of the image
+  /// \param rgba The RGBA image buffer
+  /// \param rgb The RGB image buffer
   ///
   virtual void RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const = 0;
+
+  ///
+  /// \brief Convert RGB to RGBA
+  ///
+  /// \param width The height of the image
+  /// \param height The width of the image
+  /// \param rgba The RGBA image buffer
+  /// \param rgb The RGB image buffer
+  ///
+  virtual void RgbToRgba(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const = 0;
 
   ///
   /// \brief Convert YUV to RGBA

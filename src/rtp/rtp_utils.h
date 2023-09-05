@@ -88,7 +88,7 @@ void DumpHex(const void *data, size_t size);
 /// \param width the image width in pixels
 /// \param height the image height in pixels
 ///
-void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height);
+void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace);
 
 ///
 /// \brief Create a Grey Scale Bar Test Card object
@@ -97,7 +97,7 @@ void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height);
 /// \param width the image width in pixels
 /// \param height the image height in pixels
 ///
-void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height);
+void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace);
 
 ///
 /// \brief Create a Smtpe Test Card object
@@ -106,7 +106,7 @@ void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height);
 /// \param width the image width in pixels
 /// \param height the image height in pixels
 ///
-void CreateComplexTestCard(uint8_t *data, uint32_t width, uint32_t height);
+void CreateComplexTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace);
 
 ///
 /// \brief Create a Checkerd Test Card object
@@ -115,7 +115,7 @@ void CreateComplexTestCard(uint8_t *data, uint32_t width, uint32_t height);
 /// \param width the image width in pixels
 /// \param height the image height in pixels
 ///
-void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height);
+void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace);
 
 ///
 /// \brief Create a Solid Test Card object
@@ -127,6 +127,7 @@ void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height);
 /// \param green RGB value
 /// \param blue RGB value
 ///
-void CreateSolidTestCard(uint8_t *data, uint32_t width, uint32_t height, uint8_t red, uint8_t green, uint8_t blue);
+void CreateSolidTestCard(uint8_t *data, uint32_t width, uint32_t height, uint8_t red, uint8_t green, uint8_t blue,
+                         mediax::ColourspaceType colourspace);
 
 #endif  // RTP_RTP_UTILS_H_

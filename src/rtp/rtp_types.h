@@ -94,6 +94,7 @@ struct LineHeader {
 enum class ColourspaceType {
   kColourspaceUndefined,
   kColourspaceRgb24,
+  kColourspaceRgba,  // Not a GVA uncompressed video format
   kColourspaceYuv,
   kColourspaceMono8,
   kColourspaceMono16,

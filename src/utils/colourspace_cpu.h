@@ -32,7 +32,7 @@ class ColourSpaceCpu : public ColourSpace {
   ~ColourSpaceCpu() = default;
 
   ///
-  /// \brief Convert YUV to RGBA
+  /// \brief Convert YUV to RGBA on the CPU
   ///
   /// \param height The height of the image
   /// \param width The width of the image
@@ -42,7 +42,7 @@ class ColourSpaceCpu : public ColourSpace {
   void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) const final;
 
   ///
-  /// \brief Convert RGB to Monochrome 8 bits ber pixel
+  /// \brief Convert RGB to Monochrome 8 bits ber pixel on the CPU
   ///
   /// \param height The height of the image
   /// \param width The width of the image
@@ -52,7 +52,7 @@ class ColourSpaceCpu : public ColourSpace {
   void RgbToMono8(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *mono8) const final;
 
   ///
-  /// \brief Convert RGB to Monochrome 16 bits ber pixel
+  /// \brief Convert RGB to Monochrome 16 bits ber pixel on the CPU
   ///
   /// \param height  The height of the image
   /// \param width The width of the image
@@ -62,7 +62,7 @@ class ColourSpaceCpu : public ColourSpace {
   void RgbToMono16(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *mono16) const final;
 
   ///
-  /// \brief Convert RGBA to YUV
+  /// \brief Convert RGBA to YUV on the CPU
   ///
   /// \param width The width of the image
   /// \param height The height of the image
@@ -72,7 +72,7 @@ class ColourSpaceCpu : public ColourSpace {
   void RgbaToYuv(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *yuv) const final;
 
   ///
-  /// \brief Convert RGBA to RGB
+  /// \brief Convert RGBA to RGB on the CPU
   ///
   /// \param width
   /// \param height
@@ -82,7 +82,17 @@ class ColourSpaceCpu : public ColourSpace {
   void RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const final;
 
   ///
-  /// \brief Convert YUV to RGBA
+  /// \brief Convert RGB to RGBA on the CPU
+  ///
+  /// \param width The height of the image
+  /// \param height The width of the image
+  /// \param rgba The RGBA image buffer
+  /// \param rgb The RGB image buffer
+  ///
+  void RgbToRgba(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const;
+
+  ///
+  /// \brief Convert YUV to RGBA on the CPU
   ///
   /// \param height The height of the image
   /// \param width The width of the image
@@ -92,7 +102,7 @@ class ColourSpaceCpu : public ColourSpace {
   void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const final;
 
   ///
-  /// \brief Convert YUV to RGB
+  /// \brief Convert YUV to RGB on the CPU
   ///
   /// \param height The height of the image
   /// \param width The width of the image

@@ -120,8 +120,35 @@ void DumpHex(const void *data, size_t size) {
   std::cout << std::dec << std::endl;
 }
 
+void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::ColourspaceType colourspace) {
+  switch (colourspace) {
+    case mediax::ColourspaceType::kColourspaceRgb24:
+      data[0] = (uint8_t)r;
+      data[1] = (uint8_t)g;
+      data[2] = (uint8_t)b;
+      break;
+    case mediax::ColourspaceType::kColourspaceRgba:
+      data[0] = (uint8_t)r;
+      data[1] = (uint8_t)g;
+      data[2] = (uint8_t)b;
+      data[3] = 0;  // Alpha
+      break;
+    case mediax::ColourspaceType::kColourspaceMono8:
+      data[0] = (uint8_t)(0.299 * r + 0.587 * g + 0.114 * b);
+      break;
+    case mediax::ColourspaceType::kColourspaceMono16:
+      data[0] = (uint8_t)(0.299 * r + 0.587 * g + 0.114 * b);
+      data[1] = 0;
+      break;
+    default:
+      break;
+  }
+}
+
 // Implementation of the CreateColourBarTestCard function
-void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height) {
+void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
+  uint32_t stride = mediax::BitsPerPixel(colourspace) / 8;
+
   for (uint32_t x = 0; x < width; x++) {
     for (uint32_t y = 0; y < height; y++) {
       uint8_t r;
@@ -162,36 +189,36 @@ void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height) {
         b = 255;
       }
       // Set the color of the current pixel in the image data buffer.
-      uint32_t index = (y * width + x) * 3;
-      data[index] = r;
-      data[index + 1] = g;
-      data[index + 2] = b;
+      uint32_t index = (y * width + x) * stride;
+      PackRgb(&data[index], r, g, b, colourspace);
     }
   }
 }
 
 // Implementation of the CreateGreyScaleBarTestCard function
-void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height) {
+void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
+  uint32_t stride = mediax::BitsPerPixel(colourspace) / 8;
+
   uint32_t bar_width = width / 8;
   uint32_t bar_height = height;
   uint8_t color = 0;
   for (uint32_t i = 0; i < 8; i++) {
     for (uint32_t y = 0; y < bar_height; y++) {
       for (uint32_t x = i * bar_width; x < (i + 1) * bar_width; x++) {
-        data[(y * width + x) * 3] = color;      // Red channel
-        data[(y * width + x) * 3 + 1] = color;  // Green channel
-        data[(y * width + x) * 3 + 2] = color;  // Blue channel
+        PackRgb(&data[(y * width + x) * stride], color, color, color, colourspace);  // Blue channel
       }
     }
     color += 32;
   }
 }
 
-void CreateComplexTestCard(uint8_t *data, uint32_t width, uint32_t height) {
-  uint32_t size = width * height * 3;
-  for (uint32_t i = 0; i < size; i += 3) {
-    uint32_t x = i / 3 % width;
-    uint32_t y = i / 3 / width;
+void CreateComplexTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
+  uint32_t stride = mediax::BitsPerPixel(colourspace) / 8;
+
+  uint32_t size = width * height * stride;
+  for (uint32_t i = 0; i < size; i += stride) {
+    uint32_t x = i / stride % width;
+    uint32_t y = i / stride / width;
     double r;
     double g;
     double b;
@@ -216,14 +243,14 @@ void CreateComplexTestCard(uint8_t *data, uint32_t width, uint32_t height) {
     r *= 0.5 + 0.5 * sin(t);
     g *= 0.5 + 0.5 * sin(t + 2 * M_PI / 3);
     b *= 0.5 + 0.5 * sin(t + 4 * M_PI / 3);
-    data[i] = (uint8_t)r;
-    data[i + 1] = (uint8_t)g;
-    data[i + 2] = (uint8_t)b;
+    PackRgb(&data[i], r, g, b, colourspace);
   }
 }
 
-void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height) {
-  uint32_t size = width * height * 3;
+void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
+  uint32_t stride = mediax::BitsPerPixel(colourspace) / 8;
+
+  uint32_t size = width * height * stride;
   for (uint32_t i = 0; i < size; i += 3) {
     uint32_t x = i / 3 % width;
     uint32_t y = i / 3 / width;
@@ -239,17 +266,16 @@ void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height) {
       g = 0;
       b = 0;
     }
-    data[i] = r;
-    data[i + 1] = g;
-    data[i + 2] = b;
+    PackRgb(&data[i], r, g, b, colourspace);
   }
 }
 
-void CreateSolidTestCard(uint8_t *data, uint32_t width, uint32_t height, uint8_t red, uint8_t green, uint8_t blue) {
-  uint32_t size = width * height * 3;
-  for (uint32_t i = 0; i < size; i += 3) {
-    data[i] = red;
-    data[i + 1] = green;
-    data[i + 2] = blue;
+void CreateSolidTestCard(uint8_t *data, uint32_t width, uint32_t height, uint8_t red, uint8_t green, uint8_t blue,
+                         mediax::ColourspaceType colourspace) {
+  uint32_t stride = mediax::BitsPerPixel(colourspace) / 8;
+
+  uint32_t size = width * height * stride;
+  for (uint32_t i = 0; i < size; i += stride) {
+    PackRgb(&data[i], red, green, blue, colourspace);
   }
 }
