@@ -29,7 +29,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #endif
-#include <stdint.h>
+// #include <stdint.h>
 
 namespace mediax {
 
@@ -40,6 +40,12 @@ namespace mediax {
 /// \param argv
 ///
 void RtpInit(int argc, char *argv[]);
+
+///
+/// \brief Finalise the RTP library, mainly needed for GStreamer support
+///
+///
+void RtpCleanup();
 
 }  // namespace mediax
 

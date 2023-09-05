@@ -19,19 +19,19 @@
 
 namespace mediax {
 
-class RtpH264rawDepayloader : public RtpDepayloader {
+class RtpH264Depayloader : public RtpDepayloader {
  public:
   ///
   /// \brief Construct a new Rtpvraw Depayloader object
   ///
   ///
-  RtpH264rawDepayloader();
+  RtpH264Depayloader();
 
   ///
   /// \brief Destroy the Rtpvraw Depayloader object
   ///
   ///
-  ~RtpH264rawDepayloader() final = default;
+  ~RtpH264Depayloader() final = default;
 
   ///
   /// \brief Open the RTP stream
@@ -67,7 +67,7 @@ class RtpH264rawDepayloader : public RtpDepayloader {
   /// \return true when frame available
   /// \return false when no frame was received in the timeout
   ///
-  bool Receive(uint8_t **cpu, int32_t timeout = 0) final = 0;
+  bool Receive(uint8_t **cpu, int32_t timeout = 0) final { return true; };
 
  private:
   GstElement *pipeline_;

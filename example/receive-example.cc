@@ -15,11 +15,11 @@
 #include <gtk/gtk.h>
 
 #include <iostream>
+#include <memory>
 #include <string>
 
 #include "example.h"
-#include "raw/rtpvraw_depayloader.h"
-#include "rtp/rtp_utils.h"
+#include "rtp/rtp.h"
 #include "utils/colourspace.h"
 #include "utils/colourspace_cuda.h"
 #include "version.h"
@@ -104,9 +104,17 @@ void SetupUncompressed() {
   rtp_->Start();
 }
 
-void SetupH264() {}
+void SetupH264() {
+  auto rtp_h264 = std::make_shared<mediax::RtpH264Depayloader>();
+  rtp_ = rtp_h264;
+}
 
 int main(int argc, char *argv[]) {
+  if (__amd64)
+    std::cout << "Running on AMD64\n";
+  else
+    std::cout << "Running on unknown architecture\n";
+  exit(0);
   gflags::SetVersionString(kVersion);
   gflags::SetUsageMessage(
       "Example RTP receiver\n"
@@ -155,6 +163,8 @@ int main(int argc, char *argv[]) {
   gtk_main();
 
   rtp_->Stop();
+
+  mediax::RtpCleanup();
 
   std::cout << "Example terminated...\n";
 

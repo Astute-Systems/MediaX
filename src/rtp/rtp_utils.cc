@@ -30,6 +30,13 @@ void RtpInit(int argc, char *argv[]) {
 #endif
 }
 
+void RtpCleanup() {
+#if GST_SUPPORTED
+  // Deinitialize GStreamer
+  gst_deinit();
+#endif
+}
+
 }  // namespace mediax
 
 void EndianSwap32(uint32_t *data, unsigned int length) {

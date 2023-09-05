@@ -22,9 +22,9 @@
 
 namespace mediax {
 
-RtpH264rawDepayloader::RtpH264rawDepayloader() {}
+RtpH264Depayloader::RtpH264Depayloader() {}
 
-bool RtpH264rawDepayloader::Open() {
+bool RtpH264Depayloader::Open() {
   // Open the pipeline
   // Create a pipeline
   pipeline_ = gst_pipeline_new("rtp-h264-pipeline");
@@ -74,17 +74,17 @@ bool RtpH264rawDepayloader::Open() {
   return true;
 }
 
-void RtpH264rawDepayloader::Start() {
+void RtpH264Depayloader::Start() {
   // Start the pipeline
   gst_element_set_state(pipeline_, GST_STATE_PLAYING);
 }
 
-void RtpH264rawDepayloader::Stop() {
+void RtpH264Depayloader::Stop() {
   // Stop the pipeline
   gst_element_set_state(pipeline_, GST_STATE_NULL);
 }
 
-void RtpH264rawDepayloader::Close() const {
+void RtpH264Depayloader::Close() const {
   // Destroy the pipeline
   gst_object_unref(pipeline_);
 }
