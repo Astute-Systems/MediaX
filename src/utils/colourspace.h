@@ -11,8 +11,8 @@
 /// \file colourspace.h
 ///
 
-#ifndef UTILS_COLOURSPACE_CPU_H_
-#define UTILS_COLOURSPACE_CPU_H_
+#ifndef UTILS_COLOURSPACE_H_
+#define UTILS_COLOURSPACE_H_
 
 #include <stdint.h>
 
@@ -106,4 +106,4 @@ class ColourSpace {
 
 }  // namespace video
 
-#endif  // UTILS_COLOURSPACE_CPU_H_
+#endif  // UTILS_COLOURSPACE_H_
