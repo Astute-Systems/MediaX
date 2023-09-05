@@ -20,7 +20,7 @@
 
 #include "example.h"
 #include "rtp/rtp.h"
-#include "utils/colourspace.h"
+#include "utils/colourspace_cpu.h"
 #include "utils/colourspace_cuda.h"
 #include "version.h"
 
@@ -48,7 +48,7 @@ static uint64_t m_frame_counter_ = 0;
 gboolean on_draw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer user_data) {
   uint8_t *cpu_buffer;
   auto data = static_cast<OnDrawData *>(user_data);
-  video::ColourSpace convert;
+  video::ColourSpaceCpu convert;
 
   // Fill the surface with video data if available
   if (rtp_->Receive(&cpu_buffer, 80) == true) {
@@ -110,11 +110,6 @@ void SetupH264() {
 }
 
 int main(int argc, char *argv[]) {
-  if (__amd64)
-    std::cout << "Running on AMD64\n";
-  else
-    std::cout << "Running on unknown architecture\n";
-  exit(0);
   gflags::SetVersionString(kVersion);
   gflags::SetUsageMessage(
       "Example RTP receiver\n"

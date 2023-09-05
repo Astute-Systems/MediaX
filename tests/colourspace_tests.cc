@@ -19,7 +19,7 @@
 #include <string>
 
 #include "rtp/rtp_utils.h"
-#include "utils/colourspace.h"
+#include "utils/colourspace_cpu.h"
 
 TEST(Colourspace, YuvToRgbTest) {
   uint32_t height = 4;
@@ -27,7 +27,7 @@ TEST(Colourspace, YuvToRgbTest) {
   uint8_t yuv[width * height * 2];
   uint8_t rgb[width * height * 3];
   uint8_t rgb_receive[width * height * 3];
-  video::ColourSpace convert;
+  video::ColourSpaceCpu convert;
 
   // Fill the YUV buffer with a red color
   for (uint32_t i = 0; i < (width * height * 2) / 2; i += 4) {
@@ -61,7 +61,7 @@ TEST(Colourspace, YuvToRgbaTest) {
   uint32_t width = 4;
   uint8_t yuv[width * height * 2];
   uint8_t rgba_recieve[width * height * 4];
-  video::ColourSpace convert;
+  video::ColourSpaceCpu convert;
 
   // Fill the YUV buffer with a red color
   for (uint32_t i = 0; i < (width * height * 2); i += 4) {
@@ -83,7 +83,7 @@ TEST(Colourspace, RgbToYuvTest) {
   const uint32_t height = 4;
   const uint32_t bufferSize = width * height * 3;
   uint8_t rgb[bufferSize];
-  video::ColourSpace convert;
+  video::ColourSpaceCpu convert;
 
   // Fill the expected RGB buffer with a red color
   for (uint32_t i = 0; i < width * height * 3; i += 3) {
@@ -103,7 +103,7 @@ TEST(Colourspace, RgbaToYuvTest) {
   const uint32_t height = 4;
   const uint32_t bufferSize = width * height * 4;
   uint8_t rgba[bufferSize] = {0};
-  video::ColourSpace convert;
+  video::ColourSpaceCpu convert;
 
   // Fill the expected RGB buffer with a red color
   for (uint32_t i = 0; i < width * height * 4; i += 4) {
@@ -123,7 +123,7 @@ TEST(Colourspace, RgbaToRgbTest) {
   const uint32_t height = 4;
   const uint32_t bufferSize = width * height * 4;
   uint8_t rgba[bufferSize] = {0};
-  video::ColourSpace convert;
+  video::ColourSpaceCpu convert;
 
   // Fill the expected RGB buffer with a red color
   for (uint32_t i = 0; i < width * height * 4; i += 4) {

@@ -33,10 +33,9 @@ set(SOURCES
   sap/sap_announcer.cc 
   sap/sap_listener.cc 
   sap/sap_utils.cc 
-  utils/colourspace.cc 
+  utils/colourspace_cpu.cc 
   utils/colourspace_cuda.cu
   v4l2/v4l2_source.cc
-
   h264/vaapi/rtph264_payloader.cc 
   h264/vaapi/rtph264_depayloader.cc
 )

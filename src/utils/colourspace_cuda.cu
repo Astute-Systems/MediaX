@@ -17,7 +17,9 @@
 
 #include <iostream>
 
-namespace video::cuda {
+#include "utils/colourspace_cpu.h"
+
+namespace video {
 
 // CUDA kernel to convert YUV to RGB
 __global__ void YuvToRgbKernel(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) {
@@ -46,7 +48,7 @@ __global__ void YuvToRgbKernel(uint32_t height, uint32_t width, uint8_t *yuv, ui
   rgb[rgbIndex + 2] = min(max(b, 0), 255);
 }
 
-void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) {
+void ColourSpaceCuda::YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const {
   if (!rgb || !yuv) {
     return;
   }
@@ -102,7 +104,7 @@ __global__ void yuvToRgbaKernel(uint32_t height, uint32_t width, uint8_t *yuv, u
   }
 }
 
-void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) {
+void ColourSpaceCuda::YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const {
   int block_size = 32;
   dim3 dimBlock(block_size, block_size);
   dim3 dimGrid((width + dimBlock.x - 1) / dimBlock.x, (height + dimBlock.y - 1) / dimBlock.y);
@@ -133,7 +135,7 @@ __global__ void rgbToYuvKernel(uint32_t height, uint32_t width, uint8_t *rgb, ui
   }
 }
 
-void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) {
+void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) const {
   int block_size = 32;
   dim3 dimBlock(block_size, block_size);
   dim3 dimGrid((width + dimBlock.x - 1) / dimBlock.x, (height + dimBlock.y - 1) / dimBlock.y);
@@ -164,7 +166,7 @@ __global__ void rgbaToYuvKernel(uint32_t height, uint32_t width, uint8_t *rgba, 
   }
 }
 
-void RgbaToYuv(uint32_t height, uint32_t width, uint8_t *rgba, uint8_t *yuv) {
+void ColourSpaceCuda::RgbaToYuv(uint32_t height, uint32_t width, uint8_t *rgba, uint8_t *yuv) {
   int block_size = 32;
   dim3 dimBlock(block_size, block_size);
   dim3 dimGrid((width + dimBlock.x - 1) / dimBlock.x, (height + dimBlock.y - 1) / dimBlock.y);
@@ -172,4 +174,4 @@ void RgbaToYuv(uint32_t height, uint32_t width, uint8_t *rgba, uint8_t *yuv) {
   cudaDeviceSynchronize();
 }
 
-}  // namespace video::cuda
+}  // namespace video

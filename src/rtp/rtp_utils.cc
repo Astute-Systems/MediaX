@@ -13,6 +13,8 @@
 
 #include "rtp/rtp_utils.h"
 
+#include "rtp/rtp_types.h"
+
 #if GST_SUPPORTED
 #include <gst/gst.h>
 #endif
@@ -37,6 +39,20 @@ void RtpCleanup() {
 #endif
 }
 
+uint8_t BitsPerPixel(ColourspaceType mode) {
+  switch (mode) {
+    case ColourspaceType::kColourspaceRgb24:
+      return 24;
+    case ColourspaceType::kColourspaceYuv:
+      return 16;
+    case ColourspaceType::kColourspaceMono16:
+      return 16;
+    case ColourspaceType::kColourspaceMono8:
+      return 8;
+    default:
+      return 0;
+  }
+}
 }  // namespace mediax
 
 void EndianSwap32(uint32_t *data, unsigned int length) {

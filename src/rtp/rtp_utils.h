@@ -29,15 +29,15 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #endif
-// #include <stdint.h>
+#include "rtp/rtp_types.h"
 
 namespace mediax {
 
 ///
 /// \brief Initialize the RTP library, mainly needed for GStreamer support
 ///
-/// \param argc
-/// \param argv
+/// \param argc from main, used to initialize GStreamer
+/// \param argv from main, used to initialize GStreamer
 ///
 void RtpInit(int argc, char *argv[]);
 
@@ -46,6 +46,14 @@ void RtpInit(int argc, char *argv[]);
 ///
 ///
 void RtpCleanup();
+
+///
+/// \brief Get the number of bits per pixel for a given colour space
+///
+/// \param mode
+/// \return uint8_t the bits per pixel
+///
+uint8_t BitsPerPixel(ColourspaceType mode);
 
 }  // namespace mediax
 
