@@ -31,7 +31,6 @@ StatusCode DecodeFrame(VADisplay va_display, VAContextID va_context, VASurfaceID
   VABufferID va_buffer;
   VAImage va_image;
   void *va_image_data;
-  uint32_t va_image_pitch;
 
   va_status = vaCreateConfig(va_display, VAProfileH264High, VAEntrypointVLD, nullptr, 0, &va_config);
   if (va_status != VA_STATUS_SUCCESS) {
@@ -100,8 +99,6 @@ StatusCode DecodeFrame(VADisplay va_display, VAContextID va_context, VASurfaceID
     LOG(ERROR) << "Failed to map VA buffer";
     return StatusCode::kStatusError;
   }
-
-  va_image_pitch = va_image.pitches[0];
 
   // Do something with the decoded image data
 

@@ -1,14 +1,10 @@
 cmake_minimum_required(VERSION 3.0…3.16)
 project(mediax)
 
-include(CTest)
-include(scripts/cmake/version.cmake)
-
 # enable testing functionality
 enable_testing()
 
-add_subdirectory(src)
-
+include(scripts/cmake/version.cmake)
 include(scripts/cmake/cpp.cmake)
 include(scripts/cmake/cpplint.cmake)
 # include(scripts/cmake/linters.cmake)
@@ -16,6 +12,7 @@ include(scripts/cmake/cpack.cmake)
 include(scripts/cmake/githooks.cmake)
 include(scripts/cmake/code_coverage.cmake)
 
+add_subdirectory(src)
 option(EXAMPLES "Build examples" OFF)
 if (EXAMPLES) 
     add_subdirectory(example)
@@ -24,6 +21,14 @@ endif()
 if (BUILD_TESTING) 
     add_subdirectory(tests)
 endif()
+
+# Install 
+include(GNUInstallDirs)
+
+install(TARGETS mediax DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS mediax_static DESTINATION ${CMAKE_INSTALL_LIBDIR})
+file(GLOB HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
+install(FILES ${HEADER_FILES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # install headers
 include(GNUInstallDirs)
