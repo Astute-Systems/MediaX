@@ -7,7 +7,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -fPIC -Wall -Werror")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+endif()
 
 if(CMAKE_BUILD_TYPE)
     message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
@@ -16,7 +18,3 @@ else()
     set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-# Check if Debug build
-if(CMAKE_BUILD_TYPE MATCHES Debug)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
-endif()
