@@ -20,7 +20,7 @@ namespace mediax {
 
 RtpH264Payloader::RtpH264Payloader() = default;
 
-RtpH264Payloader::~RtpH264Payloader() {}
+RtpH264Payloader::~RtpH264Payloader() = default;
 
 void RtpH264Payloader::SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
                                      std::string_view hostname, const uint32_t portno) {
