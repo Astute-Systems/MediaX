@@ -20,8 +20,6 @@
 
 #include "example.h"
 #include "rtp/rtp.h"
-#include "utils/colourspace_cpu.h"
-#include "utils/colourspace_cuda.h"
 #include "version.h"
 
 DEFINE_string(ipaddr, kIpAddressDefault, "the IP address of the transmit stream");

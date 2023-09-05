@@ -16,7 +16,15 @@
 
 #include "h264/gst/rtph264_depayloader.h"
 #include "raw/rtpvraw_depayloader.h"
+#include "raw/rtpvraw_payloader.h"
 #include "rtp/rtp_depayloader.h"
+#include "rtp/rtp_payloader.h"
 #include "rtp/rtp_utils.h"
+
+#if CUDA_ENABLED
+#include "utils/colourspace_cuda.h"
+#else
+#include "utils/colourspace_cpu.h"
+#endif
 
 #endif  // RTP_RTP_H_

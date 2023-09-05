@@ -59,10 +59,7 @@
 
 #include "example.h"
 #include "pngget.h"
-#include "raw/rtpvraw_payloader.h"
-#include "rtp/rtp_utils.h"
-#include "utils/colourspace_cpu.h"
-#include "utils/colourspace_cuda.h"
+#include "rtp/rtp.h"
 #include "v4l2/v4l2_source.h"
 #include "version.h"
 
@@ -99,7 +96,11 @@ static bool application_running = true;
 void signalHandler(int signum [[maybe_unused]]) { application_running = false; }
 
 int main(int argc, char **argv) {
-  video::ColourSpaceCpu convert;
+#if CUDA_ENABLED
+  std::shared_ptr<video::ColourSpace> convert = std::make_shared<video::ColourSpaceCuda>();
+#else
+  std::shared_ptr<video::ColourSpace> convert = std::make_shared<video::ColourSpaceCpu>();
+#endif
   mediax::ColourspaceType video_mode = mediax::ColourspaceType::kColourspaceYuv;
 
   std::unique_ptr<V4L2Capture> v4lsource;
@@ -217,7 +218,7 @@ int main(int argc, char **argv) {
         return -1;
       }
       /// Make it RGB
-      convert.RgbaToRgb(FLAGS_height, FLAGS_width, rgb.data(), rgb.data());
+      convert->RgbaToRgb(FLAGS_height, FLAGS_width, rgb.data(), rgb.data());
       break;
   }
 
@@ -238,16 +239,16 @@ int main(int argc, char **argv) {
     // Convert the RGB data to YUV again
     switch (video_mode) {
       case mediax::ColourspaceType::kColourspaceYuv:
-        convert.RgbToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
+        convert->RgbToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
         break;
       case mediax::ColourspaceType::kColourspaceRgb24:
         // Nothing to do here already RGB
         break;
       case mediax::ColourspaceType::kColourspaceMono16:
-        convert.RgbToMono16(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
+        convert->RgbToMono16(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
         break;
       case mediax::ColourspaceType::kColourspaceMono8:
-        convert.RgbToMono8(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
+        convert->RgbToMono8(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
         break;
       default:
         LOG(WARNING) << "Invalid video mode" << FLAGS_mode;
