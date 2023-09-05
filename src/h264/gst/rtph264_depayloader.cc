@@ -85,7 +85,7 @@ void RtpH264Depayloader::Stop() {
   gst_element_set_state(pipeline_, GST_STATE_NULL);
 }
 
-void RtpH264Depayloader::Close() const {
+void RtpH264Depayloader::Close() {
   // Destroy the pipeline
   gst_object_unref(pipeline_);
 }

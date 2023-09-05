@@ -57,7 +57,7 @@ class RtpDepayloader {
   /// \brief Close the RTP stream
   ///
   ///
-  virtual void Close() const = 0;
+  virtual void Close() = 0;
 
   ///
   /// \brief Recieve a frame or timeout
@@ -74,7 +74,7 @@ class RtpDepayloader {
   ///
   /// \param name The SAP/SDP session name
   ///
-  void SetSessionName(std::string_view name) const;
+  void SetSessionName(std::string_view name);
 
   ///
   /// \brief Get the Session Name attribute
@@ -95,7 +95,7 @@ class RtpDepayloader {
   /// \brief Set the Height attribute
   ///
   ///
-  void SetHeight(uint32_t height) const;
+  void SetHeight(uint32_t height);
 
   ///
   /// \brief Get the Height object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
@@ -109,7 +109,7 @@ class RtpDepayloader {
   /// \brief Set the Width attribute
   ///
   ///
-  void SetWidth(uint32_t width) const;
+  void SetWidth(uint32_t width);
 
   ///
   /// \brief Get the Width object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
@@ -123,7 +123,7 @@ class RtpDepayloader {
   /// \brief Set the Frame Rate object
   ///
   ///
-  void SetFramerate(uint32_t framerate) const;
+  void SetFramerate(uint32_t framerate);
 
   ///
   /// \brief Get the Frame Rate of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
@@ -146,13 +146,13 @@ class RtpDepayloader {
   ///
   /// \param ip_address The IPV4 address of the video stream
   ///
-  void SetIpAddress(std::string_view ip_address) const;
+  void SetIpAddress(std::string_view ip_address);
 
   ///
   /// \brief Set the Port object
   ///
   ///
-  void SetPort(uint32_t port) const;
+  void SetPort(uint32_t port);
 
   ///
   /// \brief Get the Port of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
@@ -163,7 +163,7 @@ class RtpDepayloader {
   uint32_t GetPort() const;
 
   /// Ingress port
-  static PortType ingress_;
+  PortType ingress_ = {};
 };
 
 }  // namespace mediax

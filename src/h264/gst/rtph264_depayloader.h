@@ -57,7 +57,7 @@ class RtpH264Depayloader : public RtpDepayloader {
   /// \brief Close the RTP stream
   ///
   ///
-  void Close() const final;
+  void Close() final;
 
   ///
   /// \brief Recieve a frame or timeout

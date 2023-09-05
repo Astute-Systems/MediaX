@@ -17,31 +17,29 @@
 
 namespace mediax {
 
-PortType RtpDepayloader::ingress_ = {};
-
-void RtpDepayloader::SetSessionName(std::string_view name) const { ingress_.name = name; }
+void RtpDepayloader::SetSessionName(std::string_view name) { ingress_.name = name; }
 
 std::string RtpDepayloader::GetSessionName() const { return ingress_.name; }
 
 ColourspaceType RtpDepayloader::GetColourSpace() const { return ingress_.encoding; }
 
-void RtpDepayloader::SetHeight(uint32_t height) const { ingress_.height = height; }
+void RtpDepayloader::SetHeight(uint32_t height) { ingress_.height = height; }
 
 uint32_t RtpDepayloader::GetHeight() const { return ingress_.height; }
 
-void RtpDepayloader::SetWidth(uint32_t width) const { ingress_.width = width; }
+void RtpDepayloader::SetWidth(uint32_t width) { ingress_.width = width; }
 
 uint32_t RtpDepayloader::GetWidth() const { return ingress_.width; }
 
-void RtpDepayloader::SetFramerate(uint32_t framerate) const { ingress_.framerate = framerate; }
+void RtpDepayloader::SetFramerate(uint32_t framerate) { ingress_.framerate = framerate; }
 
 uint32_t RtpDepayloader::GetFrameRate() const { return ingress_.framerate; }
 
 std::string RtpDepayloader::GetIpAddress() const { return ingress_.hostname; }
 
-void RtpDepayloader::SetIpAddress(std::string_view ip_address) const { ingress_.hostname = ip_address; }
+void RtpDepayloader::SetIpAddress(std::string_view ip_address) { ingress_.hostname = ip_address; }
 
-void RtpDepayloader::SetPort(uint32_t port) const { ingress_.port_no = port; }
+void RtpDepayloader::SetPort(uint32_t port) { ingress_.port_no = port; }
 
 uint32_t RtpDepayloader::GetPort() const { return ingress_.port_no; }
 

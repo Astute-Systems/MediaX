@@ -11,15 +11,19 @@ add_executable(
   colourspace_tests.cc
   rtp_utils_tests.cc
   rtp_payloader_tests.cc
+  rtp_depayloader_tests.cc
   sap_announcer_tests.cc
   sap_listener_tests.cc
+  main.cc
 )
 
 target_link_libraries(tests
   gtest
-  gtest_main 
   mediax_static
   ${GST_LIBRARIES}
+  pthread
+  glog
+  gflags
 )
 
 target_include_directories(

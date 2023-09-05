@@ -30,6 +30,8 @@
 #include <sys/socket.h>
 #endif
 
+#include <glog/logging.h>
+
 #include <stdexcept>
 #include <vector>
 
@@ -55,7 +57,7 @@ RtpvrawDepayloader &RtpvrawDepayloader::operator=(const RtpvrawDepayloader &othe
 
 // Broadcast the stream to port i.e. 5004
 void RtpvrawDepayloader::SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                                       std::string_view hostname, const uint32_t portno) const {
+                                       std::string_view hostname, const uint32_t portno) {
   ingress_.encoding = encoding;
   ingress_.height = height;
   ingress_.width = width;
@@ -68,7 +70,7 @@ void RtpvrawDepayloader::SetStreamInfo(std::string_view name, ColourspaceType en
 
 bool RtpvrawDepayloader::Open() {
   if (!ingress_.port_no) {
-    std::cerr << "RtpvrawDepayloader::Open() No ports set, nothing to open";
+    LOG(ERROR) << "RtpvrawDepayloader::Open() No ports set, nothing to open";
     exit(-1);
   }
   if (ingress_.port_no) {
@@ -76,7 +78,7 @@ bool RtpvrawDepayloader::Open() {
 
     // create a UDP socket
     if ((ingress_.sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
-      std::cerr << "RtpvrawDepayloader::Open() ERROR opening socket\n";
+      LOG(ERROR) << "RtpvrawDepayloader::Open() ERROR opening socket " << ingress_.hostname << ":" << ingress_.port_no;
       exit(-1);
     }
     // zero out the structure
@@ -84,10 +86,10 @@ bool RtpvrawDepayloader::Open() {
 
     si_me.sin_family = AF_INET;
     si_me.sin_port = htons((uint16_t)ingress_.port_no);
-    si_me.sin_addr.s_addr = htonl(INADDR_ANY);
+    si_me.sin_addr.s_addr = inet_addr(ingress_.hostname.c_str());
     // bind socket to port
     if (bind(ingress_.sockfd, (struct sockaddr *)&si_me, sizeof(si_me)) == -1) {
-      std::cerr << "RtpvrawDepayloader::Open() ERROR binding socket\n";
+      LOG(ERROR) << "RtpvrawDepayloader::Open() ERROR binding socket " << ingress_.hostname << ":" << ingress_.port_no;
       exit(-1);
     }
     ingress_.socket_open = true;
@@ -96,7 +98,7 @@ bool RtpvrawDepayloader::Open() {
   return true;
 }
 
-void RtpvrawDepayloader::Close() const {
+void RtpvrawDepayloader::Close() {
   sap::SAPListener::GetInstance().Stop();
 
   if (ingress_.port_no) {
@@ -142,7 +144,7 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
   struct timeval read_timeout;
   read_timeout.tv_sec = 0;
   read_timeout.tv_usec = 10;
-  setsockopt(RtpDepayloader::ingress_.sockfd, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
+  setsockopt(stream->ingress_.sockfd, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
 
   while (stream->rx_thread_running_) {
     while (receiving && stream->rx_thread_running_) {
@@ -160,8 +162,7 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
         // Read in the RTP data
         //
 
-        if (ssize_t bytes =
-                recvfrom(RtpDepayloader::ingress_.sockfd, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
+        if (ssize_t bytes = recvfrom(stream->ingress_.sockfd, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
             bytes <= 0) {
           std::this_thread::sleep_for(std::chrono::milliseconds(2));
           continue;
@@ -213,9 +214,9 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
             // Line numbers start at 1 in DEF-STAN 00-82, gstreamer starts at zero so drop those lines
             break;
           }
-          pixel = ((packet->head.payload.line[c].offset & 0x7FFF) * kColourspaceBytes.at(ingress_.encoding)) +
+          pixel = ((packet->head.payload.line[c].offset & 0x7FFF) * kColourspaceBytes.at(stream->ingress_.encoding)) +
                   (((packet->head.payload.line[c].line_number - 1) & 0x7FFF) *
-                   (RtpDepayloader::ingress_.width * kColourspaceBytes.at(ingress_.encoding)));
+                   (stream->ingress_.width * kColourspaceBytes.at(stream->ingress_.encoding)));
           length = packet->head.payload.line[c].length & 0xFFFF;
 
           memcpy(&RtpvrawDepayloader::buffer_in_[pixel], &stream->udpdata[os], length);

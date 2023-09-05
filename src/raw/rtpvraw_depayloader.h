@@ -115,7 +115,7 @@ class RtpvrawDepayloader : public RtpDepayloader {
   /// \param width The width of the stream in pixels
   ///
   void SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                     std::string_view hostname, const uint32_t port = 5004) const;
+                     std::string_view hostname, const uint32_t port = 5004);
 
   ///
   /// \brief Open the RTP stream
@@ -141,7 +141,7 @@ class RtpvrawDepayloader : public RtpDepayloader {
   /// \brief Close the RTP stream
   ///
   ///
-  void Close() const final;
+  void Close() final;
 
   ///
   /// \brief Recieve a frame or timeout
