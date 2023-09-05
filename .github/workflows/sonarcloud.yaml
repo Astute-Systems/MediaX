@@ -35,12 +35,10 @@ jobs:
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/
       - name: Run tests to generate coverage statistics
         run: |
-          ./build/bin/tests
+          cd build
+          make gcov
       - name: Collect coverage into one XML report
         run: |
-          cd build
-          # make lcov
-          make gcov
           gcovr --sonarqube > coverage.xml
       - name: Run sonar-scanner
         env:

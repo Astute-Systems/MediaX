@@ -29,4 +29,10 @@ else()
         TARGET lcov
         COMMENT "This target is must be build with -DCMAKE_BUILD_TYPE=Debug"
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+
+    add_custom_target(gcov)
+    add_custom_command(
+        TARGET gcov
+        COMMENT "This target is must be build with -DCMAKE_BUILD_TYPE=Debug"
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 endif()
