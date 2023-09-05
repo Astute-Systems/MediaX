@@ -22,8 +22,6 @@
 
 #include "rtp/rtp_types.h"
 
-#define VA_MAX_PLANES 3
-
 namespace mediax {
 
 StatusCode DecodeFrame(VADisplay va_display, VAContextID va_context, VASurfaceID va_surface, const uint8_t *frame_data,
@@ -31,12 +29,9 @@ StatusCode DecodeFrame(VADisplay va_display, VAContextID va_context, VASurfaceID
   VAConfigID va_config;
   VAStatus va_status;
   VABufferID va_buffer;
-  VASurfaceStatus va_surface_status;
   VAImage va_image;
   void *va_image_data;
-  uint32_t va_image_data_size;
   uint32_t va_image_pitch;
-  uint32_t va_image_height;
 
   va_status = vaCreateConfig(va_display, VAProfileH264High, VAEntrypointVLD, nullptr, 0, &va_config);
   if (va_status != VA_STATUS_SUCCESS) {
@@ -105,11 +100,6 @@ StatusCode DecodeFrame(VADisplay va_display, VAContextID va_context, VASurfaceID
     LOG(ERROR) << "Failed to map VA buffer";
     return StatusCode::kStatusError;
   }
-
-  // va_status = vaQueryImage(va_display, va_image.image_id, &va_image_fourcc, &va_image_width, &va_image_height);
-  // if (va_status != VA_STATUS_SUCCESS) {
-  //   LOG (ERROR) << "Failed to query VA image");
-  // }
 
   va_image_pitch = va_image.pitches[0];
 

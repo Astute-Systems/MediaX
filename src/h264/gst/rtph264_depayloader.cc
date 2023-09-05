@@ -22,7 +22,7 @@
 
 namespace mediax {
 
-RtpH264Depayloader::RtpH264Depayloader() {}
+RtpH264Depayloader::RtpH264Depayloader() = default;
 
 bool RtpH264Depayloader::Open() {
   // Open the pipeline
@@ -58,9 +58,10 @@ bool RtpH264Depayloader::Open() {
 
   // Wait for the pipeline to finish
   GstBus *bus = gst_element_get_bus(pipeline_);
-  GstMessage *msg =
-      gst_bus_timed_pop_filtered(bus, GST_CLOCK_TIME_NONE, GstMessageType(GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
-  if (msg != nullptr) {
+
+  if (GstMessage *msg =
+          gst_bus_timed_pop_filtered(bus, GST_CLOCK_TIME_NONE, GstMessageType(GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
+      msg != nullptr) {
     gst_message_unref(msg);
   }
 

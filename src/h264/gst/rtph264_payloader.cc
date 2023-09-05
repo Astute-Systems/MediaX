@@ -35,12 +35,21 @@ void RtpH264Payloader::SetStreamInfo(std::string_view name, ColourspaceType enco
 
 int RtpH264Payloader::Transmit(unsigned char*, bool) { return 0; }
 
-bool RtpH264Payloader::Open() { return true; }
+bool RtpH264Payloader::Open() {
+  // TODO(Ross): implement this function
+  return true;
+}
 
-void RtpH264Payloader::Close() {}
+void RtpH264Payloader::Close() {
+  // TODO(Ross): implement this function
+}
 
-void RtpH264Payloader::Start() {}
+void RtpH264Payloader::Start() {
+  // TODO(Ross): implement this function
+}
 
-void RtpH264Payloader::Stop() {}
+void RtpH264Payloader::Stop() {
+  // TODO(Ross): implement this function
+}
 
 }  // namespace mediax
