@@ -39,16 +39,33 @@ TEST(Utilities, EndianSwap32) {
   ASSERT_EQ(test[3], 0xf0debc9a);
 }
 
-TEST(Utilities, CreateColourBarTestCard) {
+TEST(Utilities, CreateColourBarTestCardRgb24) {
   const int kBuffSize = (640 * 480) * 3;
   std::array<uint8_t, kBuffSize> rtb_test = {0};
   CreateColourBarTestCard(rtb_test.data(), 640, 480, mediax::ColourspaceType::kColourspaceRgb24);
   ASSERT_EQ(rtb_test[0], 0xFF);
-  ASSERT_EQ(rtb_test[1], 0);
+  ASSERT_EQ(rtb_test[1], 0x0);
   ASSERT_EQ(rtb_test[2], 0x0);
+  ASSERT_EQ(rtb_test[3], 0xFF);
+  ASSERT_EQ(rtb_test[4], 0x0);
+  ASSERT_EQ(rtb_test[5], 0x0);
 }
 
-TEST(Utilities, CreateGreyScaleBarTestCard) {
+TEST(Utilities, CreateColourBarTestCardRgba) {
+  const int kBuffSize = (640 * 480) * 4;
+  std::array<uint8_t, kBuffSize> rtb_test = {0};
+  CreateColourBarTestCard(rtb_test.data(), 640, 480, mediax::ColourspaceType::kColourspaceRgba);
+  ASSERT_EQ(rtb_test[0], 0xFF);
+  ASSERT_EQ(rtb_test[1], 0x0);
+  ASSERT_EQ(rtb_test[2], 0x0);
+  ASSERT_EQ(rtb_test[3], 0x0);
+  ASSERT_EQ(rtb_test[4], 0xFF);
+  ASSERT_EQ(rtb_test[5], 0x0);
+  ASSERT_EQ(rtb_test[6], 0x0);
+  ASSERT_EQ(rtb_test[7], 0x0);
+}
+
+TEST(Utilities, CreateGreyScaleBarTestCardRgb) {
   const int kBuffSize = (640 * 480) * 3;
   std::array<uint8_t, kBuffSize> rtb_test = {0};
   CreateGreyScaleBarTestCard(rtb_test.data(), 640, 480, mediax::ColourspaceType::kColourspaceRgb24);
@@ -57,7 +74,7 @@ TEST(Utilities, CreateGreyScaleBarTestCard) {
   ASSERT_EQ(rtb_test[2], 0);
 }
 
-TEST(Utilities, CreateComplexTestCard) {
+TEST(Utilities, CreateComplexTestCardRgb) {
   const int kBuffSize = (640 * 480) * 3;
   std::array<uint8_t, kBuffSize> rtb_test = {0};
   CreateComplexTestCard(rtb_test.data(), 640, 480, mediax::ColourspaceType::kColourspaceRgb24);
@@ -66,11 +83,28 @@ TEST(Utilities, CreateComplexTestCard) {
   ASSERT_EQ(rtb_test[2], 0);
 }
 
-TEST(Utilities, CreateCheckeredTestCard) {
+TEST(Utilities, CreateCheckeredTestCardRgb) {
   const int kBuffSize = (640 * 480) * 3;
   std::array<uint8_t, kBuffSize> rtb_test = {0};
   CreateCheckeredTestCard(rtb_test.data(), 640, 480, mediax::ColourspaceType::kColourspaceRgb24);
   ASSERT_EQ(rtb_test[0], 0xFF);
   ASSERT_EQ(rtb_test[1], 0xFF);
   ASSERT_EQ(rtb_test[2], 0xFF);
+  ASSERT_EQ(rtb_test[4], 0xFF);
+  ASSERT_EQ(rtb_test[5], 0xFF);
+  ASSERT_EQ(rtb_test[6], 0xFF);
+}
+
+TEST(Utilities, CreateCheckeredTestCardRgba) {
+  const int kBuffSize = (640 * 480) * 4;
+  std::array<uint8_t, kBuffSize> rtb_test = {0};
+  CreateCheckeredTestCard(rtb_test.data(), 640, 480, mediax::ColourspaceType::kColourspaceRgba);
+  ASSERT_EQ(rtb_test[0], 0xFF);
+  ASSERT_EQ(rtb_test[1], 0xFF);
+  ASSERT_EQ(rtb_test[2], 0xFF);
+  ASSERT_EQ(rtb_test[3], 0x00);
+  ASSERT_EQ(rtb_test[4], 0xFF);
+  ASSERT_EQ(rtb_test[5], 0xFF);
+  ASSERT_EQ(rtb_test[6], 0xFF);
+  ASSERT_EQ(rtb_test[7], 0x00);
 }

@@ -256,7 +256,7 @@ void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height, med
   uint32_t stride = mediax::BitsPerPixel(colourspace) / 8;
 
   uint32_t size = width * height * stride;
-  for (uint32_t i = 0; i < size; i += 3) {
+  for (uint32_t i = 0; i < size; i += stride) {
     uint32_t x = i / 3 % width;
     uint32_t y = i / 3 / width;
     uint8_t r;
