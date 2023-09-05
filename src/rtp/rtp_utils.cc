@@ -19,6 +19,8 @@
 #include <gst/gst.h>
 #endif
 
+#include <glog/logging.h>
+
 #include <cmath>
 #include <iomanip>
 #include <iostream>
@@ -41,6 +43,8 @@ void RtpCleanup() {
 
 uint8_t BitsPerPixel(ColourspaceType mode) {
   switch (mode) {
+    case ColourspaceType::kColourspaceRgba:
+      return 32;
     case ColourspaceType::kColourspaceRgb24:
       return 24;
     case ColourspaceType::kColourspaceYuv:
@@ -50,6 +54,7 @@ uint8_t BitsPerPixel(ColourspaceType mode) {
     case ColourspaceType::kColourspaceMono8:
       return 8;
     default:
+      LOG(ERROR) << "Unknown colourspace type";
       return 0;
   }
 }
