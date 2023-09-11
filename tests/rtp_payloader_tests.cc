@@ -15,7 +15,7 @@
 
 #include "raw/rtpvraw_payloader.h"
 
-TEST(RTPDepayloaderTest, SendOneFrame) {
+TEST(RTPDepayloaderTest, SendOneFrameRgb24) {
   const int kBuffSize = (640 * 480) * 3;
   std::array<uint8_t, kBuffSize> rtb_test;
 
@@ -24,6 +24,54 @@ TEST(RTPDepayloaderTest, SendOneFrame) {
   ASSERT_EQ(rtp.GetHeight(), 640);
   ASSERT_EQ(rtp.GetWidth(), 480);
   ASSERT_EQ(rtp.GetColourSpace(), mediax::ColourspaceType::kColourspaceRgb24);
+  ASSERT_EQ(rtp.GetIpAddress(), "127.0.0.1");
+  ASSERT_EQ(rtp.GetPort(), 5004);
+  rtp.Open();
+  rtp.Transmit(rtb_test.data(), true);
+  rtp.Close();
+}
+
+TEST(RTPDepayloaderTest, SendOneFrameYuv) {
+  const int kBuffSize = (640 * 480) * 2;
+  std::array<uint8_t, kBuffSize> rtb_test;
+
+  mediax::RtpvrawPayloader rtp;
+  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceYuv, 640, 480, "127.0.0.1", 5004);
+  ASSERT_EQ(rtp.GetHeight(), 640);
+  ASSERT_EQ(rtp.GetWidth(), 480);
+  ASSERT_EQ(rtp.GetColourSpace(), mediax::ColourspaceType::kColourspaceYuv);
+  ASSERT_EQ(rtp.GetIpAddress(), "127.0.0.1");
+  ASSERT_EQ(rtp.GetPort(), 5004);
+  rtp.Open();
+  rtp.Transmit(rtb_test.data(), true);
+  rtp.Close();
+}
+
+TEST(RTPDepayloaderTest, SendOneFrameMono16) {
+  const int kBuffSize = (640 * 480) * 2;
+  std::array<uint8_t, kBuffSize> rtb_test;
+
+  mediax::RtpvrawPayloader rtp;
+  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceMono16, 640, 480, "127.0.0.1", 5004);
+  ASSERT_EQ(rtp.GetHeight(), 640);
+  ASSERT_EQ(rtp.GetWidth(), 480);
+  ASSERT_EQ(rtp.GetColourSpace(), mediax::ColourspaceType::kColourspaceMono16);
+  ASSERT_EQ(rtp.GetIpAddress(), "127.0.0.1");
+  ASSERT_EQ(rtp.GetPort(), 5004);
+  rtp.Open();
+  rtp.Transmit(rtb_test.data(), true);
+  rtp.Close();
+}
+
+TEST(RTPDepayloaderTest, SendOneFrameMono8) {
+  const int kBuffSize = (640 * 480) * 1;
+  std::array<uint8_t, kBuffSize> rtb_test;
+
+  mediax::RtpvrawPayloader rtp;
+  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceMono8, 640, 480, "127.0.0.1", 5004);
+  ASSERT_EQ(rtp.GetHeight(), 640);
+  ASSERT_EQ(rtp.GetWidth(), 480);
+  ASSERT_EQ(rtp.GetColourSpace(), mediax::ColourspaceType::kColourspaceMono8);
   ASSERT_EQ(rtp.GetIpAddress(), "127.0.0.1");
   ASSERT_EQ(rtp.GetPort(), 5004);
   rtp.Open();

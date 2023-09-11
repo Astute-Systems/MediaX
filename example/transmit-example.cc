@@ -136,7 +136,7 @@ int main(int argc, char **argv) {
   uint32_t frame = 0;
   const uint32_t kBuffSize = FLAGS_height * FLAGS_width;
   const uint32_t kBuffSizeRGB = kBuffSize * 3;
-  std::vector<uint8_t> recieve_buffer;  // Maximum is HD
+  std::vector<uint8_t> transmit_buffer;  // Maximum is HD
 
   // register signal SIGINT and signal handler
   signal(SIGINT, signalHandler);
@@ -144,38 +144,32 @@ int main(int argc, char **argv) {
   std::cout << "Example RTP streaming (" << FLAGS_width << "x" << FLAGS_height << " " << ModeToString(FLAGS_mode)
             << ") to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
 
-  sleep(1);
-
-  // Setup RTP streaming class
-  mediax::RtpvrawPayloader rtp;
-  rtp.SetStreamInfo(FLAGS_filename, mediax::ColourspaceType::kColourspaceYuv, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
-                    (uint16_t)FLAGS_port);
-  rtp.Open();
   switch (FLAGS_mode) {
     case 0:
       video_mode = mediax::ColourspaceType::kColourspaceYuv;
-      recieve_buffer.resize(FLAGS_height * FLAGS_width * 2);
       break;
     case 1:
       video_mode = mediax::ColourspaceType::kColourspaceRgb24;
-      recieve_buffer.resize(FLAGS_height * FLAGS_width * 3);
       break;
     case 2:
       video_mode = mediax::ColourspaceType::kColourspaceMono16;
-      recieve_buffer.resize(FLAGS_height * FLAGS_width * 2);
       break;
     case 3:
       video_mode = mediax::ColourspaceType::kColourspaceMono8;
-      recieve_buffer.resize(FLAGS_height * FLAGS_width * 1);
       break;
     case 4:
       video_mode = mediax::ColourspaceType::kColourspaceH264Part4;
-      recieve_buffer.resize(FLAGS_height * FLAGS_width * 3);
       break;
     default:
       LOG(WARNING) << "Invalid video mode" << FLAGS_mode;
       video_mode = mediax::ColourspaceType::kColourspaceYuv;
   }
+  transmit_buffer.resize(FLAGS_height * FLAGS_width * BitsPerPixel(video_mode));
+
+  // Setup RTP streaming class
+  mediax::RtpvrawPayloader rtp;
+  rtp.SetStreamInfo(FLAGS_filename, video_mode, FLAGS_height, FLAGS_width, FLAGS_ipaddr, (uint16_t)FLAGS_port);
+  rtp.Open();
 
   // Read the PNG file
   std::vector<uint8_t> rgb;
@@ -253,7 +247,7 @@ int main(int argc, char **argv) {
     if (FLAGS_source == 1) {
       v4lsource->CaptureFrame(rgb.data());
     }
-    memset(recieve_buffer.data(), 0, kBuffSize);
+    memset(transmit_buffer.data(), 0, kBuffSize);
 
 #if CUDA_ENABLED
     // video::cuda::RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
@@ -261,22 +255,23 @@ int main(int argc, char **argv) {
     // Convert the RGB data to YUV again
     switch (video_mode) {
       case mediax::ColourspaceType::kColourspaceYuv:
-        convert->RgbToYuv(FLAGS_height, FLAGS_width, rgb.data(), recieve_buffer.data());
+        convert->RgbToYuv(FLAGS_height, FLAGS_width, rgb.data(), transmit_buffer.data());
         break;
       case mediax::ColourspaceType::kColourspaceRgb24:
         // Nothing to do here already RGB
+        memcpy(transmit_buffer.data(), rgb.data(), FLAGS_height * FLAGS_width * BitsPerPixel(video_mode));
         break;
       case mediax::ColourspaceType::kColourspaceMono16:
-        convert->RgbToMono16(FLAGS_height, FLAGS_width, rgb.data(), recieve_buffer.data());
+        convert->RgbToMono16(FLAGS_height, FLAGS_width, rgb.data(), transmit_buffer.data());
         break;
       case mediax::ColourspaceType::kColourspaceMono8:
-        convert->RgbToMono8(FLAGS_height, FLAGS_width, rgb.data(), recieve_buffer.data());
+        convert->RgbToMono8(FLAGS_height, FLAGS_width, rgb.data(), transmit_buffer.data());
         break;
       default:
         LOG(WARNING) << "Invalid video mode" << FLAGS_mode;
     }
 #endif
-    if (rtp.Transmit(recieve_buffer.data(), true) < 0) break;
+    if (rtp.Transmit(transmit_buffer.data(), true) < 0) break;
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     if (duration < 40) {

@@ -32,6 +32,8 @@
 #include <sys/socket.h>
 #endif
 
+#include <glog/logging.h>
+
 #include "raw/rtpvraw_payloader.h"
 #include "rtp/rtp_types.h"
 #include "rtp/rtp_utils.h"
@@ -135,6 +137,9 @@ void RtpvrawPayloader::SendFrame(RtpvrawPayloader *stream) {
   ssize_t n = 0;
   uint32_t timestamp = GenerateTimestamp90kHz();
 
+  if (stream->egress_.encoding == ColourspaceType::kColourspaceUndefined) {
+    std::cerr << "Colourspace not defined!!\n";
+  }
   int32_t stride = stream->egress_.width * kColourspaceBytes.at(stream->egress_.encoding);
 
   /// Note DEF-STAN 00-082 starts line numbers at 1, gstreamer starts at 0 for raw video
@@ -153,7 +158,7 @@ void RtpvrawPayloader::SendFrame(RtpvrawPayloader *stream) {
                stream->server_len_out_);
 
     if (n == 0) {
-      std::cerr << "Transmit socket failure fd=" << stream->egress_.sockfd << "\n";
+      LOG(ERROR) << "Transmit socket failure fd=" << stream->egress_.sockfd;
       return;
     }
   }
