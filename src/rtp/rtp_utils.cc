@@ -58,6 +58,7 @@ uint8_t BitsPerPixel(ColourspaceType mode) {
       return 0;
   }
 }
+uint8_t BytesPerPixel(ColourspaceType mode) { return BitsPerPixel(mode) / 8; }
 }  // namespace mediax
 
 void EndianSwap32(uint32_t *data, unsigned int length) {
@@ -152,7 +153,7 @@ void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::Coloursp
 
 // Implementation of the CreateColourBarTestCard function
 void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
-  uint32_t stride = mediax::BitsPerPixel(colourspace) / 8;
+  uint32_t stride = mediax::BytesPerPixel(colourspace);
 
   for (uint32_t x = 0; x < width; x++) {
     for (uint32_t y = 0; y < height; y++) {
@@ -202,7 +203,7 @@ void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height, med
 
 // Implementation of the CreateGreyScaleBarTestCard function
 void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
-  uint32_t stride = mediax::BitsPerPixel(colourspace) / 8;
+  uint32_t stride = mediax::BytesPerPixel(colourspace);
 
   uint32_t bar_width = width / 8;
   uint32_t bar_height = height;
@@ -218,7 +219,7 @@ void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height, 
 }
 
 void CreateComplexTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
-  uint32_t stride = mediax::BitsPerPixel(colourspace) / 8;
+  uint32_t stride = mediax::BytesPerPixel(colourspace);
 
   uint32_t size = width * height * stride;
   for (uint32_t i = 0; i < size; i += stride) {
@@ -253,7 +254,7 @@ void CreateComplexTestCard(uint8_t *data, uint32_t width, uint32_t height, media
 }
 
 void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
-  uint32_t stride = mediax::BitsPerPixel(colourspace) / 8;
+  uint32_t stride = mediax::BytesPerPixel(colourspace);
 
   uint32_t size = width * height * stride;
   for (uint32_t i = 0; i < size; i += stride) {
@@ -277,7 +278,7 @@ void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height, med
 
 void CreateSolidTestCard(uint8_t *data, uint32_t width, uint32_t height, uint8_t red, uint8_t green, uint8_t blue,
                          mediax::ColourspaceType colourspace) {
-  uint32_t stride = mediax::BitsPerPixel(colourspace) / 8;
+  uint32_t stride = mediax::BytesPerPixel(colourspace);
 
   uint32_t size = width * height * stride;
   for (uint32_t i = 0; i < size; i += stride) {

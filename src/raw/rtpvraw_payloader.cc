@@ -110,7 +110,8 @@ void RtpvrawPayloader::Close() {
   if (tx_thread_.joinable()) tx_thread_.join();
 }
 
-void RtpvrawPayloader::UpdateHeader(Header *packet, int line, int last, int32_t timestamp, int32_t source) const {
+void RtpvrawPayloader::UpdateHeader(Header *packet, int line, int bytes_per_pixel, int last, int32_t timestamp,
+                                    int32_t source) const {
   memset(reinterpret_cast<char *>(packet), 0, sizeof(Header));
   packet->rtp.protocol = kRtpVersion << 30;
   packet->rtp.protocol = packet->rtp.protocol | kRtpExtension << 28;
@@ -119,7 +120,7 @@ void RtpvrawPayloader::UpdateHeader(Header *packet, int line, int last, int32_t 
   packet->rtp.timestamp = timestamp;
   packet->rtp.source = source;
   packet->payload.extended_sequence_number = (sequence_number_ >> 16) & 0xffff;
-  packet->payload.line[0].length = (int16_t)egress_.width * 2;
+  packet->payload.line[0].length = (int16_t)egress_.width * bytes_per_pixel;
   packet->payload.line[0].line_number = (int16_t)line;
   packet->payload.line[0].offset = 0x8000;  // Indicates another line
   packet->payload.line[1].length = 0;
@@ -140,14 +141,15 @@ void RtpvrawPayloader::SendFrame(RtpvrawPayloader *stream) {
   if (stream->egress_.encoding == ColourspaceType::kColourspaceUndefined) {
     std::cerr << "Colourspace not defined!!\n";
   }
-  int32_t stride = stream->egress_.width * kColourspaceBytes.at(stream->egress_.encoding);
+  uint8_t bytes_per_pixel = kColourspaceBytes.at(stream->egress_.encoding);
+  int32_t stride = stream->egress_.width * bytes_per_pixel;
 
   /// Note DEF-STAN 00-082 starts line numbers at 1, gstreamer starts at 0 for raw video
   for (uint32_t c = 1; c <= (stream->egress_.height); c++) {
     uint32_t last = 0;
 
     if (c == stream->egress_.height) last = 1;
-    stream->UpdateHeader(reinterpret_cast<Header *>(&packet), c, last, timestamp, kRtpSource);
+    stream->UpdateHeader(reinterpret_cast<Header *>(&packet), c, bytes_per_pixel, last, timestamp, kRtpSource);
 
     EndianSwap32(reinterpret_cast<uint32_t *>(&packet), sizeof(RtpHeader) / 4);
     EndianSwap16(reinterpret_cast<uint16_t *>(&packet.head.payload), sizeof(PayloadHeader) / 2);

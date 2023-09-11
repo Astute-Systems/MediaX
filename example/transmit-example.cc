@@ -164,7 +164,7 @@ int main(int argc, char **argv) {
       LOG(WARNING) << "Invalid video mode" << FLAGS_mode;
       video_mode = mediax::ColourspaceType::kColourspaceYuv;
   }
-  transmit_buffer.resize(FLAGS_height * FLAGS_width * BitsPerPixel(video_mode));
+  transmit_buffer.resize(FLAGS_height * FLAGS_width * BytesPerPixel(video_mode));
 
   // Setup RTP streaming class
   mediax::RtpvrawPayloader rtp;
@@ -182,48 +182,47 @@ int main(int argc, char **argv) {
       break;
     case 2:
       rgb.resize(kBuffSizeRGB);
-      CreateColourBarTestCard(rgb.data(), FLAGS_width, FLAGS_height, mediax::ColourspaceType::kColourspaceRgb24);
+      CreateColourBarTestCard(rgb.data(), FLAGS_width, FLAGS_height, video_mode);
       LOG(INFO) << "Creating colour bar test card";
       break;
     case 3:
       rgb.resize(kBuffSizeRGB);
-      CreateGreyScaleBarTestCard(rgb.data(), FLAGS_width, FLAGS_height, mediax::ColourspaceType::kColourspaceRgb24);
+      CreateGreyScaleBarTestCard(rgb.data(), FLAGS_width, FLAGS_height, video_mode);
       LOG(INFO) << "Creating greyscale test card";
       break;
     case 4:
       rgb.resize(kBuffSizeRGB);
-      CreateComplexTestCard(rgb.data(), FLAGS_width, FLAGS_height, mediax::ColourspaceType::kColourspaceRgb24);
+      CreateComplexTestCard(rgb.data(), FLAGS_width, FLAGS_height, video_mode);
       LOG(INFO) << "Creating scaled RGB values";
       break;
     case 5:
       rgb.resize(kBuffSizeRGB);
-      CreateCheckeredTestCard(rgb.data(), FLAGS_width, FLAGS_height, mediax::ColourspaceType::kColourspaceRgb24);
+      CreateCheckeredTestCard(rgb.data(), FLAGS_width, FLAGS_height, video_mode);
       LOG(INFO) << "Creating checkered test card";
       break;
     case 6:  // Solid white
       rgb.resize(kBuffSizeRGB);
-      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 255, 255, 255,
-                          mediax::ColourspaceType::kColourspaceRgb24);
+      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 255, 255, 255, video_mode);
       LOG(INFO) << "Creating solid white test card";
       break;
     case 7:  // Solid black
       rgb.resize(kBuffSizeRGB);
-      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 0, 0, mediax::ColourspaceType::kColourspaceRgb24);
+      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 0, 0, video_mode);
       LOG(INFO) << "Creating solid black test card";
       break;
     case 8:  // Solid red
       rgb.resize(kBuffSizeRGB);
-      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 255, 0, 0, mediax::ColourspaceType::kColourspaceRgb24);
+      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 255, 0, 0, video_mode);
       LOG(INFO) << "Creating solid red test card";
       break;
     case 9:  // Solid green
       rgb.resize(kBuffSizeRGB);
-      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 255, 0, mediax::ColourspaceType::kColourspaceRgb24);
+      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 255, 0, video_mode);
       LOG(INFO) << "Creating solid green test card";
       break;
     case 10:  // Solid blue
       rgb.resize(kBuffSizeRGB);
-      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 0, 255, mediax::ColourspaceType::kColourspaceRgb24);
+      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 0, 255, video_mode);
       LOG(INFO) << "Creating solid blue test card";
       break;
     default:
@@ -247,30 +246,12 @@ int main(int argc, char **argv) {
     if (FLAGS_source == 1) {
       v4lsource->CaptureFrame(rgb.data());
     }
-    memset(transmit_buffer.data(), 0, kBuffSize);
 
-#if CUDA_ENABLED
-    // video::cuda::RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
-#else
-    // Convert the RGB data to YUV again
-    switch (video_mode) {
-      case mediax::ColourspaceType::kColourspaceYuv:
-        convert->RgbToYuv(FLAGS_height, FLAGS_width, rgb.data(), transmit_buffer.data());
-        break;
-      case mediax::ColourspaceType::kColourspaceRgb24:
-        // Nothing to do here already RGB
-        memcpy(transmit_buffer.data(), rgb.data(), FLAGS_height * FLAGS_width * BitsPerPixel(video_mode));
-        break;
-      case mediax::ColourspaceType::kColourspaceMono16:
-        convert->RgbToMono16(FLAGS_height, FLAGS_width, rgb.data(), transmit_buffer.data());
-        break;
-      case mediax::ColourspaceType::kColourspaceMono8:
-        convert->RgbToMono8(FLAGS_height, FLAGS_width, rgb.data(), transmit_buffer.data());
-        break;
-      default:
-        LOG(WARNING) << "Invalid video mode" << FLAGS_mode;
-    }
-#endif
+    // Clear buffer
+    memset(transmit_buffer.data(), 0, kBuffSize);
+    // Copy new image into buffer
+    memcpy(transmit_buffer.data(), rgb.data(), FLAGS_height * FLAGS_width * BytesPerPixel(video_mode));
+
     if (rtp.Transmit(transmit_buffer.data(), true) < 0) break;
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();

@@ -55,6 +55,14 @@ void RtpCleanup();
 ///
 uint8_t BitsPerPixel(ColourspaceType mode);
 
+///
+/// \brief Get the number of bytes per pixel for a given colour space
+///
+/// \param mode
+/// \return uint8_t
+///
+uint8_t BytesPerPixel(ColourspaceType mode);
+
 }  // namespace mediax
 
 ///
