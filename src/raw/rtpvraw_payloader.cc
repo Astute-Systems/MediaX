@@ -156,6 +156,9 @@ void RtpvrawPayloader::SendFrame(RtpvrawPayloader *stream) {
            reinterpret_cast<void *>(&stream->arg_tx.rgb_frame[(c * stride) + 1]), stride);
     n = sendto(stream->egress_.sockfd, &packet, stride + 26, 0, (const sockaddr *)&stream->server_addr_out_,
                stream->server_len_out_);
+    if (n != stride + 26) {
+      LOG(ERROR) << "Transmit socket failure fd=" << stream->egress_.sockfd;
+    }
 
     if (n == 0) {
       LOG(ERROR) << "Transmit socket failure fd=" << stream->egress_.sockfd;
