@@ -35,7 +35,6 @@
 #include "raw/rtpvraw_payloader.h"
 #include "rtp/rtp_types.h"
 #include "rtp/rtp_utils.h"
-#include "sap/sap_announcer.h"
 
 namespace mediax {
 
@@ -95,19 +94,12 @@ bool RtpvrawPayloader::Open() {
     // send the message to the server
     server_len_out_ = sizeof(server_addr_out_);
     egress_.socket_open = true;
-
-    // Lastly start a SAP announcement
-    sap::SAPAnnouncer::GetInstance().AddSAPAnnouncement({egress_.name, egress_.hostname, egress_.port_no,
-                                                         egress_.height, egress_.width, egress_.framerate,
-                                                         ColourspaceType::kColourspaceYuv, false});
-    sap::SAPAnnouncer::GetInstance().Start();
   }
 
   return true;
 }
 
 void RtpvrawPayloader::Close() {
-  sap::SAPAnnouncer::GetInstance().Stop();
   if (egress_.port_no) {
     close(egress_.sockfd);
     egress_.sockfd = 0;

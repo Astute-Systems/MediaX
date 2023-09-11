@@ -67,7 +67,7 @@ DEFINE_string(ipaddr, kIpAddressDefault, "the IP address of the transmit stream"
 DEFINE_int32(port, kPortDefault, "the port to use for the transmit stream");
 DEFINE_int32(height, kHeightDefault, "the height of the image");
 DEFINE_int32(width, kWidthDefault, "the width of the image");
-DEFINE_int32(source, 0,
+DEFINE_int32(source, 2,
              "The video source (0-10)\n\t"
              "0 - Use a PNG file (see -filename)\n\t"
              "1 - v4l2src\n\t"
@@ -93,6 +93,24 @@ DEFINE_int32(mode, 0,
 
 static bool application_running = true;
 
+std::string ModeToString(int mode) {
+  switch (mode) {
+    case 0:
+      return "Uncompressed YUV";
+    case 1:
+      return "Uncompressed RGB";
+    case 2:
+      return "Mono16";
+    case 3:
+      return "Mono8";
+    case 4:
+      return "H.264";
+    default:
+      break;
+  }
+  return "unknown";
+}
+
 void signalHandler(int signum [[maybe_unused]]) { application_running = false; }
 
 int main(int argc, char **argv) {
@@ -114,17 +132,17 @@ int main(int argc, char **argv) {
       "    transmit-example -ipaddr 127.0.0.1 -port 5004 -height 480 -width 640 -source 0\n");
   gflags::ParseCommandLineFlags(&argc, &argv, true);
   google::InitGoogleLogging(argv[0]);
+  google::InstallFailureSignalHandler();
   uint32_t frame = 0;
   const uint32_t kBuffSize = FLAGS_height * FLAGS_width;
   const uint32_t kBuffSizeRGB = kBuffSize * 3;
-  std::array<uint8_t, (640 * 480) * 2> yuv;       // Maximum is HD
-  std::array<uint8_t, (640 * 480) * 3> rtb_test;  // Maximum is HD
+  std::vector<uint8_t> recieve_buffer;  // Maximum is HD
 
   // register signal SIGINT and signal handler
   signal(SIGINT, signalHandler);
 
-  std::cout << "Example RTP streaming (" << FLAGS_width << "x" << FLAGS_height << ") to " << FLAGS_ipaddr.c_str() << ":"
-            << FLAGS_port << "\n";
+  std::cout << "Example RTP streaming (" << FLAGS_width << "x" << FLAGS_height << " " << ModeToString(FLAGS_mode)
+            << ") to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
 
   sleep(1);
 
@@ -136,25 +154,28 @@ int main(int argc, char **argv) {
   switch (FLAGS_mode) {
     case 0:
       video_mode = mediax::ColourspaceType::kColourspaceYuv;
+      recieve_buffer.resize(FLAGS_height * FLAGS_width * 2);
       break;
     case 1:
       video_mode = mediax::ColourspaceType::kColourspaceRgb24;
+      recieve_buffer.resize(FLAGS_height * FLAGS_width * 3);
       break;
     case 2:
       video_mode = mediax::ColourspaceType::kColourspaceMono16;
+      recieve_buffer.resize(FLAGS_height * FLAGS_width * 2);
       break;
     case 3:
       video_mode = mediax::ColourspaceType::kColourspaceMono8;
+      recieve_buffer.resize(FLAGS_height * FLAGS_width * 1);
       break;
     case 4:
       video_mode = mediax::ColourspaceType::kColourspaceH264Part4;
+      recieve_buffer.resize(FLAGS_height * FLAGS_width * 3);
       break;
     default:
       LOG(WARNING) << "Invalid video mode" << FLAGS_mode;
       video_mode = mediax::ColourspaceType::kColourspaceYuv;
   }
-
-  memset(rtb_test.data(), 0, kBuffSize * mediax::BitsPerPixel(video_mode));
 
   // Read the PNG file
   std::vector<uint8_t> rgb;
@@ -198,17 +219,17 @@ int main(int argc, char **argv) {
       break;
     case 8:  // Solid red
       rgb.resize(kBuffSizeRGB);
-      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 255, 0, 0);
+      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 255, 0, 0, mediax::ColourspaceType::kColourspaceRgb24);
       LOG(INFO) << "Creating solid red test card";
       break;
     case 9:  // Solid green
       rgb.resize(kBuffSizeRGB);
-      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 255, 0);
+      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 255, 0, mediax::ColourspaceType::kColourspaceRgb24);
       LOG(INFO) << "Creating solid green test card";
       break;
     case 10:  // Solid blue
       rgb.resize(kBuffSizeRGB);
-      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 0, 255);
+      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 0, 255, mediax::ColourspaceType::kColourspaceRgb24);
       LOG(INFO) << "Creating solid blue test card";
       break;
     default:
@@ -232,7 +253,7 @@ int main(int argc, char **argv) {
     if (FLAGS_source == 1) {
       v4lsource->CaptureFrame(rgb.data());
     }
-    memset(yuv.data(), 0, kBuffSize);
+    memset(recieve_buffer.data(), 0, kBuffSize);
 
 #if CUDA_ENABLED
     // video::cuda::RgbaToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
@@ -240,22 +261,22 @@ int main(int argc, char **argv) {
     // Convert the RGB data to YUV again
     switch (video_mode) {
       case mediax::ColourspaceType::kColourspaceYuv:
-        convert->RgbToYuv(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
+        convert->RgbToYuv(FLAGS_height, FLAGS_width, rgb.data(), recieve_buffer.data());
         break;
       case mediax::ColourspaceType::kColourspaceRgb24:
         // Nothing to do here already RGB
         break;
       case mediax::ColourspaceType::kColourspaceMono16:
-        convert->RgbToMono16(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
+        convert->RgbToMono16(FLAGS_height, FLAGS_width, rgb.data(), recieve_buffer.data());
         break;
       case mediax::ColourspaceType::kColourspaceMono8:
-        convert->RgbToMono8(FLAGS_height, FLAGS_width, rgb.data(), yuv.data());
+        convert->RgbToMono8(FLAGS_height, FLAGS_width, rgb.data(), recieve_buffer.data());
         break;
       default:
         LOG(WARNING) << "Invalid video mode" << FLAGS_mode;
     }
 #endif
-    if (rtp.Transmit(yuv.data(), true) < 0) break;
+    if (rtp.Transmit(recieve_buffer.data(), true) < 0) break;
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     if (duration < 40) {

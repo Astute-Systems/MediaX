@@ -61,7 +61,6 @@
 #endif
 #include "rtp/rtp_payloader.h"
 #include "rtp/rtp_types.h"
-#include "sap/sap_listener.h"
 
 namespace mediax {
 

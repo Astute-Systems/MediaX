@@ -38,7 +38,6 @@
 #include "raw/rtpvraw_depayloader.h"
 #include "rtp/rtp_types.h"
 #include "rtp/rtp_utils.h"
-#include "sap/sap_announcer.h"
 
 namespace mediax {
 
@@ -99,8 +98,6 @@ bool RtpvrawDepayloader::Open() {
 }
 
 void RtpvrawDepayloader::Close() {
-  sap::SAPListener::GetInstance().Stop();
-
   if (ingress_.port_no) {
     close(ingress_.sockfd);
     ingress_.sockfd = 0;
