@@ -270,23 +270,23 @@ void CreateComplexTestCard(uint8_t *data, uint32_t width, uint32_t height, media
 void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
   uint32_t stride = mediax::BytesPerPixel(colourspace);
 
-  uint32_t size = width * height * stride;
-  for (uint32_t i = 0; i < size; i += stride) {
-    uint32_t x = i / 3 % width;
-    uint32_t y = i / 3 / width;
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-    if ((x / 8 + y / 8) % 2 == 0) {
-      r = 255;
-      g = 255;
-      b = 255;
-    } else {
-      r = 0;
-      g = 0;
-      b = 0;
+  for (uint32_t y = 0; y < height; y++) {
+    for (uint32_t x = 0; x < width; x++) {
+      uint8_t r;
+      uint8_t g;
+      uint8_t b;
+      if ((x / 8 + y / 8) % 2 == 0) {
+        r = 255;
+        g = 255;
+        b = 255;
+      } else {
+        r = 0;
+        g = 0;
+        b = 0;
+      }
+      uint32_t index = (y * width + x) * stride;
+      PackRgb(&data[index], r, g, b, colourspace);
     }
-    PackRgb(&data[i], r, g, b, colourspace);
   }
 }
 

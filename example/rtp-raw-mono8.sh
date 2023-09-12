@@ -3,7 +3,7 @@
 IP_ADDRESS=127.0.0.1
 
 echo 'Starting example application...'
-./build/bin/transmit-example -source=2 -mode=3 -ipaddr=$IP_ADDRESS -height=480 -width=640 -port=5004  &
+./build/bin/transmit-example -source=5 -mode=3 -ipaddr=$IP_ADDRESS -height=480 -width=640 -port=5004  &
 
 sleep 1
 

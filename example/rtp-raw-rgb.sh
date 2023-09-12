@@ -1,13 +1,9 @@
 #!/bin/bash
 
-#IP_ADDRESS=238.192.1.1
 IP_ADDRESS=127.0.0.1
 
-#Gstreamer1.0 working example UYVY streaming
-#===========================================
-
 echo 'Starting example application...'
-./build/bin/transmit-example -source=2 -mode=1 -ipaddr=$IP_ADDRESS -height=480 -width=640 -port=5004  &
+./build/bin/transmit-example -source=5 -mode=1 -ipaddr=$IP_ADDRESS -height=480 -width=640 -port=5004  &
 
 sleep 1
 
