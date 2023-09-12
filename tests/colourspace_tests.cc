@@ -77,6 +77,63 @@ TEST(Colourspace, YuvToRgbaTest) {
   DumpHex(rgba_recieve, 16);
 }
 
+TEST(Colourspace, RgbToRgbaTest) {
+  uint32_t height = 4;
+  uint32_t width = 4;
+  uint8_t rgb[width * height * 3];
+  uint8_t rgba_recieve[width * height * 4];
+  video::ColourSpaceCpu convert;
+
+  // Fill the RGB buffer with a red color
+  for (uint32_t i = 0; i < (width * height * 3); i += 3) {
+    rgb[i] = 0xFF;      // R component
+    rgb[i + 1] = 0x00;  // G component
+    rgb[i + 2] = 0x00;  // B component
+  }
+  DumpHex(rgb, 16);
+
+  // Call the function you want to test
+  convert.RgbToRgba(height, width, rgb, rgba_recieve);
+  DumpHex(rgba_recieve, 16);
+}
+
+TEST(Colourspace, Mono8ToRgbaTest) {
+  uint32_t height = 4;
+  uint32_t width = 4;
+  uint8_t mono8[width * height];
+  uint8_t rgba_recieve[width * height * 4];
+  video::ColourSpaceCpu convert;
+
+  // Fill the RGB buffer with a red color
+  for (uint32_t i = 0; i < (width * height); i++) {
+    mono8[i] = 0xFF;  // R component
+  }
+  DumpHex(mono8, 16);
+
+  // Call the function you want to test
+  convert.Mono8ToRgba(height, width, mono8, rgba_recieve);
+  DumpHex(rgba_recieve, 16);
+}
+
+TEST(Colourspace, Mono16ToRgbaTest) {
+  uint32_t height = 4;
+  uint32_t width = 4;
+  uint8_t mono16[width * height * 2];
+  uint8_t rgba_recieve[width * height * 4];
+  video::ColourSpaceCpu convert;
+
+  // Fill the RGB buffer with a red color
+  for (uint32_t i = 0; i < (width * height * 2); i += 2) {
+    mono16[i] = 0xFF;      // R component
+    mono16[i + 1] = 0x00;  // R component
+  }
+  DumpHex(mono16, 16);
+
+  // Call the function you want to test
+  convert.Mono16ToRgba(height, width, mono16, rgba_recieve);
+  DumpHex(rgba_recieve, 16);
+}
+
 TEST(Colourspace, RgbToYuvTest) {
   // Create a 4x4 RGB buffer
   const uint32_t width = 4;
@@ -115,6 +172,46 @@ TEST(Colourspace, RgbaToYuvTest) {
   convert.RgbaToYuv(height, width, rgba, yuv);
 
   DumpHex(yuv, 16);
+}
+
+TEST(Colourspace, RgbToMono8Test) {
+  // Create a 4x4 RGB buffer
+  const uint32_t width = 4;
+  const uint32_t height = 4;
+  const uint32_t bufferSize = width * height * 3;
+  uint8_t rgb[bufferSize];
+  video::ColourSpaceCpu convert;
+
+  // Fill the expected RGB buffer with a red color
+  for (uint32_t i = 0; i < width * height * 3; i += 3) {
+    rgb[i] = 0xFF;  // R component
+  }
+
+  // Call the function you want to test
+  uint8_t mono[bufferSize * 2] = {0};
+  convert.RgbToMono8(height, width, rgb, mono);
+
+  DumpHex(mono, 16);
+}
+
+TEST(Colourspace, RgbToMono16Test) {
+  // Create a 4x4 RGB buffer
+  const uint32_t width = 4;
+  const uint32_t height = 4;
+  const uint32_t bufferSize = width * height * 3;
+  uint8_t rgb[bufferSize];
+  video::ColourSpaceCpu convert;
+
+  // Fill the expected RGB buffer with a red color
+  for (uint32_t i = 0; i < width * height * 3; i += 3) {
+    rgb[i] = 0xFF;  // R component
+  }
+
+  // Call the function you want to test
+  uint8_t mono[bufferSize * 2] = {0};
+  convert.RgbToMono16(height, width, rgb, mono);
+
+  DumpHex(mono, 16);
 }
 
 TEST(Colourspace, RgbaToRgbTest) {
