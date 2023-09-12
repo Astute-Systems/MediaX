@@ -12,6 +12,7 @@
 #include <cairo.h>
 #include <cairo/cairo.h>
 #include <gflags/gflags.h>
+#include <glog/logging.h>
 #include <gtk/gtk.h>
 
 #include <iostream>
@@ -19,6 +20,7 @@
 #include <string>
 
 #include "example.h"
+#include "example_helpers.h"
 #include "rtp/rtp.h"
 #include "version.h"
 
@@ -84,7 +86,7 @@ gboolean update_callback(gpointer user_data) {
   return TRUE;
 }
 
-void SetupUncompressed() {
+void SetupUncompressed(mediax::ColourspaceType mode) {
   auto rtp_uncompressed = std::make_shared<mediax::RtpvrawDepayloader>();
   rtp_ = rtp_uncompressed;
   // Setup stream
@@ -92,12 +94,12 @@ void SetupUncompressed() {
     // Just give the stream name and wait for SAP/SDP announcement
     std::cout << "Example RTP streaming to " << FLAGS_session_name << "\n";
     // Add SAP callback here
-    rtp_uncompressed->SetStreamInfo(FLAGS_session_name, mediax::ColourspaceType::kColourspaceYuv, FLAGS_height,
-                                    FLAGS_width, FLAGS_ipaddr, (uint16_t)FLAGS_port);
+    rtp_uncompressed->SetStreamInfo(FLAGS_session_name, mode, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
+                                    (uint16_t)FLAGS_port);
   } else {
     std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
-    rtp_uncompressed->SetStreamInfo(FLAGS_session_name, mediax::ColourspaceType::kColourspaceYuv, FLAGS_height,
-                                    FLAGS_width, FLAGS_ipaddr, (uint16_t)FLAGS_port);
+    rtp_uncompressed->SetStreamInfo(FLAGS_session_name, mode, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
+                                    (uint16_t)FLAGS_port);
 
     // We have all the information so we can request the ports open now. No need to wait for SAP/SDP
     if (!rtp_->Open()) {
@@ -127,9 +129,13 @@ int main(int argc, char *argv[]) {
   gtk_init(&argc, &argv);
 
   mediax::RtpInit(argc, argv);
+  std::cout << "Example RTP streaming (" << FLAGS_width << "x" << FLAGS_height << " " << ModeToString(FLAGS_mode)
+            << ") to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
+
+  mediax::ColourspaceType video_mode = GetMode(FLAGS_mode);
 
   if (FLAGS_uncompressed) {
-    SetupUncompressed();
+    SetupUncompressed(video_mode);
   } else {
     SetupH264();
   }

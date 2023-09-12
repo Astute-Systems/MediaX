@@ -12,10 +12,10 @@ include_directories(${GTKMM_INCLUDE_DIRS} ${CAIRO_INCLUDE_DIRS} ${CMAKE_BINARY_D
 link_directories(${GTKMM_LIBRARY_DIRS} ${CAIRO_LIBRARY_DIRS} ${GST_LIBRARY_DIRS})
 
 include_directories(${CMAKE_SOURCE_DIR}/src)
-add_executable(transmit-example transmit-example.cc pngget.cc)
+add_executable(transmit-example transmit-example.cc example_helpers.cc pngget.cc)
 target_link_libraries(transmit-example mediax_static gflags ${GST_LIBRARIES} )
 
-add_executable(receive-example receive-example.cc pngget.cc)
+add_executable(receive-example receive-example.cc example_helpers.cc pngget.cc)
 target_link_libraries(receive-example mediax gflags ${GTKMM_LIBRARIES} ${CAIRO_LIBRARIES} ${GST_LIBRARIES} pthread)
 
 add_executable(sap-example sap-example.cc)

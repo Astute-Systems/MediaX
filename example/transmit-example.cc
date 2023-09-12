@@ -58,6 +58,7 @@
 #include <vector>
 
 #include "example.h"
+#include "example_helpers.h"
 #include "pngget.h"
 #include "rtp/rtp.h"
 #include "v4l2/v4l2_source.h"
@@ -92,24 +93,6 @@ DEFINE_int32(mode, 0,
              "4 - H.264\n\t");
 
 static bool application_running = true;
-
-std::string ModeToString(int mode) {
-  switch (mode) {
-    case 0:
-      return "Uncompressed YUV";
-    case 1:
-      return "Uncompressed RGB";
-    case 2:
-      return "Mono16";
-    case 3:
-      return "Mono8";
-    case 4:
-      return "H.264";
-    default:
-      break;
-  }
-  return "unknown";
-}
 
 void signalHandler(int signum [[maybe_unused]]) { application_running = false; }
 
@@ -147,26 +130,7 @@ int main(int argc, char **argv) {
   std::cout << "Example RTP streaming (" << FLAGS_width << "x" << FLAGS_height << " " << ModeToString(FLAGS_mode)
             << ") to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
 
-  switch (FLAGS_mode) {
-    case 0:
-      video_mode = mediax::ColourspaceType::kColourspaceYuv;
-      break;
-    case 1:
-      video_mode = mediax::ColourspaceType::kColourspaceRgb24;
-      break;
-    case 2:
-      video_mode = mediax::ColourspaceType::kColourspaceMono16;
-      break;
-    case 3:
-      video_mode = mediax::ColourspaceType::kColourspaceMono8;
-      break;
-    case 4:
-      video_mode = mediax::ColourspaceType::kColourspaceH264Part4;
-      break;
-    default:
-      LOG(WARNING) << "Invalid video mode" << FLAGS_mode;
-      video_mode = mediax::ColourspaceType::kColourspaceYuv;
-  }
+  video_mode = GetMode(FLAGS_mode);
   transmit_buffer.resize(FLAGS_height * FLAGS_width * BytesPerPixel(video_mode));
 
   // Setup RTP streaming class
