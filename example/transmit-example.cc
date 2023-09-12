@@ -133,6 +133,8 @@ int main(int argc, char **argv) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
   google::InitGoogleLogging(argv[0]);
   google::InstallFailureSignalHandler();
+  mediax::RtpInit(argc, argv);
+
   uint32_t frame = 0;
   const uint32_t kBuffSize = FLAGS_height * FLAGS_width;
   const uint32_t kBuffSizeRGB = kBuffSize * 3;
@@ -140,6 +142,7 @@ int main(int argc, char **argv) {
 
   // register signal SIGINT and signal handler
   signal(SIGINT, signalHandler);
+  signal(SIGTERM, signalHandler);
 
   std::cout << "Example RTP streaming (" << FLAGS_width << "x" << FLAGS_height << " " << ModeToString(FLAGS_mode)
             << ") to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
@@ -254,8 +257,8 @@ int main(int argc, char **argv) {
 
     if (rtp.Transmit(transmit_buffer.data(), true) < 0) break;
     auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    if (duration < 40) {
+
+    if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count(); duration < 40) {
       std::this_thread::sleep_for(std::chrono::milliseconds(40 - duration));
     }
 
@@ -263,10 +266,10 @@ int main(int argc, char **argv) {
     std::cout << "Frame: " << frame << "\r" << std::flush;
   }
   std::cout << "\n";
+  std::cout << "Example terminated...\n";
 
   rtp.Close();
-
-  std::cout << "Example terminated...\n";
+  mediax::RtpCleanup();
 
   return 0;
 }
