@@ -29,6 +29,13 @@ DEFINE_int32(width, kWidthDefault, "the width of the image");
 DEFINE_string(session_name, kSessionName, "the SAP/SDP session name");
 DEFINE_bool(wait_sap, false, "wait for SAP/SDP announcement");
 DEFINE_bool(uncompressed, true, "Uncompressed video stream");
+DEFINE_int32(mode, 0,
+             "The video mode (0-4)\n\t"
+             "0 - Uncompressed YUV\n\t"
+             "1 - Uncompressed RGB\n\t"
+             "2 - Mono16\n\t"
+             "3 - Mono8\n\t"
+             "4 - H.264\n\t");
 
 struct OnDrawData {
   std::string name;
