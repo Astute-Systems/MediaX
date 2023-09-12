@@ -50,7 +50,7 @@ const uint32_t kNumberLinesPerPacket = 10;
 /// allow for RGB data upto 1280 pixels wide
 const uint32_t kMaximumBufferSize = 1280 * 3;
 /// enough space for three lines of UDP data MTU size should be checked
-const uint32_t kMaxUdpData = 1500;
+const uint32_t kMaxUdpData = kMaximumBufferSize + 100;
 /// 0 to disable RTP header checking
 const uint32_t kRtpCheck = 0;
 /// transmit and recieve in a thread. RX thread blocks TX does not

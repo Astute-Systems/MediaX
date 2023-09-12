@@ -192,7 +192,7 @@ int main(int argc, char **argv) {
       CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 0, 255, video_mode);
       LOG(INFO) << "Creating solid blue test card";
       break;
-    default:
+    case 0:
       Png image_reader;
       rgb = image_reader.ReadPngRgb24(FLAGS_filename);
       if (rgb.empty()) {
@@ -201,6 +201,9 @@ int main(int argc, char **argv) {
       }
       /// Make it RGB
       convert->RgbaToRgb(FLAGS_height, FLAGS_width, rgb.data(), rgb.data());
+      break;
+    default:
+      LOG(INFO) << "Invalid source mode (" << FLAGS_source << ")";
       break;
   }
 

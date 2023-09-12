@@ -56,7 +56,7 @@ void ColourSpaceCpu::YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, ui
   }
 
   std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
-      sws_getContext(width, height, AV_PIX_FMT_UYVY422, width, height, AV_PIX_FMT_RGBA, SWS_BICUBIC, nullptr, nullptr,
+      sws_getContext(width, height, AV_PIX_FMT_UYVY422, width, height, AV_PIX_FMT_BGRA, SWS_BICUBIC, nullptr, nullptr,
                      nullptr),
       &sws_freeContext);
   if (!ctx) {
@@ -199,15 +199,79 @@ void ColourSpaceCpu::RgbToMono16(uint32_t height, uint32_t width, uint8_t *rgb, 
   sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
 }
 
-void ColourSpaceCpu::RgbToRgba(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const {
-  uint32_t stride = 0;
-  for (uint32_t i = 0; i < width * height * 3; i += 3) {
-    rgba[stride] = rgb[i];
-    rgba[stride + 1] = rgb[i + 1];
-    rgba[stride + 2] = rgb[i + 2];
-    rgba[stride + 3] = 0x00;
-    stride += 4;
+void ColourSpaceCpu::RgbToRgba(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *rgba) const {
+  if (!rgb || !rgba) {
+    // Handle null pointers gracefully
+    return;
   }
+
+  std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
+      sws_getContext(width, height, AV_PIX_FMT_RGB24, width, height, AV_PIX_FMT_BGRA, SWS_BICUBIC, nullptr, nullptr,
+                     nullptr),
+      &sws_freeContext);
+  if (!ctx) {
+    // Handle allocation failure gracefully
+    return;
+  }
+
+  const std::array<uint8_t *, 1> inData = {rgb};
+  std::array<uint8_t *, 1> outData = {rgba};
+
+  // Use static_cast instead of C-style cast
+  const std::array<int32_t, 1> inLinesize = {(int32_t)(width * 3)};
+  std::array<int32_t, 1> outLinesize = {(int32_t)(width * 4)};
+
+  sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
+}
+
+void ColourSpaceCpu::Mono8ToRgba(uint32_t width, uint32_t height, uint8_t *mono8, uint8_t *rgba) const {
+  if (!rgba || !mono8) {
+    // Handle null pointers gracefully
+    return;
+  }
+
+  std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
+      sws_getContext(width, height, AV_PIX_FMT_GRAY8, width, height, AV_PIX_FMT_BGRA, SWS_BICUBIC, nullptr, nullptr,
+                     nullptr),
+      &sws_freeContext);
+  if (!ctx) {
+    // Handle allocation failure gracefully
+    return;
+  }
+
+  const std::array<uint8_t *, 1> inData = {mono8};
+  std::array<uint8_t *, 1> outData = {rgba};
+
+  // Use static_cast instead of C-style cast
+  const std::array<int32_t, 1> inLinesize = {(int32_t)(width * 1)};
+  std::array<int32_t, 1> outLinesize = {(int32_t)(width * 4)};
+
+  sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
+}
+
+void ColourSpaceCpu::Mono16ToRgba(uint32_t width, uint32_t height, uint8_t *mono16, uint8_t *rgba) const {
+  if (!rgba || !mono16) {
+    // Handle null pointers gracefully
+    return;
+  }
+
+  std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
+      sws_getContext(width, height, AV_PIX_FMT_GRAY16, width, height, AV_PIX_FMT_BGRA, SWS_BICUBIC, nullptr, nullptr,
+                     nullptr),
+      &sws_freeContext);
+  if (!ctx) {
+    // Handle allocation failure gracefully
+    return;
+  }
+
+  const std::array<uint8_t *, 1> inData = {mono16};
+  std::array<uint8_t *, 1> outData = {rgba};
+
+  // Use static_cast instead of C-style cast
+  const std::array<int32_t, 1> inLinesize = {(int32_t)(width * 2)};
+  std::array<int32_t, 1> outLinesize = {(int32_t)(width * 4)};
+
+  sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
 }
 
 }  // namespace video

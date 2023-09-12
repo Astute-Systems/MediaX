@@ -43,5 +43,6 @@ std::string ModeToString(int mode) {
     default:
       break;
   }
-  return "unknown";
+  LOG(WARNING) << "Invalid video mode" << mode;
+  return "Unknown";
 }

@@ -63,7 +63,24 @@ gboolean on_draw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer
     // Get the width and height of the surface
     int width = cairo_image_surface_get_width(data->surface);
     int height = cairo_image_surface_get_height(data->surface);
-    convert.YuvToRgba(height, width, cpu_buffer, surface_data);
+
+    switch (FLAGS_mode) {
+      case 0:
+        convert.YuvToRgba(height, width, cpu_buffer, surface_data);
+        break;
+      case 1:
+        convert.RgbToRgba(height, width, cpu_buffer, surface_data);
+        break;
+      case 2:
+        convert.Mono16ToRgba(height, width, cpu_buffer, surface_data);
+        break;
+      case 3:
+        convert.Mono8ToRgba(height, width, cpu_buffer, surface_data);
+        break;
+      default:
+        LOG(ERROR) << "Unsupported mode=" << FLAGS_mode << "\n";
+        break;
+    }
 
     // Mark the surface as dirty to ensure the data is properly updated
     cairo_surface_mark_dirty(data->surface);
@@ -92,18 +109,18 @@ void SetupUncompressed(mediax::ColourspaceType mode) {
   // Setup stream
   if (FLAGS_wait_sap) {
     // Just give the stream name and wait for SAP/SDP announcement
-    std::cout << "Example RTP streaming to " << FLAGS_session_name << "\n";
+    LOG(INFO) << "Example RTP streaming to " << FLAGS_session_name;
     // Add SAP callback here
     rtp_uncompressed->SetStreamInfo(FLAGS_session_name, mode, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
                                     (uint16_t)FLAGS_port);
   } else {
-    std::cout << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
+    LOG(INFO) << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port;
     rtp_uncompressed->SetStreamInfo(FLAGS_session_name, mode, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
                                     (uint16_t)FLAGS_port);
 
     // We have all the information so we can request the ports open now. No need to wait for SAP/SDP
     if (!rtp_->Open()) {
-      std::cerr << "Could not open stream, quitting";
+      LOG(ERROR) << "Could not open stream, quitting";
       exit(1);
     }
   }
@@ -129,8 +146,8 @@ int main(int argc, char *argv[]) {
   gtk_init(&argc, &argv);
 
   mediax::RtpInit(argc, argv);
-  std::cout << "Example RTP streaming (" << FLAGS_width << "x" << FLAGS_height << " " << ModeToString(FLAGS_mode)
-            << ") to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
+  LOG(INFO) << "Example RTP streaming (" << FLAGS_width << "x" << FLAGS_height << " " << ModeToString(FLAGS_mode)
+            << ") to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port;
 
   mediax::ColourspaceType video_mode = GetMode(FLAGS_mode);
 
@@ -172,7 +189,7 @@ int main(int argc, char *argv[]) {
 
   mediax::RtpCleanup();
 
-  std::cout << "Example terminated...\n";
+  LOG(INFO) << "Example terminated...";
 
   return 0;
 }
