@@ -21,6 +21,7 @@
 #include <unistd.h>
 
 #include <iostream>
+#include <string>
 
 /// Class for Video 4 Linux 2 (V4L2) capture
 class V4L2Capture {
