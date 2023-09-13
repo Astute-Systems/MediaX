@@ -290,8 +290,15 @@ bool RtpvrawDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
 }
 
 bool RtpvrawDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
-  if (ingress_.port_no == 0) return false;
-  if (ingress_.settings_valid == false) return false;
+  if (ingress_.port_no == 0) {
+    LOG(ERROR) << "Port number has not been set";
+    return false;
+  }
+
+  if (ingress_.settings_valid == false) {
+    LOG(ERROR) << "IP settings are invalid";
+    return false;
+  }
 
   // Check ports open
   if ((ingress_.socket_open == false) && (ingress_.settings_valid == true)) {
@@ -309,6 +316,7 @@ bool RtpvrawDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   }
 
   // should not ever get here
+  LOG(ERROR) << "Something went wrong should not be here";
   return false;
 }
 
