@@ -15,6 +15,10 @@
 #include <unistd.h>
 
 #include "raw/rtpvraw_depayloader.h"
+#include "raw/rtpvraw_payloader.h"
+#include "rtp/rtp_utils.h"
+#include "util_tests.h"
+#include "utils/colourspace_cpu.h"
 
 TEST(RTPDepayloaderTest, Copy) {
   mediax::RtpvrawDepayloader rtp;
@@ -34,7 +38,50 @@ TEST(RTPDepayloaderTest, Timeout) {
   ASSERT_EQ(rtp.GetPort(), 5004);
   ASSERT_EQ(rtp.GetSessionName(), "test_session_name");
   rtp.Open();
-  rtp.Receive(&yuv_test, 80);
+  EXPECT_FALSE(rtp.Receive(&yuv_test, 80));
+  rtp.Close();
+}
+
+void SendVideoCheckered(std::string ip, uint32_t height, uint32_t width, uint32_t framerate, uint32_t portno) {
+  mediax::RtpvrawPayloader rtp;
+  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceRgb24, height, width, ip, portno);
+  rtp.Open();
+  rtp.Start();
+  // Create a buffer of 640x480x3 bytes (RGB)
+  std::vector<uint8_t> buffer(640 * 480 * 3);
+  CreateCheckeredTestCard(buffer.data(), 640, 480, mediax::ColourspaceType::kColourspaceRgb24);
+  rtp.Transmit(buffer.data(), 80);
+  rtp.Stop();
+  rtp.Close();
+}
+
+TEST(RTPDepayloaderTest, UnicastOk) {
+  uint8_t* rgb_test;
+  video::ColourSpaceCpu colourspace;
+  mediax::RtpvrawDepayloader rtp;
+
+  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceRgb24, 640, 480, "127.0.0.1", 5004);
+  rtp.Open();
+  rtp.Start();
+  SendVideoCheckered("127.0.0.1", 640, 480, 30, 5004);
+  EXPECT_TRUE(rtp.Receive(&rgb_test, 80));
+  WritePngFile(rgb_test, 640, 480, "UnicastOk.png");
+  rtp.Stop();
+  rtp.Close();
+}
+
+TEST(RTPDepayloaderTest, MulticastOk) {
+  uint8_t* rgb_test;
+  video::ColourSpaceCpu colourspace;
+
+  mediax::RtpvrawDepayloader rtp;
+  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceRgb24, 640, 480, "239.192.1.200", 5004);
+  rtp.Open();
+  rtp.Start();
+  SendVideoCheckered("239.192.1.200", 640, 480, 30, 5004);
+  EXPECT_TRUE(rtp.Receive(&rgb_test, 80));
+  WritePngFile(rgb_test, 640, 480, "MulticastOk.png");
+  rtp.Stop();
   rtp.Close();
 }
 

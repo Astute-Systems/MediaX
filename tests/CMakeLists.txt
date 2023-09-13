@@ -9,6 +9,7 @@ include_directories(${CMAKE_SOURCE_DIR}/src  ${GST_INCLUDE_DIRS})
 add_executable(
   tests
   colourspace_tests.cc
+  util_tests.cc
   rtp_tests.cc
   rtp_utils_tests.cc
   rtp_payloader_tests.cc
