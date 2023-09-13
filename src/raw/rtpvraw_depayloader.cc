@@ -73,21 +73,34 @@ bool RtpvrawDepayloader::Open() {
     exit(-1);
   }
   if (ingress_.port_no) {
-    struct sockaddr_in si_me;
+    struct sockaddr_in addr;
 
     // create a UDP socket
     if ((ingress_.sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
       LOG(ERROR) << "RtpvrawDepayloader::Open() ERROR opening socket " << ingress_.hostname << ":" << ingress_.port_no;
       exit(-1);
     }
-    // zero out the structure
-    memset(&si_me, 0, sizeof(si_me));
 
-    si_me.sin_family = AF_INET;
-    si_me.sin_port = htons((uint16_t)ingress_.port_no);
-    si_me.sin_addr.s_addr = inet_addr(ingress_.hostname.c_str());
+    if (IsMulticast(ingress_.hostname)) {
+      // Join multicast group
+      struct ip_mreq mreq;
+      mreq.imr_multiaddr.s_addr = inet_addr(ingress_.hostname.c_str());
+      mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+      if (setsockopt(ingress_.sockfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
+        LOG(ERROR) << "Can not join multicast group " << ingress_.hostname << ":" << ingress_.port_no;
+        exit(-1);
+      }
+      LOG(INFO) << "Joining multicast group " << ingress_.hostname << ":" << ingress_.port_no;
+    }
+
+    // zero out the structure
+    memset(&addr, 0, sizeof(addr));
+
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = inet_addr(ingress_.hostname.c_str());
+    addr.sin_port = htons((uint16_t)ingress_.port_no);
     // bind socket to port
-    if (bind(ingress_.sockfd, (struct sockaddr *)&si_me, sizeof(si_me)) == -1) {
+    if (bind(ingress_.sockfd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
       LOG(ERROR) << "RtpvrawDepayloader::Open() ERROR binding socket " << ingress_.hostname << ":" << ingress_.port_no;
       exit(-1);
     }

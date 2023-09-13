@@ -144,6 +144,10 @@ int main(int argc, char **argv) {
     case 1:
       rgb.resize(kBuffSizeRGB);
       v4lsource = std::make_unique<V4L2Capture>(FLAGS_device, FLAGS_height, FLAGS_width);
+      if (v4lsource->Initalise() != 0) {
+        LOG(ERROR) << "Failed to initalise V4l2 device";
+        return 1;
+      }
       v4lsource->CaptureFrame(rgb.data());
       LOG(INFO) << "Creating V4l2 source device=" + FLAGS_device;
       break;

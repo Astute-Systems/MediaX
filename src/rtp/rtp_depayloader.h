@@ -67,7 +67,7 @@ class RtpDepayloader {
   /// \return true when frame available
   /// \return false when no frame was received in the timeout
   ///
-  virtual bool Receive(uint8_t **cpu, int32_t timeout = 0) = 0;
+  virtual bool Receive(uint8_t** cpu, int32_t timeout = 0) = 0;
 
   ///
   /// \brief Set the Session Name attribute
@@ -161,6 +161,15 @@ class RtpDepayloader {
   /// \return uint32_t
   ///
   uint32_t GetPort() const;
+
+  ///
+  /// \brief Check if the IP address is a multicast address
+  ///
+  /// \param ip_address
+  /// \return true
+  /// \return false
+  ///
+  bool IsMulticast(std::string_view ip_address);
 
   /// Ingress port
   PortType ingress_ = {};

@@ -34,6 +34,7 @@
         "gstreamer",
         "gtest",
         "IGMP",
+        "Initalise",
         "ipaddr",
         "Jetson",
         "lcov",
