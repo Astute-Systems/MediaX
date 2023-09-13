@@ -263,7 +263,7 @@ void RtpvrawDepayloader::Stop() {
 
 bool RtpvrawDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
   // Wait for completion
-  if (timeout < 0) {
+  if (timeout <= 0) {
     while (!new_rx_frame_) {
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
