@@ -51,18 +51,11 @@ endif()
 
 include_directories(${CMAKE_SOURCE_DIR}/src)
 add_library(mediax SHARED ${SOURCES})
-pkg_check_modules(SWSCALE REQUIRED libswscale libavutil) # libavformat libavcodec
-if (WIN32)
-  message(STATUS "Adding windows socket libs")
-  target_link_libraries(mediax png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} wsock32 ws2_32)
-else()
-  target_link_libraries(mediax png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS})
-endif()
-target_include_directories(mediax PUBLIC ${SWSCALE_INCLUDE_DIRS} ${GST_INCLUDE_DIRS})
+
 set_target_properties(mediax PROPERTIES SOVERSION 1)
-# set_property(TARGET mediax PROPERTY CUDA_SEPARABLE_COMPILATION ON)
-# set_target_properties(mediax PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 set_target_properties(mediax PROPERTIES CUDA_ARCHITECTURES "75")
+target_include_directories(mediax PUBLIC ${CMAKE_SOURCE_DIR}/src ${SWSCALE_INCLUDE_DIRS} ${GST_INCLUDE_DIRS})
+
 
 add_library(mediax_static STATIC ${SOURCES})
 if (WIN32)

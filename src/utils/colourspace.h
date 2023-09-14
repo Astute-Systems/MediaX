@@ -31,7 +31,7 @@ class ColourSpace {
   /// \brief Destroy the Colour Space object
   ///
   ///
-  ~ColourSpace() = default;
+  virtual ~ColourSpace() = default;
 
   ///
   /// \brief Convert YUV to RGBA
@@ -112,6 +112,19 @@ class ColourSpace {
   /// \param rgb The RGB image buffer
   ///
   virtual void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const = 0;
+
+  ///
+  /// \brief Scale the image to the target size and pad with black bars if aspect ratio is different
+  ///
+  /// \param source_height The height of the source image
+  /// \param source_width The width of the source image
+  /// \param source_rgb_buffer The source image buffer
+  /// \param target_height The height of the target image
+  /// \param target_width The width of the target image
+  /// \param target_rgb_buffer The target image buffer
+  ///
+  virtual void ScaleToSize(uint32_t source_height, uint32_t source_width, uint8_t *source_rgb_buffer,
+                           uint32_t target_height, uint32_t target_width, uint8_t *target_rgb_buffer) const = 0;
 };
 
 }  // namespace video

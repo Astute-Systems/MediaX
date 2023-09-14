@@ -274,4 +274,31 @@ void ColourSpaceCpu::Mono16ToRgba(uint32_t width, uint32_t height, uint8_t *mono
   sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
 }
 
+void ColourSpaceCpu::ScaleToSize(uint32_t source_height, uint32_t source_width, uint8_t *source_rgb_buffer,
+                                 uint32_t target_height, uint32_t target_width, uint8_t *target_rgb_buffer) const {
+  if (!source_rgb_buffer || !target_rgb_buffer) {
+    // Handle null pointers gracefully
+    return;
+  }
+
+  std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
+      sws_getContext(source_width, source_height, AV_PIX_FMT_RGB24, target_width, target_height, AV_PIX_FMT_RGB24,
+                     SWS_BICUBIC, nullptr, nullptr, nullptr),
+      &sws_freeContext);
+  if (!ctx) {
+    // Handle allocation failure gracefully
+    return;
+  }
+
+  const std::array<uint8_t *, 1> inData = {source_rgb_buffer};
+  std::array<uint8_t *, 1> outData = {target_rgb_buffer};
+
+  // Use static_cast instead of C-style cast
+  const std::array<int32_t, 1> inLinesize = {(int32_t)(source_width * 3)};
+  std::array<int32_t, 1> outLinesize = {(int32_t)(target_width * 3)};
+  sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, source_height, outData.data(), outLinesize.data());
+
+  return;
+}
+
 }  // namespace video

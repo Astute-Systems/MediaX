@@ -17,11 +17,99 @@
 
 #include <iostream>
 
-#include "utils/colourspace_cpu.h"
+#include "utils/colourspace_cuda.h"
 
 namespace video {
 
-// CUDA kernel to convert YUV to RGB
+ColourSpaceCuda::ColourSpaceCuda() {
+  // Initialise CUDA
+  cudaError_t cudaStatus = cudaSetDevice(0);
+  if (cudaStatus != cudaSuccess) {
+    fprintf(stderr, "cudaSetDevice failed!  Do you have a CUDA-capable GPU installed?");
+  }
+}
+
+__global__ void RgbToYuvKernel<<<dimGrid, dimBlock>>>(height, width, rgb, yuv) {
+  int x = blockIdx.x * blockDim.x + threadIdx.x;
+  int y = blockIdx.y * blockDim.y + threadIdx.y;
+
+  if (x >= width || y >= height) return;
+
+  int rgbIndex = y * width * 3 + x * 3;
+  int yuvIndex = y * width * 2 + x * 2;
+
+  int r = rgb[rgbIndex];
+  int g = rgb[rgbIndex + 1];
+  int b = rgb[rgbIndex + 2];
+
+  int yVal = (int)(0.299f * r + 0.587f * g + 0.114f * b);
+  int uVal = (int)(-0.14713f * r - 0.28886f * g + 0.436f * b);
+  int vVal = (int)(0.615f * r - 0.51499f * g - 0.10001f * b);
+
+  yVal = min(max(0, yVal), 255);
+  uVal = min(max(0, uVal + 128), 255);
+  vVal = min(max(0, vVal + 128), 255);
+
+  yuv[yuvIndex] = (uint8_t)yVal;
+  yuv[yuvIndex | 1] = (uint8_t)uVal;
+  yuv[yuvIndex & ~1] = (uint8_t)vVal;
+}
+
+void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) const {
+  int block_size = 32;
+  dim3 dimBlock(block_size, block_size);
+  dim3 dimGrid((width + dimBlock.x - 1) / dimBlock.x, (height + dimBlock.y - 1) / dimBlock.y);
+  RgbToYuvKernel<<<dimGrid, dimBlock>>>(height, width, rgb, yuv);
+  cudaDeviceSynchronize();
+}
+
+__global__ void RgbToMono8Kernel<<<gridDim, blockDim>>>(height, width, dev_rgb, dev_mono8) {
+  int x = blockIdx.x * blockDim.x + threadIdx.x;
+  int y = blockIdx.y * blockDim.y + threadIdx.y;
+
+  if (x >= width || y >= height) return;
+
+  int rgbIndex = y * width * 3 + x * 3;
+  int mono8Index = y * width + x;
+
+  int r = dev_rgb[rgbIndex];
+  int g = dev_rgb[rgbIndex + 1];
+  int b = dev_rgb[rgbIndex + 2];
+
+  int mono8Val = (int)(0.299f * r + 0.587f * g + 0.114f * b);
+
+  dev_mono8[mono8Index] = (uint8_t)mono8Val;
+}
+
+void RgbToMono8(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *mono8) const {
+  if (!rgb || !mono8) {
+    return;
+  }
+
+  uint8_t *dev_rgb, *dev_mono8;
+  size_t rgb_size = height * width * 3 * sizeof(uint8_t);
+  size_t mono8_size = height * width * sizeof(uint8_t);
+
+  // Allocate memory on GPU
+  cudaMalloc((void **)&dev_rgb, rgb_size);
+  cudaMalloc((void **)&dev_mono8, mono8_size);
+
+  // Copy input data to GPU
+  cudaMemcpy(dev_rgb, rgb, rgb_size, cudaMemcpyHostToDevice);
+
+  // Launch CUDA kernel
+  dim3 blockDim(16, 16);
+  dim3 gridDim((width + blockDim.x - 1) / blockDim.x, (height + blockDim.y - 1) / blockDim.y);
+  RgbToMono8Kernel<<<gridDim, blockDim>>>(height, width, dev_rgb, dev_mono8);
+
+  // Copy result back to host
+  cudaMemcpy(mono8, dev_mono8, mono8_size, cudaMemcpyDeviceToHost);
+
+  // Clean up
+  cudaFree(dev_rgb);
+  cudaFree(dev_mono8);
+}
+
 __global__ void YuvToRgbKernel(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) {
   int x = blockIdx.x * blockDim.x + threadIdx.x;
   int y = blockIdx.y * blockDim.y + threadIdx.y;

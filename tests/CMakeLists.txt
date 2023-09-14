@@ -3,8 +3,9 @@ include(FindPkgConfig)
 # find GStreamer
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GST REQUIRED gstreamer-1.0 gstreamer-app-1.0 gstreamer-video-1.0)
+pkg_check_modules(SWSCALE REQUIRED libswscale libavutil) # libavformat libavcodec
 
-include_directories(${CMAKE_SOURCE_DIR}/src  ${GST_INCLUDE_DIRS})
+set(MEDIAX_LIBRARIES ${EXTERNAL_PREFIX}/usr/local/lib/libmediax_static.a ${GSTREAMER_LIBRARIES})
 
 add_executable(
   tests
@@ -23,6 +24,7 @@ target_link_libraries(tests
   gtest
   mediax_static
   ${GST_LIBRARIES}
+  ${SWSCALE_LIBRARIES}
   pthread
   glog
   gflags
