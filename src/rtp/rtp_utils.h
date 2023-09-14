@@ -114,7 +114,7 @@ void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height, 
 /// \param width the image width in pixels
 /// \param height the image height in pixels
 ///
-void CreateComplexTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace);
+void CreateQuadTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace);
 
 ///
 /// \brief Create a Checkerd Test Card object

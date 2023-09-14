@@ -232,7 +232,7 @@ void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height, 
   }
 }
 
-void CreateComplexTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
+void CreateQuadTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
   uint32_t stride = mediax::BytesPerPixel(colourspace);
 
   uint32_t size = width * height * stride;
@@ -259,10 +259,7 @@ void CreateComplexTestCard(uint8_t *data, uint32_t width, uint32_t height, media
       g = 0;
       b = 255;
     }
-    double t = static_cast<double>(i / size * 2 * M_PI);
-    r *= 0.5 + 0.5 * sin(t);
-    g *= 0.5 + 0.5 * sin(t + 2 * M_PI / 3);
-    b *= 0.5 + 0.5 * sin(t + 4 * M_PI / 3);
+
     PackRgb(&data[i], r, g, b, colourspace);
   }
 }

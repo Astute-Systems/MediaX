@@ -163,7 +163,7 @@ int main(int argc, char **argv) {
       break;
     case 4:
       rgb.resize(kBuffSizeRGB);
-      CreateComplexTestCard(rgb.data(), FLAGS_width, FLAGS_height, video_mode);
+      CreateQuadTestCard(rgb.data(), FLAGS_width, FLAGS_height, video_mode);
       LOG(INFO) << "Creating scaled RGB values";
       break;
     case 5:

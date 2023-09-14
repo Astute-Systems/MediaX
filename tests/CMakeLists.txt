@@ -11,6 +11,7 @@ add_executable(
   tests
   colourspace_tests.cc
   util_tests.cc
+  testcard_tests.cc
   rtp_tests.cc
   rtp_utils_tests.cc
   rtp_payloader_tests.cc
