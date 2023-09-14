@@ -39,7 +39,7 @@ class ColourSpaceCpu : public ColourSpace {
   /// \param rgb The RGB image buffer
   /// \param yuv The YUV:422 image buffer
   ///
-  void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) const final;
+  int RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) const final;
 
   ///
   /// \brief Convert RGB to Monochrome 8 bits ber pixel on the CPU
@@ -49,7 +49,7 @@ class ColourSpaceCpu : public ColourSpace {
   /// \param rgb The RGB image buffer
   /// \param mono8 The monochrome 8 image buffer
   ///
-  void RgbToMono8(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *mono8) const final;
+  int RgbToMono8(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *mono8) const final;
 
   ///
   /// \brief Convert RGB to Monochrome 16 bits ber pixel on the CPU
@@ -59,7 +59,7 @@ class ColourSpaceCpu : public ColourSpace {
   /// \param rgb  The RGB image buffer
   /// \param mono16 The monochrome 16 image buffer
   ///
-  void RgbToMono16(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *mono16) const final;
+  int RgbToMono16(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *mono16) const final;
 
   ///
   /// \brief Convert RGBA to YUV on the CPU
@@ -69,7 +69,7 @@ class ColourSpaceCpu : public ColourSpace {
   /// \param rgba The RGB image buffer
   /// \param yuv The YUV:422 image buffer
   ///
-  void RgbaToYuv(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *yuv) const final;
+  int RgbaToYuv(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *yuv) const final;
 
   ///
   /// \brief Convert RGBA to RGB on the CPU
@@ -79,7 +79,7 @@ class ColourSpaceCpu : public ColourSpace {
   /// \param rgba
   /// \param rgb
   ///
-  void RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const final;
+  int RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const final;
 
   ///
   /// \brief Convert RGB to RGBA on the CPU
@@ -89,7 +89,7 @@ class ColourSpaceCpu : public ColourSpace {
   /// \param rgba The RGBA image buffer
   /// \param rgba The RGB image buffer
   ///
-  void RgbToRgba(uint32_t width, uint32_t height, uint8_t *rgb, uint8_t *rgba) const final;
+  int RgbToRgba(uint32_t width, uint32_t height, uint8_t *rgb, uint8_t *rgba) const final;
 
   ///
   /// \brief Convert YUV to RGBA on the CPU
@@ -99,7 +99,7 @@ class ColourSpaceCpu : public ColourSpace {
   /// \param yuv The YUV:422 image buffer
   /// \param rgba The RGBA image buffer
   ///
-  void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const final;
+  int YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const final;
 
   ///
   /// \brief Convert Mono8 to RGBA on the CPU
@@ -109,7 +109,7 @@ class ColourSpaceCpu : public ColourSpace {
   /// \param mono8 The monochrome 8 bit image
   /// \param rgba The RGBA image buffer
   ///
-  void Mono8ToRgba(uint32_t width, uint32_t height, uint8_t *mono8, uint8_t *rgba) const;
+  int Mono8ToRgba(uint32_t width, uint32_t height, uint8_t *mono8, uint8_t *rgba) const;
 
   ///
   /// \brief Convert Mono16 to RGBA on the CPU
@@ -119,7 +119,7 @@ class ColourSpaceCpu : public ColourSpace {
   /// \param mono16 The monochrome 16 bit image
   /// \param rgba The RGBA image buffer
   ///
-  void Mono16ToRgba(uint32_t width, uint32_t height, uint8_t *mono16, uint8_t *rgba) const;
+  int Mono16ToRgba(uint32_t width, uint32_t height, uint8_t *mono16, uint8_t *rgba) const;
 
   ///
   /// \brief Convert YUV to RGB on the CPU
@@ -129,7 +129,7 @@ class ColourSpaceCpu : public ColourSpace {
   /// \param yuv The YUV:422 image buffer
   /// \param rgb The RGB image buffer
   ///
-  void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const final;
+  int YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const final;
 
   ///
   /// \brief Scale the image to the target size and pad with black bars if aspect ratio is different
@@ -141,7 +141,7 @@ class ColourSpaceCpu : public ColourSpace {
   /// \param target_width The width of the target image
   /// \param target_rgb_buffer The target image buffer
   ///
-  void ScaleToSize(uint32_t source_height, uint32_t source_width, uint8_t *source_rgb_buffer, uint32_t target_height,
+  int ScaleToSize(uint32_t source_height, uint32_t source_width, uint8_t *source_rgb_buffer, uint32_t target_height,
                    uint32_t target_width, uint8_t *target_rgb_buffer) const final;
 };
 

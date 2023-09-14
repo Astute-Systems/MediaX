@@ -41,7 +41,7 @@ class ColourSpace {
   /// \param rgb The RGB image buffer
   /// \param yuv The YUV:422 image buffer
   ///
-  virtual void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) const = 0;
+  virtual int RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) const = 0;
 
   ///
   /// \brief Convert RGB to Monochrome 8 bits ber pixel
@@ -51,7 +51,7 @@ class ColourSpace {
   /// \param rgb The RGB image buffer
   /// \param mono8 The monochrome 8 image buffer
   ///
-  virtual void RgbToMono8(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *mono8) const = 0;
+  virtual int RgbToMono8(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *mono8) const = 0;
 
   ///
   /// \brief Convert RGB to Monochrome 16 bits ber pixel
@@ -61,7 +61,7 @@ class ColourSpace {
   /// \param rgb  The RGB image buffer
   /// \param mono16 The monochrome 16 image buffer
   ///
-  virtual void RgbToMono16(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *mono16) const = 0;
+  virtual int RgbToMono16(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *mono16) const = 0;
 
   ///
   /// \brief Convert RGBA to YUV
@@ -71,7 +71,7 @@ class ColourSpace {
   /// \param rgba The RGB image buffer
   /// \param yuv The YUV:422 image buffer
   ///
-  virtual void RgbaToYuv(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *yuv) const = 0;
+  virtual int RgbaToYuv(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *yuv) const = 0;
 
   ///
   /// \brief Convert RGBA to RGB
@@ -81,7 +81,7 @@ class ColourSpace {
   /// \param rgba The RGBA image buffer
   /// \param rgb The RGB image buffer
   ///
-  virtual void RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const = 0;
+  virtual int RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const = 0;
 
   ///
   /// \brief Convert RGB to RGBA
@@ -91,7 +91,7 @@ class ColourSpace {
   /// \param rgba The RGBA image buffer
   /// \param rgb The RGB image buffer
   ///
-  virtual void RgbToRgba(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const = 0;
+  virtual int RgbToRgba(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const = 0;
 
   ///
   /// \brief Convert YUV to RGBA
@@ -101,7 +101,7 @@ class ColourSpace {
   /// \param yuv The YUV:422 image buffer
   /// \param rgba The RGBA image buffer
   ///
-  virtual void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const = 0;
+  virtual int YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const = 0;
 
   ///
   /// \brief Convert YUV to RGB
@@ -111,7 +111,7 @@ class ColourSpace {
   /// \param yuv The YUV:422 image buffer
   /// \param rgb The RGB image buffer
   ///
-  virtual void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const = 0;
+  virtual int YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const = 0;
 
   ///
   /// \brief Scale the image to the target size and pad with black bars if aspect ratio is different
@@ -123,8 +123,8 @@ class ColourSpace {
   /// \param target_width The width of the target image
   /// \param target_rgb_buffer The target image buffer
   ///
-  virtual void ScaleToSize(uint32_t source_height, uint32_t source_width, uint8_t *source_rgb_buffer,
-                           uint32_t target_height, uint32_t target_width, uint8_t *target_rgb_buffer) const = 0;
+  virtual int ScaleToSize(uint32_t source_height, uint32_t source_width, uint8_t *source_rgb_buffer,
+                          uint32_t target_height, uint32_t target_width, uint8_t *target_rgb_buffer) const = 0;
 };
 
 }  // namespace video

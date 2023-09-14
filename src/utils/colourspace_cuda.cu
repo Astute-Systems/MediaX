@@ -55,7 +55,7 @@ __global__ void RgbToYuvKernel<<<dimGrid, dimBlock>>>(height, width, rgb, yuv) {
   yuv[yuvIndex & ~1] = (uint8_t)vVal;
 }
 
-void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) const {
+int RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) const {
   int block_size = 32;
   dim3 dimBlock(block_size, block_size);
   dim3 dimGrid((width + dimBlock.x - 1) / dimBlock.x, (height + dimBlock.y - 1) / dimBlock.y);
@@ -81,7 +81,7 @@ __global__ void RgbToMono8Kernel<<<gridDim, blockDim>>>(height, width, dev_rgb, 
   dev_mono8[mono8Index] = (uint8_t)mono8Val;
 }
 
-void RgbToMono8(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *mono8) const {
+int RgbToMono8(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *mono8) const {
   if (!rgb || !mono8) {
     return;
   }
@@ -136,7 +136,7 @@ __global__ void YuvToRgbKernel(uint32_t height, uint32_t width, uint8_t *yuv, ui
   rgb[rgbIndex + 2] = min(max(b, 0), 255);
 }
 
-void ColourSpaceCuda::YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const {
+int ColourSpaceCuda::YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const {
   if (!rgb || !yuv) {
     return;
   }
@@ -192,7 +192,7 @@ __global__ void yuvToRgbaKernel(uint32_t height, uint32_t width, uint8_t *yuv, u
   }
 }
 
-void ColourSpaceCuda::YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const {
+int ColourSpaceCuda::YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const {
   int block_size = 32;
   dim3 dimBlock(block_size, block_size);
   dim3 dimGrid((width + dimBlock.x - 1) / dimBlock.x, (height + dimBlock.y - 1) / dimBlock.y);
@@ -223,7 +223,7 @@ __global__ void rgbToYuvKernel(uint32_t height, uint32_t width, uint8_t *rgb, ui
   }
 }
 
-void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) const {
+int RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) const {
   int block_size = 32;
   dim3 dimBlock(block_size, block_size);
   dim3 dimGrid((width + dimBlock.x - 1) / dimBlock.x, (height + dimBlock.y - 1) / dimBlock.y);
@@ -254,12 +254,13 @@ __global__ void rgbaToYuvKernel(uint32_t height, uint32_t width, uint8_t *rgba, 
   }
 }
 
-void ColourSpaceCuda::RgbaToYuv(uint32_t height, uint32_t width, uint8_t *rgba, uint8_t *yuv) {
+int ColourSpaceCuda::RgbaToYuv(uint32_t height, uint32_t width, uint8_t *rgba, uint8_t *yuv) {
   int block_size = 32;
   dim3 dimBlock(block_size, block_size);
   dim3 dimGrid((width + dimBlock.x - 1) / dimBlock.x, (height + dimBlock.y - 1) / dimBlock.y);
   rgbaToYuvKernel<<<dimGrid, dimBlock>>>(height, width, rgba, yuv);
   cudaDeviceSynchronize();
+  return 0;
 }
 
 }  // namespace video

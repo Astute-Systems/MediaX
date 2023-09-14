@@ -22,6 +22,28 @@
 #include "util_tests.h"
 #include "utils/colourspace_cpu.h"
 
+TEST(Colourspace, TestErrors) {
+  video::ColourSpaceCpu colour_space_cpu;
+  // Define input parameters
+  const uint32_t height = 480;
+  const uint32_t width = 640;
+  uint8_t *rgb = nullptr;
+  uint8_t *yuv = nullptr;
+
+  // Call the functions
+  EXPECT_NE(colour_space_cpu.RgbToYuv(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.RgbToMono8(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.RgbToMono16(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.RgbToRgba(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.RgbaToRgb(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.RgbaToYuv(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.YuvToRgb(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.YuvToRgba(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.Mono8ToRgba(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.Mono16ToRgba(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.ScaleToSize(height, width, rgb, height, width, yuv), 0);
+}
+
 TEST(Colourspace, YuvToRgbTest) {
   uint32_t height = 4;
   uint32_t width = 4;
