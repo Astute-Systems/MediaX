@@ -13,7 +13,7 @@
 /// \file rtph264_depayloader.h
 ///
 
-#ifndef RTPH264_DEPAYLOADER_H
-#define RTPH264_DEPAYLOADER_H
+#ifndef RTPH264_DEPAYLOADER_H_
+#define RTPH264_DEPAYLOADER_H_
 
-#endif  // RTPH264_DEPAYLOADER_H
+#endif  // RTPH264_DEPAYLOADER_H_
