@@ -257,7 +257,7 @@ TEST(Colourspace, RgbaToRgbTest) {
   DumpHex(rgb, 16);
 }
 
-TEST(Colourspace, ScaleToSizeTestRgb1) {
+TEST(Colourspace, ScaleToSizeTestRgbScaleDown) {
   // Define input parameters
   const uint32_t source_height = 1080;
   const uint32_t source_width = 1920;
@@ -277,10 +277,10 @@ TEST(Colourspace, ScaleToSizeTestRgb1) {
                              target_rgb_buffer);
 
   // Write the result to a file
-  WritePngFile(target_rgb_buffer, target_width, target_height, "1920x1080_scaled_to_640x480.png");
+  WritePngFile(target_rgb_buffer, target_width, target_height, "1920x1080_rgb_scaled_down_to_640x480.png");
 }
 
-TEST(Colourspace, ScaleToSizeTestRgb2) {
+TEST(Colourspace, ScaleToSizeTestRgbScaleUp) {
   // Define input parameters
   const uint32_t source_height = 480;
   const uint32_t source_width = 640;
@@ -300,25 +300,32 @@ TEST(Colourspace, ScaleToSizeTestRgb2) {
                              target_rgb_buffer);
 
   // Write the result to a file
-  WritePngFile(target_rgb_buffer, target_width, target_height, "640x480_scaled_to_1920x1080.png");
+  WritePngFile(target_rgb_buffer, target_width, target_height, "640x480_rgb_scaled_up_to_1920x1080.png");
 }
 
-TEST(Colourspace, ScaleToSizeTestRgba) {
+TEST(Colourspace, ScaleToSizeTestRgbaScaleUp) {
   // Define input parameters
   const uint32_t source_height = 480;
   const uint32_t source_width = 640;
-  uint8_t source_rgb_buffer[source_height * source_width * 4] = {0};  // Initialize with zeros
+  uint8_t source_rgba_buffer[source_height * source_width * 4] = {0};  // Initialize with zeros
   const uint32_t target_height = 1080;
   const uint32_t target_width = 1920;
-  uint8_t target_rgb_buffer[target_height * target_width * 4] = {0};  // Initialize with zeros
+  std::vector<uint8_t> target_rgba_buffer;
+  target_rgba_buffer.resize(target_height * target_width * 4);
 
   // Source is checked
-  CreateCheckeredTestCard(source_rgb_buffer, source_width, source_height, mediax::ColourspaceType::kColourspaceRgba);
+  CreateCheckeredTestCard(source_rgba_buffer, source_width, source_height, mediax::ColourspaceType::kColourspaceRgba);
   // Colour bars in target`
-  CreateColourBarTestCard(target_rgb_buffer, target_width, target_height, mediax::ColourspaceType::kColourspaceRgba);
+  CreateColourBarTestCard(target_rgba_buffer.data(), target_width, target_height,
+                          mediax::ColourspaceType::kColourspaceRgba);
 
   // Call the function
   video::ColourSpaceCpu colourspace;
-  colourspace.ScaleToSizeRgba(source_height, source_width, source_rgb_buffer, target_height, target_width,
-                              target_rgb_buffer);
+  colourspace.ScaleToSizeRgba(source_height, source_width, source_rgba_buffer, target_height, target_width,
+                              target_rgba_buffer.data());
+
+  colourspace.RgbaToRgb(target_height, target_width, target_rgba_buffer.data(), target_rgba_buffer.data());
+
+  // Write the result to a file
+  WritePngFile(target_rgba_buffer.data(), target_width, target_height, "640x480_rgba_scaled_up_to_1920x1080.png");
 }
