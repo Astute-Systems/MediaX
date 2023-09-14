@@ -41,7 +41,7 @@ TEST(Colourspace, TestErrors) {
   EXPECT_NE(colour_space_cpu.YuvToRgba(height, width, rgb, yuv), 0);
   EXPECT_NE(colour_space_cpu.Mono8ToRgba(height, width, rgb, yuv), 0);
   EXPECT_NE(colour_space_cpu.Mono16ToRgba(height, width, rgb, yuv), 0);
-  EXPECT_NE(colour_space_cpu.ScaleToSize(height, width, rgb, height, width, yuv), 0);
+  EXPECT_NE(colour_space_cpu.ScaleToSizeRgb(height, width, rgb, height, width, yuv), 0);
 }
 
 TEST(Colourspace, YuvToRgbTest) {
@@ -257,7 +257,7 @@ TEST(Colourspace, RgbaToRgbTest) {
   DumpHex(rgb, 16);
 }
 
-TEST(Colourspace, ScaleToSizeTest1) {
+TEST(Colourspace, ScaleToSizeTestRgb1) {
   // Define input parameters
   const uint32_t source_height = 1080;
   const uint32_t source_width = 1920;
@@ -273,14 +273,14 @@ TEST(Colourspace, ScaleToSizeTest1) {
 
   // Call the function
   video::ColourSpaceCpu colourspace;
-  colourspace.ScaleToSize(source_height, source_width, source_rgb_buffer, target_height, target_width,
-                          target_rgb_buffer);
+  colourspace.ScaleToSizeRgb(source_height, source_width, source_rgb_buffer, target_height, target_width,
+                             target_rgb_buffer);
 
   // Write the result to a file
   WritePngFile(target_rgb_buffer, target_width, target_height, "1920x1080_scaled_to_640x480.png");
 }
 
-TEST(Colourspace, ScaleToSizeTest2) {
+TEST(Colourspace, ScaleToSizeTestRgb2) {
   // Define input parameters
   const uint32_t source_height = 480;
   const uint32_t source_width = 640;
@@ -296,9 +296,29 @@ TEST(Colourspace, ScaleToSizeTest2) {
 
   // Call the function
   video::ColourSpaceCpu colourspace;
-  colourspace.ScaleToSize(source_height, source_width, source_rgb_buffer, target_height, target_width,
-                          target_rgb_buffer);
+  colourspace.ScaleToSizeRgb(source_height, source_width, source_rgb_buffer, target_height, target_width,
+                             target_rgb_buffer);
 
   // Write the result to a file
   WritePngFile(target_rgb_buffer, target_width, target_height, "640x480_scaled_to_1920x1080.png");
+}
+
+TEST(Colourspace, ScaleToSizeTestRgba) {
+  // Define input parameters
+  const uint32_t source_height = 480;
+  const uint32_t source_width = 640;
+  uint8_t source_rgb_buffer[source_height * source_width * 4] = {0};  // Initialize with zeros
+  const uint32_t target_height = 1080;
+  const uint32_t target_width = 1920;
+  uint8_t target_rgb_buffer[target_height * target_width * 4] = {0};  // Initialize with zeros
+
+  // Source is checked
+  CreateCheckeredTestCard(source_rgb_buffer, source_width, source_height, mediax::ColourspaceType::kColourspaceRgba);
+  // Colour bars in target`
+  CreateColourBarTestCard(target_rgb_buffer, target_width, target_height, mediax::ColourspaceType::kColourspaceRgba);
+
+  // Call the function
+  video::ColourSpaceCpu colourspace;
+  colourspace.ScaleToSizeRgba(source_height, source_width, source_rgb_buffer, target_height, target_width,
+                              target_rgb_buffer);
 }

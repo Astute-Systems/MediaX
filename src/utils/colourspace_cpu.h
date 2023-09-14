@@ -141,8 +141,11 @@ class ColourSpaceCpu : public ColourSpace {
   /// \param target_width The width of the target image
   /// \param target_rgb_buffer The target image buffer
   ///
-  int ScaleToSize(uint32_t source_height, uint32_t source_width, uint8_t *source_rgb_buffer, uint32_t target_height,
-                   uint32_t target_width, uint8_t *target_rgb_buffer) const final;
+  int ScaleToSizeRgb(uint32_t source_height, uint32_t source_width, uint8_t *source_rgb_buffer, uint32_t target_height,
+                     uint32_t target_width, uint8_t *target_rgb_buffer) const final;
+
+  int ScaleToSizeRgba(uint32_t source_height, uint32_t source_width, uint8_t *source_rgb_buffer, uint32_t target_height,
+                      uint32_t target_width, uint8_t *target_rgb_buffer) const final;
 };
 
 }  // namespace video
