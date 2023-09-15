@@ -100,3 +100,13 @@ TEST(RTPDepayloaderTest, Many) {
     rtp[i].Open();
   }
 }
+
+TEST(RTPDepayloaderTest, ReOpening) {
+  // Open stream 10 times
+  for (int i = 0; i < 10; i++) {
+    mediax::RtpvrawDepayloader rtp;
+    rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceYuv, 640, 480, "127.0.0.1");
+    rtp.Open();
+    rtp.Close();
+  }
+}
