@@ -14,8 +14,8 @@ add_executable(
   testcard_tests.cc
   rtp_tests.cc
   rtp_utils_tests.cc
-  rtp_payloader_tests.cc
-  rtp_depayloader_tests.cc
+  rtp_raw_payloader_tests.cc
+  rtp_raw_depayloader_tests.cc
   sap_announcer_tests.cc
   sap_listener_tests.cc
   main.cc
