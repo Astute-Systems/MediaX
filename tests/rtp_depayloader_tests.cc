@@ -107,6 +107,8 @@ TEST(RTPDepayloaderTest, ReOpening) {
     mediax::RtpvrawDepayloader rtp;
     rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceYuv, 640, 480, "127.0.0.1");
     rtp.Open();
+    rtp.Start();
+    rtp.Stop();
     rtp.Close();
   }
 }
