@@ -125,13 +125,15 @@ class RtpvrawDepayloader : public RtpDepayloader {
   bool Open() final;
 
   ///
-  /// \brief Start the stream
+  /// \brief Start the stream recieve thread, can be quickly re-started without having to re-open the UDP port
   ///
+  /// This can cause bandwidth issues if multiple UDP multicast streams are open. If bandwidth is an issue then its
+  /// better to close the stream before switching to a new stream
   ///
   void Start() final;
 
   ///
-  /// \brief Stop the stream, can be quickly re-started
+  /// \brief Stop the stream recieve thread, can be quickly re-started without having to re-open the UDP port
   ///
   ///
   void Stop() final;
@@ -147,8 +149,7 @@ class RtpvrawDepayloader : public RtpDepayloader {
   ///
   /// \param cpu the fame buffer in CPU memory.
   /// \param timeout zero will wait forever or a timeout in milliseconds
-  /// \return true when frame available
-  /// \return false when no frame was received in the timeout
+  /// \return true when frame available and false when no frame was received in the timeout
   ///
   bool Receive(uint8_t **cpu, int32_t timeout = 0) final;
 

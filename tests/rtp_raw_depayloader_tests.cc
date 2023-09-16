@@ -56,7 +56,7 @@ void SendVideoCheckered(std::string ip, uint32_t height, uint32_t width, uint32_
 }
 
 TEST(RTPDepayloaderTest, UnicastOk) {
-  uint8_t* rgb_test;
+  std::array<uint8_t, 640 * 480 * 3> rgb_test;
   video::ColourSpaceCpu colourspace;
   mediax::RtpvrawDepayloader rtp;
 
@@ -64,14 +64,15 @@ TEST(RTPDepayloaderTest, UnicastOk) {
   rtp.Open();
   rtp.Start();
   SendVideoCheckered("127.0.0.1", 640, 480, 30, 5004);
-  EXPECT_TRUE(rtp.Receive(&rgb_test, 80));
-  WritePngFile(rgb_test, 640, 480, "UnicastOk.png");
+  uint8_t* data = rgb_test.data();
+  EXPECT_TRUE(rtp.Receive(&data, 80));
+  WritePngFile(rgb_test.data(), 640, 480, "UnicastOk.png");
   rtp.Stop();
   rtp.Close();
 }
 
 TEST(RTPDepayloaderTest, MulticastOk) {
-  uint8_t* rgb_test;
+  std::array<uint8_t, 640 * 480 * 3> rgb_test;
   video::ColourSpaceCpu colourspace;
 
   mediax::RtpvrawDepayloader rtp;
@@ -79,8 +80,9 @@ TEST(RTPDepayloaderTest, MulticastOk) {
   rtp.Open();
   rtp.Start();
   SendVideoCheckered("239.192.1.200", 640, 480, 30, 5004);
-  EXPECT_TRUE(rtp.Receive(&rgb_test, 80));
-  WritePngFile(rgb_test, 640, 480, "MulticastOk.png");
+  uint8_t* data = rgb_test.data();
+  EXPECT_TRUE(rtp.Receive(&data, 80));
+  WritePngFile(rgb_test.data(), 640, 480, "MulticastOk.png");
   rtp.Stop();
   rtp.Close();
 }
@@ -111,4 +113,41 @@ TEST(RTPDepayloaderTest, ReOpening) {
     rtp.Stop();
     rtp.Close();
   }
+}
+
+void OpenStream(std::string ipaddr, uint32_t height, uint32_t width, uint32_t framerate, uint32_t portno) {
+  std::vector<uint8_t> yuv_test;
+  mediax::RtpvrawDepayloader rtp;
+  yuv_test.resize(height * width * 2);
+  rtp.SetStreamInfo("test", mediax::ColourspaceType::kColourspaceYuv, 640, 480, ipaddr);
+  rtp.Open();
+  rtp.Start();
+
+  // bool running = true;
+  // int frame_count = 0;
+  // // Recieve video
+  // while (running) {
+  //   uint8_t* data = yuv_test.data();
+  //   bool ret = rtp.Receive(&data, 80);
+  //   EXPECT_TRUE(ret);
+  //   if (ret == false) break;
+  //   if (frame_count++ > 10) running = false;
+  // }
+
+  rtp.Stop();
+  rtp.Close();
+}
+
+TEST(RTPDepayloaderTest, SwitchStreams) {
+  // Switch between 5 streams
+  std::cout << "Opening stream 1" << std::endl;
+  OpenStream("239.192.3.1", 640, 480, 30, 5004);
+  std::cout << "Opening stream 2" << std::endl;
+  OpenStream("239.192.3.2", 640, 480, 30, 5004);
+  std::cout << "Opening stream 3" << std::endl;
+  OpenStream("239.192.3.3", 640, 480, 30, 5004);
+  std::cout << "Opening stream 4" << std::endl;
+  OpenStream("239.192.3.4", 640, 480, 30, 5004);
+  std::cout << "Opening stream 5" << std::endl;
+  OpenStream("239.192.3.5", 640, 480, 30, 5004);
 }
