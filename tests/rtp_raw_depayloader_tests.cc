@@ -123,16 +123,16 @@ void OpenStream(std::string ipaddr, uint32_t height, uint32_t width, uint32_t fr
   rtp.Open();
   rtp.Start();
 
-  // bool running = true;
-  // int frame_count = 0;
-  // // Recieve video
-  // while (running) {
-  //   uint8_t* data = yuv_test.data();
-  //   bool ret = rtp.Receive(&data, 80);
-  //   EXPECT_TRUE(ret);
-  //   if (ret == false) break;
-  //   if (frame_count++ > 10) running = false;
-  // }
+  bool running = true;
+  int frame_count = 0;
+  // Recieve video
+  while (running) {
+    uint8_t* data = yuv_test.data();
+    bool ret = rtp.Receive(&data, 0);
+    EXPECT_TRUE(ret);
+    if (ret == false) break;
+    if (frame_count++ > 10) running = false;
+  }
 
   rtp.Stop();
   rtp.Close();
