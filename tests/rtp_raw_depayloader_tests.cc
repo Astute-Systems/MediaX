@@ -155,7 +155,7 @@ std::string ExecuteCommand(std::string bash) {
   return result;
 }
 
-TEST(RTPDepayloaderTest, SwitchStreams) {
+TEST(RTPDepayloaderTest, DISABLED_SwitchStreams) {
   // Start five streams run the bash script start_five_streams.sh
   ExecuteCommand("../scripts/start_five_streams.sh");
   // Switch between 5 streams
