@@ -107,7 +107,7 @@ enum class ColourspaceType {
 const std::map<ColourspaceType, uint8_t> kColourspaceBytes = {
     {ColourspaceType::kColourspaceUndefined, 0}, {ColourspaceType::kColourspaceRgb24, 3},
     {ColourspaceType::kColourspaceYuv, 2},       {ColourspaceType::kColourspaceMono8, 1},
-    {ColourspaceType::kColourspaceMono16, 1},    {ColourspaceType::kColourspaceJpeg2000, 3},
+    {ColourspaceType::kColourspaceMono16, 2},    {ColourspaceType::kColourspaceJpeg2000, 3},
     {ColourspaceType::kColourspaceH264Part4, 3}, {ColourspaceType::kColourspaceH264Part10, 3}};
 
 /// SDP encoding type
