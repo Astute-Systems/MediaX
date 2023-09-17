@@ -138,7 +138,26 @@ void OpenStream(std::string ipaddr, uint32_t height, uint32_t width, uint32_t fr
   rtp.Close();
 }
 
+std::string ExecuteCommand(std::string bash) {
+  std::string result = "";
+  FILE* pipe = popen(bash.c_str(), "r");
+  if (!pipe) throw std::runtime_error("popen() failed!");
+  try {
+    while (!feof(pipe)) {
+      char buf[256];
+      if (fgets(buf, 256, pipe) != NULL) result += buf;
+    }
+  } catch (...) {
+    pclose(pipe);
+    throw;
+  }
+  pclose(pipe);
+  return result;
+}
+
 TEST(RTPDepayloaderTest, SwitchStreams) {
+  // Start five streams run the bash script start_five_streams.sh
+  ExecuteCommand("../scripts/start_five_streams.sh");
   // Switch between 5 streams
   std::cout << "Opening stream 1" << std::endl;
   OpenStream("239.192.3.1", 640, 480, 30, 5004);
@@ -150,4 +169,5 @@ TEST(RTPDepayloaderTest, SwitchStreams) {
   OpenStream("239.192.3.4", 640, 480, 30, 5004);
   std::cout << "Opening stream 5" << std::endl;
   OpenStream("239.192.3.5", 640, 480, 30, 5004);
+  ExecuteCommand("pkill -f gst-launch-1.0");
 }

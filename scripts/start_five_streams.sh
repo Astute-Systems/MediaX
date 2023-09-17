@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
 echo "Starting 5 streames to run for $FRAMES frames each"
-# pkill -f gst-launch-1.0 
 
 FRAMES=1000
 
@@ -24,3 +23,7 @@ gst-launch-1.0 -v videotestsrc num-buffers=$FRAMES ! video/x-raw,format=UYVY,wid
 #   rtpvrawdepay ! \
 #   videoconvert ! \
 #   xvimagesink sync=false 
+
+# sleep 10
+# pkill -f gst-launch-1.0 
+
