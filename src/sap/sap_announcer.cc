@@ -89,6 +89,26 @@ void SAPAnnouncer::SendSAPDeletion(const SAPMessage &message) const { SendSAPPac
 
 // Function to send a SAP announcement
 void SAPAnnouncer::SendSAPPacket(const SAPMessage &message, bool deletion) const {
+  std::string depth;
+  std::string colorimetry;
+
+  switch (message.colourspace) {
+    case mediax::ColourspaceType::kColourspaceMono8:
+      depth = "8";
+      break;
+    case mediax::ColourspaceType::kColourspaceMono16:
+      depth = "16";
+      break;
+    case mediax::ColourspaceType::kColourspaceRgb24:
+      depth = "8";
+      colorimetry = "colorimetry=BT709-2; ";
+    case mediax::ColourspaceType::kColourspaceYuv:
+      depth = "8";
+      colorimetry = "colorimetry=BT601-5; ";
+    default:
+      break;
+  }
+
   // Prepare SDP message
   std::string sdp_msg =
       "v=0\r\n"
@@ -108,10 +128,17 @@ void SAPAnnouncer::SendSAPPacket(const SAPMessage &message, bool deletion) const
       "a=rtpmap:96 raw/90000\r\n"
       "a=fmtp:96 sampling=" +
       GetSdpColourspace(message.colourspace) + "; width=" + std::to_string(message.width) +
-      "; height=" + std::to_string(message.height) +
-      "; depth=8; colorimetry=BT601-5; progressive\r\n"
+      "; height=" + std::to_string(message.height) + "; depth=" + depth + "; " + colorimetry +
+      "progressive\r\n"
       "a=framerate:" +
-      std::to_string(message.framerate) + "\r\n";
+      std::to_string(message.framerate) + "";
+
+  if (message.colourspace == mediax::ColourspaceType::kColourspaceMono16) {
+    sdp_msg +=
+        "a=active-pixel-depth:16\r\n"
+        "a=number-pixel-flags:2\r\n"
+        "a=pixel-flags:saturated,ignored";
+  }
 
   // Oversized 4k buffer for SAP/SDP
   std::array<uint8_t, 4069> buffer;

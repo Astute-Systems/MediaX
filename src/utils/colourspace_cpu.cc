@@ -22,7 +22,7 @@ extern "C" {
 }
 namespace video {
 
-ColourSpaceCpu::ColourSpaceCpu() { av_log_set_level(AV_LOG_ERROR); }
+ColourSpaceCpu::ColourSpaceCpu() {}
 
 int ColourSpaceCpu::YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const {
   if (!rgb || !yuv) {
