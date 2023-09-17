@@ -19,6 +19,9 @@ jobs:
       - name: Install sonar-scanner and build-wrapper
         uses: SonarSource/sonarcloud-github-c-cpp@v1
 
+      - name: Apt Update
+        run: sudo apt-get update
+
       - name: Apt Install
         run: |
           sudo ./scripts/init_build_machine.sh
