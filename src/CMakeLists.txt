@@ -52,6 +52,11 @@ endif()
 
 include_directories(${CMAKE_SOURCE_DIR}/src)
 add_library(mediax SHARED ${SOURCES})
+if (WIN32)
+  target_link_libraries(mediax png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} ${GST_LIBRARIES} wsock32 ws2_32)
+else()
+  target_link_libraries(mediax png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} ${GST_LIBRARIES})
+endif()
 
 set_target_properties(mediax PROPERTIES SOVERSION 1)
 set_target_properties(mediax PROPERTIES CUDA_ARCHITECTURES "75")

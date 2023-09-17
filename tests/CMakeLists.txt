@@ -7,6 +7,8 @@ pkg_check_modules(SWSCALE REQUIRED libswscale libavutil) # libavformat libavcode
 
 set(MEDIAX_LIBRARIES ${EXTERNAL_PREFIX}/usr/local/lib/libmediax_static.a ${GSTREAMER_LIBRARIES})
 
+link_directories(${CAIRO_LIBRARY_DIRS})
+
 add_executable(
   tests
   colourspace_tests.cc
