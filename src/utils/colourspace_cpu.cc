@@ -318,22 +318,22 @@ int ColourSpaceCpu::ScaleToSizeRgba(uint32_t source_height, uint32_t source_widt
     return 1;
   }
 
-  // std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
-  //     sws_getContext(source_width, source_height, AV_PIX_FMT_RGBA, target_width, target_height, AV_PIX_FMT_RGBA,
-  //                    SWS_BICUBIC, nullptr, nullptr, nullptr),
-  //     &sws_freeContext);
-  // if (!ctx) {
-  //   // Handle allocation failure gracefully
-  //   return 1;
-  // }
+  std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
+      sws_getContext(source_width, source_height, AV_PIX_FMT_RGB24, target_width, target_height, AV_PIX_FMT_BGRA,
+                     SWS_BICUBIC, nullptr, nullptr, nullptr),
+      &sws_freeContext);
+  if (!ctx) {
+    // Handle allocation failure gracefully
+    return 1;
+  }
 
-  // const std::array<uint8_t *, 1> inData = {source_rgb_buffer};
-  // std::array<uint8_t *, 1> outData = {target_rgb_buffer};
+  const std::array<uint8_t *, 1> inData = {source_rgb_buffer};
+  std::array<uint8_t *, 1> outData = {target_rgb_buffer};
 
   // Use static_cast instead of C-style cast
-  // const std::array<int32_t, 1> inLinesize = {(int32_t)(source_width * 4)};
-  // std::array<int32_t, 1> outLinesize = {(int32_t)(target_width * 4)};
-  // sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, source_height, outData.data(), outLinesize.data());
+  const std::array<int32_t, 1> inLinesize = {(int32_t)(source_width * 3)};
+  std::array<int32_t, 1> outLinesize = {(int32_t)(target_width * 4)};
+  sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, source_height, outData.data(), outLinesize.data());
 
   return 0;
 }
