@@ -312,9 +312,11 @@ TEST(Colourspace, ScaleToSizeTestRgbaScaleUp) {
   const uint32_t target_width = 1920;
   std::vector<uint8_t> target_rgba_buffer;
   target_rgba_buffer.resize(target_height * target_width * 4);
+  std::vector<uint8_t> target_rgb_buffer;
+  target_rgb_buffer.resize(target_height * target_width * 4);
 
   // Source is checked
-  CreateCheckeredTestCard(source_rgba_buffer, source_width, source_height, mediax::ColourspaceType::kColourspaceRgba);
+  CreateCheckeredTestCard(source_rgba_buffer, source_width, source_height, mediax::ColourspaceType::kColourspaceRgb24);
   // Colour bars in target`
   CreateColourBarTestCard(target_rgba_buffer.data(), target_width, target_height,
                           mediax::ColourspaceType::kColourspaceRgba);
@@ -324,8 +326,8 @@ TEST(Colourspace, ScaleToSizeTestRgbaScaleUp) {
   colourspace.ScaleToSizeRgba(source_height, source_width, source_rgba_buffer, target_height, target_width,
                               target_rgba_buffer.data());
 
-  colourspace.RgbaToRgb(target_height, target_width, target_rgba_buffer.data(), target_rgba_buffer.data());
+  colourspace.RgbaToRgb(target_height, target_width, target_rgba_buffer.data(), target_rgb_buffer.data());
 
   // Write the result to a file
-  WritePngFile(target_rgba_buffer.data(), target_width, target_height, "640x480_rgba_scaled_up_to_1920x1080.png");
+  WritePngFile(target_rgb_buffer.data(), target_width, target_height, "640x480_rgba_scaled_up_to_1920x1080.png");
 }

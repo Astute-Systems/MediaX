@@ -132,7 +132,7 @@ class ColourSpaceCpu : public ColourSpace {
   int YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const final;
 
   ///
-  /// \brief Scale the image to the target size and pad with black bars if aspect ratio is different
+  /// \brief Scale the image to the target size.
   ///
   /// \param source_height The height of the source image
   /// \param source_width The width of the source image
@@ -144,8 +144,33 @@ class ColourSpaceCpu : public ColourSpace {
   int ScaleToSizeRgb(uint32_t source_height, uint32_t source_width, uint8_t *source_rgb_buffer, uint32_t target_height,
                      uint32_t target_width, uint8_t *target_rgb_buffer) const final;
 
+  ///
+  /// \brief Scale the image to the target size.
+  ///
+  /// \param source_height The height of the source image
+  /// \param source_width The width of the source image
+  /// \param source_rgb_buffer The source image buffer
+  /// \param target_height The height of the target image
+  /// \param target_width The width of the target image
+  /// \param target_rgba_buffer The target image buffer
+  /// \return int
+  ///
   int ScaleToSizeRgba(uint32_t source_height, uint32_t source_width, uint8_t *source_rgb_buffer, uint32_t target_height,
-                      uint32_t target_width, uint8_t *target_rgb_buffer) const final;
+                      uint32_t target_width, uint8_t *target_rgba_buffer) const final;
+
+  ///
+  /// \brief Scale the image to the target size.
+  ///
+  /// \param source_height The height of the source image
+  /// \param source_width The width of the source image
+  /// \param source_rgb_buffer The source image buffer
+  /// \param target_height The height of the target image
+  /// \param target_width The width of the target image
+  /// \param target_bgra_buffer The target image buffer
+  /// \return int
+  ///
+  int ScaleToSizeBgra(uint32_t source_height, uint32_t source_width, uint8_t *source_rgb_buffer, uint32_t target_height,
+                      uint32_t target_width, uint8_t *target_bgra_buffer) const;
 };
 
 }  // namespace video
