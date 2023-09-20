@@ -316,7 +316,7 @@ TEST(Colourspace, ScaleToSizeTestRgbaScaleUp) {
   target_rgb_buffer.resize(target_height * target_width * 4);
 
   // Source is checked
-  CreateCheckeredTestCard(source_rgba_buffer, source_width, source_height, mediax::ColourspaceType::kColourspaceRgb24);
+  CreateCheckeredTestCard(source_rgba_buffer, source_width, source_height, mediax::ColourspaceType::kColourspaceRgba);
   // Colour bars in target`
   CreateColourBarTestCard(target_rgba_buffer.data(), target_width, target_height,
                           mediax::ColourspaceType::kColourspaceRgba);
