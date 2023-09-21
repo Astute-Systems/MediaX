@@ -20,6 +20,7 @@ add_executable(
   rtp_raw_depayloader_tests.cc
   sap_announcer_tests.cc
   sap_listener_tests.cc
+  sap_utils_tests.cc
   main.cc
 )
 
