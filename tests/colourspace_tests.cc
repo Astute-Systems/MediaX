@@ -97,6 +97,9 @@ TEST(Colourspace, YuvToRgbaTest) {
 
   // Call the function you want to test
   convert.YuvToRgba(height, width, yuv, rgba_recieve);
+  // Write the result to a file
+  WritePngFile(target_rgb_buffer, target_width, target_height, "YuvToRgbaTest.png");
+
   DumpHex(rgba_recieve, 16);
 }
 
@@ -316,10 +319,7 @@ TEST(Colourspace, ScaleToSizeTestRgbaScaleUp) {
   target_rgb_buffer.resize(target_height * target_width * 4);
 
   // Source is checked
-  CreateCheckeredTestCard(source_rgba_buffer, source_width, source_height, mediax::ColourspaceType::kColourspaceRgba);
-  // Colour bars in target`
-  CreateColourBarTestCard(target_rgba_buffer.data(), target_width, target_height,
-                          mediax::ColourspaceType::kColourspaceRgba);
+  CreateColourBarTestCard(source_rgba_buffer, source_width, source_height, mediax::ColourspaceType::kColourspaceRgba);
 
   // Call the function
   video::ColourSpaceCpu colourspace;

@@ -158,8 +158,6 @@ class RtpvrawDepayloader : public RtpDepayloader {
   bool new_rx_frame_ = false;
   /// Flag indicating the thread is running
   bool rx_thread_running_ = true;
-  /// The encoded video type
-  ColourspaceType encoding_ = ColourspaceType::kColourspaceUndefined;
   /// Transmit arguments used by the thread
   TxData arg_tx;
   /// thread mutex

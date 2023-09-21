@@ -127,7 +127,7 @@ void DumpHex(const void *data, size_t size) {
 }
 
 void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::ColourspaceType colourspace) {
-  static bool odd = false;
+  static bool odd = true;
   switch (colourspace) {
     case mediax::ColourspaceType::kColourspaceYuv: {
       double y = 0.257 * r + 0.504 * g + 0.098 * b + 16;
