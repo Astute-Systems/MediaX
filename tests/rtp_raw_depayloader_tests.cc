@@ -44,7 +44,7 @@ TEST(RTPDepayloaderTest, Timeout) {
 
 void SendVideoCheckered(std::string ip, uint32_t height, uint32_t width, uint32_t framerate, uint32_t portno) {
   mediax::RtpvrawPayloader rtp;
-  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceRgb24, height, width, ip, portno);
+  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceRgb24, height, width, 25, ip, portno);
   rtp.Open();
   rtp.Start();
   // Create a buffer of 640x480x3 bytes (RGB)

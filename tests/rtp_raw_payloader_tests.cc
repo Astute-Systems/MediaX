@@ -20,7 +20,7 @@ TEST(RTPDepayloaderTest, SendOneFrameRgb24) {
   std::array<uint8_t, kBuffSize> rtb_test;
 
   mediax::RtpvrawPayloader rtp;
-  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceRgb24, 640, 480, "127.0.0.1", 5004);
+  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceRgb24, 640, 480, 25, "127.0.0.1", 5004);
   ASSERT_EQ(rtp.GetHeight(), 640);
   ASSERT_EQ(rtp.GetWidth(), 480);
   ASSERT_EQ(rtp.GetColourSpace(), mediax::ColourspaceType::kColourspaceRgb24);
@@ -36,7 +36,7 @@ TEST(RTPDepayloaderTest, SendOneFrameYuv) {
   std::array<uint8_t, kBuffSize> rtb_test;
 
   mediax::RtpvrawPayloader rtp;
-  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceYuv, 640, 480, "127.0.0.1", 5004);
+  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceYuv, 640, 480, 25, "127.0.0.1", 5004);
   ASSERT_EQ(rtp.GetHeight(), 640);
   ASSERT_EQ(rtp.GetWidth(), 480);
   ASSERT_EQ(rtp.GetColourSpace(), mediax::ColourspaceType::kColourspaceYuv);
@@ -52,7 +52,7 @@ TEST(RTPDepayloaderTest, SendOneFrameMono16) {
   std::array<uint8_t, kBuffSize> rtb_test;
 
   mediax::RtpvrawPayloader rtp;
-  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceMono16, 640, 480, "127.0.0.1", 5004);
+  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceMono16, 640, 480, 25, "127.0.0.1", 5004);
   ASSERT_EQ(rtp.GetHeight(), 640);
   ASSERT_EQ(rtp.GetWidth(), 480);
   ASSERT_EQ(rtp.GetColourSpace(), mediax::ColourspaceType::kColourspaceMono16);
@@ -68,7 +68,7 @@ TEST(RTPDepayloaderTest, SendOneFrameMono8) {
   std::array<uint8_t, kBuffSize> rtb_test;
 
   mediax::RtpvrawPayloader rtp;
-  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceMono8, 640, 480, "127.0.0.1", 5004);
+  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceMono8, 640, 480, 25, "127.0.0.1", 5004);
   ASSERT_EQ(rtp.GetHeight(), 640);
   ASSERT_EQ(rtp.GetWidth(), 480);
   ASSERT_EQ(rtp.GetColourSpace(), mediax::ColourspaceType::kColourspaceMono8);

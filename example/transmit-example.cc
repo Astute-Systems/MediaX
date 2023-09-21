@@ -68,6 +68,7 @@ DEFINE_string(ipaddr, kIpAddressDefault, "the IP address of the transmit stream"
 DEFINE_int32(port, kPortDefault, "the port to use for the transmit stream");
 DEFINE_int32(height, kHeightDefault, "the height of the image");
 DEFINE_int32(width, kWidthDefault, "the width of the image");
+DEFINE_int32(framerate, 25, "the image framerate");
 DEFINE_int32(source, 2,
              "The video source (0-10)\n\t"
              "0 - Use a PNG file (see -filename)\n\t"
@@ -135,7 +136,8 @@ int main(int argc, char **argv) {
 
   // Setup RTP streaming class
   mediax::RtpvrawPayloader rtp;
-  rtp.SetStreamInfo(FLAGS_filename, video_mode, FLAGS_height, FLAGS_width, FLAGS_ipaddr, (uint16_t)FLAGS_port);
+  rtp.SetStreamInfo(FLAGS_filename, video_mode, FLAGS_height, FLAGS_width, FLAGS_framerate, FLAGS_ipaddr,
+                    (uint16_t)FLAGS_port);
   rtp.Open();
 
   // Read the PNG file

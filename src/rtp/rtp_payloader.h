@@ -38,15 +38,16 @@ class RtpPayloader {
   ///
   /// \brief Configure an RTP output stream
   ///
-  /// \param hostname IP address i.e. 239.192.1.1 for multicast
-  /// \param port defaults to 5004
   /// \param name The name of the stream
   /// \param encoding The colour space of the stream
   /// \param height The height of the stream in pixels
   /// \param width The width of the stream in pixels
+  /// \param framerate The frame rate of the stream in frames per second
+  /// \param hostname IP address i.e. 239.192.1.1 for multicast
+  /// \param port defaults to 5004
   ///
   virtual void SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                             std::string_view hostname, const uint32_t port = 5004) = 0;
+                             uint32_t framerate, std::string_view hostname, const uint32_t port = 5004) = 0;
 
   ///
   /// \brief Open the RTP stream

@@ -40,7 +40,7 @@ class RtpH264Payloader : public RtpPayloader {
   /// \param portno port number i.e. 5004
   ///
   void SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                     std::string_view hostname, const uint32_t portno) override;
+                     uint32_t framerate, std::string_view hostname, const uint32_t portno) override;
 
   ///
   /// \brief Open the RTP stream
