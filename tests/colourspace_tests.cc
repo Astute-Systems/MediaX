@@ -93,7 +93,7 @@ TEST(Colourspace, YuvToRgbaTest) {
 
   // Call the function you want to test
   convert.YuvToRgba(height, width, yuv, rgba_recieve);
-  convert.RgbaToRgb(height, width, rgba_recieve, rgb);
+  convert.RgbaToRgb(width, height, rgba_recieve, rgb);
 
   WritePngFile(rgb, width, height, "YuvToRgbaTest.png");
 
@@ -101,22 +101,23 @@ TEST(Colourspace, YuvToRgbaTest) {
 }
 
 TEST(Colourspace, RgbToRgbaTest) {
-  uint32_t height = 4;
-  uint32_t width = 4;
+  uint32_t height = 240;
+  uint32_t width = 320;
   uint8_t rgb[width * height * 3];
   uint8_t rgba_recieve[width * height * 4];
+  uint8_t rgb_image[width * height * 3];
   video::ColourSpaceCpu convert;
 
   // Fill the RGB buffer with a red color
-  for (uint32_t i = 0; i < (width * height * 3); i += 3) {
-    rgb[i] = 0xFF;      // R component
-    rgb[i + 1] = 0x00;  // G component
-    rgb[i + 2] = 0x00;  // B component
-  }
+  CreateColourBarTestCard(rgb, width, height, mediax::ColourspaceType::kColourspaceRgb24);
   DumpHex(rgb, 16);
 
   // Call the function you want to test
-  convert.RgbToBgra(height, width, rgb, rgba_recieve);
+  convert.RgbToRgba(height, width, rgb, rgba_recieve);
+  convert.RgbaToRgb(width, height, rgba_recieve, rgb_image);
+
+  WritePngFile(rgb_image, width, height, "RgbToRgbaTest.png");
+
   DumpHex(rgba_recieve, 16);
 }
 

@@ -317,7 +317,7 @@ int ColourSpaceCpu::YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uin
   }
 
   std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
-      sws_getContext(width, height, AV_PIX_FMT_UYVY422, width, height, AV_PIX_FMT_RGBA, SWS_BICUBIC, nullptr, nullptr,
+      sws_getContext(width, height, AV_PIX_FMT_YVYU422, width, height, AV_PIX_FMT_RGBA, SWS_BICUBIC, nullptr, nullptr,
                      nullptr),
       &sws_freeContext);
   if (!ctx) {
