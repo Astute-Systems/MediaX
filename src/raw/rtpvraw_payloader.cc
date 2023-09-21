@@ -155,7 +155,7 @@ void RtpvrawPayloader::SendFrame(RtpvrawPayloader *stream) {
     EndianSwap16(reinterpret_cast<uint16_t *>(&packet.head.payload), sizeof(PayloadHeader) / 2);
 
     memcpy(reinterpret_cast<void *>(&packet.head.payload.line[2]),
-           reinterpret_cast<void *>(&stream->arg_tx.rgb_frame[(c * stride) + 1]), stride);
+           reinterpret_cast<void *>(&stream->arg_tx.rgb_frame[(c * stride)]), stride);
     n = sendto(stream->egress_.sockfd, &packet, stride + 26, 0, (const sockaddr *)&stream->server_addr_out_,
                stream->server_len_out_);
     if (n != stride + 26) {

@@ -161,6 +161,8 @@ class ColourSpaceCpu : public ColourSpace {
   ///
   int Mono16ToRgba(uint32_t width, uint32_t height, uint8_t *mono16, uint8_t *rgba) const final;
 
+  int YuvToArgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *argb) const;
+
   ///
   /// \brief Convert YUV to RGB on the CPU
   ///

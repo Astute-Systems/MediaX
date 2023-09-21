@@ -92,15 +92,16 @@ struct LineHeader {
 
 /// Supported colour spaces
 enum class ColourspaceType {
-  kColourspaceUndefined,
-  kColourspaceRgb24,
-  kColourspaceRgba,  // Not a GVA uncompressed video format
+  kColourspaceRgb24 = 0,
   kColourspaceYuv,
   kColourspaceMono8,
   kColourspaceMono16,
+  kColourspaceRgba,  // Not a GVA uncompressed video format
+  kColourspaceBgra,  // Not a GVA uncompressed video format
   kColourspaceJpeg2000,
   kColourspaceH264Part4,
-  kColourspaceH264Part10
+  kColourspaceH264Part10,
+  kColourspaceUndefined
 };
 
 /// The bits per pixel

@@ -22,7 +22,7 @@ mediax::ColourspaceType GetMode(int mode) {
       return mediax::ColourspaceType::kColourspaceH264Part4;
       break;
     default:
-      LOG(WARNING) << "Invalid video mode" << mode;
+      LOG(WARNING) << "Invalid video mode " << mode;
       return mediax::ColourspaceType::kColourspaceYuv;
   }
   return mediax::ColourspaceType::kColourspaceYuv;

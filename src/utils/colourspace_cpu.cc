@@ -31,7 +31,7 @@ int ColourSpaceCpu::YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint
   }
 
   std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
-      sws_getContext(width, height, AV_PIX_FMT_YUYV422, width, height, AV_PIX_FMT_RGB24, SWS_BICUBIC, nullptr, nullptr,
+      sws_getContext(width, height, AV_PIX_FMT_UYVY422, width, height, AV_PIX_FMT_RGB24, SWS_BICUBIC, nullptr, nullptr,
                      nullptr),
       &sws_freeContext);
   if (!ctx) {
@@ -109,7 +109,7 @@ int ColourSpaceCpu::RgbaToYuv(uint32_t height, uint32_t width, uint8_t *rgba, ui
   }
 
   std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
-      sws_getContext(width, height, AV_PIX_FMT_RGBA, width, height, AV_PIX_FMT_YUYV422, SWS_BICUBIC, nullptr, nullptr,
+      sws_getContext(width, height, AV_PIX_FMT_RGBA, width, height, AV_PIX_FMT_UYVY422, SWS_BICUBIC, nullptr, nullptr,
                      nullptr),
       &sws_freeContext);
   if (!ctx) {
@@ -135,7 +135,7 @@ int ColourSpaceCpu::RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint
   }
 
   std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
-      sws_getContext(width, height, AV_PIX_FMT_RGB24, width, height, AV_PIX_FMT_YUYV422, SWS_BICUBIC, nullptr, nullptr,
+      sws_getContext(width, height, AV_PIX_FMT_RGB24, width, height, AV_PIX_FMT_UYVY422, SWS_BICUBIC, nullptr, nullptr,
                      nullptr),
       &sws_freeContext);
   if (!ctx) {
@@ -284,6 +284,33 @@ int ColourSpaceCpu::Mono16ToBgra(uint32_t width, uint32_t height, uint8_t *mono1
   return 0;
 }
 
+int ColourSpaceCpu::YuvToArgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *argb) const {
+  if (!argb || !yuv) {
+    // Handle null pointers gracefully
+    return 1;
+  }
+
+  std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
+      sws_getContext(width, height, AV_PIX_FMT_UYVY422, width, height, AV_PIX_FMT_ARGB, SWS_BICUBIC, nullptr, nullptr,
+                     nullptr),
+      &sws_freeContext);
+  if (!ctx) {
+    // Handle allocation failure gracefully
+    return 1;
+  }
+
+  const std::vector<uint8_t *> inData = {yuv};
+  std::vector<uint8_t *> outData = {argb};
+
+  // Use static_cast instead of C-style cast
+  const std::vector<int32_t> inLinesize = {(int32_t)(width * 2)};
+  std::vector<int32_t> outLinesize = {(int32_t)(width * 4)};
+
+  sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
+
+  return 0;
+}
+
 int ColourSpaceCpu::RgbToRgba(uint32_t width, uint32_t height, uint8_t *rgb, uint8_t *rgba) const {
   if (!rgb || !rgba) {
     // Handle null pointers gracefully
@@ -317,7 +344,7 @@ int ColourSpaceCpu::YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uin
   }
 
   std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
-      sws_getContext(width, height, AV_PIX_FMT_YVYU422, width, height, AV_PIX_FMT_RGBA, SWS_BICUBIC, nullptr, nullptr,
+      sws_getContext(width, height, AV_PIX_FMT_UYVY422, width, height, AV_PIX_FMT_RGBA, SWS_BICUBIC, nullptr, nullptr,
                      nullptr),
       &sws_freeContext);
   if (!ctx) {

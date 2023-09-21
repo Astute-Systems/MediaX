@@ -60,13 +60,23 @@ gboolean on_draw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer
   // Fill the surface with video data if available
   if (rtp_->Receive(&cpu_buffer, 80) == true) {
     unsigned char *surface_data = cairo_image_surface_get_data(data->surface);
+
     // Get the width and height of the surface
     int width = cairo_image_surface_get_width(data->surface);
     int height = cairo_image_surface_get_height(data->surface);
 
+    // Check the colourspace
+    if (auto format = cairo_image_surface_get_format(data->surface); format != CAIRO_FORMAT_RGB24) {
+      LOG(ERROR) << "Unsupported format=" << format << "\n";
+      return FALSE;
+    }
+
+    // int stride = cairo_image_surface_get_stride(data->surface);
+    // LOG(INFO) << "Stride " << stride;
     switch (FLAGS_mode) {
       case 0:
         convert.YuvToBgra(height, width, cpu_buffer, surface_data);
+        // CreateColourBarTestCard(surface_data, width, height, mediax::ColourspaceType::kColourspaceRgba);
         break;
       case 1:
         convert.RgbToBgra(height, width, cpu_buffer, surface_data);

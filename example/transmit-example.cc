@@ -86,8 +86,8 @@ DEFINE_string(device, "/dev/video0", "the V4L2 device source (only with -source 
 DEFINE_string(session_name, "TestVideo1", "the SAP/SDP session name");
 DEFINE_int32(mode, 0,
              "The video mode (0-4)\n\t"
-             "0 - Uncompressed YUV\n\t"
-             "1 - Uncompressed RGB\n\t"
+             "0 - Uncompressed RGB\n\t"
+             "1 - Uncompressed YUV\n\t"
              "2 - Mono16\n\t"
              "3 - Mono8\n\t"
              "4 - H.264\n\t");
@@ -139,72 +139,72 @@ int main(int argc, char **argv) {
   rtp.Open();
 
   // Read the PNG file
-  std::vector<uint8_t> rgb;
+  std::vector<uint8_t> video_buffer;
   switch (FLAGS_source) {
     case 1:
-      rgb.resize(kBuffSizeRGB);
+      video_buffer.resize(kBuffSizeRGB);
       v4lsource = std::make_unique<V4L2Capture>(FLAGS_device, FLAGS_height, FLAGS_width);
       if (v4lsource->Initalise() != 0) {
         LOG(ERROR) << "Failed to initalise V4l2 device";
         return 1;
       }
-      v4lsource->CaptureFrame(rgb.data());
+      v4lsource->CaptureFrame(video_buffer.data());
       LOG(INFO) << "Creating V4l2 source device=" + FLAGS_device;
       break;
     case 2:
-      rgb.resize(kBuffSizeRGB);
-      CreateColourBarTestCard(rgb.data(), FLAGS_width, FLAGS_height, video_mode);
+      video_buffer.resize(kBuffSizeRGB);
+      CreateColourBarTestCard(video_buffer.data(), FLAGS_width, FLAGS_height, video_mode);
       LOG(INFO) << "Creating colour bar test card";
       break;
     case 3:
-      rgb.resize(kBuffSizeRGB);
-      CreateGreyScaleBarTestCard(rgb.data(), FLAGS_width, FLAGS_height, video_mode);
+      video_buffer.resize(kBuffSizeRGB);
+      CreateGreyScaleBarTestCard(video_buffer.data(), FLAGS_width, FLAGS_height, video_mode);
       LOG(INFO) << "Creating greyscale test card";
       break;
     case 4:
-      rgb.resize(kBuffSizeRGB);
-      CreateQuadTestCard(rgb.data(), FLAGS_width, FLAGS_height, video_mode);
+      video_buffer.resize(kBuffSizeRGB);
+      CreateQuadTestCard(video_buffer.data(), FLAGS_width, FLAGS_height, video_mode);
       LOG(INFO) << "Creating scaled RGB values";
       break;
     case 5:
-      rgb.resize(kBuffSizeRGB);
-      CreateCheckeredTestCard(rgb.data(), FLAGS_width, FLAGS_height, video_mode);
+      video_buffer.resize(kBuffSizeRGB);
+      CreateCheckeredTestCard(video_buffer.data(), FLAGS_width, FLAGS_height, video_mode);
       LOG(INFO) << "Creating checkered test card";
       break;
     case 6:  // Solid white
-      rgb.resize(kBuffSizeRGB);
-      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 255, 255, 255, video_mode);
+      video_buffer.resize(kBuffSizeRGB);
+      CreateSolidTestCard(video_buffer.data(), FLAGS_width, FLAGS_height, 255, 255, 255, video_mode);
       LOG(INFO) << "Creating solid white test card";
       break;
     case 7:  // Solid black
-      rgb.resize(kBuffSizeRGB);
-      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 0, 0, video_mode);
+      video_buffer.resize(kBuffSizeRGB);
+      CreateSolidTestCard(video_buffer.data(), FLAGS_width, FLAGS_height, 0, 0, 0, video_mode);
       LOG(INFO) << "Creating solid black test card";
       break;
     case 8:  // Solid red
-      rgb.resize(kBuffSizeRGB);
-      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 255, 0, 0, video_mode);
+      video_buffer.resize(kBuffSizeRGB);
+      CreateSolidTestCard(video_buffer.data(), FLAGS_width, FLAGS_height, 255, 0, 0, video_mode);
       LOG(INFO) << "Creating solid red test card";
       break;
     case 9:  // Solid green
-      rgb.resize(kBuffSizeRGB);
-      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 255, 0, video_mode);
+      video_buffer.resize(kBuffSizeRGB);
+      CreateSolidTestCard(video_buffer.data(), FLAGS_width, FLAGS_height, 0, 255, 0, video_mode);
       LOG(INFO) << "Creating solid green test card";
       break;
     case 10:  // Solid blue
-      rgb.resize(kBuffSizeRGB);
-      CreateSolidTestCard(rgb.data(), FLAGS_width, FLAGS_height, 0, 0, 255, video_mode);
+      video_buffer.resize(kBuffSizeRGB);
+      CreateSolidTestCard(video_buffer.data(), FLAGS_width, FLAGS_height, 0, 0, 255, video_mode);
       LOG(INFO) << "Creating solid blue test card";
       break;
     case 0:
       Png image_reader;
-      rgb = image_reader.ReadPngRgb24(FLAGS_filename);
-      if (rgb.empty()) {
+      video_buffer = image_reader.ReadPngRgb24(FLAGS_filename);
+      if (video_buffer.empty()) {
         LOG(INFO) << "Failed to read png file (" << FLAGS_filename << ")";
         return -1;
       }
       /// Make it RGB
-      convert->RgbaToRgb(FLAGS_height, FLAGS_width, rgb.data(), rgb.data());
+      convert->RgbaToRgb(FLAGS_height, FLAGS_width, video_buffer.data(), video_buffer.data());
       break;
     default:
       LOG(INFO) << "Invalid source mode (" << FLAGS_source << ")";
@@ -218,13 +218,13 @@ int main(int argc, char **argv) {
     auto start = std::chrono::high_resolution_clock::now();
     // Clear the YUV buffer
     if (FLAGS_source == 1) {
-      v4lsource->CaptureFrame(rgb.data());
+      v4lsource->CaptureFrame(video_buffer.data());
     }
 
     // Clear buffer
     memset(transmit_buffer.data(), 0, kBuffSize);
     // Copy new image into buffer
-    memcpy(transmit_buffer.data(), rgb.data(), FLAGS_height * FLAGS_width * BytesPerPixel(video_mode));
+    memcpy(transmit_buffer.data(), video_buffer.data(), FLAGS_height * FLAGS_width * BytesPerPixel(video_mode));
 
     if (rtp.Transmit(transmit_buffer.data(), true) < 0) break;
     auto end = std::chrono::high_resolution_clock::now();

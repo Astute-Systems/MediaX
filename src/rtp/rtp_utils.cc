@@ -126,21 +126,22 @@ void DumpHex(const void *data, size_t size) {
   std::cout << std::dec << std::endl;
 }
 
+static bool odd = true;
+
 void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::ColourspaceType colourspace) {
-  static bool odd = false;
   switch (colourspace) {
     case mediax::ColourspaceType::kColourspaceYuv: {
       double y = 0.257 * r + 0.504 * g + 0.098 * b + 16;
       if (odd) {
         double u = -0.148 * r - 0.291 * g + 0.439 * b + 128;
-        data[1] = (uint8_t)(u);
+        data[0] = (uint8_t)(u);
         odd = false;
       } else {
         double v = 0.439 * r - 0.368 * g - 0.071 * b + 128;
-        data[1] = (uint8_t)(v);
+        data[0] = (uint8_t)(v);
         odd = true;
       }
-      data[0] = (uint8_t)(y);
+      data[1] = (uint8_t)(y);
     } break;
     case mediax::ColourspaceType::kColourspaceRgb24:
       data[0] = (uint8_t)r;
@@ -168,7 +169,7 @@ void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::Coloursp
 // Implementation of the CreateColourBarTestCard function
 void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
   uint32_t stride = mediax::BytesPerPixel(colourspace);
-
+  odd = true;
   for (uint32_t y = 0; y < height; y++) {
     for (uint32_t x = 0; x < width; x++) {
       uint8_t r;
