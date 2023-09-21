@@ -178,8 +178,8 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
           std::this_thread::sleep_for(std::chrono::milliseconds(2));
           continue;
         }
-        packet = reinterpret_cast<RtpPacket *>(stream->udpdata.data());
-        EndianSwap32(reinterpret_cast<uint32_t *>(packet), sizeof(RtpHeader) / 4);
+        packet = (RtpPacket *)stream->udpdata.data();
+        EndianSwap32((uint32_t *)packet, sizeof(RtpHeader) / 4);
 
         //
         // Decode Header bits and confirm RTP packet
@@ -202,7 +202,7 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
         //
         while (scan_line) {
           int more;
-          EndianSwap16(reinterpret_cast<uint16_t *>(&packet->head.payload.line[scan_count]), sizeof(LineHeader) / 2);
+          EndianSwap16((uint16_t *)&packet->head.payload.line[scan_count], sizeof(LineHeader) / 2);
           more = (packet->head.payload.line[scan_count].offset & 0x8000) >> 15;
           !more ? scan_line = false : scan_line = true;  // The last scan_line
           scan_count++;

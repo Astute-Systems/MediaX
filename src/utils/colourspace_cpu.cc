@@ -338,7 +338,7 @@ int ColourSpaceCpu::RgbToRgba(uint32_t width, uint32_t height, uint8_t *rgb, uin
 }
 
 int ColourSpaceCpu::YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const {
-  if (!rgba || !rgba) {
+  if (!yuv || !rgba) {
     // Handle null pointers gracefully
     return 1;
   }

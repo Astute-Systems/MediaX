@@ -96,12 +96,19 @@ class RtpvrawDepayloader : public RtpDepayloader {
   RtpvrawDepayloader(const RtpvrawDepayloader &other);
 
   ///
-  /// \brief Copy operator
+  /// \brief Copy operator (Deleted)
   ///
   /// \param other
   /// \return RtpvrawDepayloader&
   ///
   RtpvrawDepayloader &operator=(const RtpvrawDepayloader &other);
+
+  ///
+  /// \brief Construct a new Rtpvraw Depayloader object (Deleted)
+  ///
+  /// \param other
+  ///
+  RtpvrawDepayloader(RtpvrawDepayloader &&other) = delete;
 
   ///
   /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement
