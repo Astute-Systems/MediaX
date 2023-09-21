@@ -121,11 +121,11 @@ void SetupUncompressed(mediax::ColourspaceType mode) {
     // Just give the stream name and wait for SAP/SDP announcement
     LOG(INFO) << "Example RTP streaming to " << FLAGS_session_name;
     // Add SAP callback here
-    rtp_uncompressed->SetStreamInfo(FLAGS_session_name, mode, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
+    rtp_uncompressed->SetStreamInfo(FLAGS_session_name, mode, FLAGS_height, FLAGS_width, 25, FLAGS_ipaddr,
                                     (uint16_t)FLAGS_port);
   } else {
     LOG(INFO) << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port;
-    rtp_uncompressed->SetStreamInfo(FLAGS_session_name, mode, FLAGS_height, FLAGS_width, FLAGS_ipaddr,
+    rtp_uncompressed->SetStreamInfo(FLAGS_session_name, mode, FLAGS_height, FLAGS_width, 25, FLAGS_ipaddr,
                                     (uint16_t)FLAGS_port);
 
     // We have all the information so we can request the ports open now. No need to wait for SAP/SDP

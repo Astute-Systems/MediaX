@@ -56,11 +56,12 @@ RtpvrawDepayloader &RtpvrawDepayloader::operator=(const RtpvrawDepayloader &othe
 
 // Broadcast the stream to port i.e. 5004
 void RtpvrawDepayloader::SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                                       std::string_view hostname, const uint32_t portno) {
+                                       uint32_t framerate, std::string_view hostname, const uint32_t portno) {
   ingress_.encoding = encoding;
   ingress_.height = height;
   ingress_.width = width;
   ingress_.name = name;
+  ingress_.framerate = framerate;
   ingress_.hostname = hostname;
   ingress_.port_no = portno;
   ingress_.settings_valid = true;
