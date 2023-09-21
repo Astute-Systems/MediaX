@@ -66,16 +66,16 @@ gboolean on_draw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer
 
     switch (FLAGS_mode) {
       case 0:
-        convert.YuvToRgba(height, width, cpu_buffer, surface_data);
+        convert.YuvToBgra(height, width, cpu_buffer, surface_data);
         break;
       case 1:
-        convert.RgbToRgba(height, width, cpu_buffer, surface_data);
+        convert.RgbToBgra(height, width, cpu_buffer, surface_data);
         break;
       case 2:
-        convert.Mono16ToRgba(height, width, cpu_buffer, surface_data);
+        convert.Mono16ToBgra(height, width, cpu_buffer, surface_data);
         break;
       case 3:
-        convert.Mono8ToRgba(height, width, cpu_buffer, surface_data);
+        convert.Mono8ToBgra(height, width, cpu_buffer, surface_data);
         break;
       default:
         LOG(ERROR) << "Unsupported mode=" << FLAGS_mode << "\n";

@@ -34,13 +34,13 @@ TEST(Colourspace, TestErrors) {
   EXPECT_NE(colour_space_cpu.RgbToYuv(height, width, rgb, yuv), 0);
   EXPECT_NE(colour_space_cpu.RgbToMono8(height, width, rgb, yuv), 0);
   EXPECT_NE(colour_space_cpu.RgbToMono16(height, width, rgb, yuv), 0);
-  EXPECT_NE(colour_space_cpu.RgbToRgba(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.RgbToBgra(height, width, rgb, yuv), 0);
   EXPECT_NE(colour_space_cpu.RgbaToRgb(height, width, rgb, yuv), 0);
   EXPECT_NE(colour_space_cpu.RgbaToYuv(height, width, rgb, yuv), 0);
   EXPECT_NE(colour_space_cpu.YuvToRgb(height, width, rgb, yuv), 0);
-  EXPECT_NE(colour_space_cpu.YuvToRgba(height, width, rgb, yuv), 0);
-  EXPECT_NE(colour_space_cpu.Mono8ToRgba(height, width, rgb, yuv), 0);
-  EXPECT_NE(colour_space_cpu.Mono16ToRgba(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.YuvToBgra(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.Mono8ToBgra(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.Mono16ToBgra(height, width, rgb, yuv), 0);
   EXPECT_NE(colour_space_cpu.ScaleToSizeRgb(height, width, rgb, height, width, yuv), 0);
 }
 
@@ -80,25 +80,22 @@ TEST(Colourspace, YuvToRgbTest) {
 }
 
 TEST(Colourspace, YuvToRgbaTest) {
-  uint32_t height = 4;
-  uint32_t width = 4;
+  uint32_t height = 240;
+  uint32_t width = 320;
   uint8_t yuv[width * height * 2];
   uint8_t rgba_recieve[width * height * 4];
+  uint8_t rgb[width * height * 3];
   video::ColourSpaceCpu convert;
 
   // Fill the YUV buffer with a red color
-  for (uint32_t i = 0; i < (width * height * 2); i += 4) {
-    yuv[i] = 0x51;      // Y component
-    yuv[i + 1] = 0x5a;  // U component
-    yuv[i + 2] = 0x51;  // Y component
-    yuv[i + 3] = 0xf0;  // U component
-  }
+  CreateColourBarTestCard(yuv, width, height, mediax::ColourspaceType::kColourspaceYuv);
   DumpHex(yuv, 16);
 
   // Call the function you want to test
   convert.YuvToRgba(height, width, yuv, rgba_recieve);
-  // Write the result to a file
-  WritePngFile(target_rgb_buffer, target_width, target_height, "YuvToRgbaTest.png");
+  convert.RgbaToRgb(height, width, rgba_recieve, rgb);
+
+  WritePngFile(rgb, width, height, "YuvToRgbaTest.png");
 
   DumpHex(rgba_recieve, 16);
 }
@@ -119,7 +116,7 @@ TEST(Colourspace, RgbToRgbaTest) {
   DumpHex(rgb, 16);
 
   // Call the function you want to test
-  convert.RgbToRgba(height, width, rgb, rgba_recieve);
+  convert.RgbToBgra(height, width, rgb, rgba_recieve);
   DumpHex(rgba_recieve, 16);
 }
 
@@ -137,7 +134,7 @@ TEST(Colourspace, Mono8ToRgbaTest) {
   DumpHex(mono8, 16);
 
   // Call the function you want to test
-  convert.Mono8ToRgba(height, width, mono8, rgba_recieve);
+  convert.Mono8ToBgra(height, width, mono8, rgba_recieve);
   DumpHex(rgba_recieve, 16);
 }
 
@@ -156,7 +153,7 @@ TEST(Colourspace, Mono16ToRgbaTest) {
   DumpHex(mono16, 16);
 
   // Call the function you want to test
-  convert.Mono16ToRgba(height, width, mono16, rgba_recieve);
+  convert.Mono16ToBgra(height, width, mono16, rgba_recieve);
   DumpHex(rgba_recieve, 16);
 }
 

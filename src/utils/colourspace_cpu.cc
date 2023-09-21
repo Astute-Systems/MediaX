@@ -50,8 +50,8 @@ int ColourSpaceCpu::YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint
   return 0;
 }
 
-int ColourSpaceCpu::YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const {
-  if (!rgba || !yuv) {
+int ColourSpaceCpu::YuvToBgra(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *gbra) const {
+  if (!gbra || !yuv) {
     // Handle null pointers gracefully
     return 1;
   }
@@ -66,7 +66,7 @@ int ColourSpaceCpu::YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uin
   }
 
   const std::array<uint8_t *, 1> inData = {yuv};
-  std::array<uint8_t *, 1> outData = {rgba};
+  std::array<uint8_t *, 1> outData = {gbra};
 
   // Use static_cast instead of C-style cast
   const std::array<int32_t, 1> inLinesize = {(int32_t)(width * 2)};
@@ -206,14 +206,92 @@ int ColourSpaceCpu::RgbToMono16(uint32_t height, uint32_t width, uint8_t *rgb, u
   return 0;
 }
 
-int ColourSpaceCpu::RgbToRgba(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *rgba) const {
-  if (!rgb || !rgba) {
+int ColourSpaceCpu::RgbToBgra(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *bgra) const {
+  if (!rgb || !bgra) {
     // Handle null pointers gracefully
     return 1;
   }
 
   std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
       sws_getContext(width, height, AV_PIX_FMT_RGB24, width, height, AV_PIX_FMT_BGRA, SWS_BICUBIC, nullptr, nullptr,
+                     nullptr),
+      &sws_freeContext);
+  if (!ctx) {
+    // Handle allocation failure gracefully
+    return 1;
+  }
+
+  const std::array<uint8_t *, 1> inData = {rgb};
+  std::array<uint8_t *, 1> outData = {bgra};
+
+  // Use static_cast instead of C-style cast
+  const std::array<int32_t, 1> inLinesize = {(int32_t)(width * 3)};
+  std::array<int32_t, 1> outLinesize = {(int32_t)(width * 4)};
+
+  sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
+  return 0;
+}
+
+int ColourSpaceCpu::Mono8ToBgra(uint32_t width, uint32_t height, uint8_t *mono8, uint8_t *bgra) const {
+  if (!bgra || !mono8) {
+    // Handle null pointers gracefully
+    return 1;
+  }
+
+  std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
+      sws_getContext(width, height, AV_PIX_FMT_GRAY8, width, height, AV_PIX_FMT_BGRA, SWS_BICUBIC, nullptr, nullptr,
+                     nullptr),
+      &sws_freeContext);
+  if (!ctx) {
+    // Handle allocation failure gracefully
+    return 1;
+  }
+
+  const std::array<uint8_t *, 1> inData = {mono8};
+  std::array<uint8_t *, 1> outData = {bgra};
+
+  // Use static_cast instead of C-style cast
+  const std::array<int32_t, 1> inLinesize = {(int32_t)(width * 1)};
+  std::array<int32_t, 1> outLinesize = {(int32_t)(width * 4)};
+
+  sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
+  return 0;
+}
+
+int ColourSpaceCpu::Mono16ToBgra(uint32_t width, uint32_t height, uint8_t *mono16, uint8_t *bgra) const {
+  if (!bgra || !mono16) {
+    // Handle null pointers gracefully
+    return 1;
+  }
+
+  std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
+      sws_getContext(width, height, AV_PIX_FMT_GRAY16, width, height, AV_PIX_FMT_BGRA, SWS_BICUBIC, nullptr, nullptr,
+                     nullptr),
+      &sws_freeContext);
+  if (!ctx) {
+    // Handle allocation failure gracefully
+    return 1;
+  }
+
+  const std::array<uint8_t *, 1> inData = {mono16};
+  std::array<uint8_t *, 1> outData = {bgra};
+
+  // Use static_cast instead of C-style cast
+  const std::array<int32_t, 1> inLinesize = {(int32_t)(width * 2)};
+  std::array<int32_t, 1> outLinesize = {(int32_t)(width * 4)};
+
+  sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
+  return 0;
+}
+
+int ColourSpaceCpu::RgbToRgba(uint32_t width, uint32_t height, uint8_t *rgb, uint8_t *rgba) const {
+  if (!rgb || !rgba) {
+    // Handle null pointers gracefully
+    return 1;
+  }
+
+  std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
+      sws_getContext(width, height, AV_PIX_FMT_RGB24, width, height, AV_PIX_FMT_RGBA, SWS_BICUBIC, nullptr, nullptr,
                      nullptr),
       &sws_freeContext);
   if (!ctx) {
@@ -232,6 +310,31 @@ int ColourSpaceCpu::RgbToRgba(uint32_t height, uint32_t width, uint8_t *rgb, uin
   return 0;
 }
 
+int ColourSpaceCpu::YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const {
+  if (!rgba || !rgba) {
+    // Handle null pointers gracefully
+    return 1;
+  }
+
+  std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
+      sws_getContext(width, height, AV_PIX_FMT_UYVY422, width, height, AV_PIX_FMT_RGBA, SWS_BICUBIC, nullptr, nullptr,
+                     nullptr),
+      &sws_freeContext);
+  if (!ctx) {
+    // Handle allocation failure gracefully
+    return 1;
+  }
+
+  const std::array<uint8_t *, 1> inData = {yuv};
+  std::array<uint8_t *, 1> outData = {rgba};
+
+  // Use static_cast instead of C-style cast
+  const std::array<int32_t, 1> inLinesize = {(int32_t)(width * 2)};
+  std::array<int32_t, 1> outLinesize = {(int32_t)(width * 4)};
+
+  sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
+  return 0;
+}
 int ColourSpaceCpu::Mono8ToRgba(uint32_t width, uint32_t height, uint8_t *mono8, uint8_t *rgba) const {
   if (!rgba || !mono8) {
     // Handle null pointers gracefully
@@ -239,7 +342,7 @@ int ColourSpaceCpu::Mono8ToRgba(uint32_t width, uint32_t height, uint8_t *mono8,
   }
 
   std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
-      sws_getContext(width, height, AV_PIX_FMT_GRAY8, width, height, AV_PIX_FMT_BGRA, SWS_BICUBIC, nullptr, nullptr,
+      sws_getContext(width, height, AV_PIX_FMT_GRAY8, width, height, AV_PIX_FMT_RGBA, SWS_BICUBIC, nullptr, nullptr,
                      nullptr),
       &sws_freeContext);
   if (!ctx) {
@@ -265,7 +368,7 @@ int ColourSpaceCpu::Mono16ToRgba(uint32_t width, uint32_t height, uint8_t *mono1
   }
 
   std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
-      sws_getContext(width, height, AV_PIX_FMT_GRAY16, width, height, AV_PIX_FMT_BGRA, SWS_BICUBIC, nullptr, nullptr,
+      sws_getContext(width, height, AV_PIX_FMT_GRAY16, width, height, AV_PIX_FMT_RGBA, SWS_BICUBIC, nullptr, nullptr,
                      nullptr),
       &sws_freeContext);
   if (!ctx) {

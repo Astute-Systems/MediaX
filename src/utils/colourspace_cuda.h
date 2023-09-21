@@ -88,7 +88,7 @@ class ColourSpaceCuda : public ColourSpace {
   /// \param yuv The YUV:422 image buffer
   /// \param rgba The RGBA image buffer
   ///
-  int YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const final;
+  int YuvToBgra(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const final;
 
   ///
   /// \brief Convert YUV to RGB
