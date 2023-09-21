@@ -27,9 +27,9 @@ class ColourSpaceCpu : public ColourSpace {
   /// \brief Construct a new Colour Space object
   ///
   ///
-  ColourSpaceCpu();
+  ColourSpaceCpu() = default;
 
-  ~ColourSpaceCpu() = default;
+  ~ColourSpaceCpu() final = default;
 
   ///
   /// \brief Convert YUV to RGBA on the CPU

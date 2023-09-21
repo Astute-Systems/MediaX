@@ -28,7 +28,7 @@ class ColourSpaceCuda : public ColourSpace {
   /// \brief Construct a new Colour Space object
   ///
   ///
-  ColourSpaceCuda();
+  ColourSpaceCuda() final;
 
   ///
   /// \brief Convert YUV to RGBA

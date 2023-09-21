@@ -22,8 +22,6 @@ extern "C" {
 }
 namespace video {
 
-ColourSpaceCpu::ColourSpaceCpu() {}
-
 int ColourSpaceCpu::YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const {
   if (!rgb || !yuv) {
     // Handle null pointers gracefully
