@@ -12,7 +12,7 @@
 /// \file rtph264_payloader.h
 ///
 
-#ifndef RTPH264_DEPAYLOADER_H
-#define RTPH264_DEPAYLOADER_H
+#ifndef RTPH264_PAYLOADER_H_
+#define RTPH264_PAYLOADER_H_
 #pragma ignored "This file is only available in the Pro version of VivoeX."
-#endif  // RTPH264_DEPAYLOADER_H
+#endif  // RTPH264_PAYLOADER_H_
