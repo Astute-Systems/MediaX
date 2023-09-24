@@ -14,6 +14,9 @@
 #include <gtest/gtest.h>
 #include <unistd.h>
 
+#include <chrono>
+#include <thread>
+
 #include "raw/rtpvraw_depayloader.h"
 #include "raw/rtpvraw_payloader.h"
 #include "rtp/rtp_utils.h"
@@ -70,6 +73,49 @@ TEST(RTPDepayloaderTest, UnicastOk) {
   rtp.Stop();
   rtp.Close();
 }
+
+void SendFrameThread(std::string ip, uint32_t port) {
+  LOG(INFO) << "Sending video to " << ip << ":" << port;  // Sleep thread for 100ms
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+  SendVideoCheckered(ip, 640, 480, 25, port);
+  LOG(INFO) << "Sent " << ip << ":" << port;  // Sleep thread for 100ms
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+}
+
+// TEST(RTPDepayloaderTest, UnicastOkMany) {
+//   std::array<uint8_t, 640 * 480 * 3> rgb_test;
+//   uint8_t* data = rgb_test.data();
+//   uint32_t base_port = 5004;
+//   std::map<int, mediax::RtpvrawDepayloader> rtp;
+//   int number_of_streams = 10;
+
+//   // Setup ten streams
+//   for (int i = 0; i < number_of_streams; i++) {
+//     rtp[i].SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceRgb24, 640, 480, 25, "127.0.0.1",
+//                          base_port + i);
+//     rtp[i].Open();
+//     rtp[i].Start();
+//   }
+
+//   // Send video to ten stream frames
+//   for (int i = 0; i < number_of_streams; i++) {
+//     // clear the buffer
+//     memset(data, 0, 640 * 480 * 3);
+//     // Start a transmit thread
+//     // std::thread sender_thread(SendFrameThread, rtp[i].GetIpAddress(), rtp[i].GetPort());
+//     SendVideoCheckered(rtp[i].GetIpAddress(), 640, 480, 25, rtp[i].GetPort());
+//     EXPECT_TRUE(rtp[i].Receive(&data, 1000));
+//     std::string filename = "UnicastOkMulti_" + std::to_string(i) + ".png";
+//     WritePngFile(data, 640, 480, filename.c_str());
+//   }
+
+//   // Close the streams
+//   for (int i = 0; i < number_of_streams; i++) {
+//     rtp[i].Stop();
+//     rtp[i].Close();
+//   }
+// }
 
 TEST(RTPDepayloaderTest, MulticastOk) {
   std::array<uint8_t, 640 * 480 * 3> rgb_test;

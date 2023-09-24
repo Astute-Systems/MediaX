@@ -7,10 +7,10 @@
 mediax::ColourspaceType GetMode(int mode) {
   switch (mode) {
     case 0:
-      return mediax::ColourspaceType::kColourspaceYuv;
+      return mediax::ColourspaceType::kColourspaceRgb24;
       break;
     case 1:
-      return mediax::ColourspaceType::kColourspaceRgb24;
+      return mediax::ColourspaceType::kColourspaceYuv;
       break;
     case 2:
       return mediax::ColourspaceType::kColourspaceMono16;

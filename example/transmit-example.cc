@@ -85,7 +85,7 @@ DEFINE_int32(source, 2,
 DEFINE_string(filename, "testcard.png", "the PNG file to use as the source of the video stream (only with -source 0)");
 DEFINE_string(device, "/dev/video0", "the V4L2 device source (only with -source 1)");
 DEFINE_string(session_name, "TestVideo1", "the SAP/SDP session name");
-DEFINE_int32(mode, 0,
+DEFINE_int32(mode, 1,
              "The video mode (0-4)\n\t"
              "0 - Uncompressed RGB\n\t"
              "1 - Uncompressed YUV\n\t"

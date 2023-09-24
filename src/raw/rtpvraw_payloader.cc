@@ -47,10 +47,10 @@ std::vector<uint8_t> RtpvrawPayloader::buffer_in_;
 RtpvrawPayloader::RtpvrawPayloader() = default;
 
 RtpvrawPayloader::~RtpvrawPayloader(void) {
+  if (tx_thread_.joinable()) tx_thread_.join();
   if (egress_.sockfd) {
     close(egress_.sockfd);
   }
-  if (tx_thread_.joinable()) tx_thread_.join();
 }
 
 void RtpvrawPayloader::SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,

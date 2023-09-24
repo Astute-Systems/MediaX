@@ -31,10 +31,10 @@ DEFINE_int32(width, kWidthDefault, "the width of the image");
 DEFINE_string(session_name, kSessionName, "the SAP/SDP session name");
 DEFINE_bool(wait_sap, false, "wait for SAP/SDP announcement");
 DEFINE_bool(uncompressed, true, "Uncompressed video stream");
-DEFINE_int32(mode, 0,
+DEFINE_int32(mode, 1,
              "The video mode (0-4)\n\t"
-             "0 - Uncompressed YUV\n\t"
-             "1 - Uncompressed RGB\n\t"
+             "0 - Uncompressed RGB\n\t"
+             "1 - Uncompressed YUV\n\t"
              "2 - Mono16\n\t"
              "3 - Mono8\n\t"
              "4 - H.264\n\t");
@@ -71,15 +71,12 @@ gboolean on_draw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer
       return FALSE;
     }
 
-    // int stride = cairo_image_surface_get_stride(data->surface);
-    // LOG(INFO) << "Stride " << stride;
     switch (FLAGS_mode) {
       case 0:
-        convert.YuvToBgra(height, width, cpu_buffer, surface_data);
-        // CreateColourBarTestCard(surface_data, width, height, mediax::ColourspaceType::kColourspaceRgba);
+        convert.RgbToBgra(height, width, cpu_buffer, surface_data);
         break;
       case 1:
-        convert.RgbToBgra(height, width, cpu_buffer, surface_data);
+        convert.YuvToBgra(height, width, cpu_buffer, surface_data);
         break;
       case 2:
         convert.Mono16ToBgra(height, width, cpu_buffer, surface_data);
