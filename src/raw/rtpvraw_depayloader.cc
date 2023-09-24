@@ -158,12 +158,13 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
   setsockopt(stream->ingress_.sockfd, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
 
   while (stream->rx_thread_running_) {
+    bool last_scan_line = false;
     while (receiving && stream->rx_thread_running_) {
       int marker;
-
       int version;
       int payloadType;
       bool valid = false;
+      last_scan_line = false;
 
       //
       // Read data until we get the next RTP header
@@ -186,6 +187,7 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
         //
         payloadType = (packet->head.rtp.protocol & 0x007F0000) >> 16;
         version = (packet->head.rtp.protocol & 0xC0000000) >> 30;
+        last_scan_line = (packet->head.rtp.protocol & 0x00800000) >> 23;
         if ((payloadType == 96) && (version == 2)) {
           valid = true;
         }
@@ -226,7 +228,7 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
             break;
           }
           pixel = ((packet->head.payload.line[c].offset & 0x7FFF) * kColourspaceBytes.at(stream->ingress_.encoding)) +
-                  (((packet->head.payload.line[c].line_number) & 0x7FFF) *
+                  (((packet->head.payload.line[c].line_number - 1) & 0x7FFF) *
                    (stream->ingress_.width * kColourspaceBytes.at(stream->ingress_.encoding)));
           length = packet->head.payload.line[c].length & 0xFFFF;
 
@@ -243,7 +245,7 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
     }
 
     stream->arg_tx.encoded_frame = RtpvrawDepayloader::buffer_in_.data();
-    stream->new_rx_frame_ = true;
+    stream->new_rx_frame_ = last_scan_line;
     receiving = true;
   }  // Receive loop
   return;
@@ -266,7 +268,7 @@ bool RtpvrawDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
   // Wait for completion
   if (timeout <= 0) {
     while (!new_rx_frame_) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+      std::this_thread::sleep_for(std::chrono::milliseconds(2));
     }
     *cpu = buffer_in_.data();
     new_rx_frame_ = false;
