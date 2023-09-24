@@ -226,7 +226,7 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
             break;
           }
           pixel = ((packet->head.payload.line[c].offset & 0x7FFF) * kColourspaceBytes.at(stream->ingress_.encoding)) +
-                  (((packet->head.payload.line[c].line_number - 1) & 0x7FFF) *
+                  (((packet->head.payload.line[c].line_number) & 0x7FFF) *
                    (stream->ingress_.width * kColourspaceBytes.at(stream->ingress_.encoding)));
           length = packet->head.payload.line[c].length & 0xFFFF;
 
