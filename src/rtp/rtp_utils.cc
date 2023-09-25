@@ -157,10 +157,11 @@ void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::Coloursp
     case mediax::ColourspaceType::kColourspaceMono8:
       data[0] = (uint8_t)(0.299 * r + 0.587 * g + 0.114 * b);
       break;
-    case mediax::ColourspaceType::kColourspaceMono16:
-      data[0] = (uint8_t)(0.299 * r + 0.587 * g + 0.114 * b);
-      data[1] = 0;
-      break;
+    case mediax::ColourspaceType::kColourspaceMono16: {
+      uint16_t mono16_pixel = (uint16_t)(0.299 * r + 0.587 * g + 0.114 * b);
+      data[0] = mono16_pixel >> 8 & 0xFF;
+      data[1] = mono16_pixel & 0xFF;
+    } break;
     default:
       break;
   }
