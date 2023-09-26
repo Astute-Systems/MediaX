@@ -17,6 +17,10 @@ This library (compliant to ISO/IEC 14882 C++17) implements [RFC 4421](https://da
 
 Transmit streams emit a SAP/SDP announcement every second as per RFC 2974 and RFC 4566. Also referenced as in DEF STAN 00-082.
 
+## Python bindings
+
+Library has Python bindings for video streaming (and SAP/SDP support) with AI frameworks and use inside Jypter notebooks.
+
 ## Documentation
 
 Doxygen documentation is available on [Github Page](https://defencex.github.io/MediaX).
