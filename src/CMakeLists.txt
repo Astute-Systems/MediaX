@@ -7,6 +7,9 @@ project(mediax
   VERSION "${MEDIAX_VERSION}"
 )
 
+add_subdirectory(raw)
+add_subdirectory(sap)
+
 if (BUILD_CUDA)
   enable_language(CUDA)
 else()

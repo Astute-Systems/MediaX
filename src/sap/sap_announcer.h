@@ -69,7 +69,7 @@ struct SAPMessage {
   /// The stream framerate in frames / second
   uint32_t framerate;
   /// Colourspace
-  ColourspaceType colourspace;
+  ::mediax::ColourspaceType colourspace;
   /// Flag indicating the stream was deleted
   bool deleted = false;
 };

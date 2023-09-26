@@ -120,7 +120,7 @@ class RtpvrawDepayloader : public RtpDepayloader {
   /// \param height The height of the stream in pixels
   /// \param width The width of the stream in pixels
   ///
-  void SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
+  void SetStreamInfo(std::string_view name, ::mediax::ColourspaceType encoding, uint32_t height, uint32_t width,
                      uint32_t framerate, std::string_view hostname, const uint32_t port = 5004);
 
   ///

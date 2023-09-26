@@ -172,7 +172,8 @@
         "future": "cpp",
         "typeindex": "cpp",
         "climits": "cpp",
-        "__config": "cpp"
+        "__config": "cpp",
+        "rtpvraw_depayloader.h": "c"
     },
     "terminal.integrated.shell.windows": "C:\\msys64\\usr\\bin\\bash.exe",
     "terminal.integrated.shellArgs.windows": [
