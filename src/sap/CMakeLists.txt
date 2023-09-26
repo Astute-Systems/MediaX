@@ -13,11 +13,13 @@ include_directories(${PYTHON_INCLUDE_PATH} ${CMAKE_SOURCE_DIR}/src)
 
 # build swig interface for depayloader
 set_source_files_properties(sap_announcer.i PROPERTIES CPLUSPLUS ON)
-swig_add_library(sap_announcer TYPE MODULE LANGUAGE python SOURCES sap_announcer.i)
+swig_add_library(sap_announcer TYPE MODULE LANGUAGE python SOURCES sap_announcer.i sap_announcer.cc sap_utils.cc ../rtp/rtp_utils.cc)
+swig_link_libraries(sap_announcer glog)
 
 # Create a ptyhon object just for this package
 set_source_files_properties(sap_listener.i PROPERTIES CPLUSPLUS ON)
-swig_add_library(sap_listener TYPE MODULE LANGUAGE python SOURCES sap_listener.i)
+swig_add_library(sap_listener TYPE MODULE LANGUAGE python SOURCES sap_listener.i sap_listener.cc ../rtp/rtp_utils.cc)
+swig_link_libraries(sap_listener glog)
 
 install(TARGETS sap_announcer DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/sap_announcer.py DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
