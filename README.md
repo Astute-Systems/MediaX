@@ -21,6 +21,18 @@ Transmit streams emit a SAP/SDP announcement every second as per RFC 2974 and RF
 
 Library has Python bindings for video streaming (and SAP/SDP support) with AI frameworks and use inside Jypter notebooks.
 
+Once built and installed import as follows:
+
+``` .py
+import sys
+sys.path.append('/usr/local/lib/python3/dist-packages/mediax')
+
+import sap_listener
+import sap_announcer
+import rtpvraw_payloader
+import rtpvraw_depayloader
+```
+
 ## Documentation
 
 Doxygen documentation is available on [Github Page](https://defencex.github.io/MediaX).
