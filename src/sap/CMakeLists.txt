@@ -1,5 +1,8 @@
 project(python)
 
+cmake_policy(SET CMP0086 NEW)
+cmake_policy(SET CMP0078 NEW)
+
 # find and build swig interface for python
 find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
@@ -10,33 +13,13 @@ include_directories(${PYTHON_INCLUDE_PATH} ${CMAKE_SOURCE_DIR}/src)
 
 # build swig interface for depayloader
 set_source_files_properties(sap_announcer.i PROPERTIES CPLUSPLUS ON)
-swig_add_module(sap_announcer python sap_announcer.i)
-swig_link_libraries(sap_announcer ${PYTHON_LIBRARIES})
-add_library(sap_announcer SHARED sap_announcer.cc)
-# build python package
-add_custom_command(
-    TARGET _sap_announcer POST_BUILD
-    # make python directory if it doesn't exist
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/python
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/python/sap_announcer
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/sap_announcer.py ${CMAKE_BINARY_DIR}/python/sap_announcer
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libsap_announcer.so ${CMAKE_BINARY_DIR}/python/sap_announcer
-)
-add_dependencies(_sap_announcer sap_announcer)
+swig_add_library(sap_announcer TYPE MODULE LANGUAGE python SOURCES sap_announcer.i)
 
 # Create a ptyhon object just for this package
 set_source_files_properties(sap_listener.i PROPERTIES CPLUSPLUS ON)
-swig_add_module(sap_listener python sap_listener.i)
-swig_link_libraries(sap_listener ${PYTHON_LIBRARIES})
-add_library(sap_listener SHARED sap_listener.cc)
-# build python package
-add_custom_command(
-    TARGET _sap_listener POST_BUILD
-    # make python directory if it doesn't exist
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/python
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/python/sap_listener
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/sap_listener.py ${CMAKE_BINARY_DIR}/python/sap_listener
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libsap_listener.so ${CMAKE_BINARY_DIR}/python/sap_listener
-)
+swig_add_library(sap_listener TYPE MODULE LANGUAGE python SOURCES sap_listener.i)
 
-add_dependencies(_sap_listener sap_listener)
+install(TARGETS sap_announcer DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/sap_announcer.py DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
+install(TARGETS sap_listener DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/sap_listener.py DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)

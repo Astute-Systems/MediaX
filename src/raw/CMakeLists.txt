@@ -1,5 +1,8 @@
 project(python)
 
+cmake_policy(SET CMP0086 NEW)
+cmake_policy(SET CMP0078 NEW)
+
 # find and build swig interface for python
 find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
@@ -10,32 +13,13 @@ include_directories(${PYTHON_INCLUDE_PATH} ${CMAKE_SOURCE_DIR}/src)
 
 # build swig interface for payloader
 set_source_files_properties(rtpvraw_payloader.i PROPERTIES CPLUSPLUS ON)
-swig_add_module(rtpvraw_payloader python rtpvraw_payloader.i)
-swig_link_libraries(rtpvraw_payloader ${PYTHON_LIBRARIES})
-add_library(rtpvraw_payloader SHARED rtpvraw_payloader.cc)
-# build python package
-add_custom_command(
-    TARGET _rtpvraw_payloader POST_BUILD
-    # make python directory if it doesn't exist
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/python
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/python/rtpvraw_payloader
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/rtpvraw_payloader.py ${CMAKE_BINARY_DIR}/python/rtpvraw_payloader
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/librtpvraw_payloader.so ${CMAKE_BINARY_DIR}/python/rtpvraw_payloader
-)
-add_dependencies(_rtpvraw_payloader rtpvraw_payloader )
+swig_add_library(rtpvraw_payloader TYPE SHARED LANGUAGE python SOURCES rtpvraw_payloader.i)
 
 # build swig interface for depayloader
 set_source_files_properties(rtpvraw_depayloader.i PROPERTIES CPLUSPLUS ON)
-swig_add_module(rtpvraw_depayloader python rtpvraw_depayloader.i)
-swig_link_libraries(rtpvraw_depayloader ${PYTHON_LIBRARIES})
-add_library(rtpvraw_depayloader SHARED rtpvraw_depayloader.cc)
-# build python package
-add_custom_command(
-    TARGET _rtpvraw_depayloader POST_BUILD
-    # make python directory if it doesn't exist
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/python
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/python/rtpvraw_depayloader
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/rtpvraw_depayloader.py ${CMAKE_BINARY_DIR}/python/rtpvraw_depayloader
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/librtpvraw_depayloader.so ${CMAKE_BINARY_DIR}/python/rtpvraw_depayloader
-)
-add_dependencies(_rtpvraw_depayloader rtpvraw_depayloader)
+swig_add_library(rtpvraw_depayloader TYPE SHARED LANGUAGE python SOURCES rtpvraw_depayloader.i)
+
+install(TARGETS rtpvraw_payloader DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/rtpvraw_payloader.py DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
+install(TARGETS rtpvraw_depayloader DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/rtpvraw_depayloader.py DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
