@@ -9,6 +9,7 @@ project(mediax
 
 add_subdirectory(raw)
 add_subdirectory(sap)
+add_subdirectory(rtp)
 
 if (BUILD_CUDA)
   enable_language(CUDA)

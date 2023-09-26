@@ -46,7 +46,7 @@ class RtpPayloader {
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
   /// \param port defaults to 5004
   ///
-  virtual void SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
+  virtual void SetStreamInfo(std::string_view name, ::mediax::ColourspaceType encoding, uint32_t height, uint32_t width,
                              uint32_t framerate, std::string_view hostname, const uint32_t port = 5004) = 0;
 
   ///
@@ -90,7 +90,7 @@ class RtpPayloader {
   ///
   /// \return ColourspaceType
   ///
-  ColourspaceType GetColourSpace() const;
+  mediax::ColourspaceType GetColourSpace() const;
 
   ///
   /// \brief Get the Height object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
@@ -133,7 +133,7 @@ class RtpPayloader {
   uint32_t GetPort() const;
 
   /// Egress port
-  PortType egress_;
+  ::mediax::PortType egress_;
 };
 
 }  // namespace mediax

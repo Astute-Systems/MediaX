@@ -89,7 +89,7 @@ class RtpDepayloader {
   ///
   /// \return ColourspaceType
   ///
-  ColourspaceType GetColourSpace() const;
+  ::mediax::ColourspaceType GetColourSpace() const;
 
   ///
   /// \brief Set the Height attribute
@@ -172,7 +172,7 @@ class RtpDepayloader {
   bool IsMulticast(std::string_view ip_address);
 
   /// Ingress port
-  PortType ingress_ = {};
+  ::mediax::PortType ingress_ = {};
 };
 
 }  // namespace mediax
