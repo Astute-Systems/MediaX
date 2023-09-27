@@ -186,5 +186,10 @@
         "TERM": "xterm-color",
         "PATH": "${env:PATH}",
         "WORKSPACE_ROOT": "${workspaceFolder}"
-    }
+    },
+    "python.analysis.extraPaths": [
+        "./build/python/mediax",
+        "./build/src/rtp",
+        "./build/src/sap"
+    ]
 }

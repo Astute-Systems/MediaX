@@ -18,7 +18,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[]) {
 
   mediax::sap::SAPListener& sap = mediax::sap::SAPListener::GetInstance();
 
-  std::cout << "Waiting for 2 seconds for all SAP/SDP announcements \n";
+  std::cout << "Waiting for 2 seconds for all SAP/SDP announcements\n";
 
   // Listen for 2 seconds and dump out the SAP announcements seen
   sap.Start();

@@ -19,10 +19,10 @@ target_link_libraries(transmit-example mediax_static gflags ${GST_LIBRARIES} )
 add_executable(receive-example receive-example.cc example_helpers.cc pngget.cc)
 target_link_libraries(receive-example mediax_static glog gflags ${GTKMM_LIBRARIES} ${CAIRO_LIBRARIES} png)
 
-add_executable(sap-example sap-example.cc)
-target_link_libraries(sap-example mediax_static)
+add_executable(sap-announcer sap-announcer-example.cc)
+target_link_libraries(sap-announcer mediax_static)
 
-add_executable(sap-listener sap-listener.cc)
+add_executable(sap-listener sap-listener-example.cc)
 target_link_libraries(sap-listener mediax_static)
 
 # Copy testcard.png to the build directory so that it can be found when running example
