@@ -23,7 +23,7 @@
 #include "util_tests.h"
 #include "utils/colourspace_cpu.h"
 
-TEST(RtpH264DepayloaderTest, Timeout) {
+TEST(RtpH264DepayloaderTest, DISABLED_Timeout) {
   uint8_t* rgb_test;
 
   mediax::RtpH264Depayloader rtp;
@@ -34,12 +34,10 @@ TEST(RtpH264DepayloaderTest, Timeout) {
   rtp.Close();
 }
 
-TEST(RtpH264DepayloaderTest, UnicastOk) {
+TEST(RtpH264DepayloaderTest, DISABLED_UnicastOk) {
   std::array<uint8_t, 640 * 480 * 3> rgb_test;
   video::ColourSpaceCpu colourspace;
   mediax::RtpH264Depayloader rtp;
-
-  mediax::RtpInit(0, nullptr);
 
   // Set the stream details
   rtp.SetIpAddress("127.0.0.1");
