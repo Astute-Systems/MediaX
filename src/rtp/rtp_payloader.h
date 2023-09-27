@@ -6,10 +6,9 @@
 // Licensed under the Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
 // License. See the LICENSE file in the project root for full license details.
 //
-///
 /// \brief RTP streaming video class for uncompressed DEF-STAN 00-82 video streams
 ///
-/// \file rtpv_payloader.h
+/// \file rtp_payloader.h
 ///
 
 #ifndef RTP_RTP_PAYLOADER_H_

@@ -34,6 +34,8 @@
 //
 // Use his program to stream data to the udpsc example above on the Jetson
 //
+/// \brief A simple video transmitter example
+///
 /// \file transmit-example.cc
 
 #include <byteswap.h>

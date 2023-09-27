@@ -6,6 +6,8 @@
 // Licensed under the Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
 // License. See the LICENSE file in the project root for full license details.
 //
+/// \brief Some common types used in examples
+///
 /// \file example.h
 ///
 
