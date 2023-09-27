@@ -127,6 +127,6 @@ bool RtpH264Depayloader::Receive(uint8_t **cpu, int32_t timeout) {
     }
   }
   return true;
-};
+}
 
 }  // namespace mediax
