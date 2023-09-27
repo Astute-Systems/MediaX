@@ -67,6 +67,7 @@
         "sonarqube",
         "sonarscan",
         "startuml",
+        "timespan",
         "udpdata",
         "udpsc",
         "udpsink",

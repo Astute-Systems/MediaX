@@ -10,11 +10,14 @@
 /// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
 ///
 /// \file rtph264_depayloader.h
+///
 
 #ifndef H264_GST_RTPH264_DEPAYLOADER_H_
 #define H264_GST_RTPH264_DEPAYLOADER_H_
 
 #include <gst/gst.h>
+
+#include <vector>
 
 #include "rtp/rtp_depayloader.h"
 
@@ -68,7 +71,10 @@ class RtpH264Depayloader : public RtpDepayloader {
   /// \return true when frame available
   /// \return false when no frame was received in the timeout
   ///
-  bool Receive(uint8_t **cpu, int32_t timeout = 0) final { return true; };
+  bool Receive(uint8_t **cpu, int32_t timeout = 0) final;
+
+  std::vector<uint8_t> buffer_in_;
+  bool new_rx_frame_ = false;
 
  private:
   GstElement *pipeline_;

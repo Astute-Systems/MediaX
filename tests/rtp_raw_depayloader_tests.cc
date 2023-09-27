@@ -7,7 +7,7 @@
 // License. See the LICENSE file in the project root for full license details.
 //
 ///
-/// \file rtp_depayloader_tests.cc
+/// \file rtp_raw_depayloader_tests.cc
 ///
 
 #include <glog/logging.h>
@@ -23,13 +23,13 @@
 #include "util_tests.h"
 #include "utils/colourspace_cpu.h"
 
-TEST(RTPDepayloaderTest, Copy) {
+TEST(RtpRawDepayloaderTest, Copy) {
   mediax::RtpvrawDepayloader rtp;
   mediax::RtpvrawDepayloader rtp2;
   rtp = rtp2;
 }
 
-TEST(RTPDepayloaderTest, Timeout) {
+TEST(RtpRawDepayloaderTest, Timeout) {
   uint8_t* yuv_test;
 
   mediax::RtpvrawDepayloader rtp;
@@ -58,7 +58,7 @@ void SendVideoCheckered(std::string ip, uint32_t height, uint32_t width, uint32_
   rtp.Close();
 }
 
-TEST(RTPDepayloaderTest, UnicastOk) {
+TEST(RtpRawDepayloaderTest, UnicastOk) {
   std::array<uint8_t, 640 * 480 * 3> rgb_test;
   video::ColourSpaceCpu colourspace;
   mediax::RtpvrawDepayloader rtp;
@@ -83,7 +83,7 @@ void SendFrameThread(std::string ip, uint32_t port) {
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
-// TEST(RTPDepayloaderTest, UnicastOkMany) {
+// TEST(RtpRawDepayloaderTest, UnicastOkMany) {
 //   std::array<uint8_t, 640 * 480 * 3> rgb_test;
 //   uint8_t* data = rgb_test.data();
 //   uint32_t base_port = 5004;
@@ -117,7 +117,7 @@ void SendFrameThread(std::string ip, uint32_t port) {
 //   }
 // }
 
-TEST(RTPDepayloaderTest, MulticastOk) {
+TEST(RtpRawDepayloaderTest, MulticastOk) {
   std::array<uint8_t, 640 * 480 * 3> rgb_test;
   video::ColourSpaceCpu colourspace;
 
@@ -134,7 +134,7 @@ TEST(RTPDepayloaderTest, MulticastOk) {
   rtp.Close();
 }
 
-TEST(RTPDepayloaderTest, Many) {
+TEST(RtpRawDepayloaderTest, Many) {
   std::array<std::string, 10> ip_pool = {"239.192.1.1", "239.192.1.2", "239.192.1.3", "239.192.1.4", "239.192.1.5",
                                          "239.192.1.6", "239.192.1.7", "239.192.1.8", "239.192.1.9", "239.192.1.10"};
   std::array<mediax::RtpvrawDepayloader, 10> rtp;
@@ -150,7 +150,7 @@ TEST(RTPDepayloaderTest, Many) {
   }
 }
 
-TEST(RTPDepayloaderTest, ReOpening) {
+TEST(RtpRawDepayloaderTest, ReOpening) {
   // Open stream 10 times
   for (int i = 0; i < 10; i++) {
     mediax::RtpvrawDepayloader rtp;
@@ -202,7 +202,7 @@ std::string ExecuteCommand(std::string bash) {
   return result;
 }
 
-TEST(RTPDepayloaderTest, DISABLED_SwitchStreams) {
+TEST(RtpRawDepayloaderTest, DISABLED_SwitchStreams) {
   // Start five streams run the bash script start_five_streams.sh
   ExecuteCommand("../scripts/start_five_streams.sh");
   // Switch between 5 streams

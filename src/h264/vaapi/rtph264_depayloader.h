@@ -9,8 +9,8 @@
 //
 /// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
 ///
-///
 /// \file rtph264_depayloader.h
+///
 
 #ifndef H264_VAAPI_RTPH264_DEPAYLOADER_H_
 #define H264_VAAPI_RTPH264_DEPAYLOADER_H_
