@@ -40,7 +40,7 @@ void RtpH264Depayloader::SetStreamInfo(std::string_view name, ::mediax::Coloursp
   ingress_.name = name;
   ingress_.hostname = hostname;
   ingress_.port_no = port;
-};
+}
 
 GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
   auto depayloader = static_cast<RtpH264Depayloader *>(user_data);
