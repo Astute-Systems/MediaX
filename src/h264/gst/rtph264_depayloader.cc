@@ -48,7 +48,7 @@ GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
   depayloader->buffer_in_.resize(size);
 
   // Copy the data from the buffer to the allocated memory
-  gst_buffer_extract(buffer, 0, (guint8 *)depayloader->buffer_in_.data(), size);
+  gst_buffer_extract(buffer, 0, reinterpret_cast<guint8 *>(depayloader->buffer_in_.data()), size);
 
   // Release the sample
   gst_sample_unref(sample);
