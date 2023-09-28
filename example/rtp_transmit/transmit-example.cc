@@ -137,10 +137,12 @@ int main(int argc, char **argv) {
   transmit_buffer.resize(FLAGS_height * FLAGS_width * BytesPerPixel(video_mode));
 
   // Setup RTP streaming class
-  mediax::RtpvrawPayloader rtp;
-  rtp.SetStreamInfo(FLAGS_filename, video_mode, FLAGS_height, FLAGS_width, FLAGS_framerate, FLAGS_ipaddr,
-                    (uint16_t)FLAGS_port);
-  rtp.Open();
+  std::unique_ptr<mediax::RtpPayloader> rtp;
+  rtp = std::make_unique<mediax::RtpvrawPayloader>();
+
+  rtp->SetStreamInfo(FLAGS_filename, video_mode, FLAGS_height, FLAGS_width, FLAGS_framerate, FLAGS_ipaddr,
+                     (uint16_t)FLAGS_port);
+  rtp->Open();
 
   // Read the PNG file
   std::vector<uint8_t> video_buffer;
@@ -230,7 +232,7 @@ int main(int argc, char **argv) {
     // Copy new image into buffer
     memcpy(transmit_buffer.data(), video_buffer.data(), FLAGS_height * FLAGS_width * BytesPerPixel(video_mode));
 
-    if (rtp.Transmit(transmit_buffer.data(), true) < 0) break;
+    if (rtp->Transmit(transmit_buffer.data(), true) < 0) break;
     auto end = std::chrono::high_resolution_clock::now();
 
     if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count(); duration < 40) {
@@ -243,7 +245,7 @@ int main(int argc, char **argv) {
   std::cout << "\n";
   std::cout << "Example terminated...\n";
 
-  rtp.Close();
+  rtp->Close();
   mediax::RtpCleanup();
 
   return 0;

@@ -15,6 +15,7 @@
 #define RTP_RTP_H_
 
 #include "h264/gst/rtph264_depayloader.h"
+#include "h264/gst/rtph264_payloader.h"
 #include "raw/rtpvraw_depayloader.h"
 #include "raw/rtpvraw_payloader.h"
 #include "rtp/rtp_depayloader.h"

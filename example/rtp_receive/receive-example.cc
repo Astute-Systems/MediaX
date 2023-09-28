@@ -113,19 +113,22 @@ gboolean update_callback(gpointer user_data) {
 }
 
 void SetupUncompressed(mediax::ColourspaceType mode) {
-  auto rtp_uncompressed = std::make_shared<mediax::RtpvrawDepayloader>();
-  rtp_ = rtp_uncompressed;
+  if ((mode == mediax::ColourspaceType::kColourspaceH264Part10) ||
+      (mode == mediax::ColourspaceType::kColourspaceH264Part4)) {
+    rtp_ = std::make_shared<mediax::RtpH264Depayloader>();
+  } else {
+    rtp_ = std::make_shared<mediax::RtpvrawDepayloader>();
+  }
+
   // Setup stream
   if (FLAGS_wait_sap) {
     // Just give the stream name and wait for SAP/SDP announcement
     LOG(INFO) << "Example RTP streaming to " << FLAGS_session_name;
     // Add SAP callback here
-    rtp_uncompressed->SetStreamInfo(FLAGS_session_name, mode, FLAGS_height, FLAGS_width, 25, FLAGS_ipaddr,
-                                    (uint16_t)FLAGS_port);
+    rtp_->SetStreamInfo(FLAGS_session_name, mode, FLAGS_height, FLAGS_width, 25, FLAGS_ipaddr, (uint16_t)FLAGS_port);
   } else {
     LOG(INFO) << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port;
-    rtp_uncompressed->SetStreamInfo(FLAGS_session_name, mode, FLAGS_height, FLAGS_width, 25, FLAGS_ipaddr,
-                                    (uint16_t)FLAGS_port);
+    rtp_->SetStreamInfo(FLAGS_session_name, mode, FLAGS_height, FLAGS_width, 25, FLAGS_ipaddr, (uint16_t)FLAGS_port);
 
     // We have all the information so we can request the ports open now. No need to wait for SAP/SDP
     if (!rtp_->Open()) {

@@ -28,10 +28,22 @@
 
 namespace mediax {
 
-RtpH264Depayloader::RtpH264Depayloader() = default;
+RtpH264Depayloader::~RtpH264Depayloader(void) = default;
+
+void RtpH264Depayloader::SetStreamInfo(std::string_view name, ::mediax::ColourspaceType encoding, uint32_t height,
+                                       uint32_t width, uint32_t framerate, std::string_view hostname,
+                                       const uint32_t port) {
+  ingress_.encoding = encoding;
+  ingress_.height = height;
+  ingress_.width = width;
+  ingress_.framerate = framerate;
+  ingress_.name = name;
+  ingress_.hostname = hostname;
+  ingress_.port_no = port;
+};
 
 GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
-  RtpH264Depayloader *depayloader = static_cast<RtpH264Depayloader *>(user_data);
+  auto depayloader = static_cast<RtpH264Depayloader *>(user_data);
 
   // Pull the sample from the appsink
   GstSample *sample = gst_app_sink_pull_sample(appsink);
@@ -87,13 +99,11 @@ bool RtpH264Depayloader::Open() {
   // Decode frame using vaapi
   GstElement *vaapih264dec = gst_element_factory_make("vaapih264dec", "rtp-h264-vaapih264dec");
 
-  // Set the new frame callback
-
   // Create a custom appsrc element to receive the H.264 stream
   GstElement *appsink = gst_element_factory_make("appsink", "rtp-h264-appsrc");
   // Set the callback function for the appsink
   GstAppSinkCallbacks callbacks = {.new_sample = NewFrameCallback};
-  gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &callbacks, this, NULL);
+  gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &callbacks, this, nullptr);
 
   // Add all elements to the pipeline
   gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, rtph264depay, h264parse, queue, vaapih264dec, appsink,

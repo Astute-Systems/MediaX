@@ -1,8 +1,8 @@
 project(examples)
 
 add_subdirectory(common)
-add_subdirectory(transmit)
-add_subdirectory(receive)
+add_subdirectory(rtp_transmit)
+add_subdirectory(rtp_receive)
 add_subdirectory(sap_announcer)
 add_subdirectory(sap_listener)
 

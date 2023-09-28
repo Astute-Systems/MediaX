@@ -34,6 +34,19 @@ class RtpDepayloader {
   virtual ~RtpDepayloader() = default;
 
   ///
+  /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement
+  ///
+  /// \param hostname IP address i.e. 239.192.1.1 for multicast
+  /// \param port defaults to 5004
+  /// \param name The name of the stream
+  /// \param encoding The encoding of the stream
+  /// \param height The height of the stream in pixels
+  /// \param width The width of the stream in pixels
+  ///
+  virtual void SetStreamInfo(std::string_view name, ::mediax::ColourspaceType encoding, uint32_t height, uint32_t width,
+                             uint32_t framerate, std::string_view hostname, const uint32_t port = 5004) = 0;
+
+  ///
   /// \brief Open the RTP stream
   ///
   /// \return true

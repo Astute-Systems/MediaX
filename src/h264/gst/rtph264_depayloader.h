@@ -29,13 +29,41 @@ class RtpH264Depayloader : public RtpDepayloader {
   /// \brief Construct a new Rtpvraw Depayloader object
   ///
   ///
-  RtpH264Depayloader();
+  RtpH264Depayloader() = default;
 
   ///
   /// \brief Destroy the Rtpvraw Depayloader object
   ///
   ///
-  ~RtpH264Depayloader() final = default;
+  ~RtpH264Depayloader() final;
+
+  ///
+  /// \brief Copy operator (Deleted)
+  ///
+  /// \param other
+  /// \return RtpH264Depayloader
+  ///
+  RtpH264Depayloader &operator=(const RtpH264Depayloader &other) { return *this; }
+
+  ///
+  /// \brief Construct a new RtpH264Depayloader object (Deleted)
+  ///
+  /// \param other
+  ///
+  RtpH264Depayloader(RtpH264Depayloader &&other) = delete;
+
+  ///
+  /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement
+  ///
+  /// \param hostname IP address i.e. 239.192.1.1 for multicast
+  /// \param port defaults to 5004
+  /// \param name The name of the stream
+  /// \param encoding The encoding of the stream
+  /// \param height The height of the stream in pixels
+  /// \param width The width of the stream in pixels
+  ///
+  void SetStreamInfo(std::string_view name, ::mediax::ColourspaceType encoding, uint32_t height, uint32_t width,
+                     uint32_t framerate, std::string_view hostname, const uint32_t port = 5004) final;
 
   ///
   /// \brief Open the RTP stream

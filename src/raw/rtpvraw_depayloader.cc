@@ -52,7 +52,7 @@ RtpvrawDepayloader::RtpvrawDepayloader(const RtpvrawDepayloader &other) {
   pthread_mutex_init(&mutex_, nullptr);
 }
 
-RtpvrawDepayloader &RtpvrawDepayloader::operator=(const RtpvrawDepayloader &other) { return *this; }
+RtpvrawDepayloader &RtpvrawDepayloader::operator=(const RtpvrawDepayloader &other [[maybe_unused]]) { return *this; }
 
 // Broadcast the stream to port i.e. 5004
 void RtpvrawDepayloader::SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,

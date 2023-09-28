@@ -10,6 +10,7 @@ project(mediax
 add_subdirectory(raw)
 add_subdirectory(sap)
 add_subdirectory(rtp)
+add_subdirectory(h264)
 
 if (BUILD_CUDA)
   enable_language(CUDA)
@@ -41,25 +42,14 @@ set(SOURCES
   utils/colourspace_cpu.cc 
   utils/colourspace_cuda.cu
   v4l2/v4l2_source.cc
-  h264/vaapi/rtph264_payloader.cc 
-  h264/vaapi/rtph264_depayloader.cc
 )
-option(GST_SUPPORTED "GStreamer support" ON)
-if (GST_SUPPORTED)
-  message(STATUS "Adding GST support")
-    list(APPEND SOURCES
-    h264/gst/rtph264_payloader.cc 
-    h264/gst/rtph264_depayloader.cc
-  )
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGST_SUPPORTED")
-endif()
 
 include_directories(${CMAKE_SOURCE_DIR}/src)
 add_library(mediax SHARED ${SOURCES})
 if (WIN32)
-  target_link_libraries(mediax png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} ${GST_LIBRARIES} wsock32 ws2_32)
+  target_link_libraries(mediax h264 png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} wsock32 ws2_32)
 else()
-  target_link_libraries(mediax png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} ${GST_LIBRARIES})
+  target_link_libraries(mediax h264 png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS})
 endif()
 
 set_target_properties(mediax PROPERTIES SOVERSION 1)
@@ -69,9 +59,9 @@ target_include_directories(mediax PUBLIC ${CMAKE_SOURCE_DIR}/src ${SWSCALE_INCLU
 
 add_library(mediax_static STATIC ${SOURCES})
 if (WIN32)
-  target_link_libraries(mediax_static png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} ${GST_LIBRARIES} wsock32 ws2_32)
+  target_link_libraries(mediax_static h264 png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} ${GST_LIBRARIES} wsock32 ws2_32)
 else()
-  target_link_libraries(mediax_static png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} ${GST_LIBRARIES})
+  target_link_libraries(mediax_static h264 png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} ${GST_LIBRARIES})
 endif()
 
 target_include_directories(mediax_static PUBLIC ${CMAKE_SOURCE_DIR}/src ${SWSCALE_INCLUDE_DIRS} ${GST_INCLUDE_DIRS})
