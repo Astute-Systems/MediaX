@@ -39,16 +39,22 @@ TEST(RtpH264DepayloaderTest, DISABLED_UnicastOk) {
   video::ColourSpaceCpu colourspace;
   mediax::RtpH264Depayloader rtp;
 
+  // Increase GST debug level
+  setenv("GST_DEBUG", "3", 1);
   // Set the stream details
   rtp.SetIpAddress("127.0.0.1");
   rtp.SetPort(5004);
+  std::cout << "Setup" << std::endl;
 
   // Start the stream
   rtp.Open();
+  std::cout << "Opened" << std::endl;
   rtp.Start();
+  std::cout << "Started" << std::endl;
   uint8_t* data = rgb_test.data();
-  EXPECT_TRUE(rtp.Receive(&data, 80));
-  WritePngFile(rgb_test.data(), 640, 480, "UnicastOk.png");
+  EXPECT_TRUE(rtp.Receive(&data, 800));
+  std::cout << "Received" << std::endl;
+  WritePngFile(data, 1280, 720, "H264_Image.png");
   rtp.Stop();
   rtp.Close();
 }

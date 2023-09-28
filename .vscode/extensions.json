@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "ms-python.vscode-pylance",
+        "ms-python.python",
+        "github.copilot",
+        "github.copilot-chat",
+        "github.vscode-github-actions"
+    ]
+}

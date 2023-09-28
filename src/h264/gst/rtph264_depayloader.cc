@@ -10,11 +10,16 @@
 ///
 /// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
 ///
+/// gst-launch-1.0 -v udpsrc caps="application/x-rtp, media=(string)video, clock-rate=(int)90000,
+/// encoding-name=(string)H264" ! rtph264depay ! h264parse ! queue ! vaapih264dec ! caps="video/x-raw, format=RGB" !
+/// videoconvert ! appsink
+///
 /// \file rtph264_depayloader.cc
 ///
 
 #include "h264/gst/rtph264_depayloader.h"
 
+#include <gst/app/gstappsink.h>
 #include <gst/gst.h>
 
 #include <chrono>
@@ -25,12 +30,33 @@ namespace mediax {
 
 RtpH264Depayloader::RtpH264Depayloader() = default;
 
-void NewFrameCallback(GstElement *rtph264depay, guint8 *buffer, guint size, gpointer user_data) {
-  std::cout << "New frame received" << std::endl;
-  auto depayloader = reinterpret_cast<RtpH264Depayloader *>(user_data);
+GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
+  RtpH264Depayloader *depayloader = static_cast<RtpH264Depayloader *>(user_data);
+
+  // Pull the sample from the appsink
+  GstSample *sample = gst_app_sink_pull_sample(appsink);
+
+  // Get the buffer from the sample
+  GstBuffer *buffer = gst_sample_get_buffer(sample);
+
+  // Get the size of the buffer
+  gsize size = gst_buffer_get_size(buffer);
+  std::cout << "New frame callback size" << size << std::endl;
+
+  // Allocate memory for the frame data
+  // guint8 *data = g_new(guint8, size);
   depayloader->buffer_in_.resize(size);
-  memcpy(depayloader->buffer_in_.data(), buffer, size);
+
+  // Copy the data from the buffer to the allocated memory
+  gst_buffer_extract(buffer, 0, (guint8 *)depayloader->buffer_in_.data(), size);
+
+  // Release the sample
+  gst_sample_unref(sample);
+
+  // Set good frame flag
   depayloader->new_rx_frame_ = true;
+
+  return GST_FLOW_OK;
 }
 
 bool RtpH264Depayloader::Open() {
@@ -41,7 +67,6 @@ bool RtpH264Depayloader::Open() {
   // Create a udpsrc element to receive the RTP stream
   GstElement *udpsrc = gst_element_factory_make("udpsrc", "rtp-h264-udpsrc");
   g_object_set(G_OBJECT(udpsrc), "port", GetPort(), nullptr);
-  std::cout << "Port: " << GetPort() << std::endl;
 
   // Create a capsfilter element to set the caps for the RTP stream
   GstElement *capsfilter = gst_element_factory_make("capsfilter", "rtp-h264-capsfilter");
@@ -56,25 +81,38 @@ bool RtpH264Depayloader::Open() {
   // H.264 parse
   GstElement *h264parse = gst_element_factory_make("h264parse", "rtp-h264-h264parse");
 
+  // Queue
+  GstElement *queue = gst_element_factory_make("queue", "rtp-h264-queue");
+
   // Decode frame using vaapi
-  GstElement *vaapidecode = gst_element_factory_make("vaapidecode", "rtp-h264-vaapidecode");
+  GstElement *vaapih264dec = gst_element_factory_make("vaapih264dec", "rtp-h264-vaapih264dec");
 
   // Set the new frame callback
 
   // Create a custom appsrc element to receive the H.264 stream
-  GstElement *appsrc = gst_element_factory_make("appsrc", "rtp-h264-appsrc");
-  g_object_set(G_OBJECT(appsrc), "stream-type", 0, "format", GST_FORMAT_TIME, nullptr);
-  g_signal_connect(rtph264depay, "new-payload", G_CALLBACK(NewFrameCallback), this);
+  GstElement *appsink = gst_element_factory_make("appsink", "rtp-h264-appsrc");
+  // Set the callback function for the appsink
+  GstAppSinkCallbacks callbacks = {.new_sample = NewFrameCallback};
+  gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &callbacks, this, NULL);
 
   // Add all elements to the pipeline
-  gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, rtph264depay, h264parse, vaapidecode, appsrc, nullptr);
+  gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, rtph264depay, h264parse, queue, vaapih264dec, appsink,
+                   nullptr);
 
   // Link the elements
-  gst_element_link_many(udpsrc, capsfilter, rtph264depay, h264parse, vaapidecode, appsrc, nullptr);
+  gst_element_link_many(udpsrc, capsfilter, rtph264depay, h264parse, queue, vaapih264dec, appsink, nullptr);
 
+  return true;
+}
+
+void RtpH264Depayloader::Start() {
   // Start the pipeline
   gst_element_set_state(pipeline_, GST_STATE_PLAYING);
+}
 
+void RtpH264Depayloader::Stop() {
+  // Stop the pipeline
+  gst_element_set_state(pipeline_, GST_STATE_NULL);
   // Wait for the pipeline to finish
   GstBus *bus = gst_element_get_bus(pipeline_);
 
@@ -90,18 +128,6 @@ bool RtpH264Depayloader::Open() {
   // Free resources
   gst_object_unref(bus);
   gst_object_unref(pipeline_);
-
-  return true;
-}
-
-void RtpH264Depayloader::Start() {
-  // Start the pipeline
-  gst_element_set_state(pipeline_, GST_STATE_PLAYING);
-}
-
-void RtpH264Depayloader::Stop() {
-  // Stop the pipeline
-  gst_element_set_state(pipeline_, GST_STATE_NULL);
 }
 
 void RtpH264Depayloader::Close() {
@@ -110,7 +136,7 @@ void RtpH264Depayloader::Close() {
 }
 
 bool RtpH264Depayloader::Receive(uint8_t **cpu, int32_t timeout) {
-  auto now = std::chrono::high_resolution_clock::now();
+  auto start_time = std::chrono::high_resolution_clock::now();
   if (new_rx_frame_) {
     // Dont start a new thread if a frame is available just return it
     *cpu = buffer_in_.data();
@@ -119,7 +145,9 @@ bool RtpH264Depayloader::Receive(uint8_t **cpu, int32_t timeout) {
   } else {
     while (!new_rx_frame_) {
       // Check timeout
-      if (auto elapsed = std::chrono::high_resolution_clock::now() - now; elapsed.count() > timeout) {
+      if (auto elapsed = std::chrono::high_resolution_clock::now() - start_time;
+          elapsed > std::chrono::milliseconds(timeout)) {
+        std::cout << "Timeout" << std::endl;
         return false;
       }
       // Wait for a new frame sleep 1ms
