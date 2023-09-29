@@ -122,6 +122,16 @@ class ColourSpaceCpu : public ColourSpace {
   int Mono16ToBgra(uint32_t width, uint32_t height, uint8_t *mono16, uint8_t *bgra) const final;
 
   ///
+  /// \brief Construct a new Nv12 To Bgra object
+  ///
+  /// \param width The height of the image
+  /// \param height The width of the image
+  /// \param nv12 The NV12 bit image
+  /// \param bgra The BGRA image buffer
+  ///
+  int Nv12ToBgra(uint32_t height, uint32_t width, uint8_t *nv12, uint8_t *bgra) const;
+
+  ///
   /// \brief Convert RGB to RGBA on the CPU
   ///
   /// \param width The height of the image

@@ -33,7 +33,9 @@ TEST(RtpRawDepayloaderTest, Timeout) {
   uint8_t* yuv_test;
 
   mediax::RtpvrawDepayloader rtp;
-  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceRgb24, 640, 480, 25, "127.0.0.1", 5004);
+  mediax::StreamInformation stream_info = {
+      "test_session_name", mediax::ColourspaceType::kColourspaceRgb24, 640, 480, 25, "127.0.0.1", 5004};
+  rtp.SetStreamInfo(stream_info);
   ASSERT_EQ(rtp.GetHeight(), 640);
   ASSERT_EQ(rtp.GetWidth(), 480);
   ASSERT_EQ(rtp.GetColourSpace(), mediax::ColourspaceType::kColourspaceRgb24);
@@ -47,7 +49,9 @@ TEST(RtpRawDepayloaderTest, Timeout) {
 
 void SendVideoCheckered(std::string ip, uint32_t height, uint32_t width, uint32_t framerate, uint32_t portno) {
   mediax::RtpvrawPayloader rtp;
-  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceRgb24, height, width, 25, ip, portno);
+  mediax::StreamInformation stream_info = {
+      "test_session_name", mediax::ColourspaceType::kColourspaceRgb24, height, width, 25, ip, portno};
+  rtp.SetStreamInfo(stream_info);
   rtp.Open();
   rtp.Start();
   // Create a buffer of 640x480x3 bytes (RGB)
@@ -62,8 +66,9 @@ TEST(RtpRawDepayloaderTest, UnicastOk) {
   std::array<uint8_t, 640 * 480 * 3> rgb_test;
   video::ColourSpaceCpu colourspace;
   mediax::RtpvrawDepayloader rtp;
-
-  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceRgb24, 640, 480, 25, "127.0.0.1", 5004);
+  mediax::StreamInformation stream_info = {
+      "test_session_name", mediax::ColourspaceType::kColourspaceRgb24, 640, 480, 25, "127.0.0.1", 5004};
+  rtp.SetStreamInfo(stream_info);
   rtp.Open();
   rtp.Start();
   SendVideoCheckered("127.0.0.1", 640, 480, 30, 5004);
@@ -122,8 +127,9 @@ TEST(RtpRawDepayloaderTest, MulticastOk) {
   video::ColourSpaceCpu colourspace;
 
   mediax::RtpvrawDepayloader rtp;
-  rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceRgb24, 640, 480, 25, "239.192.1.200",
-                    5004);
+  mediax::StreamInformation stream_info = {
+      "test_session_name", mediax::ColourspaceType::kColourspaceRgb24, 640, 480, 25, "239.192.1.200", 5004};
+  rtp.SetStreamInfo(stream_info);
   rtp.Open();
   rtp.Start();
   SendVideoCheckered("239.192.1.200", 640, 480, 30, 5004);
@@ -140,8 +146,14 @@ TEST(RtpRawDepayloaderTest, Many) {
   std::array<mediax::RtpvrawDepayloader, 10> rtp;
   for (int i = 0; i < 10; i++) {
     LOG(INFO) << "Creating stream number " << i << " with IP:" << ip_pool[i];
-    rtp[i].SetStreamInfo("test_session_name_" + std::to_string(i), mediax::ColourspaceType::kColourspaceRgb24, 640, 480,
-                         25, ip_pool[i], 5004);
+    mediax::StreamInformation stream_info = {"test_session_name_" + std::to_string(i),
+                                             mediax::ColourspaceType::kColourspaceRgb24,
+                                             640,
+                                             480,
+                                             25,
+                                             ip_pool[i],
+                                             5004};
+    rtp[i].SetStreamInfo(stream_info);
   }
 
   for (int i = 0; i < 10; i++) {
@@ -154,7 +166,9 @@ TEST(RtpRawDepayloaderTest, ReOpening) {
   // Open stream 10 times
   for (int i = 0; i < 10; i++) {
     mediax::RtpvrawDepayloader rtp;
-    rtp.SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceYuv, 640, 480, 25, "127.0.0.1");
+    mediax::StreamInformation stream_info = {
+        "test_session_name", mediax::ColourspaceType::kColourspaceYuv, 640, 480, 25, "127.0.0.1"};
+    rtp.SetStreamInfo(stream_info);
     rtp.Open();
     rtp.Start();
     rtp.Stop();
@@ -166,7 +180,8 @@ void OpenStream(std::string ipaddr, uint32_t height, uint32_t width, uint32_t fr
   std::vector<uint8_t> yuv_test;
   mediax::RtpvrawDepayloader rtp;
   yuv_test.resize(height * width * 2);
-  rtp.SetStreamInfo("test", mediax::ColourspaceType::kColourspaceYuv, 640, 480, 25, ipaddr);
+  mediax::StreamInformation stream_info = {"test", mediax::ColourspaceType::kColourspaceYuv, 640, 480, 25, ipaddr};
+  rtp.SetStreamInfo(stream_info);
   rtp.Open();
   rtp.Start();
 

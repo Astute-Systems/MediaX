@@ -13,8 +13,8 @@ gst-launch-1.0 \
     rtph264pay ! \
     udpsink host=${IP_ADDRESS} port=${PORT} &
 
-sleep 10
+# sleep 10
 
-# Kill all the gstremers launch pipelines
-pkill -f gst-launch-1.0
+# # Kill all the gstremers launch pipelines
+# pkill -f gst-launch-1.0
 

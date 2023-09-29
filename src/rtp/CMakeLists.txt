@@ -8,8 +8,14 @@ find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
 set(CMAKE_SWIG_FLAGS "")
 
+# Gstreamer
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GST REQUIRED gstreamer-1.0)
+
+message(STATUS "Gstreamer include dirs: ${GST_INCLUDE_DIRS}")
+
 find_package(PythonLibs REQUIRED)
-include_directories(${PYTHON_INCLUDE_PATH} ${CMAKE_SOURCE_DIR}/src)
+include_directories(${PYTHON_INCLUDE_PATH} ${GST_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/src)
 
 # types
 set_source_files_properties(rtp_types.i PROPERTIES CPLUSPLUS ON)

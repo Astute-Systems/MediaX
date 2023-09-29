@@ -282,6 +282,33 @@ int ColourSpaceCpu::Mono16ToBgra(uint32_t width, uint32_t height, uint8_t *mono1
   return 0;
 }
 
+int ColourSpaceCpu::Nv12ToBgra(uint32_t height, uint32_t width, uint8_t *nv12, uint8_t *bgra) const {
+  if (!bgra || !nv12) {
+    // Handle null pointers gracefully
+    return 1;
+  }
+
+  std::unique_ptr<SwsContext, decltype(&sws_freeContext)> ctx(
+      sws_getContext(width, height, AV_PIX_FMT_NV12, width, height, AV_PIX_FMT_BGRA, SWS_BICUBIC, nullptr, nullptr,
+                     nullptr),
+      &sws_freeContext);
+  if (!ctx) {
+    // Handle allocation failure gracefully
+    return 1;
+  }
+
+  const std::array<uint8_t *, 2> inData = {nv12, nv12 + width * height};
+  std::array<uint8_t *, 1> outData = {bgra};
+
+  // Use static_cast instead of C-style cast
+  const std::array<int32_t, 2> inLinesize = {(int32_t)(width), (int32_t)(width)};
+  std::array<int32_t, 1> outLinesize = {(int32_t)(width * 4)};
+
+  sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, height, outData.data(), outLinesize.data());
+
+  return 0;
+}
+
 int ColourSpaceCpu::YuvToArgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *argb) const {
   if (!argb || !yuv) {
     // Handle null pointers gracefully

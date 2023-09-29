@@ -44,7 +44,7 @@ set(SOURCES
   v4l2/v4l2_source.cc
 )
 
-include_directories(${CMAKE_SOURCE_DIR}/src)
+include_directories(${CMAKE_SOURCE_DIR}/src ${SWSCALE_INCLUDE_DIRS} ${GST_INCLUDE_DIRS})
 add_library(mediax SHARED ${SOURCES})
 if (WIN32)
   target_link_libraries(mediax h264 png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} wsock32 ws2_32)

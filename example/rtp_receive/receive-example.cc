@@ -59,6 +59,8 @@ gboolean on_draw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer
   auto data = static_cast<OnDrawData *>(user_data);
   video::ColourSpaceCpu convert;
 
+  std::cout << "Frame=" << m_frame_counter_ << "\n";
+
   // Fill the surface with video data if available
   if (rtp_->Receive(&cpu_buffer, 80) == true) {
     unsigned char *surface_data = cairo_image_surface_get_data(data->surface);
@@ -85,6 +87,9 @@ gboolean on_draw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer
         break;
       case 3:
         convert.Mono8ToBgra(height, width, cpu_buffer, surface_data);
+        break;
+      case 4:
+        convert.Nv12ToBgra(height, width, cpu_buffer, surface_data);
         break;
       default:
         LOG(ERROR) << "Unsupported mode=" << FLAGS_mode << "\n";

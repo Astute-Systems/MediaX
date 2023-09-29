@@ -8,7 +8,6 @@ pkg_check_modules(SWSCALE REQUIRED libswscale libavutil) # libavformat libavcode
 set(MEDIAX_LIBRARIES ${EXTERNAL_PREFIX}/usr/local/lib/libmediax_static.a ${GSTREAMER_LIBRARIES})
 
 link_directories(${CAIRO_LIBRARY_DIRS})
-
 add_executable(
   tests
   colourspace_tests.cc
@@ -18,7 +17,7 @@ add_executable(
   rtp_utils_tests.cc
   rtp_raw_payloader_tests.cc
   rtp_raw_depayloader_tests.cc
-  rtp_h264_depayloader_tests.cc
+  rtp_h264_gst_depayloader_tests.cc
   sap_announcer_tests.cc
   sap_listener_tests.cc
   sap_utils_tests.cc

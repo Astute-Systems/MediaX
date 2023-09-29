@@ -24,6 +24,10 @@
 #include "utils/colourspace_cpu.h"
 
 TEST(RtpH264DepayloaderTest, DISABLED_Timeout) {
+#if !GST_SUPPORTED
+  GTEST_SKIP();
+#endif
+
   uint8_t* rgb_test;
 
   mediax::RtpH264Depayloader rtp;
@@ -35,6 +39,10 @@ TEST(RtpH264DepayloaderTest, DISABLED_Timeout) {
 }
 
 TEST(RtpH264DepayloaderTest, DISABLED_UnicastOk) {
+#if !GST_SUPPORTED
+  GTEST_SKIP();
+#endif
+
   std::array<uint8_t, 640 * 480 * 3> rgb_test;
   video::ColourSpaceCpu colourspace;
   mediax::RtpH264Depayloader rtp;
@@ -53,8 +61,9 @@ TEST(RtpH264DepayloaderTest, DISABLED_UnicastOk) {
   std::cout << "Started" << std::endl;
   uint8_t* data = rgb_test.data();
   EXPECT_TRUE(rtp.Receive(&data, 800));
-  std::cout << "Received" << std::endl;
-  WritePngFile(data, 1280, 720, "H264_Image.png");
   rtp.Stop();
   rtp.Close();
+
+  std::cout << "Received" << std::endl;
+  WritePngFile(data, 1280, 720, "H264_Image.png");
 }
