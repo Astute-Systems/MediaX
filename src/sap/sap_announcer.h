@@ -33,6 +33,7 @@
 
 #include "rtp/rtp_types.h"
 
+// The Session Announcement Protocol (SAP) and Session Description Protocol (SDP) namespace
 namespace mediax::sap {
 
 /// Class to announce the stream details using the SAP protocol

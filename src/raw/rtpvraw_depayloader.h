@@ -29,11 +29,11 @@
 /// ===========================================
 /// gst-launch-1.0 videotestsrc num_buffers ! video/x-raw, format=UYVY, framerate=25/1, width=640, height=480 ! queue !
 /// rtpvrawpay ! udpsink host=127.0.0.1 port=5004
-///
+/// \code
 /// gst-launch-1.0 udpsrc port=5004 caps="application/x-rtp, media=(string)video, clock-rate=(int)90000,
 /// encoding-name=(string)RAW, sampling=(string)YCbCr-4:2:2, depth=(string)8, width=(string)480, height=(string)480,
 /// payload=(int)96" ! queue ! rtpvrawdepay ! queue ! xvimagesink sync=false
-
+/// \endcode
 /// Use his program to stream data to the udpsrc example above on the tegra X1
 
 #ifndef RAW_RTPVRAW_DEPAYLOADER_H_

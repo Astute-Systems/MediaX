@@ -18,7 +18,7 @@
 
 #include "utils/colourspace.h"
 
-/// Helper functions for different colour space options
+/// The video functions namespace for colourspace manipulation
 namespace video {
 
 /// Helper functions for different colour space options
