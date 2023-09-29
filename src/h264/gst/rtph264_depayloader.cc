@@ -10,9 +10,12 @@
 ///
 /// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
 ///
+/// Below is a sample pipeline to create video streams using GStreamer:
+/// \code
 /// gst-launch-1.0 -v udpsrc caps="application/x-rtp, media=(string)video, clock-rate=(int)90000,
 /// encoding-name=(string)H264" ! rtph264depay ! h264parse ! queue ! vaapih264dec ! caps="video/x-raw, format=RGB" !
 /// videoconvert ! appsink
+/// \endcode
 ///
 /// \file rtph264_depayloader.cc
 ///
@@ -57,6 +60,16 @@ GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
   // Allocate memory for the frame data
   // guint8 *data = g_new(guint8, size);
   depayloader->buffer_in_.resize(size);
+
+  // Get the buffer height and width
+  const GstCaps *caps = gst_sample_get_caps(sample);
+  const GstStructure *structure = gst_caps_get_structure(caps, 0);
+  gint width;
+  gint height;
+  gst_structure_get_int(structure, "height", &height);
+  gst_structure_get_int(structure, "width", &width);
+  depayloader->ingress_.height = height;
+  depayloader->ingress_.width = width;
 
   // Copy the data from the buffer to the allocated memory
   gst_buffer_extract(buffer, 0, reinterpret_cast<guint8 *>(depayloader->buffer_in_.data()), size);
@@ -122,21 +135,12 @@ void RtpH264Depayloader::Start() {
 void RtpH264Depayloader::Stop() {
   // Stop the pipeline
   gst_element_set_state(pipeline_, GST_STATE_NULL);
+  std::cout << "Pipeline stopped" << std::endl;
   // Wait for the pipeline to finish
   GstBus *bus = gst_element_get_bus(pipeline_);
 
-  if (GstMessage *msg =
-          gst_bus_timed_pop_filtered(bus, GST_CLOCK_TIME_NONE, GstMessageType(GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
-      msg != nullptr) {
-    gst_message_unref(msg);
-  }
-
-  // Stop the pipeline
-  gst_element_set_state(pipeline_, GST_STATE_NULL);
-
   // Free resources
   gst_object_unref(bus);
-  gst_object_unref(pipeline_);
 }
 
 void RtpH264Depayloader::Close() {

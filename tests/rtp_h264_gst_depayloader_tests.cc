@@ -64,6 +64,9 @@ TEST(RtpH264DepayloaderTest, DISABLED_UnicastOk) {
   rtp.Stop();
   rtp.Close();
 
+  EXPECT_EQ(rtp.GetHeight(), 720);
+  EXPECT_EQ(rtp.GetWidth(), 1280);
+
   std::cout << "Received" << std::endl;
-  WritePngFile(data, 1280, 720, "H264_Image.png");
+  WritePngFile(data, rtp.GetWidth(), rtp.GetHeight() / 3, "H264_Image.png");
 }
