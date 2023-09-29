@@ -173,7 +173,6 @@ struct RtpPacket {
 };
 
 /// Transmit data structure
-/// Battlefield Management System (BMS) state definition
 struct TxData {
   /// RGB frame
   uint8_t *rgb_frame;
@@ -183,6 +182,17 @@ struct TxData {
   uint32_t width;
   /// Width of frame
   uint32_t height;
+};
+
+/// Struct capturing all stream information
+struct StreamInformation {
+  std::string_view name;
+  ::mediax::ColourspaceType encoding;
+  uint32_t height;
+  uint32_t width;
+  uint32_t framerate;
+  std::string_view hostname;
+  uint32_t port = 5004;
 };
 
 }  // namespace mediax

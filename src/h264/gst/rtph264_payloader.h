@@ -41,8 +41,7 @@ class RtpH264Payloader : public RtpPayloader {
   /// \param hostname IP address i.e. 123.192.1.1
   /// \param portno port number i.e. 5004
   ///
-  void SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                     uint32_t framerate, std::string_view hostname, const uint32_t portno) override;
+  void SetStreamInfo(const ::mediax::StreamInformation& stream_information) final;
 
   ///
   /// \brief Open the RTP stream
@@ -65,7 +64,7 @@ class RtpH264Payloader : public RtpPayloader {
   /// \param blocking set to true if blocking
   /// \return int
   ///
-  int Transmit(uint8_t *rgbframe, bool blocking = true) final;
+  int Transmit(uint8_t* rgbframe, bool blocking = true) final;
 
   ///
   /// \brief Stop the stream, can be quickly re-started

@@ -28,6 +28,7 @@
 
 #include "glog/logging.h"
 #include "rtp/rtp_utils.h"
+#include "sap/sap_utils.h"
 
 namespace mediax::sap {
 
@@ -111,6 +112,20 @@ void SAPListener::SAPListenerThread(SAPListener *sap) {
 void SAPListener::RegisterSapListener(std::string_view session_name, const SapCallback &callback) {
   DLOG(INFO) << "Register SAP listener with session-name=" << session_name;
   callbacks_[std::string(session_name)] = callback;
+}
+
+StreamInformation SAPListener::GetStreamInformation(std::string_view session_name) const {
+  StreamInformation stream_information;
+  auto it = announcements_.find(std::string(session_name));
+  if (it != announcements_.end()) {
+    stream_information.hostname = it->second.ip_address;
+    stream_information.port = it->second.port;
+    stream_information.height = it->second.height;
+    stream_information.width = it->second.width;
+    stream_information.framerate = it->second.framerate;
+    stream_information.encoding = SamplingToColourspaceType(it->second.sampling, it->second.bits_per_pixel);
+  }
+  return stream_information;
 }
 
 void SAPListener::Start() {
@@ -270,6 +285,7 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> *rawdata) {
     sdp.height = std::stoi(attributes_map["height"]);
     sdp.width = std::stoi(attributes_map["width"]);
     sdp.framerate = std::stoi(attributes_map["framerate"]);
+    sdp.bits_per_pixel = std::stoi(attributes_map["depth"]);
     sdp.sampling = attributes_map["96sampling"];
   } catch (const std::invalid_argument &e [[maybe_unused]]) {
     DLOG(ERROR) << "Invalid argument in SAP message. SDP text = " << sdp.sdp_text;

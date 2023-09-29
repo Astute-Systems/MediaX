@@ -22,15 +22,15 @@ RtpH264Payloader::RtpH264Payloader() = default;
 
 RtpH264Payloader::~RtpH264Payloader() = default;
 
-void RtpH264Payloader::SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                                     uint32_t framerate, std::string_view hostname, const uint32_t portno) {
-  egress_.encoding = encoding;
-  egress_.height = height;
-  egress_.width = width;
-  egress_.framerate = framerate;
-  egress_.name = name;
-  egress_.hostname = hostname;
-  egress_.port_no = portno;
+void RtpH264Payloader::SetStreamInfo(const ::mediax::StreamInformation& stream_information) {
+  egress_.encoding = stream_information.encoding;
+  egress_.height = stream_information.height;
+  egress_.width = stream_information.width;
+  egress_.framerate = stream_information.framerate;
+  egress_.name = stream_information.name;
+  egress_.hostname = stream_information.hostname;
+  egress_.port_no = stream_information.port;
+  egress_.settings_valid = true;
 }
 
 int RtpH264Payloader::Transmit(unsigned char*, bool) { return 0; }

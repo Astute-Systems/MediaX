@@ -30,16 +30,15 @@ namespace mediax {
 
 RtpH264Depayloader::~RtpH264Depayloader(void) = default;
 
-void RtpH264Depayloader::SetStreamInfo(std::string_view name, ::mediax::ColourspaceType encoding, uint32_t height,
-                                       uint32_t width, uint32_t framerate, std::string_view hostname,
-                                       const uint32_t port) {
-  ingress_.encoding = encoding;
-  ingress_.height = height;
-  ingress_.width = width;
-  ingress_.framerate = framerate;
-  ingress_.name = name;
-  ingress_.hostname = hostname;
-  ingress_.port_no = port;
+void RtpH264Depayloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
+  ingress_.encoding = stream_information.encoding;
+  ingress_.height = stream_information.height;
+  ingress_.width = stream_information.width;
+  ingress_.framerate = stream_information.framerate;
+  ingress_.name = stream_information.name;
+  ingress_.hostname = stream_information.hostname;
+  ingress_.port_no = stream_information.port;
+  ingress_.settings_valid = true;
 }
 
 GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {

@@ -27,19 +27,19 @@
 #include "version.h"
 
 DEFINE_string(ipaddr, kIpAddressDefault, "the IP address of the transmit stream");
-DEFINE_int32(port, kPortDefault, "the port to use for the transmit stream");
-DEFINE_int32(height, kHeightDefault, "the height of the image");
-DEFINE_int32(width, kWidthDefault, "the width of the image");
+DEFINE_uint32(port, kPortDefault, "the port to use for the transmit stream");
+DEFINE_uint32(height, kHeightDefault, "the height of the image");
+DEFINE_uint32(width, kWidthDefault, "the width of the image");
 DEFINE_string(session_name, kSessionName, "the SAP/SDP session name");
 DEFINE_bool(wait_sap, false, "wait for SAP/SDP announcement");
 DEFINE_bool(uncompressed, true, "Uncompressed video stream");
-DEFINE_int32(mode, 1,
-             "The video mode (0-4)\n\t"
-             "0 - Uncompressed RGB\n\t"
-             "1 - Uncompressed YUV\n\t"
-             "2 - Mono16\n\t"
-             "3 - Mono8\n\t"
-             "4 - H.264\n\t");
+DEFINE_uint32(mode, 1,
+              "The video mode (0-4)\n\t"
+              "0 - Uncompressed RGB\n\t"
+              "1 - Uncompressed YUV\n\t"
+              "2 - Mono16\n\t"
+              "3 - Mono8\n\t"
+              "4 - H.264\n\t");
 
 struct OnDrawData {
   std::string name;
@@ -121,14 +121,16 @@ void SetupUncompressed(mediax::ColourspaceType mode) {
   }
 
   // Setup stream
+  mediax::StreamInformation stream_information = {
+      FLAGS_session_name, mode, FLAGS_height, FLAGS_width, 25, FLAGS_ipaddr, (uint16_t)FLAGS_port};
   if (FLAGS_wait_sap) {
     // Just give the stream name and wait for SAP/SDP announcement
     LOG(INFO) << "Example RTP streaming to " << FLAGS_session_name;
     // Add SAP callback here
-    rtp_->SetStreamInfo(FLAGS_session_name, mode, FLAGS_height, FLAGS_width, 25, FLAGS_ipaddr, (uint16_t)FLAGS_port);
+    rtp_->SetStreamInfo(stream_information);
   } else {
     LOG(INFO) << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port;
-    rtp_->SetStreamInfo(FLAGS_session_name, mode, FLAGS_height, FLAGS_width, 25, FLAGS_ipaddr, (uint16_t)FLAGS_port);
+    rtp_->SetStreamInfo(stream_information);
 
     // We have all the information so we can request the ports open now. No need to wait for SAP/SDP
     if (!rtp_->Open()) {
@@ -184,7 +186,9 @@ int main(int argc, char *argv[]) {
   gtk_widget_set_size_request(drawing_area, FLAGS_width, FLAGS_height);
   g_object_set_data(G_OBJECT(drawing_area), "surface", surface);
 
-  OnDrawData data = {FLAGS_session_name, surface, FLAGS_height, FLAGS_width, FLAGS_ipaddr, (uint16_t)FLAGS_port};
+  OnDrawData data = {
+      FLAGS_session_name,  surface, static_cast<int>(FLAGS_height), static_cast<int>(FLAGS_width), FLAGS_ipaddr,
+      (uint16_t)FLAGS_port};
 
   // Connect to the "draw" signal of the drawing area
   g_signal_connect(G_OBJECT(drawing_area), "draw", G_CALLBACK(on_draw), &data);

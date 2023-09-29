@@ -22,6 +22,14 @@
 namespace mediax::sap {
 
 ///
+/// \brief Convert a string to a ColourspaceType
+///
+/// \param sampling
+/// \return ColourspaceType
+///
+ColourspaceType SamplingToColourspaceType(std::string sampling, uint32_t bits_per_pixel);
+
+///
 /// \brief Get the Sdp Colourspace object
 ///
 /// \param colourspace The colourspace to get the SDP string for

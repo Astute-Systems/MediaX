@@ -107,6 +107,8 @@ struct SDPMessage {
   std::string sampling;
   /// The framerate of the video stream
   uint32_t framerate;
+  /// This bits per pixel of the video stream
+  uint32_t bits_per_pixel;
   /// Set to true if the SDP message has been deleted
   bool deleted = false;
   /// The complete SDP announcement
@@ -142,7 +144,7 @@ class SAPListener {
   ///
   /// \return The vectored list of SAP/SDP streams seen on the network
   ///
-  const std::map<std::string, SDPMessage, std::less<>> &GetSAPAnnouncements() const;
+  const std::map<std::string, ::mediax::sap::SDPMessage, std::less<>> &GetSAPAnnouncements() const;
 
   ///
   /// \brief Register a callback for our session_name
@@ -150,7 +152,15 @@ class SAPListener {
   /// \param session_name Advertised session name
   /// \param callback The callback to notify when SAP/SDP message received
   ///
-  void RegisterSapListener(std::string_view session_name, const SapCallback &callback);
+  void RegisterSapListener(std::string_view session_name, const ::mediax::sap::SapCallback &callback);
+
+  ///
+  /// \brief Get the stream information for a given session name
+  ///
+  /// \param session_name
+  /// \return StreamInformation
+  ///
+  ::mediax::StreamInformation GetStreamInformation(std::string_view session_name) const;
 
   ///
   /// \brief Start the SAP/SDP announcements thread

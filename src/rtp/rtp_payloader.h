@@ -45,8 +45,7 @@ class RtpPayloader {
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
   /// \param port defaults to 5004
   ///
-  virtual void SetStreamInfo(std::string_view name, ::mediax::ColourspaceType encoding, uint32_t height, uint32_t width,
-                             uint32_t framerate, std::string_view hostname, const uint32_t port = 5004) = 0;
+  virtual void SetStreamInfo(const ::mediax::StreamInformation& stream_information) = 0;
 
   ///
   /// \brief Open the RTP stream
@@ -81,7 +80,7 @@ class RtpPayloader {
   /// \param blocking defaults to true, will wait till frame has been transmitted
   /// \return int
   ///
-  virtual int Transmit(uint8_t *rgbframe, bool blocking = true) = 0;
+  virtual int Transmit(uint8_t* rgbframe, bool blocking = true) = 0;
 
   ///
   /// \brief Get the Colour Space object of the incoming stream. \note This may be invalid id no SAP/SDP announcement

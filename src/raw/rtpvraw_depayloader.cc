@@ -55,17 +55,16 @@ RtpvrawDepayloader::RtpvrawDepayloader(const RtpvrawDepayloader &other) {
 RtpvrawDepayloader &RtpvrawDepayloader::operator=(const RtpvrawDepayloader &other [[maybe_unused]]) { return *this; }
 
 // Broadcast the stream to port i.e. 5004
-void RtpvrawDepayloader::SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                                       uint32_t framerate, std::string_view hostname, const uint32_t portno) {
-  ingress_.encoding = encoding;
-  ingress_.height = height;
-  ingress_.width = width;
-  ingress_.name = name;
-  ingress_.framerate = framerate;
-  ingress_.hostname = hostname;
-  ingress_.port_no = portno;
+void RtpvrawDepayloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
+  ingress_.encoding = stream_information.encoding;
+  ingress_.height = stream_information.height;
+  ingress_.width = stream_information.width;
+  ingress_.name = stream_information.name;
+  ingress_.framerate = stream_information.framerate;
+  ingress_.hostname = stream_information.hostname;
+  ingress_.port_no = stream_information.port;
   ingress_.settings_valid = true;
-  buffer_in_.resize((height * width) * kColourspaceBytes.at(ingress_.encoding));
+  buffer_in_.resize((ingress_.height * ingress_.width) * kColourspaceBytes.at(ingress_.encoding));
 }
 
 bool RtpvrawDepayloader::Open() {

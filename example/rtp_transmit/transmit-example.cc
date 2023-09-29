@@ -67,33 +67,33 @@
 #include "version.h"
 
 DEFINE_string(ipaddr, kIpAddressDefault, "the IP address of the transmit stream");
-DEFINE_int32(port, kPortDefault, "the port to use for the transmit stream");
-DEFINE_int32(height, kHeightDefault, "the height of the image");
-DEFINE_int32(width, kWidthDefault, "the width of the image");
-DEFINE_int32(framerate, 25, "the image framerate");
-DEFINE_int32(source, 2,
-             "The video source (0-10)\n\t"
-             "0 - Use a PNG file (see -filename)\n\t"
-             "1 - v4l2src\n\t"
-             "2 - Colour bars\n\t"
-             "3 - Greyscale bars\n\t"
-             "4 - Scaled RGB values\n\t"
-             "5 - Checkered test card\n\t"
-             "6 - Solid white\n\t"
-             "7 - Solid black\n\t"
-             "8 - Solid red\n\t"
-             "9 - Solid green\n\t"
-             "10 - Solid blue\n\t");
+DEFINE_uint32(port, kPortDefault, "the port to use for the transmit stream");
+DEFINE_uint32(height, kHeightDefault, "the height of the image");
+DEFINE_uint32(width, kWidthDefault, "the width of the image");
+DEFINE_uint32(framerate, 25, "the image framerate");
+DEFINE_uint32(source, 2,
+              "The video source (0-10)\n\t"
+              "0 - Use a PNG file (see -filename)\n\t"
+              "1 - v4l2src\n\t"
+              "2 - Colour bars\n\t"
+              "3 - Greyscale bars\n\t"
+              "4 - Scaled RGB values\n\t"
+              "5 - Checkered test card\n\t"
+              "6 - Solid white\n\t"
+              "7 - Solid black\n\t"
+              "8 - Solid red\n\t"
+              "9 - Solid green\n\t"
+              "10 - Solid blue\n\t");
 DEFINE_string(filename, "testcard.png", "the PNG file to use as the source of the video stream (only with -source 0)");
 DEFINE_string(device, "/dev/video0", "the V4L2 device source (only with -source 1)");
 DEFINE_string(session_name, "TestVideo1", "the SAP/SDP session name");
-DEFINE_int32(mode, 1,
-             "The video mode (0-4)\n\t"
-             "0 - Uncompressed RGB\n\t"
-             "1 - Uncompressed YUV\n\t"
-             "2 - Mono16\n\t"
-             "3 - Mono8\n\t"
-             "4 - H.264\n\t");
+DEFINE_uint32(mode, 1,
+              "The video mode (0-4)\n\t"
+              "0 - Uncompressed RGB\n\t"
+              "1 - Uncompressed YUV\n\t"
+              "2 - Mono16\n\t"
+              "3 - Mono8\n\t"
+              "4 - H.264\n\t");
 
 static bool application_running = true;
 
@@ -140,8 +140,9 @@ int main(int argc, char **argv) {
   std::unique_ptr<mediax::RtpPayloader> rtp;
   rtp = std::make_unique<mediax::RtpvrawPayloader>();
 
-  rtp->SetStreamInfo(FLAGS_filename, video_mode, FLAGS_height, FLAGS_width, FLAGS_framerate, FLAGS_ipaddr,
-                     (uint16_t)FLAGS_port);
+  mediax::StreamInformation stream_information = {FLAGS_filename,  video_mode,   FLAGS_height,        FLAGS_width,
+                                                  FLAGS_framerate, FLAGS_ipaddr, (uint16_t)FLAGS_port};
+  rtp->SetStreamInfo(stream_information);
   rtp->Open();
 
   // Read the PNG file
