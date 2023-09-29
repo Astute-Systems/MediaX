@@ -13,7 +13,7 @@
 /// \file rtph264_depayloader.cc
 ///
 
-#include "h264/vaapi/rtph264_depayloader.h"
+#include "h264/native/rtph264_depayloader.h"
 
 #include <glog/logging.h>
 #include <va/va.h>
