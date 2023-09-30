@@ -25,6 +25,7 @@
 #include <gst/app/gstappsink.h>
 #include <gst/gst.h>
 
+#include <algorithm>
 #include <chrono>
 #include <iostream>
 #include <string>
