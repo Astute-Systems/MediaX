@@ -277,7 +277,7 @@ bool RtpvrawDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
     auto start_time = std::chrono::high_resolution_clock::now();
 
     while (!new_rx_frame_) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+      std::this_thread::sleep_for(std::chrono::milliseconds(2));
       auto end_time = std::chrono::high_resolution_clock::now();
       if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
           duration >= to) {

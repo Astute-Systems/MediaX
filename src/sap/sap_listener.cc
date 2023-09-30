@@ -99,8 +99,7 @@ void SAPListener::SAPListenerThread(SAPListener *sap) {
 
   while (running_) {
     if (ssize_t bytes = recvfrom(sap->sockfd_, sap->udpdata_.data(), kMaxUdpData, 0, nullptr, nullptr); bytes <= 0) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
+      std::this_thread::sleep_for(std::chrono::milliseconds(2));
       continue;
     }
 
