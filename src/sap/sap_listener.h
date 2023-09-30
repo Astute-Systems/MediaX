@@ -157,11 +157,11 @@ class SAPListener {
   ///
   /// \brief Get the stream information for a given session name
   ///
-  /// \param session_name
-  /// \return StreamInformation
+  /// \param session_name The SAP/SDP session name
+  /// \param stream_information The stream information being updated
+  /// \return bool, true if the stream information was updated
   ///
-  ::mediax::StreamInformation GetStreamInformation(std::string_view session_name) const;
-
+  bool GetStreamInformation(std::string_view session_name, ::mediax::StreamInformation *stream_information) const;
   ///
   /// \brief Start the SAP/SDP announcements thread
   ///

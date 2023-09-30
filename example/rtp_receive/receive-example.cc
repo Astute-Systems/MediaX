@@ -24,6 +24,7 @@
 #include "example.h"
 #include "example_helpers.h"
 #include "rtp/rtp.h"
+#include "sap/sap_listener.h"
 #include "version.h"
 
 DEFINE_string(ipaddr, kIpAddressDefault, "the IP address of the transmit stream");
@@ -51,6 +52,7 @@ struct OnDrawData {
 };
 
 std::shared_ptr<mediax::RtpDepayloader> rtp_;
+std::shared_ptr<mediax::sap::SAPListener> sap_listener_;
 
 static uint64_t m_frame_counter_ = 0;
 
@@ -119,7 +121,7 @@ gboolean update_callback(gpointer user_data) {
   return TRUE;
 }
 
-void SetupUncompressed(mediax::ColourspaceType mode) {
+void ProcessVideo(mediax::ColourspaceType mode) {
   if ((mode == mediax::ColourspaceType::kColourspaceH264Part10) ||
       (mode == mediax::ColourspaceType::kColourspaceH264Part4)) {
     rtp_ = std::make_shared<mediax::RtpH264Depayloader>();
@@ -133,6 +135,15 @@ void SetupUncompressed(mediax::ColourspaceType mode) {
   if (FLAGS_wait_sap) {
     // Just give the stream name and wait for SAP/SDP announcement
     LOG(INFO) << "Example RTP streaming to " << FLAGS_session_name;
+    sap_listener_ = std::make_shared<mediax::sap::SAPListener>();
+    sap_listener_->Start();
+    // Sleep for one second to allow the SAP listener to start
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    if (sap_listener_->GetStreamInformation(FLAGS_session_name, &stream_information) == false) {
+      LOG(ERROR) << "Could not get stream information, quitting";
+      exit(1);
+    }
     // Add SAP callback here
     rtp_->SetStreamInfo(stream_information);
   } else {
@@ -147,11 +158,6 @@ void SetupUncompressed(mediax::ColourspaceType mode) {
   }
 
   rtp_->Start();
-}
-
-void SetupH264() {
-  auto rtp_h264 = std::make_shared<mediax::RtpH264Depayloader>();
-  rtp_ = rtp_h264;
 }
 
 int main(int argc, char *argv[]) {
@@ -172,11 +178,7 @@ int main(int argc, char *argv[]) {
 
   mediax::ColourspaceType video_mode = GetMode(FLAGS_mode);
 
-  if (FLAGS_uncompressed) {
-    SetupUncompressed(video_mode);
-  } else {
-    SetupH264();
-  }
+  ProcessVideo(video_mode);
 
   // Create a new window
   GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);

@@ -113,18 +113,18 @@ void SAPListener::RegisterSapListener(std::string_view session_name, const SapCa
   callbacks_[std::string(session_name)] = callback;
 }
 
-StreamInformation SAPListener::GetStreamInformation(std::string_view session_name) const {
-  StreamInformation stream_information;
+bool SAPListener::GetStreamInformation(std::string_view session_name, StreamInformation *stream_information) const {
   auto it = announcements_.find(std::string(session_name));
   if (it != announcements_.end()) {
-    stream_information.hostname = it->second.ip_address;
-    stream_information.port = it->second.port;
-    stream_information.height = it->second.height;
-    stream_information.width = it->second.width;
-    stream_information.framerate = it->second.framerate;
-    stream_information.encoding = SamplingToColourspaceType(it->second.sampling, it->second.bits_per_pixel);
+    stream_information->hostname = it->second.ip_address;
+    stream_information->port = it->second.port;
+    stream_information->height = it->second.height;
+    stream_information->width = it->second.width;
+    stream_information->framerate = it->second.framerate;
+    stream_information->encoding = SamplingToColourspaceType(it->second.sampling, it->second.bits_per_pixel);
+    return true;
   }
-  return stream_information;
+  return false;
 }
 
 void SAPListener::Start() {
