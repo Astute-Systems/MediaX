@@ -202,7 +202,7 @@ int main(int argc, char *argv[]) {
   g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), nullptr);
 
   // Start the update timer
-  g_timeout_add(60, update_callback, drawing_area);  // 25 Hz = 40ms interval
+  g_timeout_add(40, update_callback, drawing_area);  // 25 Hz = 40ms interval
 
   gtk_widget_show_all(window);
 
