@@ -131,7 +131,7 @@ void ProcessVideo(mediax::ColourspaceType mode) {
 
   // Setup stream
   mediax::StreamInformation stream_information = {
-      FLAGS_session_name, mode, FLAGS_height, FLAGS_width, 25, FLAGS_ipaddr, (uint16_t)FLAGS_port};
+      FLAGS_session_name, FLAGS_ipaddr, (uint16_t)FLAGS_port, FLAGS_height, FLAGS_width, 25, mode, false};
   if (FLAGS_wait_sap) {
     // Just give the stream name and wait for SAP/SDP announcement
     LOG(INFO) << "Example RTP streaming to " << FLAGS_session_name;

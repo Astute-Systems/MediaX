@@ -63,6 +63,7 @@
 #include "example_helpers.h"
 #include "pngget.h"
 #include "rtp/rtp.h"
+#include "sap/sap_announcer.h"
 #include "v4l2/v4l2_source.h"
 #include "version.h"
 
@@ -99,7 +100,7 @@ static bool application_running = true;
 
 void signalHandler(int signum [[maybe_unused]]) { application_running = false; }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
 #if CUDA_ENABLED
   std::shared_ptr<mediax::video::ColourSpace> convert = std::make_shared<mediax::video::ColourSpaceCuda>();
 #else
@@ -140,8 +141,11 @@ int main(int argc, char **argv) {
   std::unique_ptr<mediax::RtpPayloader> rtp;
   rtp = std::make_unique<mediax::RtpvrawPayloader>();
 
-  mediax::StreamInformation stream_information = {FLAGS_filename,  video_mode,   FLAGS_height,        FLAGS_width,
-                                                  FLAGS_framerate, FLAGS_ipaddr, (uint16_t)FLAGS_port};
+  // Setup SAP/SDP announcment
+  mediax::sap::SAPAnnouncer& sap_announcer = mediax::sap::SAPAnnouncer::GetInstance();
+
+  mediax::StreamInformation stream_information = {FLAGS_filename, FLAGS_ipaddr,    (uint16_t)FLAGS_port, FLAGS_height,
+                                                  FLAGS_width,    FLAGS_framerate, video_mode,           false};
   rtp->SetStreamInfo(stream_information);
   rtp->Open();
 

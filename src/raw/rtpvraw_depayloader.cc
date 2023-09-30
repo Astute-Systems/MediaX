@@ -59,7 +59,7 @@ void RtpvrawDepayloader::SetStreamInfo(const ::mediax::StreamInformation &stream
   ingress_.encoding = stream_information.encoding;
   ingress_.height = stream_information.height;
   ingress_.width = stream_information.width;
-  ingress_.name = stream_information.name;
+  ingress_.name = stream_information.session_name;
   ingress_.framerate = stream_information.framerate;
   ingress_.hostname = stream_information.hostname;
   ingress_.port_no = stream_information.port;

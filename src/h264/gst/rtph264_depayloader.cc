@@ -42,7 +42,7 @@ void RtpH264Depayloader::SetStreamInfo(const ::mediax::StreamInformation &stream
   ingress_.height = stream_information.height;
   ingress_.width = stream_information.width;
   ingress_.framerate = stream_information.framerate;
-  ingress_.name = stream_information.name;
+  ingress_.name = stream_information.session_name;
   ingress_.hostname = stream_information.hostname;
   ingress_.port_no = stream_information.port;
   ingress_.settings_valid = true;

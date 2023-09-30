@@ -21,7 +21,7 @@ TEST(RTPDepayloaderTest, SendOneFrameRgb24) {
 
   mediax::RtpvrawPayloader rtp;
   mediax::StreamInformation stream_information = {
-      "test_session_name", mediax::ColourspaceType::kColourspaceRgb24, 640, 480, 25, "127.0.0.1", 5004};
+      "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceRgb24, false};
   rtp.SetStreamInfo(stream_information);
   ASSERT_EQ(rtp.GetHeight(), 640);
   ASSERT_EQ(rtp.GetWidth(), 480);
@@ -39,7 +39,7 @@ TEST(RTPDepayloaderTest, SendOneFrameYuv) {
 
   mediax::RtpvrawPayloader rtp;
   mediax::StreamInformation stream_information = {
-      "test_session_name", mediax::ColourspaceType::kColourspaceYuv, 640, 480, 25, "127.0.0.1", 5004};
+      "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceYuv, false};
   rtp.SetStreamInfo(stream_information);
   ASSERT_EQ(rtp.GetHeight(), 640);
   ASSERT_EQ(rtp.GetWidth(), 480);
@@ -57,7 +57,7 @@ TEST(RTPDepayloaderTest, SendOneFrameMono16) {
 
   mediax::RtpvrawPayloader rtp;
   mediax::StreamInformation stream_information = {
-      "test_session_name", mediax::ColourspaceType::kColourspaceMono16, 640, 480, 25, "127.0.0.1", 5004};
+      "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceMono16, false};
   rtp.SetStreamInfo(stream_information);
   ASSERT_EQ(rtp.GetHeight(), 640);
   ASSERT_EQ(rtp.GetWidth(), 480);
@@ -75,7 +75,7 @@ TEST(RTPDepayloaderTest, SendOneFrameMono8) {
 
   mediax::RtpvrawPayloader rtp;
   mediax::StreamInformation stream_information = {
-      "test_session_name", mediax::ColourspaceType::kColourspaceMono8, 640, 480, 25, "127.0.0.1", 5004};
+      "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceMono8};
   rtp.SetStreamInfo(stream_information);
   ASSERT_EQ(rtp.GetHeight(), 640);
   ASSERT_EQ(rtp.GetWidth(), 480);

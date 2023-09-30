@@ -187,13 +187,22 @@ struct TxData {
 
 /// Struct capturing all stream information
 struct StreamInformation {
-  std::string_view name;
-  ::mediax::ColourspaceType encoding;
-  uint32_t height;
-  uint32_t width;
-  uint32_t framerate;
-  std::string_view hostname;
+  /// The SDP session name
+  std::string session_name;
+  /// The IPV4 address as a string
+  std::string hostname;
+  /// The IPV4 port number
   uint32_t port = 5004;
+  /// The stream height in pixels
+  uint32_t height;
+  /// The stream width in pixels
+  uint32_t width;
+  /// The stream framerate in frames / second
+  uint32_t framerate;
+  /// Colourspace
+  ::mediax::ColourspaceType encoding;
+  /// Flag indicating the stream was deleted
+  bool deleted = false;
 };
 
 }  // namespace mediax

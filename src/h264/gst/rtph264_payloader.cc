@@ -27,7 +27,7 @@ void RtpH264Payloader::SetStreamInfo(const ::mediax::StreamInformation& stream_i
   egress_.height = stream_information.height;
   egress_.width = stream_information.width;
   egress_.framerate = stream_information.framerate;
-  egress_.name = stream_information.name;
+  egress_.name = stream_information.session_name;
   egress_.hostname = stream_information.hostname;
   egress_.port_no = stream_information.port;
   egress_.settings_valid = true;
