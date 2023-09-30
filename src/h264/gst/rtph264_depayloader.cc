@@ -29,6 +29,8 @@
 #include <iostream>
 #include <string>
 
+#include "rtp/rtp_utils.h"
+
 namespace mediax {
 
 RtpH264Depayloader::~RtpH264Depayloader(void) = default;
@@ -45,6 +47,8 @@ void RtpH264Depayloader::SetStreamInfo(const ::mediax::StreamInformation &stream
 }
 
 GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
+  gint width = 0;
+  gint height = 0;
   auto depayloader = static_cast<RtpH264Depayloader *>(user_data);
 
   // Pull the sample from the appsink
@@ -55,30 +59,51 @@ GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
 
   // Get the size of the buffer
   gsize size = gst_buffer_get_size(buffer);
-  std::cout << "New frame callback size" << size << std::endl;
 
   // Allocate memory for the frame data
   // guint8 *data = g_new(guint8, size);
-  depayloader->buffer_in_.resize(size);
+  depayloader->GetBuffer().resize(size);
 
   // Get the buffer height and width
   const GstCaps *caps = gst_sample_get_caps(sample);
   const GstStructure *structure = gst_caps_get_structure(caps, 0);
-  gint width;
-  gint height;
   gst_structure_get_int(structure, "height", &height);
   gst_structure_get_int(structure, "width", &width);
-  depayloader->ingress_.height = height;
-  depayloader->ingress_.width = width;
+  // Get the colourspace
+  const gchar *colorspace = gst_structure_get_string(structure, "format");
 
-  // Copy the data from the buffer to the allocated memory
-  gst_buffer_extract(buffer, 0, reinterpret_cast<guint8 *>(depayloader->buffer_in_.data()), size);
+  // Set the ColourspaceType
+
+  if (strncmp(colorspace, "UYVY", 4) == 0) {
+    depayloader->SetColourSpace(ColourspaceType::kColourspaceYuv);
+  } else if (strncmp(colorspace, "RGB", 3) == 0) {
+    depayloader->SetColourSpace(ColourspaceType::kColourspaceRgb24);
+  } else if (strncmp(colorspace, "NV12", 3) == 0) {
+    depayloader->SetColourSpace(ColourspaceType::kColourspaceNv12);
+  } else if (strncmp(colorspace, "RGBA", 4) == 0) {
+    depayloader->SetColourSpace(ColourspaceType::kColourspaceRgba);
+  } else {
+    depayloader->SetColourSpace(ColourspaceType::kColourspaceUndefined);
+    std::cout << "Unknown colourspace " << colorspace << std::endl;
+  }
+  depayloader->SetHeight(height);
+  depayloader->SetWidth(width);
+
+  // Get a pointer to the video frame
+  GstMapInfo map;
+  gst_buffer_map(buffer, &map, GST_MAP_READ);
+
+  // Copy the frame data
+  std::copy(map.data, map.data + size, depayloader->GetBuffer().begin());
+
+  // Unmap the buffer
+  gst_buffer_unmap(buffer, &map);
 
   // Release the sample
   gst_sample_unref(sample);
 
   // Set good frame flag
-  depayloader->new_rx_frame_ = true;
+  depayloader->NewFrame();
 
   return GST_FLOW_OK;
 }
@@ -150,24 +175,25 @@ void RtpH264Depayloader::Close() {
 
 bool RtpH264Depayloader::Receive(uint8_t **cpu, int32_t timeout) {
   auto start_time = std::chrono::high_resolution_clock::now();
-  if (new_rx_frame_) {
-    // Dont start a new thread if a frame is available just return it
-    *cpu = buffer_in_.data();
-    new_rx_frame_ = false;
-    return true;
-  } else {
-    while (!new_rx_frame_) {
-      // Check timeout
-      if (auto elapsed = std::chrono::high_resolution_clock::now() - start_time;
-          elapsed > std::chrono::milliseconds(timeout)) {
-        std::cout << "Timeout" << std::endl;
-        return false;
-      }
-      // Wait for a new frame sleep 1ms
-      std::chrono::milliseconds timespan(timeout);
+
+  while (!new_rx_frame_) {
+    // Check timeout
+    if (auto elapsed = std::chrono::high_resolution_clock::now() - start_time;
+        elapsed > std::chrono::milliseconds(timeout)) {
+      return false;
     }
+    // Wait for a new frame sleep 1ms
+    std::chrono::milliseconds timespan(timeout);
   }
+  // Dont start a new thread if a frame is available just return it
+  *cpu = buffer_in_.data();
+
+  new_rx_frame_ = false;
   return true;
 }
+
+std::vector<uint8_t> &RtpH264Depayloader::GetBuffer() { return buffer_in_; }
+
+void RtpH264Depayloader::NewFrame() { new_rx_frame_ = true; }
 
 }  // namespace mediax

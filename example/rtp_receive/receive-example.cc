@@ -57,9 +57,11 @@ static uint64_t m_frame_counter_ = 0;
 gboolean on_draw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer user_data) {
   uint8_t *cpu_buffer;
   auto data = static_cast<OnDrawData *>(user_data);
-  video::ColourSpaceCpu convert;
+  mediax::video::ColourSpaceCpu convert;
 
-  std::cout << "Frame=" << m_frame_counter_ << "\n";
+  // Overwrite line below to test the frame rate
+  std::cout << "Frame=" << m_frame_counter_ << "\r";
+  std::flush(std::cout);
 
   // Fill the surface with video data if available
   if (rtp_->Receive(&cpu_buffer, 80) == true) {

@@ -5,8 +5,10 @@
 //
 // Licensed under the Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
 // License. See the LICENSE file in the project root for full license details.
-//
-/// \file sap-example.cc
+//'
+/// \brief A SAP/SDP announcement example
+///
+/// \file sap_announcer_example.cc
 ///
 
 #include <iostream>

@@ -23,7 +23,7 @@
 #include "utils/colourspace_cpu.h"
 
 TEST(TestCard, Solid) {
-  video::ColourSpaceCpu colourspace;
+  mediax::video::ColourSpaceCpu colourspace;
   const uint32_t width = 640;
   const uint32_t height = 480;
 
@@ -42,7 +42,7 @@ TEST(TestCard, Solid) {
 }
 
 TEST(TestCard, Checkered) {
-  video::ColourSpaceCpu colourspace;
+  mediax::video::ColourSpaceCpu colourspace;
   const uint32_t width = 640;
   const uint32_t height = 480;
 
@@ -53,7 +53,7 @@ TEST(TestCard, Checkered) {
 }
 
 TEST(TestCard, ColourBars) {
-  video::ColourSpaceCpu colourspace;
+  mediax::video::ColourSpaceCpu colourspace;
   const uint32_t width = 640;
   const uint32_t height = 480;
 
@@ -64,7 +64,7 @@ TEST(TestCard, ColourBars) {
 }
 
 TEST(TestCard, GreyBars) {
-  video::ColourSpaceCpu colourspace;
+  mediax::video::ColourSpaceCpu colourspace;
   const uint32_t width = 640;
   const uint32_t height = 480;
 
@@ -75,7 +75,7 @@ TEST(TestCard, GreyBars) {
 }
 
 TEST(TestCard, CreateQuadTestCard) {
-  video::ColourSpaceCpu colourspace;
+  mediax::video::ColourSpaceCpu colourspace;
   const uint32_t width = 640;
   const uint32_t height = 480;
 

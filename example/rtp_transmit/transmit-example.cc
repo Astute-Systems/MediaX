@@ -101,9 +101,9 @@ void signalHandler(int signum [[maybe_unused]]) { application_running = false; }
 
 int main(int argc, char **argv) {
 #if CUDA_ENABLED
-  std::shared_ptr<video::ColourSpace> convert = std::make_shared<video::ColourSpaceCuda>();
+  std::shared_ptr<mediax::video::ColourSpace> convert = std::make_shared<mediax::video::ColourSpaceCuda>();
 #else
-  std::shared_ptr<video::ColourSpace> convert = std::make_shared<video::ColourSpaceCpu>();
+  std::shared_ptr<mediax::video::ColourSpace> convert = std::make_shared<mediax::video::ColourSpaceCpu>();
 #endif
   mediax::ColourspaceType video_mode = mediax::ColourspaceType::kColourspaceYuv;
 

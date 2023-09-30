@@ -45,6 +45,10 @@ void RtpDepayloader::SetPort(uint32_t port) { ingress_.port_no = port; }
 
 uint32_t RtpDepayloader::GetPort() const { return ingress_.port_no; }
 
+void RtpDepayloader::SetColourSpace(::mediax::ColourspaceType colourspace) { ingress_.encoding = colourspace; }
+
+::mediax::ColourspaceType RtpDepayloader::GetColourSpace() { return ingress_.encoding; }
+
 bool RtpDepayloader::IsMulticast(std::string_view ip_address) {
   struct in_addr addr;
   if (inet_aton(std::string(ip_address).c_str(), &addr) == 0) {

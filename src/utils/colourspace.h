@@ -16,7 +16,7 @@
 
 #include <stdint.h>
 
-namespace video {
+namespace mediax::video {
 
 /// Helper functions for different colour space options
 class ColourSpace {
@@ -200,6 +200,6 @@ class ColourSpace {
                               uint32_t target_height, uint32_t target_width, uint8_t *target_rgb_buffer) const = 0;
 };
 
-}  // namespace video
+}  // namespace mediax::video
 
 #endif  // UTILS_COLOURSPACE_H_

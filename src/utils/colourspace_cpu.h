@@ -18,7 +18,7 @@
 
 #include "utils/colourspace.h"
 
-namespace video {
+namespace mediax::video {
 
 /// Helper functions for different colour space options
 class ColourSpaceCpu : public ColourSpace {
@@ -132,6 +132,17 @@ class ColourSpaceCpu : public ColourSpace {
   int Nv12ToBgra(uint32_t height, uint32_t width, uint8_t *nv12, uint8_t *bgra) const;
 
   ///
+  /// \brief Construct a new Nv12 To Rgb object
+  ///
+  /// \param height
+  /// \param width
+  /// \param nv12
+  /// \param rgb
+  /// \return int
+  ///
+  int Nv12ToRgb(uint32_t height, uint32_t width, uint8_t *nv12, uint8_t *rgb) const;
+
+  ///
   /// \brief Convert RGB to RGBA on the CPU
   ///
   /// \param width The height of the image
@@ -225,6 +236,6 @@ class ColourSpaceCpu : public ColourSpace {
                       uint32_t target_width, uint8_t *target_bgra_buffer) const;
 };
 
-}  // namespace video
+}  // namespace mediax::video
 
 #endif  // UTILS_COLOURSPACE_CPU_H_

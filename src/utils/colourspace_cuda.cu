@@ -19,7 +19,7 @@
 
 #include "utils/colourspace_cuda.h"
 
-namespace video {
+namespace mediax::video {
 
 ColourSpaceCuda::ColourSpaceCuda() {
   // Initialise CUDA
@@ -263,4 +263,4 @@ int ColourSpaceCuda::RgbaToYuv(uint32_t height, uint32_t width, uint8_t *rgba, u
   return 0;
 }
 
-}  // namespace video
+}  // namespace mediax::video

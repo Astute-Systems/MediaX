@@ -43,8 +43,8 @@ TEST(RtpH264DepayloaderTest, DISABLED_UnicastOk) {
   GTEST_SKIP();
 #endif
 
-  std::array<uint8_t, 640 * 480 * 3> rgb_test;
-  video::ColourSpaceCpu colourspace;
+  std::array<uint8_t, 1280 * 720 * 3> rgb_test;
+  mediax::video::ColourSpaceCpu colourspace;
   mediax::RtpH264Depayloader rtp;
 
   // Increase GST debug level
@@ -60,13 +60,17 @@ TEST(RtpH264DepayloaderTest, DISABLED_UnicastOk) {
   rtp.Start();
   std::cout << "Started" << std::endl;
   uint8_t* data = rgb_test.data();
-  EXPECT_TRUE(rtp.Receive(&data, 800));
+  EXPECT_TRUE(rtp.Receive(&data, 80));
   rtp.Stop();
   rtp.Close();
+
+  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::ColourspaceType::kColourspaceNv12);
+  mediax::video::ColourSpaceCpu convert;
+  convert.Nv12ToRgb(rtp.GetHeight(), rtp.GetWidth(), data, rgb_test.data());
 
   EXPECT_EQ(rtp.GetHeight(), 720);
   EXPECT_EQ(rtp.GetWidth(), 1280);
 
   std::cout << "Received" << std::endl;
-  WritePngFile(data, rtp.GetWidth(), rtp.GetHeight() / 3, "H264_Image.png");
+  WritePngFile(rgb_test.data(), rtp.GetWidth(), rtp.GetHeight(), "H264_Image.png");
 }

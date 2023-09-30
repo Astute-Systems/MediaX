@@ -62,6 +62,7 @@
 #include "rtp/rtp_depayloader.h"
 #include "rtp/rtp_types.h"
 
+/// The DefenceX media streaming namespace
 namespace mediax {
 
 ///

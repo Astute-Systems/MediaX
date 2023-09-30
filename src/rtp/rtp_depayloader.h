@@ -175,6 +175,20 @@ class RtpDepayloader {
   uint32_t GetPort() const;
 
   ///
+  /// \brief Set the Colour Space object
+  ///
+  /// \param colourspace
+  ///
+  void SetColourSpace(::mediax::ColourspaceType colourspace);
+
+  ///
+  /// \brief Get the Colour Space object
+  ///
+  /// \return ::mediax::ColourspaceType
+  ///
+  ::mediax::ColourspaceType GetColourSpace();
+
+  ///
   /// \brief Check if the IP address is a multicast address
   ///
   /// \param ip_address

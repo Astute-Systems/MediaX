@@ -64,7 +64,7 @@ void SendVideoCheckered(std::string ip, uint32_t height, uint32_t width, uint32_
 
 TEST(RtpRawDepayloaderTest, UnicastOk) {
   std::array<uint8_t, 640 * 480 * 3> rgb_test;
-  video::ColourSpaceCpu colourspace;
+  mediax::video::ColourSpaceCpu colourspace;
   mediax::RtpvrawDepayloader rtp;
   mediax::StreamInformation stream_info = {
       "test_session_name", mediax::ColourspaceType::kColourspaceRgb24, 640, 480, 25, "127.0.0.1", 5004};
@@ -124,7 +124,7 @@ void SendFrameThread(std::string ip, uint32_t port) {
 
 TEST(RtpRawDepayloaderTest, MulticastOk) {
   std::array<uint8_t, 640 * 480 * 3> rgb_test;
-  video::ColourSpaceCpu colourspace;
+  mediax::video::ColourSpaceCpu colourspace;
 
   mediax::RtpvrawDepayloader rtp;
   mediax::StreamInformation stream_info = {
@@ -207,7 +207,7 @@ std::string ExecuteCommand(std::string bash) {
   try {
     while (!feof(pipe)) {
       char buf[256];
-      if (fgets(buf, 256, pipe) != NULL) result += buf;
+      if (fgets(buf, 256, pipe) != nullptr) result += buf;
     }
   } catch (...) {
     pclose(pipe);

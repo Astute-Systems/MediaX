@@ -100,11 +100,26 @@ class RtpH264Depayloader : public RtpDepayloader {
   ///
   bool Receive(uint8_t **cpu, int32_t timeout = 0) final;
 
-  std::vector<uint8_t> buffer_in_;
-  bool new_rx_frame_ = false;
+  ///
+  /// \brief Get the Buffer object
+  ///
+  /// \return uint8_t*
+  ///
+  std::vector<uint8_t> &GetBuffer();
+
+  ///
+  /// \brief Set new frame available
+  ///
+  ///
+  void NewFrame();
 
  private:
+  /// The GStreamer pipeline
   GstElement *pipeline_;
+  /// The video buffer
+  std::vector<uint8_t> buffer_in_;
+  /// A flag indication a new frame is available
+  bool new_rx_frame_ = false;
 };
 
 }  // namespace mediax

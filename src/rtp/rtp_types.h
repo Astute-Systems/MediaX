@@ -98,6 +98,7 @@ enum class ColourspaceType {
   kColourspaceMono16,
   kColourspaceRgba,  // Not a GVA uncompressed video format
   kColourspaceBgra,  // Not a GVA uncompressed video format
+  kColourspaceNv12,  // Not a GVA uncompressed video format
   kColourspaceJpeg2000,
   kColourspaceH264Part4,
   kColourspaceH264Part10,

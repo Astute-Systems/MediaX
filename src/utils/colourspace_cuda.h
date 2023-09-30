@@ -19,7 +19,7 @@
 #include "utils/colourspace.h"
 
 /// The video functions namespace for colourspace manipulation
-namespace video {
+namespace mediax::video {
 
 /// Helper functions for different colour space options
 class ColourSpaceCuda : public ColourSpace {
@@ -101,6 +101,6 @@ class ColourSpaceCuda : public ColourSpace {
   int YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const final;
 };
 
-}  // namespace video
+}  // namespace mediax::video
 
 #endif  // UTILS_COLOURSPACE_CUDA_H_
