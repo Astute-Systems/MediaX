@@ -18,7 +18,7 @@
 #include <QObject>
 #include <memory>
 
-#include "rtp/raw/rtp_depayloader.h"
+#include "uncompressed/rtp_uncompressed_depayloader.h"
 
 namespace mediax::qt {
 
@@ -27,7 +27,7 @@ class RtpDepayloaderWrapper : public QObject {
 
  public:
   explicit RtpDepayloaderWrapper(QObject* parent = nullptr) : QObject(parent) {
-    m_rtpDepayloader = std::make_unique<mediax::RtpDepayloader>();
+    m_rtpDepayloader = std::make_unique<mediax::RtpUncompressedDepayloader>();
   }
 
  public slots:

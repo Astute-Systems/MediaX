@@ -26,11 +26,23 @@ if (VAAPI_SUPPORTED)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DVAAPI_SUPPORTED")
 endif()
 
-
 option(NVENC_SUPPORTED "Nvidia NVENC support" OFF)
 if (NVENC_SUPPORTED) 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNVENC_SUPPORTED")
 endif()
+
+# BUILD_CUDA
+option(BUILD_CUDA "Build CUDA" OFF)
+if (BUILD_CUDA)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_CUDA")
+endif()
+
+# BUILD_QT6 Wrappers
+option(BUILD_QT6 "Build QT6 Wrappers" OFF)
+if (BUILD_QT6)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_QT6")
+endif()
+
 
 if(CMAKE_BUILD_TYPE)
     message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")

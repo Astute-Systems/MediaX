@@ -18,7 +18,7 @@
 #include <QByteArray>
 #include <QObject>
 
-#include "rtph264_payloader.h"
+#include "h264/gst/rtp_h264_payloader.h"
 
 namespace mediax::qt {
 
@@ -26,31 +26,22 @@ class RtpH264PayloaderWrapper : public QObject {
   Q_OBJECT
 
  public:
-  explicit RtpH264PayloaderWrapper(QObject *parent = nullptr) : QObject(parent) {}
+  explicit RtpH264PayloaderWrapper(QObject *parent = nullptr);
+
+  ~RtpH264PayloaderWrapper() = default;
 
   Q_INVOKABLE void setStreamInfo(const QString &hostname, int port, const QString &name, const QString &encoding,
-                                 int height, int width) {
-    StreamInformation stream_information;
-    stream_information.hostname = hostname.toStdString();
-    stream_information.port = port;
-    stream_information.name = name.toStdString();
-    stream_information.encoding = encoding.toStdString();
-    stream_information.height = height;
-    stream_information.width = width;
-    payloader_.SetStreamInfo(stream_information);
-  }
+                                 int height, int width);
 
-  Q_INVOKABLE bool open() { return payloader_.Open(); }
+  Q_INVOKABLE bool open();
 
-  Q_INVOKABLE void start() { payloader_.Start(); }
+  Q_INVOKABLE void start();
 
-  Q_INVOKABLE void stop() { payloader_.Stop(); }
+  Q_INVOKABLE void stop();
 
-  Q_INVOKABLE void close() { payloader_.Close(); }
+  Q_INVOKABLE void close();
 
-  Q_INVOKABLE int transmit(QByteArray &frame, bool blocking = true) {
-    return payloader_.Transmit(reinterpret_cast<uint8_t *>(frame.data()), blocking);
-  }
+  Q_INVOKABLE int transmit(const QByteArray &frame, bool blocking = true);
 
  private:
   RtpH264Payloader payloader_;

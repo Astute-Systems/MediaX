@@ -18,8 +18,6 @@
 
 namespace mediax {
 
-RtpH264Payloader::RtpH264Payloader() = default;
-
 RtpH264Payloader::~RtpH264Payloader() = default;
 
 void RtpH264Payloader::SetStreamInfo(const ::mediax::StreamInformation& stream_information) {

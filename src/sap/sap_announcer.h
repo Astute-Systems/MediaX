@@ -38,6 +38,7 @@ namespace mediax::sap {
 
 /// Class to announce the stream details using the SAP protocol
 struct SAPHeader {
+ public:
   /// Protocol version
   uint8_t version;
   /// Hash, must be unique for this announcement

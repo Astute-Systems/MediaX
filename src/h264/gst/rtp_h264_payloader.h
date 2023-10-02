@@ -19,11 +19,12 @@
 namespace mediax {
 
 class RtpH264Payloader : public RtpPayloader {
+ public:
   ///
   /// \brief Construct a new Rtp H.264 Payloader object
   ///
   ///
-  RtpH264Payloader();
+  RtpH264Payloader() = default;
 
   ///
   /// \brief Destroy the Rtp H.264 Payloader object

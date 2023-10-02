@@ -36,8 +36,8 @@
 /// \endcode
 /// Use his program to stream data to the udpsrc example above on the tegra X1
 
-#ifndef RAW_RTP_UNCOMPRESSED_DEPAYLOADER_H_
-#define RAW_RTP_UNCOMPRESSED_DEPAYLOADER_H_
+#ifndef UNCOMPRESSED_RTP_UNCOMPRESSED_DEPAYLOADER_H_
+#define UNCOMPRESSED_RTP_UNCOMPRESSED_DEPAYLOADER_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -229,4 +229,4 @@ class RtpUncompressedDepayloader : public RtpDepayloader {
 
 }  // namespace mediax
 
-#endif  // RAW_RTP_UNCOMPRESSED_DEPAYLOADER_H_
+#endif  // UNCOMPRESSED_RTP_UNCOMPRESSED_DEPAYLOADER_H_

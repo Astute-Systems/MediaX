@@ -18,7 +18,7 @@
 #include <QObject>
 #include <memory>
 
-#include "rtp/raw/rtp_payloader.h"
+#include "uncompressed/rtp_uncompressed_payloader.h"
 
 namespace mediax::qt {
 
@@ -27,7 +27,7 @@ class RtpPayloaderWrapper : public QObject {
 
  public:
   explicit RtpPayloaderWrapper(QObject* parent = nullptr) : QObject(parent) {
-    m_rtpPayloader = std::make_unique<mediax::RtpPayloader>();
+    m_rtpPayloader = std::make_unique<mediax::RtpUncompressedPayloader>();
   }
 
  public slots:

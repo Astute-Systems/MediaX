@@ -12,14 +12,14 @@
 /// \file QtRtpH264Depayloader.h
 ///
 
-#ifndef QT_QTRTPH264PAYLOADER_H_
-#define QT_QTRTPH264PAYLOADER_H_
+#ifndef QT_QTRTPH264DEPAYLOADER_H_
+#define QT_QTRTPH264DEPAYLOADER_H_
 
 #include <QByteArray>
 #include <QObject>
 #include <QVector>
 
-#include "rtph264_depayloader.h"
+#include "h264/gst/rtp_h264_depayloader.h"
 
 namespace mediax::qt {
 
@@ -27,40 +27,23 @@ class RtpH264DepayloaderWrapper : public QObject {
   Q_OBJECT
 
  public:
-  explicit RtpH264DepayloaderWrapper(QObject *parent = nullptr) : QObject(parent) {}
+  explicit RtpH264DepayloaderWrapper(QObject *parent = nullptr);
 
-  Q_INVOKABLE void setStreamInfo(const QString &hostname, int port, const QString &name, const QString &encoding,
-                                 int height, int width) {
-    StreamInformation stream_information;
-    stream_information.hostname = hostname.toStdString();
-    stream_information.port = port;
-    stream_information.name = name.toStdString();
-    stream_information.encoding = encoding.toStdString();
-    stream_information.height = height;
-    stream_information.width = width;
-    depayloader_.SetStreamInfo(stream_information);
-  }
+  Q_INVOKABLE void setStreamInfo(const QString &hostname, int port, const QString &session_name, int height, int width);
 
-  Q_INVOKABLE bool open() { return depayloader_.Open(); }
+  Q_INVOKABLE bool open();
 
-  Q_INVOKABLE void start() { depayloader_.Start(); }
+  Q_INVOKABLE void start();
 
-  Q_INVOKABLE void stop() { depayloader_.Stop(); }
+  Q_INVOKABLE void stop();
 
-  Q_INVOKABLE void close() { depayloader_.Close(); }
+  Q_INVOKABLE void close();
 
-  Q_INVOKABLE bool receive(QByteArray &frame, int timeout = 0) {
-    uint8_t *cpu = nullptr;
-    bool result = depayloader_.Receive(&cpu, timeout);
-    if (result) {
-      frame = QByteArray(reinterpret_cast<const char *>(cpu), depayloader_.GetBuffer().size());
-    }
-    return result;
-  }
+  Q_INVOKABLE bool receive(QByteArray &frame, int timeout = 0);
 
-  Q_INVOKABLE QVector<quint8> getBuffer() const { return QVector<quint8>::fromStdVector(depayloader_.GetBuffer()); }
+  Q_INVOKABLE QVector<quint8> getBuffer() const;
 
-  Q_INVOKABLE void newFrame() { depayloader_.NewFrame(); }
+  Q_INVOKABLE void newFrame();
 
  private:
   RtpH264Depayloader depayloader_;
@@ -68,4 +51,4 @@ class RtpH264DepayloaderWrapper : public QObject {
 
 }  // namespace mediax::qt
 
-#endif  // QT_QTRTPH264PAYLOADER_H_
+#endif  // QT_QTRTPH264DEPAYLOADER_H_

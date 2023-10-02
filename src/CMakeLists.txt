@@ -12,6 +12,10 @@ add_subdirectory(sap)
 add_subdirectory(rtp)
 add_subdirectory(h264)
 
+if (BUILD_QT6)
+  add_subdirectory(qt)
+endif()
+
 if (BUILD_CUDA)
   enable_language(CUDA)
 else()

@@ -29,24 +29,12 @@ class QTSAPListener : public QObject {
  public:
   explicit QTSAPListener(QObject *parent = nullptr) : QObject(parent) {}
 
-  Q_INVOKABLE void addSapCallback(const std::string &name, const SapCallback &callback) {
-    sap_listener_.AddSapCallback(name, callback);
-  }
-
-  Q_INVOKABLE void removeSapCallback(const std::string &name) { sap_listener_.RemoveSapCallback(name); }
-
-  Q_INVOKABLE void clearSapCallbacks() { sap_listener_.ClearSapCallbacks(); }
-
   Q_INVOKABLE void start() { sap_listener_.Start(); }
 
   Q_INVOKABLE void stop() { sap_listener_.Stop(); }
 
-  Q_INVOKABLE void setMulticastAddress(const std::string &address) { sap_listener_.SetMulticastAddress(address); }
-
-  Q_INVOKABLE void setMulticastPort(uint16_t port) { sap_listener_.SetMulticastPort(port); }
-
  signals:
-  void sapDataReceived(const std::string &name, const SDPMessage &message);
+  void sapDataReceived(const std::string &name, const ::mediax::sap::SDPMessage &message);
 
  private:
   ::mediax::sap::SAPListener sap_listener_;

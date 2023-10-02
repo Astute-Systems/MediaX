@@ -39,6 +39,7 @@
         "guint",
         "IGMP",
         "Initalise",
+        "INVOKABLE",
         "ipaddr",
         "Jetson",
         "lcov",
