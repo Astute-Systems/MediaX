@@ -17,9 +17,9 @@
 #include <chrono>
 #include <thread>
 
-#include "h264/gst/rtph264_depayloader.h"
-#include "raw/rtpvraw_payloader.h"
+#include "h264/gst/rtp_h264_depayloader.h"
 #include "rtp/rtp_utils.h"
+#include "uncompressed/rtp_uncompressed_payloader.h"
 #include "util_tests.h"
 #include "utils/colourspace_cpu.h"
 

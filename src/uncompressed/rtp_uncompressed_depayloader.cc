@@ -9,7 +9,7 @@
 ///
 /// \brief RTP streaming video class for uncompressed DEF-STAN 00-82 video streams
 ///
-/// \file rtpvraw_depayloader.cc
+/// \file rtp_uncompressed_depayloader.cc
 ///
 /// Might need to add a route here (hint to send out multicast traffic):
 /// sudo route add -net 239.0.0.0 netmask 255.0.0.0 eth1
@@ -35,27 +35,30 @@
 #include <stdexcept>
 #include <vector>
 
-#include "raw/rtpvraw_depayloader.h"
 #include "rtp/rtp_types.h"
 #include "rtp/rtp_utils.h"
+#include "uncompressed/rtp_uncompressed_depayloader.h"
 
 namespace mediax {
 
-std::vector<uint8_t> RtpvrawDepayloader::buffer_in_;
+std::vector<uint8_t> RtpUncompressedDepayloader::buffer_in_;
 
-RtpvrawDepayloader::RtpvrawDepayloader() { pthread_mutex_init(&mutex_, nullptr); }
+RtpUncompressedDepayloader::RtpUncompressedDepayloader() { pthread_mutex_init(&mutex_, nullptr); }
 
-RtpvrawDepayloader::~RtpvrawDepayloader(void) = default;
+RtpUncompressedDepayloader::~RtpUncompressedDepayloader(void) = default;
 
-RtpvrawDepayloader::RtpvrawDepayloader(const RtpvrawDepayloader &other) {
+RtpUncompressedDepayloader::RtpUncompressedDepayloader(const RtpUncompressedDepayloader &other) {
   *this = other;
   pthread_mutex_init(&mutex_, nullptr);
 }
 
-RtpvrawDepayloader &RtpvrawDepayloader::operator=(const RtpvrawDepayloader &other [[maybe_unused]]) { return *this; }
+RtpUncompressedDepayloader &RtpUncompressedDepayloader::operator=(const RtpUncompressedDepayloader &other
+                                                                  [[maybe_unused]]) {
+  return *this;
+}
 
 // Broadcast the stream to port i.e. 5004
-void RtpvrawDepayloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
+void RtpUncompressedDepayloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
   ingress_.encoding = stream_information.encoding;
   ingress_.height = stream_information.height;
   ingress_.width = stream_information.width;
@@ -67,9 +70,9 @@ void RtpvrawDepayloader::SetStreamInfo(const ::mediax::StreamInformation &stream
   buffer_in_.resize((ingress_.height * ingress_.width) * kColourspaceBytes.at(ingress_.encoding));
 }
 
-bool RtpvrawDepayloader::Open() {
+bool RtpUncompressedDepayloader::Open() {
   if (!ingress_.port_no) {
-    LOG(ERROR) << "RtpvrawDepayloader::Open() No ports set, nothing to open";
+    LOG(ERROR) << "RtpUncompressedDepayloader::Open() No ports set, nothing to open";
     exit(-1);
   }
   if (ingress_.port_no) {
@@ -77,7 +80,8 @@ bool RtpvrawDepayloader::Open() {
 
     // create a UDP socket
     if ((ingress_.sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
-      LOG(ERROR) << "RtpvrawDepayloader::Open() ERROR opening socket " << ingress_.hostname << ":" << ingress_.port_no;
+      LOG(ERROR) << "RtpUncompressedDepayloader::Open() ERROR opening socket " << ingress_.hostname << ":"
+                 << ingress_.port_no;
       exit(-1);
     }
 
@@ -101,7 +105,8 @@ bool RtpvrawDepayloader::Open() {
     addr.sin_port = htons((uint16_t)ingress_.port_no);
     // bind socket to port
     if (bind(ingress_.sockfd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
-      LOG(ERROR) << "RtpvrawDepayloader::Open() ERROR binding socket " << ingress_.hostname << ":" << ingress_.port_no;
+      LOG(ERROR) << "RtpUncompressedDepayloader::Open() ERROR binding socket " << ingress_.hostname << ":"
+                 << ingress_.port_no;
       exit(-1);
     }
     ingress_.socket_open = true;
@@ -110,7 +115,7 @@ bool RtpvrawDepayloader::Open() {
   return true;
 }
 
-void RtpvrawDepayloader::Close() {
+void RtpUncompressedDepayloader::Close() {
   if (ingress_.port_no) {
     close(ingress_.sockfd);
     ingress_.sockfd = 0;
@@ -118,7 +123,7 @@ void RtpvrawDepayloader::Close() {
   }
 }
 
-bool RtpvrawDepayloader::ReadRtpHeader(RtpvrawDepayloader *stream, RtpPacket *packet) const {
+bool RtpUncompressedDepayloader::ReadRtpHeader(RtpUncompressedDepayloader *stream, RtpPacket *packet) const {
   int version;
   int payloadType;
 
@@ -145,7 +150,7 @@ bool RtpvrawDepayloader::ReadRtpHeader(RtpvrawDepayloader *stream, RtpPacket *pa
   return false;
 }
 
-void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
+void RtpUncompressedDepayloader::ReceiveThread(RtpUncompressedDepayloader *stream) {
   RtpPacket *packet{};
   bool receiving = true;
   int scan_count = 0;
@@ -231,7 +236,7 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
                    (stream->ingress_.width * kColourspaceBytes.at(stream->ingress_.encoding)));
           length = packet->head.payload.line[c].length & 0xFFFF;
 
-          memcpy(&RtpvrawDepayloader::buffer_in_[pixel], &stream->udpdata[os], length);
+          memcpy(&RtpUncompressedDepayloader::buffer_in_[pixel], &stream->udpdata[os], length);
 
           last_packet += length;
           payload += length;
@@ -243,19 +248,19 @@ void RtpvrawDepayloader::ReceiveThread(RtpvrawDepayloader *stream) {
       }
     }
 
-    stream->arg_tx.encoded_frame = RtpvrawDepayloader::buffer_in_.data();
+    stream->arg_tx.encoded_frame = RtpUncompressedDepayloader::buffer_in_.data();
     stream->new_rx_frame_ = last_scan_line;
     receiving = true;
   }  // Receive loop
   return;
 }
 
-void RtpvrawDepayloader::Start() {
+void RtpUncompressedDepayloader::Start() {
   rx_thread_running_ = true;
-  rx_thread_ = std::thread(&RtpvrawDepayloader::ReceiveThread, this);
+  rx_thread_ = std::thread(&RtpUncompressedDepayloader::ReceiveThread, this);
 }
 
-void RtpvrawDepayloader::Stop() {
+void RtpUncompressedDepayloader::Stop() {
   rx_thread_running_ = false;
 
   if (rx_thread_.joinable()) {
@@ -263,7 +268,7 @@ void RtpvrawDepayloader::Stop() {
   }
 }
 
-bool RtpvrawDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
+bool RtpUncompressedDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
   // Wait for completion
   if (timeout <= 0) {
     while (!new_rx_frame_) {
@@ -291,7 +296,7 @@ bool RtpvrawDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
   }
 }
 
-bool RtpvrawDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
+bool RtpUncompressedDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   if (ingress_.port_no == 0) {
     LOG(ERROR) << "Port number has not been set";
     return false;

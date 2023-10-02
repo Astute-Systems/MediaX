@@ -126,7 +126,7 @@ void ProcessVideo(mediax::ColourspaceType mode) {
       (mode == mediax::ColourspaceType::kColourspaceH264Part4)) {
     rtp_ = std::make_shared<mediax::RtpH264Depayloader>();
   } else {
-    rtp_ = std::make_shared<mediax::RtpvrawDepayloader>();
+    rtp_ = std::make_shared<mediax::RtpUncompressedDepayloader>();
   }
 
   // Setup stream

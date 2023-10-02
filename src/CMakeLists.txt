@@ -7,7 +7,7 @@ project(mediax
   VERSION "${MEDIAX_VERSION}"
 )
 
-add_subdirectory(raw)
+add_subdirectory(uncompressed)
 add_subdirectory(sap)
 add_subdirectory(rtp)
 add_subdirectory(h264)
@@ -34,8 +34,8 @@ set(SOURCES
   rtp/rtp_utils.cc 
   rtp/rtp_payloader.cc 
   rtp/rtp_depayloader.cc 
-  raw/rtpvraw_payloader.cc 
-  raw/rtpvraw_depayloader.cc 
+  uncompressed/rtp_uncompressed_payloader.cc 
+  uncompressed/rtp_uncompressed_depayloader.cc 
   sap/sap_announcer.cc 
   sap/sap_listener.cc 
   sap/sap_utils.cc 

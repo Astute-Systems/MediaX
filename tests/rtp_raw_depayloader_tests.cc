@@ -17,22 +17,22 @@
 #include <chrono>
 #include <thread>
 
-#include "raw/rtpvraw_depayloader.h"
-#include "raw/rtpvraw_payloader.h"
 #include "rtp/rtp_utils.h"
+#include "uncompressed/rtp_uncompressed_depayloader.h"
+#include "uncompressed/rtp_uncompressed_payloader.h"
 #include "util_tests.h"
 #include "utils/colourspace_cpu.h"
 
 TEST(RtpRawDepayloaderTest, Copy) {
-  mediax::RtpvrawDepayloader rtp;
-  mediax::RtpvrawDepayloader rtp2;
+  mediax::RtpUncompressedDepayloader rtp;
+  mediax::RtpUncompressedDepayloader rtp2;
   rtp = rtp2;
 }
 
 TEST(RtpRawDepayloaderTest, Timeout) {
   uint8_t* yuv_test;
 
-  mediax::RtpvrawDepayloader rtp;
+  mediax::RtpUncompressedDepayloader rtp;
   mediax::StreamInformation stream_info = {
       "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceRgb24, false};
   rtp.SetStreamInfo(stream_info);
@@ -48,7 +48,7 @@ TEST(RtpRawDepayloaderTest, Timeout) {
 }
 
 void SendVideoCheckered(std::string ip, uint32_t height, uint32_t width, uint32_t framerate, uint32_t portno) {
-  mediax::RtpvrawPayloader rtp;
+  mediax::RtpUncompressedPayloader rtp;
   mediax::StreamInformation stream_info = {
       "test_session_name", ip, portno, height, width, 25, mediax::ColourspaceType::kColourspaceRgb24, false};
   rtp.SetStreamInfo(stream_info);
@@ -65,7 +65,7 @@ void SendVideoCheckered(std::string ip, uint32_t height, uint32_t width, uint32_
 TEST(RtpRawDepayloaderTest, UnicastOk) {
   std::array<uint8_t, 640 * 480 * 3> rgb_test;
   mediax::video::ColourSpaceCpu colourspace;
-  mediax::RtpvrawDepayloader rtp;
+  mediax::RtpUncompressedDepayloader rtp;
   mediax::StreamInformation stream_info = {
       "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceRgb24, false};
   rtp.SetStreamInfo(stream_info);
@@ -92,7 +92,7 @@ void SendFrameThread(std::string ip, uint32_t port) {
 //   std::array<uint8_t, 640 * 480 * 3> rgb_test;
 //   uint8_t* data = rgb_test.data();
 //   uint32_t base_port = 5004;
-//   std::map<int, mediax::RtpvrawDepayloader> rtp;
+//   std::map<int, mediax::RtpUncompressedDepayloader> rtp;
 //   int number_of_streams = 10;
 
 //   // Setup ten streams
@@ -126,7 +126,7 @@ TEST(RtpRawDepayloaderTest, MulticastOk) {
   std::array<uint8_t, 640 * 480 * 3> rgb_test;
   mediax::video::ColourSpaceCpu colourspace;
 
-  mediax::RtpvrawDepayloader rtp;
+  mediax::RtpUncompressedDepayloader rtp;
   mediax::StreamInformation stream_info = {
       "test_session_name", "239.192.1.200", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceRgb24, false};
   rtp.SetStreamInfo(stream_info);
@@ -143,7 +143,7 @@ TEST(RtpRawDepayloaderTest, MulticastOk) {
 TEST(RtpRawDepayloaderTest, Many) {
   std::array<std::string, 10> ip_pool = {"239.192.1.1", "239.192.1.2", "239.192.1.3", "239.192.1.4", "239.192.1.5",
                                          "239.192.1.6", "239.192.1.7", "239.192.1.8", "239.192.1.9", "239.192.1.10"};
-  std::array<mediax::RtpvrawDepayloader, 10> rtp;
+  std::array<mediax::RtpUncompressedDepayloader, 10> rtp;
   for (int i = 0; i < 10; i++) {
     LOG(INFO) << "Creating stream number " << i << " with IP:" << ip_pool[i];
     mediax::StreamInformation stream_info = {
@@ -161,7 +161,7 @@ TEST(RtpRawDepayloaderTest, Many) {
 TEST(RtpRawDepayloaderTest, ReOpening) {
   // Open stream 10 times
   for (int i = 0; i < 10; i++) {
-    mediax::RtpvrawDepayloader rtp;
+    mediax::RtpUncompressedDepayloader rtp;
     mediax::StreamInformation stream_info = {
         "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceYuv, false};
     rtp.SetStreamInfo(stream_info);
@@ -174,7 +174,7 @@ TEST(RtpRawDepayloaderTest, ReOpening) {
 
 void OpenStream(std::string ipaddr, uint32_t height, uint32_t width, uint32_t framerate, uint32_t portno) {
   std::vector<uint8_t> yuv_test;
-  mediax::RtpvrawDepayloader rtp;
+  mediax::RtpUncompressedDepayloader rtp;
   yuv_test.resize(height * width * 2);
   mediax::StreamInformation stream_info = {"test", ipaddr, 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceYuv,
                                            false};

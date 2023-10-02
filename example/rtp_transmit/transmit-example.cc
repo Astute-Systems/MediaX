@@ -139,7 +139,7 @@ int main(int argc, char** argv) {
 
   // Setup RTP streaming class
   std::unique_ptr<mediax::RtpPayloader> rtp;
-  rtp = std::make_unique<mediax::RtpvrawPayloader>();
+  rtp = std::make_unique<mediax::RtpUncompressedPayloader>();
 
   // Setup SAP/SDP announcment
   mediax::sap::SAPAnnouncer& sap_announcer = mediax::sap::SAPAnnouncer::GetInstance();

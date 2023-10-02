@@ -9,7 +9,7 @@
 ///
 /// \brief RTP streaming video class for uncompressed DEF-STAN 00-82 video streams
 ///
-/// \file rtpvraw_depayloader.h
+/// \file rtp_uncompressed_payloader.h
 ///
 ///
 /// Example RTP packet from wireshark
@@ -29,16 +29,17 @@
 /// ===========================================
 /// gst-launch-1.0 videotestsrc num_buffers ! video/x-raw, format=UYVY, framerate=25/1, width=640, height=480 ! queue !
 /// rtpvrawpay ! udpsink host=127.0.0.1 port=5004
-/// \code
+///
 /// gst-launch-1.0 udpsrc port=5004 caps="application/x-rtp, media=(string)video, clock-rate=(int)90000,
 /// encoding-name=(string)RAW, sampling=(string)YCbCr-4:2:2, depth=(string)8, width=(string)480, height=(string)480,
 /// payload=(int)96" ! queue ! rtpvrawdepay ! queue ! xvimagesink sync=false
-/// \endcode
+
 /// Use his program to stream data to the udpsrc example above on the tegra X1
 
-#ifndef RAW_RTPVRAW_DEPAYLOADER_H_
-#define RAW_RTPVRAW_DEPAYLOADER_H_
+#ifndef RAW_RTP_UNCOMPRESSED_PAYLOADER_H_
+#define RAW_RTP_UNCOMPRESSED_PAYLOADER_H_
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -46,8 +47,10 @@
 
 #include <array>
 #include <chrono>
+#include <mutex>
 #include <string>
 #include <thread>
+#include <vector>
 #if _WIN32
 #include <winsock2.h>
 #else
@@ -56,20 +59,16 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #endif
-#include <limits>
-#include <vector>
-
-#include "rtp/rtp_depayloader.h"
+#include "rtp/rtp_payloader.h"
 #include "rtp/rtp_types.h"
 
-/// The DefenceX media streaming namespace
 namespace mediax {
 
 ///
 /// \brief Manage an RTP stream
 ///
 ///
-class RtpvrawDepayloader : public RtpDepayloader {
+class RtpUncompressedPayloader : public RtpPayloader {
  public:
   /// The supported colour spaces
 
@@ -79,45 +78,21 @@ class RtpvrawDepayloader : public RtpDepayloader {
   /// \param height in pixels of the RTP stream
   /// \param width in pixels of the RTP stream
   ///
-  RtpvrawDepayloader();
+  RtpUncompressedPayloader();
 
   ///
   /// \brief Destroy the Rtp Stream object
   ///
   ///
-  ~RtpvrawDepayloader() final;
+  ~RtpUncompressedPayloader() final;
 
   ///
-  /// \brief The copy constructor
-  ///
-  /// \param other
-  /// \return true
-  /// \return false
-  ///
-  RtpvrawDepayloader(const RtpvrawDepayloader &other);
-
-  ///
-  /// \brief Copy operator (Deleted)
-  ///
-  /// \param other
-  /// \return RtpvrawDepayloader&
-  ///
-  RtpvrawDepayloader &operator=(const RtpvrawDepayloader &other);
-
-  ///
-  /// \brief Construct a new Rtpvraw Depayloader object (Deleted)
-  ///
-  /// \param other
-  ///
-  RtpvrawDepayloader(RtpvrawDepayloader &&other) = delete;
-
-  ///
-  /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement
+  /// \brief Configure an RTP output stream
   ///
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
   /// \param port defaults to 5004
   /// \param name The name of the stream
-  /// \param encoding The encoding of the stream
+  /// \param encoding The colour space of the stream
   /// \param height The height of the stream in pixels
   /// \param width The width of the stream in pixels
   ///
@@ -132,49 +107,52 @@ class RtpvrawDepayloader : public RtpDepayloader {
   bool Open() final;
 
   ///
-  /// \brief Start the stream recieve thread, can be quickly re-started without having to re-open the UDP port
-  ///
-  /// This can cause bandwidth issues if multiple UDP multicast streams are open. If bandwidth is an issue then its
-  /// better to close the stream before switching to a new stream
-  ///
-  void Start() final;
-
-  ///
-  /// \brief Stop the stream recieve thread, can be quickly re-started without having to re-open the UDP port
-  ///
-  ///
-  void Stop() final;
-
-  ///
   /// \brief Close the RTP stream
   ///
   ///
   void Close() final;
 
   ///
-  /// \brief Recieve a frame or timeout
+  /// \brief Transmit an RGB buffer
   ///
-  /// \param cpu the fame buffer in CPU memory.
-  /// \param timeout zero will wait forever or a timeout in milliseconds
-  /// \return true when frame available and false when no frame was received in the timeout
+  /// \param rgbframe pointer to the frame data
+  /// \param blocking defaults to true, will wait till frame has been transmitted
+  /// \return int
   ///
-  bool Receive(uint8_t **cpu, int32_t timeout = 0) final;
+  int Transmit(uint8_t *rgbframe, bool blocking = true) final;
+
+  ///
+  /// \brief Send a frame
+  ///
+  /// \param stream
+  /// \return int
+  ///
+  static void SendFrame(RtpUncompressedPayloader *stream);
+
+  ///
+  /// \brief Get the Mutex object
+  ///
+  /// \return std::mutex&
+  ///
+  std::mutex &GetMutex() { return mutex_; }
 
  private:
   /// The incremental sequence numer for transmitting RTP packets
-  bool new_rx_frame_ = false;
-  /// Flag indicating the thread is running
-  bool rx_thread_running_ = true;
+  static uint32_t sequence_number_;
   /// Transmit arguments used by the thread
   TxData arg_tx;
-  /// thread mutex
-  pthread_mutex_t mutex_;
-  /// UDP data buffer
-  std::array<uint8_t, kMaxUdpData> udpdata;
-  /// UDP data buffer
+  /// The server address information
+  struct addrinfo *server_out_;
+  /// The socket for the outgoing stream
+  struct sockaddr_in server_addr_out_;
+  /// The length of the server address
+  socklen_t server_len_out_;
+  /// The buffer for the incoming RTP data
   static std::vector<uint8_t> buffer_in_;
   /// Arguments sent to thread
-  std::thread rx_thread_;
+  std::thread tx_thread_;
+  /// The mutex for the transmit thread
+  std::mutex mutex_;
 
   ///
   /// \brief Populate the RTP header
@@ -185,31 +163,14 @@ class RtpvrawDepayloader : public RtpDepayloader {
   /// \param timestamp the timestamp
   /// \param source the source id
   ///
-  void UpdateHeader(Header *packet, int line, int last, int32_t timestamp, int32_t source) const;
+  void UpdateHeader(Header *packet, int line, int bytes_per_pixel, int last, int32_t timestamp, int32_t source) const;
 
   ///
   /// \brief Transmit RTP data to the network using a separate thread
   /// \param stream this object
   /// \return void
   ///
-  static void TransmitThread(RtpvrawDepayloader *stream);
-
-  ///
-  /// \brief Recieve RTP data to the network using a separate thread
-  ///
-  /// \param stream this object
-  ///
-  static void ReceiveThread(RtpvrawDepayloader *stream);
-
-  ///
-  /// \brief Wait for a frame or timeout
-  ///
-  /// \param cpu
-  /// \param timeout
-  /// \return true
-  /// \return false
-  ///
-  bool WaitForFrame(uint8_t **cpu, int32_t timeout);
+  static void TransmitThread(RtpUncompressedPayloader *stream);
 
   ///
   /// \brief Get a 90Htz timestamp
@@ -217,16 +178,8 @@ class RtpvrawDepayloader : public RtpDepayloader {
   /// \return int32_t The current time stamp
   ///
   static int32_t GenerateTimestamp90kHz();
-
-  ///
-  /// \brief Read in a RTP packet and decode header
-  ///
-  /// \return true
-  /// \return false
-  ///
-  bool ReadRtpHeader(RtpvrawDepayloader *stream, RtpPacket *packet) const;
 };
 
 }  // namespace mediax
 
-#endif  // RAW_RTPVRAW_DEPAYLOADER_H_
+#endif  // RAW_RTP_UNCOMPRESSED_PAYLOADER_H_

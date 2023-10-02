@@ -12,8 +12,8 @@
 /// \file rtph264_depayloader.h
 ///
 
-#ifndef H264_GST_RTPH264_DEPAYLOADER_H_
-#define H264_GST_RTPH264_DEPAYLOADER_H_
+#ifndef H264_GST_RTP_H264_DEPAYLOADER_H_
+#define H264_GST_RTP_H264_DEPAYLOADER_H_
 
 #include <gst/gst.h>
 
@@ -124,4 +124,4 @@ class RtpH264Depayloader : public RtpDepayloader {
 
 }  // namespace mediax
 
-#endif  // H264_GST_RTPH264_DEPAYLOADER_H_
+#endif  // H264_GST_RTP_H264_DEPAYLOADER_H_

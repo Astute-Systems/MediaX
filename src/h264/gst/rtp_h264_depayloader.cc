@@ -20,7 +20,7 @@
 /// \file rtph264_depayloader.cc
 ///
 
-#include "h264/gst/rtph264_depayloader.h"
+#include "h264/gst/rtp_h264_depayloader.h"
 
 #include <gst/app/gstappsink.h>
 #include <gst/gst.h>

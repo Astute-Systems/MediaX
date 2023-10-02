@@ -9,7 +9,7 @@
 ///
 /// \brief RTP streaming video class for uncompressed DEF-STAN 00-82 video streams
 ///
-/// \file QtRtpRawDepayloader.h
+/// \file QtRtpUncompressedDepayloader.h
 ///
 
 #ifndef QT_QTRTPUNCOMPRESSEDDEPAYLOADER_H_
@@ -18,7 +18,7 @@
 #include <QObject>
 #include <memory>
 
-#include "rtp/rtp_depayloader.h"
+#include "rtp/raw/rtp_depayloader.h"
 
 namespace mediax::qt {
 

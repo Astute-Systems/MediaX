@@ -13,13 +13,13 @@
 #include <gtest/gtest.h>
 #include <unistd.h>
 
-#include "raw/rtpvraw_payloader.h"
+#include "uncompressed/rtp_uncompressed_payloader.h"
 
 TEST(RTPDepayloaderTest, SendOneFrameRgb24) {
   const int kBuffSize = (640 * 480) * 3;
   std::array<uint8_t, kBuffSize> rtb_test;
 
-  mediax::RtpvrawPayloader rtp;
+  mediax::RtpUncompressedPayloader rtp;
   mediax::StreamInformation stream_information = {
       "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceRgb24, false};
   rtp.SetStreamInfo(stream_information);
@@ -37,7 +37,7 @@ TEST(RTPDepayloaderTest, SendOneFrameYuv) {
   const int kBuffSize = (640 * 480) * 2;
   std::array<uint8_t, kBuffSize> rtb_test;
 
-  mediax::RtpvrawPayloader rtp;
+  mediax::RtpUncompressedPayloader rtp;
   mediax::StreamInformation stream_information = {
       "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceYuv, false};
   rtp.SetStreamInfo(stream_information);
@@ -55,7 +55,7 @@ TEST(RTPDepayloaderTest, SendOneFrameMono16) {
   const int kBuffSize = (640 * 480) * 2;
   std::array<uint8_t, kBuffSize> rtb_test;
 
-  mediax::RtpvrawPayloader rtp;
+  mediax::RtpUncompressedPayloader rtp;
   mediax::StreamInformation stream_information = {
       "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceMono16, false};
   rtp.SetStreamInfo(stream_information);
@@ -73,7 +73,7 @@ TEST(RTPDepayloaderTest, SendOneFrameMono8) {
   const int kBuffSize = (640 * 480) * 1;
   std::array<uint8_t, kBuffSize> rtb_test;
 
-  mediax::RtpvrawPayloader rtp;
+  mediax::RtpUncompressedPayloader rtp;
   mediax::StreamInformation stream_information = {
       "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceMono8};
   rtp.SetStreamInfo(stream_information);

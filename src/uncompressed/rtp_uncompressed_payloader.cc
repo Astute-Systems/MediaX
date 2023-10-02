@@ -9,7 +9,7 @@
 ///
 /// \brief RTP streaming video class for uncompressed DEF-STAN 00-82 video streams
 ///
-/// \file rtpvraw_payloader.cc
+/// \file rtp_uncompressed_payloader.cc
 ///
 /// Might need to add a route here (hint to send out multicast traffic):
 /// sudo route add -net 239.0.0.0 netmask 255.0.0.0 eth1
@@ -34,26 +34,26 @@
 
 #include <glog/logging.h>
 
-#include "raw/rtpvraw_payloader.h"
 #include "rtp/rtp_types.h"
 #include "rtp/rtp_utils.h"
+#include "uncompressed/rtp_uncompressed_payloader.h"
 
 namespace mediax {
 
-uint32_t RtpvrawPayloader::sequence_number_ = 0;
+uint32_t RtpUncompressedPayloader::sequence_number_ = 0;
 
-std::vector<uint8_t> RtpvrawPayloader::buffer_in_;
+std::vector<uint8_t> RtpUncompressedPayloader::buffer_in_;
 
-RtpvrawPayloader::RtpvrawPayloader() = default;
+RtpUncompressedPayloader::RtpUncompressedPayloader() = default;
 
-RtpvrawPayloader::~RtpvrawPayloader(void) {
+RtpUncompressedPayloader::~RtpUncompressedPayloader(void) {
   if (tx_thread_.joinable()) tx_thread_.join();
   if (egress_.sockfd) {
     close(egress_.sockfd);
   }
 }
 
-void RtpvrawPayloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
+void RtpUncompressedPayloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
   egress_.encoding = stream_information.encoding;
   egress_.height = stream_information.height;
   egress_.width = stream_information.width;
@@ -65,7 +65,7 @@ void RtpvrawPayloader::SetStreamInfo(const ::mediax::StreamInformation &stream_i
   buffer_in_.resize(egress_.height * egress_.width * 2);
 }
 
-bool RtpvrawPayloader::Open() {
+bool RtpUncompressedPayloader::Open() {
   if (!egress_.port_no) {
     std::cerr << "No ports set, nothing to open";
     exit(-1);
@@ -100,7 +100,7 @@ bool RtpvrawPayloader::Open() {
   return true;
 }
 
-void RtpvrawPayloader::Close() {
+void RtpUncompressedPayloader::Close() {
   if (egress_.port_no) {
     close(egress_.sockfd);
     egress_.sockfd = 0;
@@ -109,8 +109,8 @@ void RtpvrawPayloader::Close() {
   if (tx_thread_.joinable()) tx_thread_.join();
 }
 
-void RtpvrawPayloader::UpdateHeader(Header *packet, int line, int bytes_per_pixel, int last, int32_t timestamp,
-                                    int32_t source) const {
+void RtpUncompressedPayloader::UpdateHeader(Header *packet, int line, int bytes_per_pixel, int last, int32_t timestamp,
+                                            int32_t source) const {
   memset(reinterpret_cast<char *>(packet), 0, sizeof(Header));
   packet->rtp.protocol = kRtpVersion << 30;
   packet->rtp.protocol = packet->rtp.protocol | kRtpExtension << 28;
@@ -131,7 +131,7 @@ void RtpvrawPayloader::UpdateHeader(Header *packet, int line, int bytes_per_pixe
   sequence_number_++;
 }
 
-void RtpvrawPayloader::SendFrame(RtpvrawPayloader *stream) {
+void RtpUncompressedPayloader::SendFrame(RtpUncompressedPayloader *stream) {
   RtpPacket packet;
 
   ssize_t n = 0;
@@ -168,14 +168,14 @@ void RtpvrawPayloader::SendFrame(RtpvrawPayloader *stream) {
   }
 }
 
-void RtpvrawPayloader::TransmitThread(RtpvrawPayloader *stream) {
+void RtpUncompressedPayloader::TransmitThread(RtpUncompressedPayloader *stream) {
   // send a frame, once last thread has completed
   std::scoped_lock lock(stream->mutex_);
   SendFrame(stream);
   return;
 }
 
-int RtpvrawPayloader::Transmit(uint8_t *rgbframe, bool blocking) {
+int RtpUncompressedPayloader::Transmit(uint8_t *rgbframe, bool blocking) {
   arg_tx.rgb_frame = rgbframe;
 
   if (egress_.port_no == 0) return -1;
@@ -197,7 +197,7 @@ int RtpvrawPayloader::Transmit(uint8_t *rgbframe, bool blocking) {
   return 0;
 }
 
-int32_t RtpvrawPayloader::GenerateTimestamp90kHz() {
+int32_t RtpUncompressedPayloader::GenerateTimestamp90kHz() {
   // Get the current time point
   auto now = std::chrono::high_resolution_clock::now();
 
