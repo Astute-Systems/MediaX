@@ -15,32 +15,32 @@
 
 #include "qt/QtRtpH264Payloader.h"
 
-// namespace mediax::qt {
+namespace mediax::qt {
 
-// RtpH264PayloaderWrapper::RtpH264PayloaderWrapper(QObject *parent = nullptr) : QObject(parent) {}
+RtpH264PayloaderWrapper::RtpH264PayloaderWrapper(QObject *parent) : QObject(parent) {}
 
-// Q_INVOKABLE void RtpH264PayloaderWrapper::setStreamInfo(const QString &hostname, int port, const QString &name,
-//                                                         const QString &encoding, int height, int width) {
-//   StreamInformation stream_information;
-//   stream_information.hostname = hostname.toStdString();
-//   stream_information.port = port;
-//   stream_information.name = name.toStdString();
-//   stream_information.encoding = encoding.toStdString();
-//   stream_information.height = height;
-//   stream_information.width = width;
-//   payloader_.SetStreamInfo(stream_information);
-// }
+Q_INVOKABLE void RtpH264PayloaderWrapper::setStreamInfo(const QString &hostname, int port, const QString &session_name,
+                                                        int height, int width) {
+  StreamInformation stream_information;
+  stream_information.hostname = hostname.toStdString();
+  stream_information.port = port;
+  stream_information.session_name = session_name.toStdString();
+  stream_information.encoding = mediax::ColourspaceType::kColourspaceH264Part10;
+  stream_information.height = height;
+  stream_information.width = width;
+  payloader_.SetStreamInfo(stream_information);
+}
 
-// Q_INVOKABLE bool RtpH264PayloaderWrapper::open() { return payloader_.Open(); }
+Q_INVOKABLE bool RtpH264PayloaderWrapper::open() { return payloader_.Open(); }
 
-// Q_INVOKABLE void RtpH264PayloaderWrapper::start() { payloader_.Start(); }
+Q_INVOKABLE void RtpH264PayloaderWrapper::start() { payloader_.Start(); }
 
-// Q_INVOKABLE void RtpH264PayloaderWrapper::stop() { payloader_.Stop(); }
+Q_INVOKABLE void RtpH264PayloaderWrapper::stop() { payloader_.Stop(); }
 
-// Q_INVOKABLE void RtpH264PayloaderWrapper::close() { payloader_.Close(); }
+Q_INVOKABLE void RtpH264PayloaderWrapper::close() { payloader_.Close(); }
 
-// Q_INVOKABLE int RtpH264PayloaderWrapper::transmit(const QByteArray &frame, bool blocking = true) {
-//   return payloader_.Transmit(reinterpret_cast<uint8_t *>(frame.data()), blocking);
-// }
+Q_INVOKABLE int RtpH264PayloaderWrapper::transmit(QByteArray &frame, bool blocking) {
+  return payloader_.Transmit(reinterpret_cast<uint8_t *>(frame.data()), blocking);
+}
 
-// }  // namespace mediax::qt
+}  // namespace mediax::qt

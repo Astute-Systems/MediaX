@@ -39,7 +39,7 @@ class RtpH264DepayloaderWrapper : public QObject {
 
   Q_INVOKABLE void close();
 
-  Q_INVOKABLE bool receive(QByteArray &frame, int timeout = 0);
+  Q_INVOKABLE bool receive(QByteArray &frame, int timeout = 0);  // NOLINT
 
   Q_INVOKABLE QVector<quint8> getBuffer() const;
 

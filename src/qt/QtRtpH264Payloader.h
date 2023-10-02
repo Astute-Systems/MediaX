@@ -30,8 +30,7 @@ class RtpH264PayloaderWrapper : public QObject {
 
   ~RtpH264PayloaderWrapper() = default;
 
-  Q_INVOKABLE void setStreamInfo(const QString &hostname, int port, const QString &name, const QString &encoding,
-                                 int height, int width);
+  Q_INVOKABLE void setStreamInfo(const QString &hostname, int port, const QString &name, int height, int width);
 
   Q_INVOKABLE bool open();
 
@@ -41,7 +40,7 @@ class RtpH264PayloaderWrapper : public QObject {
 
   Q_INVOKABLE void close();
 
-  Q_INVOKABLE int transmit(const QByteArray &frame, bool blocking = true);
+  Q_INVOKABLE int transmit(QByteArray &frame, bool blocking = true);  // NOLINT
 
  private:
   RtpH264Payloader payloader_;
