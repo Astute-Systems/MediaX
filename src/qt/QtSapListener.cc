@@ -14,4 +14,12 @@
 
 #include "qt/QtSapListener.h"
 
-namespace mediax::qt {}  // namespace mediax::qt
+namespace mediax::qt {
+
+QTSAPListener::QTSAPListener(QObject *parent) : QObject(parent) {}
+
+Q_INVOKABLE void QTSAPListener::start() { sap_listener_.Start(); }
+
+Q_INVOKABLE void QTSAPListener::stop() { sap_listener_.Stop(); }
+
+}  // namespace mediax::qt

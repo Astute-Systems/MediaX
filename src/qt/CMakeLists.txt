@@ -8,7 +8,7 @@ pkg_check_modules(GST REQUIRED gstreamer-1.0)
 include_directories(${CMAKE_SOURCE_DIR}/src Qt6::Core ${GST_INCLUDE_DIRS})
 
 set(SOURCES
-#   QtSapAnnouncer.cc
+  QtSapAnnouncer.cc
   QtSapListener.cc
   QtRtpUncompressedDepayloader.cc
   QtRtpUncompressedPayloader.cc

@@ -35,7 +35,7 @@ class RtpPayloaderWrapper : public QObject {
     m_rtpPayloader->SetStreamInfo(stream_information);
   }
 
-  int transmit(uint8_t* rgbframe, bool blocking = true) { return m_rtpPayloader->Transmit(rgbframe, blocking); }
+  int transmit(uint8_t* rgbframe, bool blocking = true);
 
  private:
   std::unique_ptr<mediax::RtpPayloader> m_rtpPayloader;

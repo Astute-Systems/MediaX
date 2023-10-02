@@ -27,11 +27,11 @@ class QTSAPListener : public QObject {
   Q_OBJECT
 
  public:
-  explicit QTSAPListener(QObject *parent = nullptr) : QObject(parent) {}
+  explicit QTSAPListener(QObject *parent = nullptr);
 
-  Q_INVOKABLE void start() { sap_listener_.Start(); }
+  Q_INVOKABLE void start();
 
-  Q_INVOKABLE void stop() { sap_listener_.Stop(); }
+  Q_INVOKABLE void stop();
 
  signals:
   void sapDataReceived(const std::string &name, const ::mediax::sap::SDPMessage &message);

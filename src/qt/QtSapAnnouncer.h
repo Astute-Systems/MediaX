@@ -26,29 +26,27 @@ class QTSAPAnnouncer : public QObject {
   Q_OBJECT
 
  public:
-  explicit QTSAPAnnouncer(QObject *parent = nullptr) : QObject(parent) {}
+  explicit QTSAPAnnouncer(QObject* parent = nullptr);
 
-  Q_INVOKABLE void addSAPAnnouncement(const ::mediax::StreamInformation &stream_information) {
-    sap_announcer_.AddSAPAnnouncement(stream_information);
-  }
+  Q_INVOKABLE void addSAPAnnouncement(const ::mediax::StreamInformation& stream_information);
 
-  Q_INVOKABLE void deleteAllSAPAnnouncements() { sap_announcer_.DeleteAllSAPAnnouncements(); }
+  Q_INVOKABLE void deleteAllSAPAnnouncements();
 
-  Q_INVOKABLE void start() { sap_announcer_.Start(); }
+  Q_INVOKABLE void start();
 
-  Q_INVOKABLE void stop() { sap_announcer_.Stop(); }
+  Q_INVOKABLE void stop();
 
-  Q_INVOKABLE void setSourceInterface(uint16_t select = 0) { sap_announcer_.SetSourceInterface(select); }
+  Q_INVOKABLE void setSourceInterface(uint16_t select = 0);
 
-  Q_INVOKABLE void listInterfaces(uint16_t select = 0) { sap_announcer_.ListInterfaces(select); }
+  Q_INVOKABLE void listInterfaces(uint16_t select = 0);
 
-  Q_INVOKABLE uint32_t getActiveStreamCount() const { return sap_announcer_.GetActiveStreamCount(); }
+  Q_INVOKABLE uint32_t getActiveStreamCount() const;
 
  signals:
   void activeStreamCountChanged(uint32_t count);
 
  private:
-  ::mediax::sap::SAPAnnouncer sap_announcer_;
+  ::mediax::sap::SAPAnnouncer& sap_announcer_;
 };
 
 }  // namespace mediax::qt

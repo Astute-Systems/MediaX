@@ -35,7 +35,7 @@ class RtpDepayloaderWrapper : public QObject {
     m_rtpDepayloader->SetStreamInfo(stream_information);
   }
 
-  bool receive(uint8_t** cpu, int32_t timeout = 0) { return m_rtpDepayloader->Receive(cpu, timeout); }
+  bool receive(uint8_t** cpu, int32_t timeout = 0);
 
  private:
   std::unique_ptr<mediax::RtpDepayloader> m_rtpDepayloader;

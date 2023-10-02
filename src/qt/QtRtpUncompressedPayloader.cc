@@ -14,4 +14,10 @@
 
 #include "qt/QtRtpUncompressedPayloader.h"
 
-namespace mediax::qt {}  // namespace mediax::qt
+namespace mediax::qt {
+
+int RtpPayloaderWrapper::transmit(uint8_t* rgbframe, bool blocking) {
+  return m_rtpPayloader->Transmit(rgbframe, blocking);
+}
+
+}  // namespace mediax::qt
