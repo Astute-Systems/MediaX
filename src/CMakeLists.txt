@@ -48,12 +48,45 @@ set(SOURCES
   v4l2/v4l2_source.cc
 )
 
+
+if (GST_SUPPORTED)
+  # Use GStreamer for hardware accelerated video decoding, append sources
+  list(APPEND SOURCES
+    h264/gst/rtp_h264_depayloader.cc
+    h264/gst/rtp_h264_payloader.cc
+  )
+endif()
+
+if (VAAPI_SUPPORTED)
+  # Use Intel Video Acceleration API (VAAPI) for hardware accelerated video decoding
+  list(APPEND SOURCES
+    h264/vaapi/rtp_h264_depayloader.cc
+    h264/vaapi/rtp_h264_payloader.cc
+  )
+endif()
+
+if (NVENC_SUPPORTED)
+  # Use Nvidia Encoder (NVENC) for hardware accelerated video decoding
+  list(APPEND SOURCES
+    h264/nvenc/rtp_h264_depayloader.cc
+    h264/nvenc/rtp_h264_payloader.cc
+  )
+endif()
+
+if (!GST_SUPPORTED AND !VAAPI_SUPPORTED AND !NVENC_SUPPORTED)
+  # Use native video decoding for software x264 decoding
+  list(APPEND SOURCES
+    h264/native/rtp_h264_depayloader.cc
+    h264/native/rtp_h264_payloader.cc
+  )
+endif()
+
 include_directories(${CMAKE_SOURCE_DIR}/src ${SWSCALE_INCLUDE_DIRS} ${GST_INCLUDE_DIRS})
 add_library(mediax SHARED ${SOURCES})
 if (WIN32)
-  target_link_libraries(mediax h264 png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} wsock32 ws2_32)
+  target_link_libraries(mediax png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} wsock32 ws2_32)
 else()
-  target_link_libraries(mediax h264 png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS})
+  target_link_libraries(mediax png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS})
 endif()
 
 set_target_properties(mediax PROPERTIES SOVERSION 1)
@@ -63,9 +96,9 @@ target_include_directories(mediax PUBLIC ${CMAKE_SOURCE_DIR}/src ${SWSCALE_INCLU
 
 add_library(mediax_static STATIC ${SOURCES})
 if (WIN32)
-  target_link_libraries(mediax_static h264 png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} ${GST_LIBRARIES} wsock32 ws2_32)
+  target_link_libraries(mediax_static png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} ${GST_LIBRARIES} wsock32 ws2_32)
 else()
-  target_link_libraries(mediax_static h264 png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} ${GST_LIBRARIES})
+  target_link_libraries(mediax_static png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} ${GST_LIBRARIES})
 endif()
 
 target_include_directories(mediax_static PUBLIC ${CMAKE_SOURCE_DIR}/src ${SWSCALE_INCLUDE_DIRS} ${GST_INCLUDE_DIRS})

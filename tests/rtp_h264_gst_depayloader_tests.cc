@@ -23,19 +23,20 @@
 #include "util_tests.h"
 #include "utils/colourspace_cpu.h"
 
-TEST(RtpH264DepayloaderTest, DISABLED_Timeout) {
+TEST(RtpH264DepayloaderTest, Timeout) {
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
 
   uint8_t* rgb_test;
 
-  mediax::RtpH264Depayloader rtp;
-  rtp.SetSessionName("test_session_name");
-  ASSERT_EQ(rtp.GetSessionName(), "test_session_name");
-  rtp.Open();
-  EXPECT_FALSE(rtp.Receive(&rgb_test, 80));
-  rtp.Close();
+  std::shared_ptr<mediax::RtpDepayloader> rtp;
+  rtp = std::make_shared<mediax::RtpH264Depayloader>();
+  rtp->SetSessionName("test_session_name");
+  ASSERT_EQ(rtp->GetSessionName(), "test_session_name");
+  rtp->Open();
+  EXPECT_FALSE(rtp->Receive(&rgb_test, 80));
+  rtp->Close();
 }
 
 TEST(RtpH264DepayloaderTest, DISABLED_UnicastOk) {
