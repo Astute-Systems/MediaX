@@ -15,6 +15,7 @@
 #ifndef H264_GST_RTP_H264_DEPAYLOADER_H_
 #define H264_GST_RTP_H264_DEPAYLOADER_H_
 
+#include <gst/app/gstappsink.h>
 #include <gst/gst.h>
 
 #include <vector>
@@ -22,6 +23,8 @@
 #include "rtp/rtp_depayloader.h"
 
 namespace mediax {
+
+GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data);
 
 class RtpH264Depayloader : public RtpDepayloader {
  public:
