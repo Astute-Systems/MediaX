@@ -35,7 +35,7 @@
 
 namespace mediax {
 
-RtpH264Depayloader::~RtpH264Depayloader(void) = default;
+RtpH264Depayloader::~RtpH264Depayloader() = default;
 
 void RtpH264Depayloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
   ingress_.encoding = stream_information.encoding;
