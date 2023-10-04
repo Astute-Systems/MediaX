@@ -22,3 +22,6 @@ target_link_libraries(qtwrapper Qt6::Core)
 # Install qtwrapper
 install(TARGETS qtwrapper DESTINATION lib)
 install(FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/qtwrapper)
+# Qt6 Wrappers
+file(GLOB_RECURSE MEDIAX_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/qt/*.h)
+install(FILES ${MEDIAX_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mediax/qt)
