@@ -12,5 +12,5 @@ link_directories(${GTKMM_LIBRARY_DIRS} ${CAIRO_LIBRARY_DIRS})
 
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
-add_executable(receive-example receive-example.cc)
-target_link_libraries(receive-example mediax_static example_helpers ${GLOG_LIBRARIES}  ${GFLAGS_LIBRARIES} ${GTKMM_LIBRARIES} ${CAIRO_LIBRARIES} png)
+add_executable(rtp-receive receive-example.cc)
+target_link_libraries(rtp-receive mediax_static example_helpers ${GLOG_LIBRARIES}  ${GFLAGS_LIBRARIES} ${GTKMM_LIBRARIES} ${CAIRO_LIBRARIES} png)

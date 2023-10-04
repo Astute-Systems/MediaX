@@ -24,8 +24,8 @@ swig_link_libraries(rtp_uncompressed_payloader glog swscale)
 # build swig interface for depayloader
 set_source_files_properties(rtp_uncompressed_depayloader.i PROPERTIES CPLUSPLUS ON)
 swig_add_library(rtp_uncompressed_depayloader TYPE SHARED LANGUAGE python SOURCES rtp_uncompressed_depayloader.i rtp_uncompressed_depayloader.cc ../rtp/rtp_depayloader.cc ../rtp/rtp_utils.cc ../utils/colourspace_cpu.cc)
-set_target_properties(rtp_uncompressed_depayloader PROPERTIES VERSION ${MEDIAX_VERSION} SOVERSION ${MEDIAX_MAJOR_VERSION})
 swig_link_libraries(rtp_uncompressed_depayloader glog swscale)
+set_target_properties(rtp_uncompressed_depayloader PROPERTIES VERSION 1.0.0)
 
 install(TARGETS rtp_uncompressed_payloader DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/rtp_uncompressed_payloader.py DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
