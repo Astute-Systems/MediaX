@@ -6,10 +6,9 @@
 // Licensed under the Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
 // License. See the LICENSE file in the project root for full license details.
 //
-///
 /// \brief RTP streaming video class for uncompressed DEF-STAN 00-82 video streams
 ///
-/// \file rtpv_payloader.h
+/// \file rtp_payloader.h
 ///
 
 #ifndef RTP_RTP_PAYLOADER_H_
@@ -38,15 +37,15 @@ class RtpPayloader {
   ///
   /// \brief Configure an RTP output stream
   ///
-  /// \param hostname IP address i.e. 239.192.1.1 for multicast
-  /// \param port defaults to 5004
   /// \param name The name of the stream
   /// \param encoding The colour space of the stream
   /// \param height The height of the stream in pixels
   /// \param width The width of the stream in pixels
+  /// \param framerate The frame rate of the stream in frames per second
+  /// \param hostname IP address i.e. 239.192.1.1 for multicast
+  /// \param port defaults to 5004
   ///
-  virtual void SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                             std::string_view hostname, const uint32_t port = 5004) = 0;
+  virtual void SetStreamInfo(const ::mediax::StreamInformation& stream_information) = 0;
 
   ///
   /// \brief Open the RTP stream
@@ -81,7 +80,7 @@ class RtpPayloader {
   /// \param blocking defaults to true, will wait till frame has been transmitted
   /// \return int
   ///
-  virtual int Transmit(uint8_t *rgbframe, bool blocking = true) = 0;
+  virtual int Transmit(uint8_t* rgbframe, bool blocking = true) = 0;
 
   ///
   /// \brief Get the Colour Space object of the incoming stream. \note This may be invalid id no SAP/SDP announcement
@@ -89,7 +88,7 @@ class RtpPayloader {
   ///
   /// \return ColourspaceType
   ///
-  ColourspaceType GetColourSpace() const;
+  mediax::ColourspaceType GetColourSpace() const;
 
   ///
   /// \brief Get the Height object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
@@ -132,7 +131,7 @@ class RtpPayloader {
   uint32_t GetPort() const;
 
   /// Egress port
-  PortType egress_;
+  ::mediax::PortType egress_;
 };
 
 }  // namespace mediax

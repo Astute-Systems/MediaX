@@ -126,21 +126,22 @@ void DumpHex(const void *data, size_t size) {
   std::cout << std::dec << std::endl;
 }
 
+static bool odd = true;
+
 void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::ColourspaceType colourspace) {
-  static bool odd = false;
   switch (colourspace) {
     case mediax::ColourspaceType::kColourspaceYuv: {
       double y = 0.257 * r + 0.504 * g + 0.098 * b + 16;
       if (odd) {
         double u = -0.148 * r - 0.291 * g + 0.439 * b + 128;
-        data[1] = (uint8_t)(u);
+        data[0] = (uint8_t)(u);
         odd = false;
       } else {
         double v = 0.439 * r - 0.368 * g - 0.071 * b + 128;
-        data[1] = (uint8_t)(v);
+        data[0] = (uint8_t)(v);
         odd = true;
       }
-      data[0] = (uint8_t)(y);
+      data[1] = (uint8_t)(y);
     } break;
     case mediax::ColourspaceType::kColourspaceRgb24:
       data[0] = (uint8_t)r;
@@ -156,10 +157,11 @@ void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::Coloursp
     case mediax::ColourspaceType::kColourspaceMono8:
       data[0] = (uint8_t)(0.299 * r + 0.587 * g + 0.114 * b);
       break;
-    case mediax::ColourspaceType::kColourspaceMono16:
-      data[0] = (uint8_t)(0.299 * r + 0.587 * g + 0.114 * b);
-      data[1] = 0;
-      break;
+    case mediax::ColourspaceType::kColourspaceMono16: {
+      uint16_t mono16_pixel = (uint16_t)(0.299 * r + 0.587 * g + 0.114 * b);
+      data[0] = mono16_pixel >> 8 & 0xFF;
+      data[1] = mono16_pixel & 0xFF;
+    } break;
     default:
       break;
   }
@@ -168,7 +170,7 @@ void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::Coloursp
 // Implementation of the CreateColourBarTestCard function
 void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
   uint32_t stride = mediax::BytesPerPixel(colourspace);
-
+  odd = true;
   for (uint32_t y = 0; y < height; y++) {
     for (uint32_t x = 0; x < width; x++) {
       uint8_t r;
@@ -232,7 +234,7 @@ void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height, 
   }
 }
 
-void CreateComplexTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
+void CreateQuadTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
   uint32_t stride = mediax::BytesPerPixel(colourspace);
 
   uint32_t size = width * height * stride;
@@ -259,10 +261,7 @@ void CreateComplexTestCard(uint8_t *data, uint32_t width, uint32_t height, media
       g = 0;
       b = 255;
     }
-    double t = static_cast<double>(i / size * 2 * M_PI);
-    r *= 0.5 + 0.5 * sin(t);
-    g *= 0.5 + 0.5 * sin(t + 2 * M_PI / 3);
-    b *= 0.5 + 0.5 * sin(t + 4 * M_PI / 3);
+
     PackRgb(&data[i], r, g, b, colourspace);
   }
 }

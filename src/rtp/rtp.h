@@ -14,12 +14,13 @@
 #ifndef RTP_RTP_H_
 #define RTP_RTP_H_
 
-#include "h264/gst/vaapi/rtph264_depayloader.h"
-#include "raw/rtpvraw_depayloader.h"
-#include "raw/rtpvraw_payloader.h"
+#include "h264/gst/vaapi/rtp_h264_depayloader.h"
+#include "h264/gst/vaapi/rtp_h264_payloader.h"
 #include "rtp/rtp_depayloader.h"
 #include "rtp/rtp_payloader.h"
 #include "rtp/rtp_utils.h"
+#include "uncompressed/rtp_uncompressed_depayloader.h"
+#include "uncompressed/rtp_uncompressed_payloader.h"
 
 #if CUDA_ENABLED
 #include "utils/colourspace_cuda.h"

@@ -79,39 +79,72 @@ void SAPAnnouncer::DeleteAllStreams() {
     }
   }
 }
-void SAPAnnouncer::AddSAPAnnouncement(const SAPMessage &message) { streams_.push_back(message); }
+void SAPAnnouncer::AddSAPAnnouncement(const StreamInformation &stream_information) {
+  streams_.push_back(stream_information);
+}
 
 void SAPAnnouncer::DeleteAllSAPAnnouncements() { streams_.clear(); }
 
-void SAPAnnouncer::SendSAPAnnouncement(const SAPMessage &message) const { SendSAPPacket(message, false); }
+void SAPAnnouncer::SendSAPAnnouncement(const StreamInformation &stream_information) const {
+  SendSAPPacket(stream_information, false);
+}
 
-void SAPAnnouncer::SendSAPDeletion(const SAPMessage &message) const { SendSAPPacket(message, true); }
+void SAPAnnouncer::SendSAPDeletion(const StreamInformation &stream_information) const {
+  SendSAPPacket(stream_information, true);
+}
 
 // Function to send a SAP announcement
-void SAPAnnouncer::SendSAPPacket(const SAPMessage &message, bool deletion) const {
-  // Prepare SDP message
+void SAPAnnouncer::SendSAPPacket(const StreamInformation &stream_information, bool deletion) const {
+  std::string depth;
+  std::string colorimetry;
+
+  switch (stream_information.encoding) {
+    case mediax::ColourspaceType::kColourspaceMono8:
+      depth = "8";
+      break;
+    case mediax::ColourspaceType::kColourspaceMono16:
+      depth = "16";
+      break;
+    case mediax::ColourspaceType::kColourspaceRgb24:
+      depth = "8";
+      colorimetry = "colorimetry=BT709-2; ";
+    case mediax::ColourspaceType::kColourspaceYuv:
+      depth = "8";
+      colorimetry = "colorimetry=BT601-5; ";
+    default:
+      break;
+  }
+
+  // Prepare SDP stream_information
   std::string sdp_msg =
       "v=0\r\n"
       "o=- 3394362021 3394362021 IN IP4 " +
-      message.ipAddress +
+      stream_information.hostname +
       "\r\n"
       "s=" +
-      message.sessionName +
+      stream_information.session_name +
       "\r\n"
       "c=IN IP4 " +
       kIpaddr +
       "/15\r\n"
       "t=0 0\r\n"
       "m=video " +
-      std::to_string(message.port) +
+      std::to_string(stream_information.port) +
       " RTP/AVP 96\r\n"
       "a=rtpmap:96 raw/90000\r\n"
       "a=fmtp:96 sampling=" +
-      GetSdpColourspace(message.colourspace) + "; width=" + std::to_string(message.width) +
-      "; height=" + std::to_string(message.height) +
-      "; depth=8; colorimetry=BT601-5; progressive\r\n"
+      GetSdpColourspace(stream_information.encoding) + "; width=" + std::to_string(stream_information.width) +
+      "; height=" + std::to_string(stream_information.height) + "; depth=" + depth + "; " + colorimetry +
+      "progressive\r\n"
       "a=framerate:" +
-      std::to_string(message.framerate) + "\r\n";
+      std::to_string(stream_information.framerate) + "";
+
+  if (stream_information.encoding == mediax::ColourspaceType::kColourspaceMono16) {
+    sdp_msg +=
+        "a=active-pixel-depth:16\r\n"
+        "a=number-pixel-flags:2\r\n"
+        "a=pixel-flags:saturated,ignored";
+  }
 
   // Oversized 4k buffer for SAP/SDP
   std::array<uint8_t, 4069> buffer;
@@ -148,7 +181,7 @@ void SAPAnnouncer::ListInterfaces(uint16_t select) { SetAddressHelper(select, tr
 
 void SAPAnnouncer::SetAddressHelper(uint16_t select [[maybe_unused]], bool helper) {
 #ifdef _WIN32
-#pragma message("TODO: Implement SetAddressHelper for Windows")
+#pragma stream_information("TODO: Implement SetAddressHelper for Windows")
 #else
   struct ifaddrs *ifaddr;
 
@@ -170,7 +203,7 @@ void SAPAnnouncer::SetAddressHelper(uint16_t select [[maybe_unused]], bool helpe
 
 void SAPAnnouncer::CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t select) {
 #ifdef _WIN32
-#pragma message("TODO: Implement CheckAddresses for Windows")
+#pragma stream_information("TODO: Implement CheckAddresses for Windows")
 #else
   uint16_t count_interfaces = 0;
   std::array<char, INET_ADDRSTRLEN> addr_str;

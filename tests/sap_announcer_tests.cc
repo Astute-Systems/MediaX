@@ -13,12 +13,13 @@
 #include <gtest/gtest.h>
 #include <unistd.h>
 
+#include "rtp/rtp.h"
 #include "sap/sap_announcer.h"
 
 TEST(SAPAnnouncerTest, AddSAPAnnouncement) {
   mediax::sap::SAPAnnouncer &announcer = mediax::sap::SAPAnnouncer::GetInstance();
   announcer.DeleteAllSAPAnnouncements();
-  mediax::sap::SAPMessage message = {
+  mediax::StreamInformation message = {
       "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::ColourspaceType::kColourspaceYuv, false};
   announcer.AddSAPAnnouncement(message);
   ASSERT_EQ(announcer.GetActiveStreamCount(), 1);
@@ -27,9 +28,9 @@ TEST(SAPAnnouncerTest, AddSAPAnnouncement) {
 TEST(SAPAnnouncerTest, AddMultipleSAPAnnouncements) {
   mediax::sap::SAPAnnouncer &announcer = mediax::sap::SAPAnnouncer::GetInstance();
   announcer.DeleteAllSAPAnnouncements();
-  mediax::sap::SAPMessage message1 = {
+  mediax::StreamInformation message1 = {
       "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::ColourspaceType::kColourspaceYuv, false};
-  mediax::sap::SAPMessage message2 = {
+  mediax::StreamInformation message2 = {
       "SD Stream", "239.192.6.1", 5004, 1280, 720, 30, mediax::ColourspaceType::kColourspaceYuv, false};
   announcer.AddSAPAnnouncement(message1);
   announcer.AddSAPAnnouncement(message2);
@@ -39,19 +40,19 @@ TEST(SAPAnnouncerTest, AddMultipleSAPAnnouncements) {
 TEST(SAPAnnouncerTest, DeleteAllSAPAnnouncements) {
   mediax::sap::SAPAnnouncer &announcer = mediax::sap::SAPAnnouncer::GetInstance();
   announcer.DeleteAllSAPAnnouncements();
-  mediax::sap::SAPMessage message1 = {
+  mediax::StreamInformation message1 = {
       "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::ColourspaceType::kColourspaceYuv, false};
-  mediax::sap::SAPMessage message2 = {
+  mediax::StreamInformation message2 = {
       "SD Stream 1", "239.192.6.1", 5004, 1280, 720, 30, mediax::ColourspaceType::kColourspaceYuv, false};
-  mediax::sap::SAPMessage message3 = {
+  mediax::StreamInformation message3 = {
       "SD Stream 2", "239.192.6.2", 5004, 1280, 720, 30, mediax::ColourspaceType::kColourspaceYuv, false};
-  mediax::sap::SAPMessage message4 = {
+  mediax::StreamInformation message4 = {
       "SD Stream 3", "239.192.6.3", 5004, 1280, 720, 30, mediax::ColourspaceType::kColourspaceYuv, false};
-  mediax::sap::SAPMessage message5 = {
+  mediax::StreamInformation message5 = {
       "SD Stream 4", "239.192.6.4", 5004, 1280, 720, 30, mediax::ColourspaceType::kColourspaceYuv, false};
-  mediax::sap::SAPMessage message6 = {
+  mediax::StreamInformation message6 = {
       "SD Stream 5", "239.192.6.5", 5004, 1280, 720, 30, mediax::ColourspaceType::kColourspaceYuv, false};
-  mediax::sap::SAPMessage message7 = {
+  mediax::StreamInformation message7 = {
       "SD Stream 6", "239.192.6.6", 5004, 1280, 720, 30, mediax::ColourspaceType::kColourspaceYuv, false};
   announcer.AddSAPAnnouncement(message1);
   announcer.AddSAPAnnouncement(message2);

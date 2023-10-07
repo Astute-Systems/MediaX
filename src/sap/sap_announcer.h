@@ -33,10 +33,12 @@
 
 #include "rtp/rtp_types.h"
 
+// The Session Announcement Protocol (SAP) and Session Description Protocol (SDP) namespace
 namespace mediax::sap {
 
 /// Class to announce the stream details using the SAP protocol
 struct SAPHeader {
+ public:
   /// Protocol version
   uint8_t version;
   /// Hash, must be unique for this announcement
@@ -52,26 +54,6 @@ struct SAPHeader {
   ///
   SAPHeader(uint8_t version, uint8_t hash, uint32_t originating_source)
       : version(version), hash(hash), originating_source(originating_source) {}
-};
-
-/// A simplified SAP message structure
-struct SAPMessage {
-  /// The SDP session name
-  std::string sessionName;
-  /// The IPV4 address as a string
-  std::string ipAddress;
-  /// The IPV4 port number
-  uint32_t port;
-  /// The stream height in pixels
-  uint32_t height;
-  /// The stream width in pixels
-  uint32_t width;
-  /// The stream framerate in frames / second
-  uint32_t framerate;
-  /// Colourspace
-  ColourspaceType colourspace;
-  /// Flag indicating the stream was deleted
-  bool deleted = false;
 };
 
 /// Class to announce the stream details using the SAP protocol
@@ -94,7 +76,7 @@ class SAPAnnouncer {
   ///
   /// \param message The stream details
   ///
-  void AddSAPAnnouncement(const SAPMessage &message);
+  void AddSAPAnnouncement(const ::mediax::StreamInformation &stream_information);
 
   ///
   /// \brief Deletes all announcements, thread is still running. Call Stop() method to terminate the thread
@@ -133,7 +115,7 @@ class SAPAnnouncer {
   ///
   /// \return std::vector<SAPMessage>&
   ///
-  std::vector<SAPMessage> &GetStreams() { return streams_; }
+  std::vector<::mediax::StreamInformation> &GetStreams() { return streams_; }
 
   ///
   /// \brief Get the number of active streams
@@ -162,21 +144,21 @@ class SAPAnnouncer {
   ///
   /// \param sap The SAPAnnouncer object
   ///
-  static void SAPAnnouncementThread(SAPAnnouncer *sap);
+  static void SAPAnnouncementThread(SAPAnnouncer *stream_information);
 
   ///
   /// \brief  Function to send a SAP announcement
   ///
   /// \param message The stream details
   ///
-  void SendSAPAnnouncement(const SAPMessage &message) const;
+  void SendSAPAnnouncement(const ::mediax::StreamInformation &stream_information) const;
 
   ///
   /// \brief Function to send a SAP deletion
   ///
   /// \param message The stream details, needed to form the deletion packet
   ///
-  void SendSAPDeletion(const SAPMessage &message) const;
+  void SendSAPDeletion(const ::mediax::StreamInformation &stream_information) const;
 
   ///
   /// \brief Sed SAP packet
@@ -184,7 +166,7 @@ class SAPAnnouncer {
   /// \param message
   /// \param deletion
   ///
-  void SendSAPPacket(const SAPMessage &message, bool deletion) const;
+  void SendSAPPacket(const ::mediax::StreamInformation &stream_information, bool deletion) const;
 
   ///
   /// \brief Set the Address Helper object, can print interface details if helper is set
@@ -210,7 +192,7 @@ class SAPAnnouncer {
   void CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t selected);
 
   /// A list of active SAP streams
-  std::vector<SAPMessage> streams_;
+  std::vector<::mediax::StreamInformation> streams_;
   /// The SAP/SDP transmission thread
   std::thread thread_;
   /// The IPV4 source address

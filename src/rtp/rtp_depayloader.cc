@@ -13,6 +13,8 @@
 
 #include "rtp/rtp_depayloader.h"
 
+#include <arpa/inet.h>
+
 #include <string_view>
 
 namespace mediax {
@@ -42,5 +44,17 @@ void RtpDepayloader::SetIpAddress(std::string_view ip_address) { ingress_.hostna
 void RtpDepayloader::SetPort(uint32_t port) { ingress_.port_no = port; }
 
 uint32_t RtpDepayloader::GetPort() const { return ingress_.port_no; }
+
+void RtpDepayloader::SetColourSpace(::mediax::ColourspaceType colourspace) { ingress_.encoding = colourspace; }
+
+::mediax::ColourspaceType RtpDepayloader::GetColourSpace() { return ingress_.encoding; }
+
+bool RtpDepayloader::IsMulticast(std::string_view ip_address) {
+  struct in_addr addr;
+  if (inet_aton(std::string(ip_address).c_str(), &addr) == 0) {
+    return false;
+  }
+  return IN_MULTICAST(ntohl(addr.s_addr));
+}
 
 }  // namespace mediax

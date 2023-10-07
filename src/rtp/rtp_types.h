@@ -92,22 +92,24 @@ struct LineHeader {
 
 /// Supported colour spaces
 enum class ColourspaceType {
-  kColourspaceUndefined,
-  kColourspaceRgb24,
-  kColourspaceRgba,  // Not a GVA uncompressed video format
+  kColourspaceRgb24 = 0,
   kColourspaceYuv,
   kColourspaceMono8,
   kColourspaceMono16,
+  kColourspaceRgba,  // Not a GVA uncompressed video format
+  kColourspaceBgra,  // Not a GVA uncompressed video format
+  kColourspaceNv12,  // Not a GVA uncompressed video format
   kColourspaceJpeg2000,
   kColourspaceH264Part4,
-  kColourspaceH264Part10
+  kColourspaceH264Part10,
+  kColourspaceUndefined
 };
 
 /// The bits per pixel
 const std::map<ColourspaceType, uint8_t> kColourspaceBytes = {
     {ColourspaceType::kColourspaceUndefined, 0}, {ColourspaceType::kColourspaceRgb24, 3},
     {ColourspaceType::kColourspaceYuv, 2},       {ColourspaceType::kColourspaceMono8, 1},
-    {ColourspaceType::kColourspaceMono16, 1},    {ColourspaceType::kColourspaceJpeg2000, 3},
+    {ColourspaceType::kColourspaceMono16, 2},    {ColourspaceType::kColourspaceJpeg2000, 3},
     {ColourspaceType::kColourspaceH264Part4, 3}, {ColourspaceType::kColourspaceH264Part10, 3}};
 
 /// SDP encoding type
@@ -172,7 +174,6 @@ struct RtpPacket {
 };
 
 /// Transmit data structure
-/// Battlefield Management System (BMS) state definition
 struct TxData {
   /// RGB frame
   uint8_t *rgb_frame;
@@ -182,6 +183,26 @@ struct TxData {
   uint32_t width;
   /// Width of frame
   uint32_t height;
+};
+
+/// Struct capturing all stream information
+struct StreamInformation {
+  /// The SDP session name
+  std::string session_name;
+  /// The IPV4 address as a string
+  std::string hostname;
+  /// The IPV4 port number
+  uint32_t port = 5004;
+  /// The stream height in pixels
+  uint32_t height;
+  /// The stream width in pixels
+  uint32_t width;
+  /// The stream framerate in frames / second
+  uint32_t framerate;
+  /// Colourspace
+  ::mediax::ColourspaceType encoding;
+  /// Flag indicating the stream was deleted
+  bool deleted = false;
 };
 
 }  // namespace mediax

@@ -17,6 +17,22 @@ This library (compliant to ISO/IEC 14882 C++17) implements [RFC 4421](https://da
 
 Transmit streams emit a SAP/SDP announcement every second as per RFC 2974 and RFC 4566. Also referenced as in DEF STAN 00-082.
 
+## Python bindings
+
+Library has Python bindings for video streaming (and SAP/SDP support) with AI frameworks and use inside Jypter notebooks.
+
+Once built and installed import as follows:
+
+``` .py
+import sys
+sys.path.append('/usr/local/lib/python3/dist-packages/mediax')
+
+import sap_listener
+import sap_announcer
+import rtpvraw_payloader
+import rtpvraw_depayloader
+```
+
 ## Documentation
 
 Doxygen documentation is available on [Github Page](https://defencex.github.io/MediaX).

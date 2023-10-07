@@ -18,8 +18,8 @@
 
 #include "utils/colourspace.h"
 
-/// Helper functions for different colour space options
-namespace video {
+/// The video functions namespace for colourspace manipulation
+namespace mediax::video {
 
 /// Helper functions for different colour space options
 class ColourSpaceCuda : public ColourSpace {
@@ -28,7 +28,7 @@ class ColourSpaceCuda : public ColourSpace {
   /// \brief Construct a new Colour Space object
   ///
   ///
-  ColourSpaceCuda();
+  ColourSpaceCuda() final;
 
   ///
   /// \brief Convert YUV to RGBA
@@ -38,7 +38,7 @@ class ColourSpaceCuda : public ColourSpace {
   /// \param rgb The RGB image buffer
   /// \param yuv The YUV:422 image buffer
   ///
-  void RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) const final;
+  int RgbToYuv(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *yuv) const final;
 
   ///
   /// \brief Convert RGB to Monochrome 8 bits ber pixel
@@ -48,7 +48,7 @@ class ColourSpaceCuda : public ColourSpace {
   /// \param rgb The RGB image buffer
   /// \param mono8 The monochrome 8 image buffer
   ///
-  void RgbToMono8(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *mono8) const final;
+  int RgbToMono8(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *mono8) const final;
 
   ///
   /// \brief Convert RGB to Monochrome 16 bits ber pixel
@@ -58,7 +58,7 @@ class ColourSpaceCuda : public ColourSpace {
   /// \param rgb  The RGB image buffer
   /// \param mono16 The monochrome 16 image buffer
   ///
-  void RgbToMono16(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *mono16) const final;
+  int RgbToMono16(uint32_t height, uint32_t width, uint8_t *rgb, uint8_t *mono16) const final;
 
   ///
   /// \brief Convert RGBA to YUV
@@ -68,7 +68,7 @@ class ColourSpaceCuda : public ColourSpace {
   /// \param rgba The RGB image buffer
   /// \param yuv The YUV:422 image buffer
   ///
-  void RgbaToYuv(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *yuv) const final;
+  int RgbaToYuv(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *yuv) const final;
 
   ///
   /// \brief Convert RGBA to RGB
@@ -78,7 +78,7 @@ class ColourSpaceCuda : public ColourSpace {
   /// \param rgba
   /// \param rgb
   ///
-  void RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const final;
+  int RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const final;
 
   ///
   /// \brief Convert YUV to RGBA
@@ -88,7 +88,7 @@ class ColourSpaceCuda : public ColourSpace {
   /// \param yuv The YUV:422 image buffer
   /// \param rgba The RGBA image buffer
   ///
-  void YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const final;
+  int YuvToBgra(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const final;
 
   ///
   /// \brief Convert YUV to RGB
@@ -98,9 +98,9 @@ class ColourSpaceCuda : public ColourSpace {
   /// \param yuv The YUV:422 image buffer
   /// \param rgb The RGB image buffer
   ///
-  void YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const final;
+  int YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const final;
 };
 
-}  // namespace video
+}  // namespace mediax::video
 
 #endif  // UTILS_COLOURSPACE_CUDA_H_

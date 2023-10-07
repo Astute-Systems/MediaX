@@ -21,6 +21,7 @@
 #include <unistd.h>
 
 #include <iostream>
+#include <string>
 
 /// Class for Video 4 Linux 2 (V4L2) capture
 class V4L2Capture {
@@ -47,6 +48,8 @@ class V4L2Capture {
   ///
   ~V4L2Capture();
 
+  int Initalise();
+
   ///
   /// \brief Capture a frame from the V4L2 device
   ///
@@ -62,6 +65,8 @@ class V4L2Capture {
  private:
   /// \brief The file descriptor for the V4L2 device
   int fd_ = -1;
+  /// \brief The video capture device
+  std::string device_;
   /// \brief The width of the frame
   int width_;
   /// \brief The height of the frame

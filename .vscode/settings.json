@@ -5,7 +5,9 @@
     "C_Cpp.clang_format_fallbackStyle": "{BasedOnStyle: Google, ColumnLimit: 120}",
     "cSpell.words": [
         "Aapex",
+        "appsink",
         "appsrc",
+        "bitsperpixel",
         "bytep",
         "capsfilter",
         "cfamily",
@@ -29,11 +31,15 @@
         "gcov",
         "gcovr",
         "gflags",
+        "gint",
         "gpointer",
         "greyscale",
         "gstreamer",
         "gtest",
+        "guint",
         "IGMP",
+        "Initalise",
+        "INVOKABLE",
         "ipaddr",
         "Jetson",
         "lcov",
@@ -66,12 +72,14 @@
         "sonarqube",
         "sonarscan",
         "startuml",
+        "timespan",
         "udpdata",
         "udpsc",
         "udpsink",
         "udpsrc",
         "UYVY",
         "vaapi",
+        "vaapih",
         "videoconvert",
         "videotestsrc",
         "VIVOE",
@@ -172,7 +180,8 @@
         "future": "cpp",
         "typeindex": "cpp",
         "climits": "cpp",
-        "__config": "cpp"
+        "__config": "cpp",
+        "rtpvraw_depayloader.h": "c"
     },
     "terminal.integrated.shell.windows": "C:\\msys64\\usr\\bin\\bash.exe",
     "terminal.integrated.shellArgs.windows": [
@@ -185,5 +194,10 @@
         "TERM": "xterm-color",
         "PATH": "${env:PATH}",
         "WORKSPACE_ROOT": "${workspaceFolder}"
-    }
+    },
+    "python.analysis.extraPaths": [
+        "./build/python/mediax",
+        "./build/src/rtp",
+        "./build/src/sap"
+    ]
 }

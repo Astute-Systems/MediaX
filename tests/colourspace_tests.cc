@@ -19,7 +19,30 @@
 #include <string>
 
 #include "rtp/rtp_utils.h"
+#include "util_tests.h"
 #include "utils/colourspace_cpu.h"
+
+TEST(Colourspace, TestErrors) {
+  mediax::video::ColourSpaceCpu colour_space_cpu;
+  // Define input parameters
+  const uint32_t height = 480;
+  const uint32_t width = 640;
+  uint8_t *rgb = nullptr;
+  uint8_t *yuv = nullptr;
+
+  // Call the functions
+  EXPECT_NE(colour_space_cpu.RgbToYuv(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.RgbToMono8(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.RgbToMono16(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.RgbToBgra(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.RgbaToRgb(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.RgbaToYuv(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.YuvToRgb(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.YuvToBgra(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.Mono8ToBgra(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.Mono16ToBgra(height, width, rgb, yuv), 0);
+  EXPECT_NE(colour_space_cpu.ScaleToSizeRgb(height, width, rgb, height, width, yuv), 0);
+}
 
 TEST(Colourspace, YuvToRgbTest) {
   uint32_t height = 4;
@@ -27,7 +50,7 @@ TEST(Colourspace, YuvToRgbTest) {
   uint8_t yuv[width * height * 2];
   uint8_t rgb[width * height * 3];
   uint8_t rgb_receive[width * height * 3];
-  video::ColourSpaceCpu convert;
+  mediax::video::ColourSpaceCpu convert;
 
   // Fill the YUV buffer with a red color
   for (uint32_t i = 0; i < (width * height * 2) / 2; i += 4) {
@@ -57,43 +80,44 @@ TEST(Colourspace, YuvToRgbTest) {
 }
 
 TEST(Colourspace, YuvToRgbaTest) {
-  uint32_t height = 4;
-  uint32_t width = 4;
+  uint32_t height = 240;
+  uint32_t width = 320;
   uint8_t yuv[width * height * 2];
   uint8_t rgba_recieve[width * height * 4];
-  video::ColourSpaceCpu convert;
+  uint8_t rgb[width * height * 3];
+  mediax::video::ColourSpaceCpu convert;
 
   // Fill the YUV buffer with a red color
-  for (uint32_t i = 0; i < (width * height * 2); i += 4) {
-    yuv[i] = 0x51;      // Y component
-    yuv[i + 1] = 0x5a;  // U component
-    yuv[i + 2] = 0x51;  // Y component
-    yuv[i + 3] = 0xf0;  // U component
-  }
+  CreateColourBarTestCard(yuv, width, height, mediax::ColourspaceType::kColourspaceYuv);
   DumpHex(yuv, 16);
 
   // Call the function you want to test
   convert.YuvToRgba(height, width, yuv, rgba_recieve);
+  convert.RgbaToRgb(width, height, rgba_recieve, rgb);
+
+  WritePngFile(rgb, width, height, "YuvToRgbaTest.png");
+
   DumpHex(rgba_recieve, 16);
 }
 
 TEST(Colourspace, RgbToRgbaTest) {
-  uint32_t height = 4;
-  uint32_t width = 4;
+  uint32_t height = 240;
+  uint32_t width = 320;
   uint8_t rgb[width * height * 3];
   uint8_t rgba_recieve[width * height * 4];
-  video::ColourSpaceCpu convert;
+  uint8_t rgb_image[width * height * 3];
+  mediax::video::ColourSpaceCpu convert;
 
   // Fill the RGB buffer with a red color
-  for (uint32_t i = 0; i < (width * height * 3); i += 3) {
-    rgb[i] = 0xFF;      // R component
-    rgb[i + 1] = 0x00;  // G component
-    rgb[i + 2] = 0x00;  // B component
-  }
+  CreateColourBarTestCard(rgb, width, height, mediax::ColourspaceType::kColourspaceRgb24);
   DumpHex(rgb, 16);
 
   // Call the function you want to test
   convert.RgbToRgba(height, width, rgb, rgba_recieve);
+  convert.RgbaToRgb(width, height, rgba_recieve, rgb_image);
+
+  WritePngFile(rgb_image, width, height, "RgbToRgbaTest.png");
+
   DumpHex(rgba_recieve, 16);
 }
 
@@ -102,7 +126,7 @@ TEST(Colourspace, Mono8ToRgbaTest) {
   uint32_t width = 4;
   uint8_t mono8[width * height];
   uint8_t rgba_recieve[width * height * 4];
-  video::ColourSpaceCpu convert;
+  mediax::video::ColourSpaceCpu convert;
 
   // Fill the RGB buffer with a red color
   for (uint32_t i = 0; i < (width * height); i++) {
@@ -111,7 +135,7 @@ TEST(Colourspace, Mono8ToRgbaTest) {
   DumpHex(mono8, 16);
 
   // Call the function you want to test
-  convert.Mono8ToRgba(height, width, mono8, rgba_recieve);
+  convert.Mono8ToBgra(height, width, mono8, rgba_recieve);
   DumpHex(rgba_recieve, 16);
 }
 
@@ -120,7 +144,7 @@ TEST(Colourspace, Mono16ToRgbaTest) {
   uint32_t width = 4;
   uint8_t mono16[width * height * 2];
   uint8_t rgba_recieve[width * height * 4];
-  video::ColourSpaceCpu convert;
+  mediax::video::ColourSpaceCpu convert;
 
   // Fill the RGB buffer with a red color
   for (uint32_t i = 0; i < (width * height * 2); i += 2) {
@@ -130,7 +154,7 @@ TEST(Colourspace, Mono16ToRgbaTest) {
   DumpHex(mono16, 16);
 
   // Call the function you want to test
-  convert.Mono16ToRgba(height, width, mono16, rgba_recieve);
+  convert.Mono16ToBgra(height, width, mono16, rgba_recieve);
   DumpHex(rgba_recieve, 16);
 }
 
@@ -140,7 +164,7 @@ TEST(Colourspace, RgbToYuvTest) {
   const uint32_t height = 4;
   const uint32_t bufferSize = width * height * 3;
   uint8_t rgb[bufferSize];
-  video::ColourSpaceCpu convert;
+  mediax::video::ColourSpaceCpu convert;
 
   // Fill the expected RGB buffer with a red color
   for (uint32_t i = 0; i < width * height * 3; i += 3) {
@@ -160,7 +184,7 @@ TEST(Colourspace, RgbaToYuvTest) {
   const uint32_t height = 4;
   const uint32_t bufferSize = width * height * 4;
   uint8_t rgba[bufferSize] = {0};
-  video::ColourSpaceCpu convert;
+  mediax::video::ColourSpaceCpu convert;
 
   // Fill the expected RGB buffer with a red color
   for (uint32_t i = 0; i < width * height * 4; i += 4) {
@@ -180,7 +204,7 @@ TEST(Colourspace, RgbToMono8Test) {
   const uint32_t height = 4;
   const uint32_t bufferSize = width * height * 3;
   uint8_t rgb[bufferSize];
-  video::ColourSpaceCpu convert;
+  mediax::video::ColourSpaceCpu convert;
 
   // Fill the expected RGB buffer with a red color
   for (uint32_t i = 0; i < width * height * 3; i += 3) {
@@ -200,7 +224,7 @@ TEST(Colourspace, RgbToMono16Test) {
   const uint32_t height = 4;
   const uint32_t bufferSize = width * height * 3;
   uint8_t rgb[bufferSize];
-  video::ColourSpaceCpu convert;
+  mediax::video::ColourSpaceCpu convert;
 
   // Fill the expected RGB buffer with a red color
   for (uint32_t i = 0; i < width * height * 3; i += 3) {
@@ -220,7 +244,7 @@ TEST(Colourspace, RgbaToRgbTest) {
   const uint32_t height = 4;
   const uint32_t bufferSize = width * height * 4;
   uint8_t rgba[bufferSize] = {0};
-  video::ColourSpaceCpu convert;
+  mediax::video::ColourSpaceCpu convert;
 
   // Fill the expected RGB buffer with a red color
   for (uint32_t i = 0; i < width * height * 4; i += 4) {
@@ -232,4 +256,76 @@ TEST(Colourspace, RgbaToRgbTest) {
   convert.RgbaToRgb(height, width, rgba, rgb);
 
   DumpHex(rgb, 16);
+}
+
+TEST(Colourspace, ScaleToSizeTestRgbScaleDown) {
+  // Define input parameters
+  const uint32_t source_height = 1080;
+  const uint32_t source_width = 1920;
+  uint8_t source_rgb_buffer[source_height * source_width * 3] = {0};  // Initialize with zeros
+  const uint32_t target_height = 480;
+  const uint32_t target_width = 640;
+  uint8_t target_rgb_buffer[target_height * target_width * 3] = {0};  // Initialize with zeros
+
+  // Source is checked
+  CreateCheckeredTestCard(source_rgb_buffer, source_width, source_height, mediax::ColourspaceType::kColourspaceRgb24);
+  // Colour bars in target
+  CreateColourBarTestCard(target_rgb_buffer, target_width, target_height, mediax::ColourspaceType::kColourspaceRgb24);
+
+  // Call the function
+  mediax::video::ColourSpaceCpu colourspace;
+  colourspace.ScaleToSizeRgb(source_height, source_width, source_rgb_buffer, target_height, target_width,
+                             target_rgb_buffer);
+
+  // Write the result to a file
+  WritePngFile(target_rgb_buffer, target_width, target_height, "1920x1080_rgb_scaled_down_to_640x480.png");
+}
+
+TEST(Colourspace, ScaleToSizeTestRgbScaleUp) {
+  // Define input parameters
+  const uint32_t source_height = 480;
+  const uint32_t source_width = 640;
+  uint8_t source_rgb_buffer[source_height * source_width * 3] = {0};  // Initialize with zeros
+  const uint32_t target_height = 1080;
+  const uint32_t target_width = 1920;
+  uint8_t target_rgb_buffer[target_height * target_width * 3] = {0};  // Initialize with zeros
+
+  // Source is checked
+  CreateCheckeredTestCard(source_rgb_buffer, source_width, source_height, mediax::ColourspaceType::kColourspaceRgb24);
+  // Colour bars in target
+  CreateColourBarTestCard(target_rgb_buffer, target_width, target_height, mediax::ColourspaceType::kColourspaceRgb24);
+
+  // Call the function
+  mediax::video::ColourSpaceCpu colourspace;
+  colourspace.ScaleToSizeRgb(source_height, source_width, source_rgb_buffer, target_height, target_width,
+                             target_rgb_buffer);
+
+  // Write the result to a file
+  WritePngFile(target_rgb_buffer, target_width, target_height, "640x480_rgb_scaled_up_to_1920x1080.png");
+}
+
+TEST(Colourspace, ScaleToSizeTestRgbaScaleUp) {
+  // Define input parameters
+  const uint32_t source_height = 480;
+  const uint32_t source_width = 640;
+  uint8_t source_rgba_buffer[source_height * source_width * 4] = {0};  // Initialize with zeros
+  const uint32_t target_height = 1080;
+  const uint32_t target_width = 1920;
+  std::vector<uint8_t> target_rgba_buffer;
+  target_rgba_buffer.resize(target_height * target_width * 4);
+  std::vector<uint8_t> target_rgb_buffer;
+  target_rgb_buffer.resize(target_height * target_width * 4);
+
+  // Source is checked
+  CreateColourBarTestCard(source_rgba_buffer, source_width, source_height, mediax::ColourspaceType::kColourspaceRgba);
+
+  // Call the function
+  mediax::video::ColourSpaceCpu colourspace;
+  colourspace.ScaleToSizeRgba(source_height, source_width, source_rgba_buffer, target_height, target_width,
+                              target_rgba_buffer.data());
+
+  colourspace.RgbaToRgb(target_height, target_width, target_rgba_buffer.data(), target_rgb_buffer.data());
+
+  // Write the result to a file
+  WritePngFile(target_rgb_buffer.data(), target_width, target_height, "640x480_rgba_scaled_up_to_1920x1080.png");
 }

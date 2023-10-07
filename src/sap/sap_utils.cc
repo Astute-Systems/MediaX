@@ -13,8 +13,22 @@
 ///
 
 #include "sap/sap_utils.h"
+// for std::transform
+#include <algorithm>
 
 namespace mediax::sap {
+
+ColourspaceType SamplingToColourspaceType(std::string sampling, uint32_t bits_per_pixel) {
+  // Convert to lower case
+  std::string lower = sampling;
+  std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
+
+  if (sampling == "rgb") return ColourspaceType::kColourspaceRgb24;
+  if (sampling == "YCbCr-4:2:2") return ColourspaceType::kColourspaceYuv;
+  if ((sampling == "Mono") && (bits_per_pixel == 8)) return ColourspaceType::kColourspaceMono8;
+  if ((sampling == "Mono") && (bits_per_pixel == 16)) return ColourspaceType::kColourspaceMono16;
+  return ColourspaceType::kColourspaceUndefined;
+}
 
 std::string GetSdpColourspace(ColourspaceType colourspace) {
   switch (colourspace) {

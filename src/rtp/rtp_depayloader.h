@@ -34,6 +34,18 @@ class RtpDepayloader {
   virtual ~RtpDepayloader() = default;
 
   ///
+  /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement
+  ///
+  /// \param hostname IP address i.e. 239.192.1.1 for multicast
+  /// \param port defaults to 5004
+  /// \param name The name of the stream
+  /// \param encoding The encoding of the stream
+  /// \param height The height of the stream in pixels
+  /// \param width The width of the stream in pixels
+  ///
+  virtual void SetStreamInfo(const ::mediax::StreamInformation& stream_information) = 0;
+
+  ///
   /// \brief Open the RTP stream
   ///
   /// \return true
@@ -67,7 +79,7 @@ class RtpDepayloader {
   /// \return true when frame available
   /// \return false when no frame was received in the timeout
   ///
-  virtual bool Receive(uint8_t **cpu, int32_t timeout = 0) = 0;
+  virtual bool Receive(uint8_t** cpu, int32_t timeout = 0) = 0;
 
   ///
   /// \brief Set the Session Name attribute
@@ -89,7 +101,7 @@ class RtpDepayloader {
   ///
   /// \return ColourspaceType
   ///
-  ColourspaceType GetColourSpace() const;
+  ::mediax::ColourspaceType GetColourSpace() const;
 
   ///
   /// \brief Set the Height attribute
@@ -162,8 +174,31 @@ class RtpDepayloader {
   ///
   uint32_t GetPort() const;
 
+  ///
+  /// \brief Set the Colour Space object
+  ///
+  /// \param colourspace
+  ///
+  void SetColourSpace(::mediax::ColourspaceType colourspace);
+
+  ///
+  /// \brief Get the Colour Space object
+  ///
+  /// \return ::mediax::ColourspaceType
+  ///
+  ::mediax::ColourspaceType GetColourSpace();
+
+  ///
+  /// \brief Check if the IP address is a multicast address
+  ///
+  /// \param ip_address
+  /// \return true
+  /// \return false
+  ///
+  bool IsMulticast(std::string_view ip_address);
+
   /// Ingress port
-  PortType ingress_ = {};
+  ::mediax::PortType ingress_ = {};
 };
 
 }  // namespace mediax

@@ -77,7 +77,7 @@ TEST(Utilities, CreateGreyScaleBarTestCardRgb) {
 TEST(Utilities, CreateComplexTestCardRgb) {
   const int kBuffSize = (640 * 480) * 3;
   std::array<uint8_t, kBuffSize> rtb_test = {0};
-  CreateComplexTestCard(rtb_test.data(), 640, 480, mediax::ColourspaceType::kColourspaceRgb24);
+  CreateQuadTestCard(rtb_test.data(), 640, 480, mediax::ColourspaceType::kColourspaceRgb24);
   ASSERT_EQ(rtb_test[0], 0);
   ASSERT_EQ(rtb_test[1], 0);
   ASSERT_EQ(rtb_test[2], 0);

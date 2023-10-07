@@ -15,5 +15,6 @@ set(CPACK_DEBIAN_PACKAGE_SECTION "libs")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://defencex.ai")
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "MediaX library for RTP and SAP")
 set(CPACK_DEBIAN_PACKAGE_NAME "mediax")
+set(CPACK_STRIP_FILES TRUE)
 
 include(CPack)

@@ -7,6 +7,15 @@ project(mediax
   VERSION "${MEDIAX_VERSION}"
 )
 
+add_subdirectory(uncompressed)
+add_subdirectory(sap)
+add_subdirectory(rtp)
+add_subdirectory(h264)
+
+if (BUILD_QT6)
+  add_subdirectory(qt)
+endif()
+
 if (BUILD_CUDA)
   enable_language(CUDA)
 else()
@@ -18,6 +27,7 @@ include(GNUInstallDirs)
 # find GStreamer
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GST REQUIRED gstreamer-1.0 gstreamer-app-1.0 gstreamer-video-1.0)
+pkg_check_modules(SWSCALE REQUIRED libswscale)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "MSYS")
   message("Detected MSYS2...")
@@ -28,41 +38,61 @@ set(SOURCES
   rtp/rtp_utils.cc 
   rtp/rtp_payloader.cc 
   rtp/rtp_depayloader.cc 
-  raw/rtpvraw_payloader.cc 
-  raw/rtpvraw_depayloader.cc 
+  uncompressed/rtp_uncompressed_payloader.cc 
+  uncompressed/rtp_uncompressed_depayloader.cc 
   sap/sap_announcer.cc 
   sap/sap_listener.cc 
   sap/sap_utils.cc 
   utils/colourspace_cpu.cc 
   utils/colourspace_cuda.cu
   v4l2/v4l2_source.cc
-  h264/vaapi/rtph264_payloader.cc 
-  h264/vaapi/rtph264_depayloader.cc
 )
-option(GST_SUPPORTED "GStreamer support" ON)
+
+
 if (GST_SUPPORTED)
   message(STATUS "Adding GST support")
     list(APPEND SOURCES
-    h264/gst/vaapi/rtph264_payloader.cc 
-    h264/gst/vaapi/rtph264_depayloader.cc
+    h264/gst/vaapi/rtp_h264_payloader.cc 
+    h264/gst/vaapi/rtp_h264_depayloader.cc
   )
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGST_SUPPORTED")
 endif()
 
-include_directories(${CMAKE_SOURCE_DIR}/src)
+if (VAAPI_SUPPORTED)
+  # Use Intel Video Acceleration API (VAAPI) for hardware accelerated video decoding
+  list(APPEND SOURCES
+    h264/vaapi/rtp_h264_depayloader.cc
+    h264/vaapi/rtp_h264_payloader.cc
+  )
+endif()
+
+if (NVENC_SUPPORTED)
+  # Use Nvidia Encoder (NVENC) for hardware accelerated video decoding
+  list(APPEND SOURCES
+    h264/nvenc/rtp_h264_depayloader.cc
+    h264/nvenc/rtp_h264_payloader.cc
+  )
+endif()
+
+if (!GST_SUPPORTED AND !VAAPI_SUPPORTED AND !NVENC_SUPPORTED)
+  # Use native video decoding for software x264 decoding
+  list(APPEND SOURCES
+    h264/native/rtp_h264_depayloader.cc
+    h264/native/rtp_h264_payloader.cc
+  )
+endif()
+
+include_directories(${CMAKE_SOURCE_DIR}/src ${SWSCALE_INCLUDE_DIRS} ${GST_INCLUDE_DIRS})
 add_library(mediax SHARED ${SOURCES})
-pkg_check_modules(SWSCALE REQUIRED libswscale libavutil) # libavformat libavcodec
 if (WIN32)
-  message(STATUS "Adding windows socket libs")
   target_link_libraries(mediax png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} wsock32 ws2_32)
 else()
   target_link_libraries(mediax png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS})
 endif()
-target_include_directories(mediax PUBLIC ${SWSCALE_INCLUDE_DIRS} ${GST_INCLUDE_DIRS})
+
 set_target_properties(mediax PROPERTIES SOVERSION 1)
-# set_property(TARGET mediax PROPERTY CUDA_SEPARABLE_COMPILATION ON)
-# set_target_properties(mediax PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 set_target_properties(mediax PROPERTIES CUDA_ARCHITECTURES "75")
+target_include_directories(mediax PUBLIC ${CMAKE_SOURCE_DIR}/src ${SWSCALE_INCLUDE_DIRS} ${GST_INCLUDE_DIRS})
+
 
 add_library(mediax_static STATIC ${SOURCES})
 if (WIN32)

@@ -11,4 +11,5 @@
 /// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
 ///
 /// \file rtph264_payloader.cc
-///
+
+#include "h264/vaapi/rtph264_payloader.h"
