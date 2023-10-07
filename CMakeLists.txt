@@ -5,6 +5,7 @@ project(mediax)
 enable_testing()
 
 include(scripts/cmake/version.cmake)
+include(scripts/cmake/doxygen.cmake)
 include(scripts/cmake/cpp.cmake)
 include(scripts/cmake/cpplint.cmake)
 # include(scripts/cmake/linters.cmake)

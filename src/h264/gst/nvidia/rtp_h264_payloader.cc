@@ -12,24 +12,25 @@
 /// \file rtph_264_payloader.cc
 ///
 
-#include "h264/gst/rtph264_depayloader.h"
-#include "h264/gst/rtph264_payloader.h"
+#include "h264/gst/nvidia/rtp_h264_payloader.h"
 
-namespace mediax::gst::vaapi {
+#include "h264/gst/nvidia/rtp_h264_depayloader.h"
+
+namespace mediax::h264::gst::nvidia {
 
 RtpH264Payloader::RtpH264Payloader() = default;
 
 RtpH264Payloader::~RtpH264Payloader() = default;
 
-void RtpH264Payloader::SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                                     std::string_view hostname, const uint32_t portno) {
-  egress_.encoding = encoding;
-  egress_.height = height;
-  egress_.width = width;
-  egress_.framerate = 25;
-  egress_.name = name;
-  egress_.hostname = hostname;
-  egress_.port_no = portno;
+void RtpH264Payloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
+  egress_.encoding = stream_information.encoding;
+  egress_.height = stream_information.height;
+  egress_.width = stream_information.width;
+  egress_.framerate = stream_information.framerate;
+  egress_.name = stream_information.session_name;
+  egress_.hostname = stream_information.hostname;
+  egress_.port_no = stream_information.port;
+  egress_.settings_valid = true;
 }
 
 int RtpH264Payloader::Transmit(unsigned char *, bool) { return 0; }
@@ -94,4 +95,4 @@ void RtpH264Payloader::Stop() {
   gst_element_set_state(pipeline_, GST_STATE_NULL);
 }
 
-}  // namespace mediax::gst::vaapi
+}  // namespace mediax::h264::gst::nvidia

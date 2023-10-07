@@ -18,7 +18,7 @@
 
 #include "rtp/rtp_payloader.h"
 
-namespace mediax::gst::vaapi {
+namespace mediax::h264::vaapi {
 
 class RtpH264Payloader : public RtpPayloader {
   ///
@@ -85,6 +85,6 @@ class RtpH264Payloader : public RtpPayloader {
   GstElement *pipeline_;
 };
 
-}  // namespace mediax::gst::vaapi
+}  // namespace mediax::h264::vaapi
 
 #endif  // H264_VAAPI_RTPH264_PAYLOADER_H_

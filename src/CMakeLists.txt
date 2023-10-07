@@ -10,7 +10,6 @@ project(mediax
 add_subdirectory(uncompressed)
 add_subdirectory(sap)
 add_subdirectory(rtp)
-add_subdirectory(h264)
 
 if (BUILD_QT6)
   add_subdirectory(qt)
@@ -54,6 +53,8 @@ if (GST_SUPPORTED)
     list(APPEND SOURCES
     h264/gst/vaapi/rtp_h264_payloader.cc 
     h264/gst/vaapi/rtp_h264_depayloader.cc
+    h264/gst/nvidia/rtp_h264_payloader.cc 
+    h264/gst/nvidia/rtp_h264_depayloader.cc
   )
 endif()
 

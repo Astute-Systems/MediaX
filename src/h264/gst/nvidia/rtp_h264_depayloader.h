@@ -12,8 +12,8 @@
 /// \file rtph264_depayloader.h
 ///
 
-#ifndef H264_GST_VAAPI_RTP_H264_DEPAYLOADER_H_
-#define H264_GST_VAAPI_RTP_H264_DEPAYLOADER_H_
+#ifndef H264_GST_NVIDIA_RTP_H264_DEPAYLOADER_H_
+#define H264_GST_NVIDIA_RTP_H264_DEPAYLOADER_H_
 
 #include <gst/app/gstappsink.h>
 #include <gst/gst.h>
@@ -22,7 +22,8 @@
 
 #include "rtp/rtp_depayloader.h"
 
-namespace mediax {
+/// The Gstreamer implementation of the Nvidia (NVENC) namespace
+namespace mediax::h264::gst::nvidia {
 
 GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data);
 
@@ -58,12 +59,7 @@ class RtpH264Depayloader : public RtpDepayloader {
   ///
   /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement
   ///
-  /// \param hostname IP address i.e. 239.192.1.1 for multicast
-  /// \param port defaults to 5004
-  /// \param name The name of the stream
-  /// \param encoding The encoding of the stream
-  /// \param height The height of the stream in pixels
-  /// \param width The width of the stream in pixels
+  /// \param stream_information set the stream information
   ///
   void SetStreamInfo(const ::mediax::StreamInformation &stream_information) final;
 
@@ -125,6 +121,6 @@ class RtpH264Depayloader : public RtpDepayloader {
   bool new_rx_frame_ = false;
 };
 
-}  // namespace mediax
+}  // namespace mediax::h264::gst::nvidia
 
 #endif  // H264_GST_VAAPI_RTP_H264_DEPAYLOADER_H_

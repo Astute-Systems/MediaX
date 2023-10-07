@@ -21,6 +21,7 @@
 
 #include "sap/sap_listener.h"
 
+/// The Qt wrappers namespace
 namespace mediax::qt {
 
 class QTSAPListener : public QObject {

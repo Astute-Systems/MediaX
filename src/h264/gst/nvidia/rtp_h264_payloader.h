@@ -16,7 +16,7 @@
 
 #include "rtp/rtp_payloader.h"
 
-namespace mediax::gst::vaapi {
+namespace mediax::h264::gst::nvidia {
 
 class RtpH264Payloader : public RtpPayloader {
   ///
@@ -34,15 +34,9 @@ class RtpH264Payloader : public RtpPayloader {
   ///
   /// \brief Set the Stream Info object
   ///
-  /// \param name session name
-  /// \param encoding colour space
-  /// \param height height in pixels
-  /// \param width width in pixels
-  /// \param hostname IP address i.e. 123.192.1.1
-  /// \param portno port number i.e. 5004
+  /// \param stream_information
   ///
-  void SetStreamInfo(std::string_view name, ColourspaceType encoding, uint32_t height, uint32_t width,
-                     std::string_view hostname, const uint32_t portno) override;
+  void SetStreamInfo(const ::mediax::StreamInformation &stream_information) override;
 
   ///
   /// \brief Open the RTP stream
@@ -83,6 +77,6 @@ class RtpH264Payloader : public RtpPayloader {
   GstElement *pipeline_;
 };
 
-}  // namespace mediax::gst::vaapi
+}  // namespace mediax::h264::gst::nvidia
 
-#endif  // H264_GST_RTP_H264_PAYLOADER_H_
+#endif  // H264_GST_NVIDIA_RTP_H264_PAYLOADER_H_

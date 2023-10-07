@@ -124,7 +124,7 @@ gboolean update_callback(gpointer user_data) {
 void ProcessVideo(mediax::ColourspaceType mode) {
   if ((mode == mediax::ColourspaceType::kColourspaceH264Part10) ||
       (mode == mediax::ColourspaceType::kColourspaceH264Part4)) {
-    rtp_ = std::make_shared<mediax::gst::vaapi::RtpH264Depayloader>();
+    rtp_ = std::make_shared<mediax::h264::gst::vaapi::RtpH264Depayloader>();
   } else {
     rtp_ = std::make_shared<mediax::RtpUncompressedDepayloader>();
   }

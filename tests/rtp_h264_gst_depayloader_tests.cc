@@ -31,7 +31,7 @@ TEST(RtpH264DepayloaderTest, Timeout) {
   uint8_t* rgb_test;
 
   std::shared_ptr<mediax::RtpDepayloader> rtp;
-  rtp = std::make_shared<mediax::gst::vaapi::RtpH264Depayloader>();
+  rtp = std::make_shared<mediax::h264::gst::vaapi::RtpH264Depayloader>();
   rtp->SetSessionName("test_session_name");
   ASSERT_EQ(rtp->GetSessionName(), "test_session_name");
   rtp->Open();
@@ -46,7 +46,7 @@ TEST(RtpH264DepayloaderTest, DISABLED_UnicastOk) {
 
   std::array<uint8_t, 1280 * 720 * 3> rgb_test;
   mediax::video::ColourSpaceCpu colourspace;
-  mediax::gst::vaapi::RtpH264Depayloader rtp;
+  mediax::h264::gst::vaapi::RtpH264Depayloader rtp;
 
   // Increase GST debug level
   setenv("GST_DEBUG", "3", 1);
