@@ -15,6 +15,8 @@
 #ifndef H264_VAAPI_RTPH264_DEPAYLOADER_H_
 #define H264_VAAPI_RTPH264_DEPAYLOADER_H_
 
+#include <vector>
+
 /// The MediaX Intel Video Accelleration API (VAAPI) namespace
 namespace mediax::h264::vaapi {
 

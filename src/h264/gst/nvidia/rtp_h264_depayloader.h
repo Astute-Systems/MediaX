@@ -123,4 +123,4 @@ class RtpH264Depayloader : public RtpDepayloader {
 
 }  // namespace mediax::h264::gst::nvidia
 
-#endif  // H264_GST_VAAPI_RTP_H264_DEPAYLOADER_H_
+#endif  // H264_GST_NVIDIA_RTP_H264_DEPAYLOADER_H_
