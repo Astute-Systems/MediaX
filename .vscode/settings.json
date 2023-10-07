@@ -71,6 +71,7 @@
         "udpsink",
         "udpsrc",
         "UYVY",
+        "vaapi",
         "videoconvert",
         "videotestsrc",
         "VIVOE",

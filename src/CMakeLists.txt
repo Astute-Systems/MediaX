@@ -43,8 +43,8 @@ option(GST_SUPPORTED "GStreamer support" ON)
 if (GST_SUPPORTED)
   message(STATUS "Adding GST support")
     list(APPEND SOURCES
-    h264/gst/rtph264_payloader.cc 
-    h264/gst/rtph264_depayloader.cc
+    h264/gst/vaapi/rtph264_payloader.cc 
+    h264/gst/vaapi/rtph264_depayloader.cc
   )
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGST_SUPPORTED")
 endif()

@@ -129,7 +129,7 @@ void SetupUncompressed(mediax::ColourspaceType mode) {
 }
 
 void SetupH264() {
-  auto rtp_h264 = std::make_shared<mediax::RtpH264Depayloader>();
+  auto rtp_h264 = std::make_shared<mediax::gst::vaapi::RtpH264Depayloader>();
   rtp_ = rtp_h264;
 }
 

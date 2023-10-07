@@ -17,7 +17,7 @@
 
 #include "rtp/rtp_depayloader.h"
 
-namespace mediax {
+namespace mediax::gst::vaapi {
 
 class RtpH264Depayloader : public RtpDepayloader {
  public:
@@ -73,6 +73,6 @@ class RtpH264Depayloader : public RtpDepayloader {
   GstElement *pipeline_;
 };
 
-}  // namespace mediax
+}  // namespace mediax::gst::vaapi
 
 #endif  // H264_GST_RTPH264_DEPAYLOADER_H_

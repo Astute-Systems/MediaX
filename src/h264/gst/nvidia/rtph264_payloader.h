@@ -12,9 +12,11 @@
 #ifndef H264_GST_RTPH264_PAYLOADER_H_
 #define H264_GST_RTPH264_PAYLOADER_H_
 
+#include <gst/gst.h>
+
 #include "rtp/rtp_payloader.h"
 
-namespace mediax {
+namespace mediax::gst::vaapi {
 
 class RtpH264Payloader : public RtpPayloader {
   ///
@@ -76,8 +78,11 @@ class RtpH264Payloader : public RtpPayloader {
   ///
   ///
   void Stop() final;
+
+ private:
+  GstElement *pipeline_;
 };
 
-}  // namespace mediax
+}  // namespace mediax::gst::vaapi
 
 #endif  // H264_GST_RTPH264_PAYLOADER_H_

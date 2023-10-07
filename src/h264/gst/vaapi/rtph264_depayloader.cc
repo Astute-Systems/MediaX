@@ -13,14 +13,14 @@
 /// \file rtph264_depayloader.cc
 ///
 
-#include "h264/gst/rtph264_depayloader.h"
+#include "h264/gst/vaapi/rtph264_depayloader.h"
 
 #include <gst/gst.h>
 
 #include <iostream>
 #include <string>
 
-namespace mediax {
+namespace mediax::gst::vaapi {
 
 RtpH264Depayloader::RtpH264Depayloader() = default;
 
@@ -43,7 +43,24 @@ bool RtpH264Depayloader::Open() {
   // Create a rtph264depay element to depayload the RTP stream
   GstElement *rtph264depay = gst_element_factory_make("rtph264depay", "rtp-h264-depay");
 
-  // Create a custom appsrc element to receive the H.264 stream
+  // // Create a H.264 Parser element to parse the H.264 stream
+  // GstElement *h264parse = gst_element_factory_make("h264parse", "rtp-h264-h264parse");
+
+  // // Create a custom Intel VAAPI element to receive the H.264 stream
+  // GstElement *vaapiparse = gst_element_factory_make("vaapiparse", "rtp-h264-vaapiparse");
+  // g_object_set(G_OBJECT(vaapiparse), "config-interval", 1, nullptr);
+
+  // // Create a vaapidecode element to decode the H.264 stream
+  // GstElement *vaapidecode = gst_element_factory_make("vaapidecode", "rtp-h264-vaapidecode");
+
+  // // Create a vaapisink element to display the decoded H.264 stream
+  // GstElement *vaapisink = gst_element_factory_make("vaapisink", "rtp-h264-vaapisink");
+  // g_object_set(G_OBJECT(vaapisink), "sync", false, nullptr);
+
+  // // Create a custom appsrc element to receive the H.264 stream
+  // GstElement *appsrc = gst_element_factory_make("appsrc", "rtp-h264-appsrc");
+  // g_object_set(G_OBJECT(appsrc), "stream-type", 0, "format", GST_FORMAT_TIME, nullptr);
+
   GstElement *appsrc = gst_element_factory_make("appsrc", "rtp-h264-appsrc");
   g_object_set(G_OBJECT(appsrc), "stream-type", 0, "format", GST_FORMAT_TIME, nullptr);
 
@@ -90,4 +107,4 @@ void RtpH264Depayloader::Close() {
   gst_object_unref(pipeline_);
 }
 
-}  // namespace mediax
+}  // namespace mediax::gst::vaapi
