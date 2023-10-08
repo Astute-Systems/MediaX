@@ -27,7 +27,7 @@ jobs:
           sudo ./scripts/init_build_machine.sh
 
       - name: CMake and Build
-        run: mkdir build && cd build && cmake -DEXAMPLES=ON -DGST_SUPPORT=ON.. && make
+        run: mkdir build && cd build && cmake -DEXAMPLES=ON -DGST_SUPPORT=ON .. && make
 
       - name: Install
         run: cd build && sudo make install
