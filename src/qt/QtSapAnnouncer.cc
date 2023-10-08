@@ -15,6 +15,7 @@
 #include "qt/QtSapAnnouncer.h"
 
 #include <iostream>
+#include <memory>
 
 namespace mediax::qt {
 
