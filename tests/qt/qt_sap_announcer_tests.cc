@@ -11,7 +11,10 @@ class QtSapAnnouncerTest : public Test {
  protected:
   void SetUp() override { qt_sap_announcer_ = std::make_unique<QtSapAnnouncer>(); }
 
-  void TearDown() override { qt_sap_announcer_.reset(); }
+  void TearDown() override {
+    qt_sap_announcer_->stop();
+    qt_sap_announcer_.reset();
+  }
 
   std::unique_ptr<QtSapAnnouncer> qt_sap_announcer_;
 };
