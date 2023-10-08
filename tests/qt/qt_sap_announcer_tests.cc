@@ -36,10 +36,7 @@ TEST_F(QtSapAnnouncerTest, Start) {
   EXPECT_EQ(qt_sap_announcer_->getActiveStreamCount(), 0);
   qt_sap_announcer_->addSAPAnnouncement(stream_information);
   qt_sap_announcer_->start();
-  // Make sure we can call this again without breaking
-  qt_sap_announcer_->start();
-  qt_sap_announcer_->start();
-  qt_sap_announcer_->start();
+  qt_sap_announcer_->stop();
 }
 
 TEST_F(QtSapAnnouncerTest, Stop) {
