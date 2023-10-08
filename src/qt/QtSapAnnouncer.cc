@@ -22,9 +22,10 @@ namespace mediax::qt {
 QtSapAnnouncer::QtSapAnnouncer(QObject *parent)
     : QObject(parent), sap_announcer_(::mediax::sap::SAPAnnouncer::GetInstance()) {}
 
-QtSapAnnouncer &QtSapAnnouncer::GetInstance() {
-  static std::unique_ptr<QtSapAnnouncer> m_instance = std::make_unique<QtSapAnnouncer>();
-  return *m_instance;
+QtSapAnnouncer &QtSapAnnouncer::getInstance() {
+  /// The singleton instance
+  static QtSapAnnouncer m_instance;
+  return m_instance;
 }
 
 Q_INVOKABLE void QtSapAnnouncer::addSAPAnnouncement(const ::mediax::StreamInformation &stream_information) {

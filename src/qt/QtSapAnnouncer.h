@@ -44,7 +44,7 @@ class QtSapAnnouncer : public QObject {
   ///
   /// \return QtSapAnnouncer&
   ///
-  static QtSapAnnouncer& GetInstance();
+  static QtSapAnnouncer& getInstance();
 
   ///
   /// \brief Add a SAP announcement

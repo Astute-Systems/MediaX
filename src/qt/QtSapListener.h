@@ -55,7 +55,7 @@ class QtSapListener : public QObject {
   ///
   /// \return QtSapListener&
   ///
-  static QtSapListener &GetInstance();
+  static QtSapListener &getInstance();
 
  signals:
 
@@ -65,7 +65,7 @@ class QtSapListener : public QObject {
   /// \param name the SAP stream session name
   /// \param message the actual message being recieved
   ///
-  void sapDataReceived(const std::string &name, const ::mediax::sap::SDPMessage &message);
+  void sapData(const std::string &name, const ::mediax::sap::SDPMessage &message);
 
  private:
   ///
@@ -73,7 +73,7 @@ class QtSapListener : public QObject {
   ///
   /// \param sdp
   ///
-  static void SapCallback(sap::SDPMessage *sdp);
+  static void SapCallback(const sap::SDPMessage *sdp);
 
   ::mediax::sap::SAPListener sap_listener_;
 };
