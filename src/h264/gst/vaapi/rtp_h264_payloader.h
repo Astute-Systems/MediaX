@@ -21,6 +21,7 @@
 namespace mediax::h264::gst::vaapi {
 
 class RtpH264Payloader : public RtpPayloader {
+ public:
   ///
   /// \brief Construct a new Rtp H.264 Payloader object
   ///

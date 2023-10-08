@@ -16,10 +16,20 @@
 
 namespace mediax::qt {
 
-QTSAPListener::QTSAPListener(QObject *parent) : QObject(parent) {}
+void QtSapListener::SapCallback(sap::SDPMessage *sdp) {
+  std::string name = "unknown";
+  emit ::mediax::qt::QtSapListener::GetInstance().sapDataReceived(name, *sdp);
+}
 
-Q_INVOKABLE void QTSAPListener::start() { sap_listener_.Start(); }
+QtSapListener &QtSapListener::GetInstance() {
+  static std::unique_ptr<QtSapListener> m_instance = std::make_unique<QtSapListener>();
+  return *m_instance;
+}
 
-Q_INVOKABLE void QTSAPListener::stop() { sap_listener_.Stop(); }
+QtSapListener::QtSapListener(QObject *parent) : QObject(parent) { sap_listener_.RegisterSapListener("", SapCallback); }
+
+Q_INVOKABLE void QtSapListener::start() { sap_listener_.Start(); }
+
+Q_INVOKABLE void QtSapListener::stop() { sap_listener_.Stop(); }
 
 }  // namespace mediax::qt

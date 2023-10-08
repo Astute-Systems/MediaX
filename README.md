@@ -33,6 +33,10 @@ import rtpvraw_payloader
 import rtpvraw_depayloader
 ```
 
+# Qt6 bindings
+
+These bindings are currently available for testing. Please find documentation [here](https://defencex.github.io/MediaX/namespacemediax_1_1qt.html).
+
 ## Documentation
 
 Doxygen documentation is available on [Github Page](https://defencex.github.io/MediaX).

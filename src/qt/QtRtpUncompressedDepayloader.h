@@ -22,22 +22,41 @@
 
 namespace mediax::qt {
 
-class RtpDepayloaderWrapper : public QObject {
+class QtRtpUncompressedDepayloader : public QObject {
   Q_OBJECT
 
  public:
-  explicit RtpDepayloaderWrapper(QObject* parent = nullptr) : QObject(parent) {
+  ///
+  /// \brief Construct a new Rtp Uncompressed Depayloader object
+  ///
+  /// \param parent
+  ///
+  explicit QtRtpUncompressedDepayloader(QObject* parent = nullptr) : QObject(parent) {
     m_rtpDepayloader = std::make_unique<mediax::RtpUncompressedDepayloader>();
   }
 
  public slots:
+  ///
+  /// \brief Set the Stream Info object
+  ///
+  /// \param stream_information
+  ///
   void setStreamInfo(const mediax::StreamInformation& stream_information) {
     m_rtpDepayloader->SetStreamInfo(stream_information);
   }
 
+  ///
+  /// \brief Receive a frame from the RTP stream
+  ///
+  /// \param cpu
+  /// \param timeout
+  /// \return true
+  /// \return false
+  ///
   bool receive(uint8_t** cpu, int32_t timeout = 0);
 
  private:
+  /// The underlying RTP depayloader
   std::unique_ptr<mediax::RtpDepayloader> m_rtpDepayloader;
 };
 

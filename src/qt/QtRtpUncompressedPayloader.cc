@@ -16,7 +16,7 @@
 
 namespace mediax::qt {
 
-int RtpPayloaderWrapper::transmit(uint8_t* rgbframe, bool blocking) {
+int QtRtpUncompressedPayloader::transmit(uint8_t* rgbframe, bool blocking) {
   return m_rtpPayloader->Transmit(rgbframe, blocking);
 }
 
