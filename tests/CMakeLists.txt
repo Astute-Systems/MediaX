@@ -44,7 +44,6 @@ add_executable(
 set(LINK_LIBRARIES
   gtest
   mediax
-  
   Qt6::Core
   ${GST_LIBRARIES}
   ${SWSCALE_LIBRARIES}

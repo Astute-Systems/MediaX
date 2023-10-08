@@ -56,6 +56,4 @@ Q_INVOKABLE QVector<quint8> QtRtpH264Deayloader::getBuffer() {
   return buffer;
 }
 
-Q_INVOKABLE void QtRtpH264Deayloader::newFrame() { depayloader_.NewFrame(); }
-
 }  // namespace mediax::qt

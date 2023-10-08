@@ -37,6 +37,12 @@ import rtpvraw_depayloader
 
 These bindings are currently available for testing. Please find documentation [here](https://defencex.github.io/MediaX/namespacemediax_1_1qt.html).
 
+To build from source add with Qt6 add:
+
+```
+cmake -DGST_SUPPORT=ON ..
+```
+
 ## Documentation
 
 Doxygen documentation is available on [Github Page](https://defencex.github.io/MediaX).

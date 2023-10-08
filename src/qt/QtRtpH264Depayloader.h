@@ -77,8 +77,8 @@ class QtRtpH264Deayloader : public QObject {
   ///
   /// \brief Receive a frame from the RTP stream
   ///
-  /// \param frame
-  /// \param timeout
+  /// \param frame buffer to hold the recieved image
+  /// \param timeout timeout in milliseconds, if zero wait for ever (blocking)
   /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE bool receive(QByteArray &frame, int timeout = 0);
@@ -90,14 +90,8 @@ class QtRtpH264Deayloader : public QObject {
   ///
   Q_INVOKABLE QVector<quint8> getBuffer();
 
-  ///
-  /// \brief Get the Active Stream Count object
-  ///
-  /// \return Q_INVOKABLE
-  ///
-  Q_INVOKABLE void newFrame();
-
  private:
+  /// The underlying RTP H.264 depayloader
   mediax::h264::gst::vaapi::RtpH264Depayloader depayloader_;
 };
 
