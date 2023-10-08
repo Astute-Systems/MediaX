@@ -81,7 +81,7 @@ class QtRtpH264Deayloader : public QObject {
   /// \param timeout
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE bool receive(QByteArray &frame, int timeout = 0);  // NOLINT
+  Q_INVOKABLE bool receive(QByteArray &frame, int timeout = 0);
 
   ///
   /// \brief Get the Buffer object

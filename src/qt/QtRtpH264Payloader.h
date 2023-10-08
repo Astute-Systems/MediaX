@@ -86,7 +86,7 @@ class QtRtpH264Payloader : public QObject {
   /// \param blocking Set to true if blocking
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE int transmit(QByteArray &frame, bool blocking = true);  // NOLINT
+  Q_INVOKABLE int transmit(QByteArray &frame, bool blocking = true);
 
  private:
   ::mediax::h264::gst::vaapi::RtpH264Payloader payloader_;
