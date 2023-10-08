@@ -128,6 +128,7 @@ bool SAPListener::GetStreamInformation(std::string_view session_name, StreamInfo
 }
 
 void SAPListener::Start() {
+  if (running_) return;
   running_ = true;
   thread_ = std::thread(SAPListenerThread, this);
 }

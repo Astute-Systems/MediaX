@@ -115,14 +115,14 @@ class SAPAnnouncer {
   ///
   /// \return std::vector<SAPMessage>&
   ///
-  std::vector<::mediax::StreamInformation> &GetStreams() { return streams_; }
+  std::vector<::mediax::StreamInformation> &GetStreams();
 
   ///
   /// \brief Get the number of active streams
   ///
   /// \return uint32_t
   ///
-  uint32_t GetActiveStreamCount() const { return (uint32_t)streams_.size(); }
+  uint32_t GetActiveStreamCount() const;
 
  private:
   ///

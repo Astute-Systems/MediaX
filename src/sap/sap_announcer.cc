@@ -184,6 +184,10 @@ void SAPAnnouncer::SetSourceInterface(uint16_t select) { SetAddressHelper(select
 
 void SAPAnnouncer::ListInterfaces(uint16_t select) { SetAddressHelper(select, true); }
 
+uint32_t SAPAnnouncer::GetActiveStreamCount() const { return (uint32_t)streams_.size(); }
+
+std::vector<::mediax::StreamInformation> &SAPAnnouncer::GetStreams() { return streams_; }
+
 void SAPAnnouncer::SetAddressHelper(uint16_t select [[maybe_unused]], bool helper) {
 #ifdef _WIN32
 #pragma stream_information("TODO: Implement SetAddressHelper for Windows")

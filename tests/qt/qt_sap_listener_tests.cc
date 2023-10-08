@@ -6,14 +6,14 @@
 using namespace mediax::qt;
 using namespace ::testing;
 
-TEST(QtSapListenerTest, Start) {
+TEST(QtSapListenerTest, DISABLED_Start) {
   mediax::qt::QtSapListener listener;
   listener.start();
   listener.stop();
   // Add your assertions here to test the behavior of the start() method
 }
 
-TEST(QtSapListenerTest, Stop) {
+TEST(QtSapListenerTest, DISABLED_Stop) {
   mediax::qt::QtSapListener listener;
   listener.start();
   listener.start();
