@@ -1,5 +1,9 @@
 include(FindPkgConfig)
 
+# Qt6 Autogen
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
 # Set Qt6 package
 find_package(Qt6 COMPONENTS Core REQUIRED)
 
@@ -37,10 +41,10 @@ add_executable(
   ${SOURCES}
 )
 
-target_link_libraries(tests
+set(LINK_LIBRARIES
   gtest
   mediax
-  mediaxqt
+  
   Qt6::Core
   ${GST_LIBRARIES}
   ${SWSCALE_LIBRARIES}
@@ -48,6 +52,14 @@ target_link_libraries(tests
   glog
   gflags
 )
+
+if (GST_SUPPORTED) 
+  list(APPEND LINK_LIBRARIES
+    mediaxqt
+  )
+endif()
+
+target_link_libraries(tests ${LINK_LIBRARIES})
 
 target_include_directories(
   tests PUBLIC

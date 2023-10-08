@@ -40,6 +40,13 @@ class QtSapAnnouncer : public QObject {
   ~QtSapAnnouncer() final = default;
 
   ///
+  /// \brief Get the SAP/SDP announcer singleton instance
+  ///
+  /// \return QtSapAnnouncer&
+  ///
+  static QtSapAnnouncer& GetInstance();
+
+  ///
   /// \brief Add a SAP announcement
   ///
   /// \param stream_information

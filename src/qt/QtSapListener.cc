@@ -14,11 +14,14 @@
 
 #include "qt/QtSapListener.h"
 
+#include <iostream>
+
 namespace mediax::qt {
 
 void QtSapListener::SapCallback(sap::SDPMessage *sdp) {
+  std::cout << "QtSapListener::SapCallback name = " << sdp->session_name << std::endl;
   std::string name = "unknown";
-  emit ::mediax::qt::QtSapListener::GetInstance().sapDataReceived(name, *sdp);
+  //   emit ::mediax::qt::QtSapListener::GetInstance().sapDataReceived(name, *sdp);
 }
 
 QtSapListener &QtSapListener::GetInstance() {

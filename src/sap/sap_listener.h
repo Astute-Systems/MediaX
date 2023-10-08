@@ -216,7 +216,7 @@ class SAPListener {
   /// \return true
   /// \return false
   ///
-  bool SapStore(std::array<uint8_t, kMaxUdpData> *udpdata);
+  bool SapStore(std::array<uint8_t, kMaxUdpData> *udpdata, uint32_t size);
 
   /// The list of SAP/SDP announcement callbacks
   std::map<std::string, SapCallback, std::less<>> callbacks_;

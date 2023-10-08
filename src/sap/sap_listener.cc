@@ -98,13 +98,14 @@ void SAPListener::SAPListenerThread(SAPListener *sap) {
   DLOG(INFO) << "SAP packet received " << kIpaddr << ":" << kPort;
 
   while (running_) {
-    if (ssize_t bytes = recvfrom(sap->sockfd_, sap->udpdata_.data(), kMaxUdpData, 0, nullptr, nullptr); bytes <= 0) {
+    ssize_t bytes = 0;
+    if (bytes = recvfrom(sap->sockfd_, sap->udpdata_.data(), kMaxUdpData, 0, nullptr, nullptr); bytes <= 0) {
       std::this_thread::sleep_for(std::chrono::milliseconds(2));
       continue;
     }
 
     // Process SAP here
-    sap->SapStore(&sap->udpdata_);
+    sap->SapStore(&sap->udpdata_, static_cast<uint32_t>(bytes));
   }
 }
 
@@ -199,9 +200,14 @@ std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributesEqua
   return attributes;
 }
 
-bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> *rawdata) {
+bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> *rawdata, uint32_t size) {
+  if (size < 8) {
+    DLOG(ERROR) << "SAP packet too small";
+    return false;
+  }
   std::map<std::string, std::string, std::less<>> attributes_map;
-  const uint32_t *source = reinterpret_cast<uint32_t *>(&rawdata[4]);
+  auto source = reinterpret_cast<uint32_t *>(&rawdata->at(4));
+
   SDPMessage sdp;
   sdp.sdp_text.append(rawdata->begin() + 8, rawdata->end());
   // convert to string IP address
@@ -213,6 +219,7 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> *rawdata) {
   // Convert string to istringstream
   std::istringstream iss(sdp.sdp_text);
   std::string line;
+
   while (std::getline(iss, line)) {
     line.erase(remove(line.begin(), line.end(), '\r'), line.end());
     line.erase(remove(line.begin(), line.end(), '\n'), line.end());
@@ -297,10 +304,13 @@ bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> *rawdata) {
   announcements_[sdp.session_name] = sdp;
 
   // Check the callbacks
-
   for (const auto &[name, callback] : callbacks_) {
     if (name == sdp.session_name) {
       // We have a match, hit the callback
+      callback(&sdp);
+    }
+    // Find the get all callbacks i.e. no name set
+    if (name.empty()) {
       callback(&sdp);
     }
   }

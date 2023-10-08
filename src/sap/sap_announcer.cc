@@ -50,7 +50,7 @@ SAPAnnouncer::SAPAnnouncer() {
 
 SAPAnnouncer::~SAPAnnouncer() {
   DeleteAllStreams();
-  close(sockfd_);
+  if (sockfd_ != -1) close(sockfd_);
 }
 
 SAPAnnouncer &SAPAnnouncer::GetInstance() {
