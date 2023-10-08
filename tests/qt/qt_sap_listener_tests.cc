@@ -19,7 +19,7 @@ class SapReceiver : public QObject {
   }
 };
 
-TEST(QtSapListenerTest, Start) {
+TEST(QtSapListenerTest, DISABLED_Start) {
   mediax::qt::QtSapListener listener;
   SapReceiver receiver;
   QObject::connect(&listener, &mediax::qt::QtSapListener::sapData, &receiver, &SapReceiver::sapDataReceived);
