@@ -13,8 +13,8 @@
 /// \file QtSapListener.h
 ///
 
-#ifndef QT_QtSapListener_H_
-#define QT_QtSapListener_H_
+#ifndef QT_QTSAPLISTENER_H_
+#define QT_QTSAPLISTENER_H_
 
 #include <QObject>
 #include <memory>
@@ -75,10 +75,9 @@ class QtSapListener : public QObject {
   ///
   static void SapCallback(sap::SDPMessage *sdp);
 
-  std::unique_ptr<QtSapListener> m_instance;
   ::mediax::sap::SAPListener sap_listener_;
 };
 
 }  // namespace mediax::qt
 
-#endif  // QT_QtSapListener_H_
+#endif  // QT_QTSAPLISTENER_H_

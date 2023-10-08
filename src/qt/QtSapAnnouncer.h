@@ -13,8 +13,8 @@
 /// \file QtSapAnnouncer.h
 ///
 
-#ifndef QT_QtSapAnnouncer_H_
-#define QT_QtSapAnnouncer_H_
+#ifndef QT_QTSAPANNOUNCER_H_
+#define QT_QTSAPANNOUNCER_H_
 
 #include <QObject>
 
@@ -106,4 +106,4 @@ class QtSapAnnouncer : public QObject {
 
 }  // namespace mediax::qt
 
-#endif  // QT_QtSapAnnouncer_H_
+#endif  // QT_QTSAPANNOUNCER_H_

@@ -14,6 +14,8 @@
 
 #include "qt/QtRtpH264Depayloader.h"
 
+#include <algorithm>
+
 namespace mediax::qt {
 
 QtRtpH264Deayloader::QtRtpH264Deayloader(QObject *parent) : QObject(parent) {}
