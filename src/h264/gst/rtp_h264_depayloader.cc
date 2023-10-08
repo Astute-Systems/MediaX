@@ -117,6 +117,8 @@ bool RtpH264Depayloader::Open() {
   // Create a udpsrc element to receive the RTP stream
   GstElement *udpsrc = gst_element_factory_make("udpsrc", "rtp-h264-udpsrc");
   g_object_set(G_OBJECT(udpsrc), "port", GetPort(), nullptr);
+  // Auto multicast
+  g_object_set(G_OBJECT(udpsrc), "auto-multicast", true, nullptr);
 
   // Create a capsfilter element to set the caps for the RTP stream
   GstElement *capsfilter = gst_element_factory_make("capsfilter", "rtp-h264-capsfilter");
