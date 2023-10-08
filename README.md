@@ -40,7 +40,7 @@ These bindings are currently available for testing. Please find documentation [h
 To build from source add with Qt6 add:
 
 ```
-cmake -DGST_SUPPORT=ON ..
+cmake -DBUILD_QT6=ON ..
 ```
 
 ## Documentation

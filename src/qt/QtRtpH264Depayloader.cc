@@ -40,11 +40,11 @@ Q_INVOKABLE void QtRtpH264Deayloader::stop() { depayloader_.Stop(); }
 
 Q_INVOKABLE void QtRtpH264Deayloader::close() { depayloader_.Close(); }
 
-Q_INVOKABLE bool QtRtpH264Deayloader::receive(QByteArray &frame, int timeout) {
+Q_INVOKABLE bool QtRtpH264Deayloader::receive(QByteArray *frame, int timeout) {
   uint8_t *cpu = nullptr;
   bool result = depayloader_.Receive(&cpu, timeout);
   if (result) {
-    frame = QByteArray(reinterpret_cast<const char *>(cpu), depayloader_.GetBuffer().size());
+    *frame = QByteArray(reinterpret_cast<const char *>(cpu), depayloader_.GetBuffer().size());
   }
   return result;
 }

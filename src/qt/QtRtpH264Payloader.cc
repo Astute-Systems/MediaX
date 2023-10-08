@@ -41,8 +41,8 @@ Q_INVOKABLE void QtRtpH264Payloader::stop() { payloader_.Stop(); }
 
 Q_INVOKABLE void QtRtpH264Payloader::close() { payloader_.Close(); }
 
-Q_INVOKABLE int QtRtpH264Payloader::transmit(QByteArray &frame, bool blocking) {
-  return payloader_.Transmit(reinterpret_cast<uint8_t *>(frame.data()), blocking);
+Q_INVOKABLE int QtRtpH264Payloader::transmit(QByteArray *frame, bool blocking) {
+  return payloader_.Transmit(reinterpret_cast<uint8_t *>(frame->data()), blocking);
 }
 
 }  // namespace mediax::qt
