@@ -39,7 +39,7 @@ TEST(RtpH264DepayloaderTest, Timeout) {
   rtp->Close();
 }
 
-TEST(RtpH264DepayloaderTest, DISABLED_UnicastOk) {
+TEST(RtpH264DepayloaderTest, UnicastOk) {
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
@@ -50,22 +50,70 @@ TEST(RtpH264DepayloaderTest, DISABLED_UnicastOk) {
 
   // Increase GST debug level
   setenv("GST_DEBUG", "3", 1);
-  // Set the stream details
+  // Set the stream details individually
   rtp.SetIpAddress("127.0.0.1");
   rtp.SetPort(5004);
+  rtp.SetSessionName("test_session_name");
+  rtp.SetHeight(720);
+  rtp.SetWidth(1280);
+  rtp.SetColourSpace(::mediax::ColourspaceType::kColourspaceH264Part10);
   std::cout << "Setup" << std::endl;
 
   // Start the stream
-  rtp.Open();
+  EXPECT_TRUE(rtp.Open());
   std::cout << "Opened" << std::endl;
   rtp.Start();
   std::cout << "Started" << std::endl;
   uint8_t* data = rgb_test.data();
-  EXPECT_TRUE(rtp.Receive(&data, 80));
+  EXPECT_FALSE(rtp.Receive(&data, 80));
   rtp.Stop();
   rtp.Close();
 
-  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::ColourspaceType::kColourspaceNv12);
+  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::ColourspaceType::kColourspaceH264Part10);
+  mediax::video::ColourSpaceCpu convert;
+  convert.Nv12ToRgb(rtp.GetHeight(), rtp.GetWidth(), data, rgb_test.data());
+
+  EXPECT_EQ(rtp.GetHeight(), 720);
+  EXPECT_EQ(rtp.GetWidth(), 1280);
+
+  std::cout << "Received" << std::endl;
+  WritePngFile(rgb_test.data(), rtp.GetWidth(), rtp.GetHeight(), "H264_Image.png");
+}
+
+TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfo) {
+#if !GST_SUPPORTED
+  GTEST_SKIP();
+#endif
+
+  std::array<uint8_t, 1280 * 720 * 3> rgb_test;
+  mediax::video::ColourSpaceCpu colourspace;
+  mediax::h264::gst::vaapi::RtpH264Depayloader rtp;
+
+  // Increase GST debug level
+  setenv("GST_DEBUG", "3", 1);
+  // Set the stream details using set stream info
+  ::mediax::StreamInformation stream_info = {.session_name = "test_session_name",
+                                             .hostname = "127.0.0.1",
+                                             .port = 5004,
+                                             .height = 720,
+                                             .width = 1280,
+                                             .framerate = 25,
+                                             .encoding = ::mediax::ColourspaceType::kColourspaceH264Part10,
+                                             .deleted = false};
+  rtp.SetStreamInfo(stream_info);
+  std::cout << "Setup" << std::endl;
+
+  // Start the stream
+  EXPECT_TRUE(rtp.Open());
+  std::cout << "Opened" << std::endl;
+  rtp.Start();
+  std::cout << "Started" << std::endl;
+  uint8_t* data = rgb_test.data();
+  EXPECT_FALSE(rtp.Receive(&data, 80));
+  rtp.Stop();
+  rtp.Close();
+
+  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::ColourspaceType::kColourspaceH264Part10);
   mediax::video::ColourSpaceCpu convert;
   convert.Nv12ToRgb(rtp.GetHeight(), rtp.GetWidth(), data, rgb_test.data());
 
