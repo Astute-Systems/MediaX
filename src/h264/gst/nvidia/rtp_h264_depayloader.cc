@@ -20,7 +20,7 @@
 /// \file rtph264_depayloader.cc
 ///
 
-#include "h264/gst/rtp_h264_depayloader.h"
+#include "h264/gst/nvidia/rtp_h264_depayloader.h"
 
 #include <gst/gst.h>
 
@@ -32,7 +32,7 @@
 
 #include "rtp/rtp_utils.h"
 
-namespace mediax {
+namespace mediax::h264::gst::nvidia {
 
 RtpH264Depayloader::~RtpH264Depayloader() = default;
 
@@ -199,4 +199,4 @@ std::vector<uint8_t> &RtpH264Depayloader::GetBuffer() { return buffer_in_; }
 
 void RtpH264Depayloader::NewFrame() { new_rx_frame_ = true; }
 
-}  // namespace mediax
+}  // namespace mediax::h264::gst::nvidia

@@ -14,8 +14,8 @@
 #ifndef RTP_RTP_H_
 #define RTP_RTP_H_
 
-#include "h264/gst/rtp_h264_depayloader.h"
-#include "h264/gst/rtp_h264_payloader.h"
+#include "h264/gst/vaapi/rtp_h264_depayloader.h"
+#include "h264/gst/vaapi/rtp_h264_payloader.h"
 #include "rtp/rtp_depayloader.h"
 #include "rtp/rtp_payloader.h"
 #include "rtp/rtp_utils.h"

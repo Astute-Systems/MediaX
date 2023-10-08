@@ -6,25 +6,24 @@
 // Licensed under the Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
 // License. See the LICENSE file in the project root for full license details.
 //
-/// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
 ///
-/// \file rtph264_payloader.h
-///
+/// \file rtp_h264_payloader.h
 
-#ifndef H264_GST_RTP_H264_PAYLOADER_H_
-#define H264_GST_RTP_H264_PAYLOADER_H_
+#ifndef H264_GST_NVIDIA_RTP_H264_PAYLOADER_H_
+#define H264_GST_NVIDIA_RTP_H264_PAYLOADER_H_
+
+#include <gst/gst.h>
 
 #include "rtp/rtp_payloader.h"
 
-namespace mediax {
+namespace mediax::h264::gst::nvidia {
 
 class RtpH264Payloader : public RtpPayloader {
- public:
   ///
   /// \brief Construct a new Rtp H.264 Payloader object
   ///
   ///
-  RtpH264Payloader() = default;
+  RtpH264Payloader();
 
   ///
   /// \brief Destroy the Rtp H.264 Payloader object
@@ -35,14 +34,9 @@ class RtpH264Payloader : public RtpPayloader {
   ///
   /// \brief Set the Stream Info object
   ///
-  /// \param name session name
-  /// \param encoding colour space
-  /// \param height height in pixels
-  /// \param width width in pixels
-  /// \param hostname IP address i.e. 123.192.1.1
-  /// \param portno port number i.e. 5004
+  /// \param stream_information
   ///
-  void SetStreamInfo(const ::mediax::StreamInformation& stream_information) final;
+  void SetStreamInfo(const ::mediax::StreamInformation &stream_information) override;
 
   ///
   /// \brief Open the RTP stream
@@ -65,7 +59,7 @@ class RtpH264Payloader : public RtpPayloader {
   /// \param blocking set to true if blocking
   /// \return int
   ///
-  int Transmit(uint8_t* rgbframe, bool blocking = true) final;
+  int Transmit(uint8_t *rgbframe, bool blocking = true) final;
 
   ///
   /// \brief Stop the stream, can be quickly re-started
@@ -78,8 +72,11 @@ class RtpH264Payloader : public RtpPayloader {
   ///
   ///
   void Stop() final;
+
+ private:
+  GstElement *pipeline_;
 };
 
-}  // namespace mediax
+}  // namespace mediax::h264::gst::nvidia
 
-#endif  // H264_GST_RTP_H264_PAYLOADER_H_
+#endif  // H264_GST_NVIDIA_RTP_H264_PAYLOADER_H_

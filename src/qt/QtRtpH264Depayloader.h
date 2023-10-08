@@ -19,34 +19,80 @@
 #include <QObject>
 #include <QVector>
 
-#include "h264/gst/rtp_h264_depayloader.h"
+#include "h264/gst/vaapi/rtp_h264_depayloader.h"
 
 namespace mediax::qt {
 
-class RtpH264DepayloaderWrapper : public QObject {
+class QtRtpH264Deayloader : public QObject {
   Q_OBJECT
 
  public:
-  explicit RtpH264DepayloaderWrapper(QObject *parent = nullptr);
+  ///
+  /// \brief Construct a new Qt Rtp H 2 6 4 Deayloader object
+  ///
+  /// \param parent
+  ///
+  explicit QtRtpH264Deayloader(QObject *parent = nullptr);
 
+  ///
+  /// \brief Set the Stream Info object
+  ///
+  /// \param hostname
+  /// \param port
+  /// \param session_name
+  /// \param height
+  /// \param width
+  /// \return Q_INVOKABLE
+  ///
   Q_INVOKABLE void setStreamInfo(const QString &hostname, int port, const QString &session_name, int height, int width);
 
+  ///
+  /// \brief Open the RTP stream
+  ///
+  /// \return Q_INVOKABLE
+  ///
   Q_INVOKABLE bool open();
 
+  ///
+  /// \brief Start the RTP stream
+  ///
+  /// \return Q_INVOKABLE
+  ///
   Q_INVOKABLE void start();
 
+  ///
+  /// \brief Stop the RTP stream
+  ///
+  /// \return Q_INVOKABLE
+  ///
   Q_INVOKABLE void stop();
 
+  ///
+  /// \brief Close the RTP stream
+  ///
+  /// \return Q_INVOKABLE
+  ///
   Q_INVOKABLE void close();
 
-  Q_INVOKABLE bool receive(QByteArray &frame, int timeout = 0);  // NOLINT
+  ///
+  /// \brief Receive a frame from the RTP stream
+  ///
+  /// \param frame buffer to hold the recieved image
+  /// \param timeout timeout in milliseconds, if zero wait for ever (blocking)
+  /// \return Q_INVOKABLE
+  ///
+  Q_INVOKABLE bool receive(QByteArray *frame, int timeout = 0);
 
-  Q_INVOKABLE QVector<quint8> getBuffer() const;
-
-  Q_INVOKABLE void newFrame();
+  ///
+  /// \brief Get the Buffer object
+  ///
+  /// \return Q_INVOKABLE
+  ///
+  Q_INVOKABLE QVector<quint8> getBuffer();
 
  private:
-  RtpH264Depayloader depayloader_;
+  /// The underlying RTP H.264 depayloader
+  mediax::h264::gst::vaapi::RtpH264Depayloader depayloader_;
 };
 
 }  // namespace mediax::qt

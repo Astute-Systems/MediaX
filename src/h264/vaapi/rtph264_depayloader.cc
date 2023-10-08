@@ -22,7 +22,7 @@
 
 #include "rtp/rtp_types.h"
 
-namespace mediax {
+namespace mediax::h264::vaapi {
 
 StatusCode DecodeFrame(VADisplay va_display, VAContextID va_context, VASurfaceID va_surface, const uint8_t *frame_data,
                        int frame_size) {
@@ -141,4 +141,4 @@ StatusCode DecodeFrame(VADisplay va_display, VAContextID va_context, VASurfaceID
   return StatusCode::kStatusOk;
 }
 
-}  // namespace mediax
+}  // namespace mediax::h264::vaapi

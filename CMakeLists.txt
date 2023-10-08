@@ -1,10 +1,11 @@
-cmake_minimum_required(VERSION 3.0…3.16)
+cmake_minimum_required(VERSION 3.10…3.16)
 project(mediax)
 
 # enable testing functionality
 enable_testing()
 
 include(scripts/cmake/version.cmake)
+include(scripts/cmake/doxygen.cmake)
 include(scripts/cmake/cpp.cmake)
 include(scripts/cmake/cpplint.cmake)
 # include(scripts/cmake/linters.cmake)
@@ -30,22 +31,23 @@ install(TARGETS mediax_static DESTINATION ${CMAKE_INSTALL_LIBDIR})
 file(GLOB HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
 install(FILES ${HEADER_FILES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
+# Header install function from dir
+function (install_headers_from_dir HEADER_DIR DESTINATION_DIR)
+    file(GLOB_RECURSE HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${HEADER_DIR}/*.h)
+    install(FILES ${HEADER_FILES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${DESTINATION_DIR})
+endfunction()
+
 # install headers
 include(GNUInstallDirs)
-file(GLOB_RECURSE MEDIAX_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/rtp/*.h)
-install(FILES ${MEDIAX_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mediax/rtp)
-file(GLOB_RECURSE MEDIAX_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/uncompressed/*.h)
-install(FILES ${MEDIAX_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mediax/uncompressed)
-file(GLOB_RECURSE MEDIAX_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/h264/gst/*.h)
-install(FILES ${MEDIAX_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mediax/h264/gst)
-file(GLOB_RECURSE MEDIAX_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/h264/vaapi/*.h)
-install(FILES ${MEDIAX_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mediax/h264/vaapi)
-file(GLOB_RECURSE MEDIAX_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/sap/*.h)
-install(FILES ${MEDIAX_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mediax/sap)
-file(GLOB_RECURSE MEDIAX_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/utils/*.h)
-install(FILES ${MEDIAX_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mediax/utils)
-file(GLOB_RECURSE MEDIAX_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/v4l2/*.h)
-install(FILES ${MEDIAX_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mediax/v4l2)
+install_headers_from_dir(src/rtp mediax/rtp)
+install_headers_from_dir(src/uncompressed mediax/uncompressed)
+install_headers_from_dir(src/h264/vaapi mediax/h264/vaapi)
+install_headers_from_dir(src/h264/gst/vaapi mediax/h264/gst/vaapi)
+install_headers_from_dir(src/h264/gst/nvidia mediax/h264/gst/nvidia)
+install_headers_from_dir(src/sap mediax/sap)
+install_headers_from_dir(src/utils mediax/utils)
+install_headers_from_dir(src/v4l2 mediax/v4l2)
+install_headers_from_dir(src/qt mediax/qt)
 
 #install package config file
 install(FILES ${CMAKE_BINARY_DIR}/mediax.pc DESTINATION  ${CMAKE_INSTALL_LIBDIR}/pkgconfig)

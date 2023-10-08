@@ -22,22 +22,40 @@
 
 namespace mediax::qt {
 
-class RtpPayloaderWrapper : public QObject {
+class QtRtpUncompressedPayloader : public QObject {
   Q_OBJECT
 
  public:
-  explicit RtpPayloaderWrapper(QObject* parent = nullptr) : QObject(parent) {
+  ///
+  /// \brief Construct a new Qt Rtp Uncompressed Payloader object
+  ///
+  /// \param parent
+  ///
+  explicit QtRtpUncompressedPayloader(QObject* parent = nullptr) : QObject(parent) {
     m_rtpPayloader = std::make_unique<mediax::RtpUncompressedPayloader>();
   }
 
  public slots:
+  ///
+  /// \brief Set the Stream Info object
+  ///
+  /// \param stream_information
+  ///
   void setStreamInfo(const mediax::StreamInformation& stream_information) {
     m_rtpPayloader->SetStreamInfo(stream_information);
   }
 
+  ///
+  /// \brief Send a frame to the RTP stream
+  ///
+  /// \param rgbframe
+  /// \param blocking
+  /// \return int
+  ///
   int transmit(uint8_t* rgbframe, bool blocking = true);
 
  private:
+  /// The underlying RTP payloader
   std::unique_ptr<mediax::RtpPayloader> m_rtpPayloader;
 };
 

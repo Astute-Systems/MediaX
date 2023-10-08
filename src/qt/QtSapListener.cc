@@ -14,12 +14,24 @@
 
 #include "qt/QtSapListener.h"
 
+#include <iostream>
+
 namespace mediax::qt {
 
-QTSAPListener::QTSAPListener(QObject *parent) : QObject(parent) {}
+void QtSapListener::SapCallback(const sap::SDPMessage *sdp) {
+  std::cout << "QtSapListener::SapCallback name = " << sdp->session_name << std::endl;
+  //   emit ::mediax::qt::QtSapListener::getInstance().sapData(sdp->session_name, *sdp);
+}
 
-Q_INVOKABLE void QTSAPListener::start() { sap_listener_.Start(); }
+QtSapListener &QtSapListener::getInstance() {
+  static auto m_instance = std::make_shared<QtSapListener>();
+  return *m_instance;
+}
 
-Q_INVOKABLE void QTSAPListener::stop() { sap_listener_.Stop(); }
+QtSapListener::QtSapListener(QObject *parent) : QObject(parent) { sap_listener_.RegisterSapListener("", SapCallback); }
+
+Q_INVOKABLE void QtSapListener::start() { sap_listener_.Start(); }
+
+Q_INVOKABLE void QtSapListener::stop() { sap_listener_.Stop(); }
 
 }  // namespace mediax::qt

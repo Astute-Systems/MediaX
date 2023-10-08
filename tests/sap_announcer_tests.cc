@@ -19,6 +19,7 @@
 TEST(SAPAnnouncerTest, AddSAPAnnouncement) {
   mediax::sap::SAPAnnouncer &announcer = mediax::sap::SAPAnnouncer::GetInstance();
   announcer.DeleteAllSAPAnnouncements();
+  ASSERT_EQ(announcer.GetActiveStreamCount(), 0);
   mediax::StreamInformation message = {
       "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::ColourspaceType::kColourspaceYuv, false};
   announcer.AddSAPAnnouncement(message);

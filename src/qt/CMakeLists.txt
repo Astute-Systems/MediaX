@@ -5,6 +5,11 @@ find_package(Qt6 COMPONENTS Core REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GST REQUIRED gstreamer-1.0)
 
+# Qt auto
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
 include_directories(${CMAKE_SOURCE_DIR}/src Qt6::Core ${GST_INCLUDE_DIRS})
 
 set(SOURCES
@@ -16,12 +21,8 @@ set(SOURCES
   QtRtpH264Depayloader.cc
 )
 
-add_library(qtwrapper STATIC ${SOURCES})
-target_link_libraries(qtwrapper Qt6::Core)
+add_library(mediaxqt STATIC ${SOURCES})
+target_link_libraries(mediaxqt Qt6::Core)
 
 # Install qtwrapper
-install(TARGETS qtwrapper DESTINATION lib)
-install(FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/qtwrapper)
-# Qt6 Wrappers
-file(GLOB_RECURSE MEDIAX_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/qt/*.h)
-install(FILES ${MEDIAX_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mediax/qt)
+install(TARGETS mediaxqt DESTINATION lib)

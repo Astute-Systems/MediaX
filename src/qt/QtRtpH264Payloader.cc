@@ -17,10 +17,12 @@
 
 namespace mediax::qt {
 
-RtpH264PayloaderWrapper::RtpH264PayloaderWrapper(QObject *parent) : QObject(parent) {}
+QtRtpH264Payloader::QtRtpH264Payloader(QObject *parent) : QObject(parent) {}
 
-Q_INVOKABLE void RtpH264PayloaderWrapper::setStreamInfo(const QString &hostname, int port, const QString &session_name,
-                                                        int height, int width) {
+QtRtpH264Payloader::~QtRtpH264Payloader() = default;
+
+Q_INVOKABLE void QtRtpH264Payloader::setStreamInfo(const QString &hostname, int port, const QString &session_name,
+                                                   int height, int width) {
   StreamInformation stream_information;
   stream_information.hostname = hostname.toStdString();
   stream_information.port = port;
@@ -31,16 +33,16 @@ Q_INVOKABLE void RtpH264PayloaderWrapper::setStreamInfo(const QString &hostname,
   payloader_.SetStreamInfo(stream_information);
 }
 
-Q_INVOKABLE bool RtpH264PayloaderWrapper::open() { return payloader_.Open(); }
+Q_INVOKABLE bool QtRtpH264Payloader::open() { return payloader_.Open(); }
 
-Q_INVOKABLE void RtpH264PayloaderWrapper::start() { payloader_.Start(); }
+Q_INVOKABLE void QtRtpH264Payloader::start() { payloader_.Start(); }
 
-Q_INVOKABLE void RtpH264PayloaderWrapper::stop() { payloader_.Stop(); }
+Q_INVOKABLE void QtRtpH264Payloader::stop() { payloader_.Stop(); }
 
-Q_INVOKABLE void RtpH264PayloaderWrapper::close() { payloader_.Close(); }
+Q_INVOKABLE void QtRtpH264Payloader::close() { payloader_.Close(); }
 
-Q_INVOKABLE int RtpH264PayloaderWrapper::transmit(QByteArray &frame, bool blocking) {
-  return payloader_.Transmit(reinterpret_cast<uint8_t *>(frame.data()), blocking);
+Q_INVOKABLE int QtRtpH264Payloader::transmit(QByteArray *frame, bool blocking) {
+  return payloader_.Transmit(reinterpret_cast<uint8_t *>(frame->data()), blocking);
 }
 
 }  // namespace mediax::qt

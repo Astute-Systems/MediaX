@@ -15,6 +15,8 @@
 #include "qt/QtRtpUncompressedDepayloader.h"
 
 namespace mediax::qt {
-bool RtpDepayloaderWrapper::receive(uint8_t** cpu, int32_t timeout) { return m_rtpDepayloader->Receive(cpu, timeout); }
+bool QtRtpUncompressedDepayloader::receive(uint8_t** cpu, int32_t timeout) {
+  return m_rtpDepayloader->Receive(cpu, timeout);
+}
 
 }  // namespace mediax::qt

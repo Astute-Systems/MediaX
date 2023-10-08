@@ -29,7 +29,7 @@ jobs:
       - name: Run build-wrapper
         run: |
           mkdir build
-          cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON -S . -B build
+          cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON -DBUILD_QT6=ON -DGST_SUPPORTED=ON -S . -B build
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Debug
 
       - name: Run tests to generate coverage statistics

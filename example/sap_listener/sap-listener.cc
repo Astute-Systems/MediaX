@@ -8,7 +8,7 @@
 //
 /// \brief A SAP/SDP listener example
 ///
-/// \file sap_listener_example.cc
+/// \file sap-example.cc
 ///
 
 #include <iostream>

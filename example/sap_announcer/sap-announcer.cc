@@ -8,7 +8,7 @@
 //'
 /// \brief A SAP/SDP announcement example
 ///
-/// \file sap_announcer_example.cc
+/// \file sap-announcer.cc
 ///
 
 #include <iostream>

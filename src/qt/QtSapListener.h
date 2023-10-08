@@ -17,26 +17,64 @@
 #define QT_QTSAPLISTENER_H_
 
 #include <QObject>
+#include <memory>
 #include <string>
 
 #include "sap/sap_listener.h"
 
+/// The Qt wrappers namespace
 namespace mediax::qt {
 
-class QTSAPListener : public QObject {
+class QtSapListener : public QObject {
   Q_OBJECT
 
  public:
-  explicit QTSAPListener(QObject *parent = nullptr);
+  ///
+  /// \brief Construct a new Qt Sap Listener object
+  ///
+  /// \param parent
+  ///
+  explicit QtSapListener(QObject *parent = nullptr);
 
+  ///
+  /// \brief Start the SAP server
+  ///
+  /// \return Q_INVOKABLE
+  ///
   Q_INVOKABLE void start();
 
+  ///
+  /// \brief Stop the SAP server
+  ///
+  /// \return Q_INVOKABLE
+  ///
   Q_INVOKABLE void stop();
 
+  ///
+  /// \brief Get the singleton Instance object
+  ///
+  /// \return QtSapListener&
+  ///
+  static QtSapListener &getInstance();
+
  signals:
-  void sapDataReceived(const std::string &name, const ::mediax::sap::SDPMessage &message);
+
+  ///
+  /// \brief A callback for a SAP message received
+  ///
+  /// \param name the SAP stream session name
+  /// \param message the actual message being recieved
+  ///
+  void sapData(const std::string name, const ::mediax::sap::SDPMessage message);
 
  private:
+  ///
+  /// \brief Process incoming SAP announcments
+  ///
+  /// \param sdp
+  ///
+  static void SapCallback(const sap::SDPMessage *sdp);
+
   ::mediax::sap::SAPListener sap_listener_;
 };
 

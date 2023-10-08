@@ -14,6 +14,8 @@
 
 #include "sap/sap_announcer.h"
 
+#include <glog/logging.h>
+
 #include <array>
 #include <chrono>
 #include <cstring>
@@ -33,7 +35,7 @@ bool SAPAnnouncer::running_ = false;
 
 SAPAnnouncer::SAPAnnouncer() {
   if ((sockfd_ = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-    perror("socket creation failed");
+    DLOG(ERROR) << "socket creation failed";
     exit(EXIT_FAILURE);
   }
 
@@ -48,7 +50,7 @@ SAPAnnouncer::SAPAnnouncer() {
 
 SAPAnnouncer::~SAPAnnouncer() {
   DeleteAllStreams();
-  close(sockfd_);
+  if (sockfd_ != -1) close(sockfd_);
 }
 
 SAPAnnouncer &SAPAnnouncer::GetInstance() {
@@ -57,7 +59,10 @@ SAPAnnouncer &SAPAnnouncer::GetInstance() {
 }
 
 void SAPAnnouncer::Start() {
-  if (running_) return;
+  if (running_) {
+    DLOG(WARNING) << "SAPAnnouncer already running, called twice?\n";
+    return;
+  }
   for (auto &stream_ : streams_) {
     stream_.deleted = false;
   }
@@ -68,7 +73,7 @@ void SAPAnnouncer::Stop() {
   // Only deletes the streams from the SAP/SDP announcement, they are still in the vector ready to be restarted
   DeleteAllStreams();
   running_ = false;
-  thread_.join();
+  if (thread_.joinable()) thread_.join();
 }
 
 void SAPAnnouncer::DeleteAllStreams() {
@@ -179,6 +184,10 @@ void SAPAnnouncer::SetSourceInterface(uint16_t select) { SetAddressHelper(select
 
 void SAPAnnouncer::ListInterfaces(uint16_t select) { SetAddressHelper(select, true); }
 
+uint32_t SAPAnnouncer::GetActiveStreamCount() const { return (uint32_t)streams_.size(); }
+
+std::vector<::mediax::StreamInformation> &SAPAnnouncer::GetStreams() { return streams_; }
+
 void SAPAnnouncer::SetAddressHelper(uint16_t select [[maybe_unused]], bool helper) {
 #ifdef _WIN32
 #pragma stream_information("TODO: Implement SetAddressHelper for Windows")
@@ -186,7 +195,7 @@ void SAPAnnouncer::SetAddressHelper(uint16_t select [[maybe_unused]], bool helpe
   struct ifaddrs *ifaddr;
 
   if (getifaddrs(&ifaddr) == -1) {
-    std::cerr << "Error getting local IP addresses" << std::endl;
+    LOG(ERROR) << "Error getting local IP addresses";
     return;
   }
 

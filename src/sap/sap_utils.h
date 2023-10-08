@@ -19,6 +19,7 @@
 
 #include "rtp/rtp_types.h"
 
+/// The Session Announcment Protocol / Session Description Protocol (SAP/SDP) namespace
 namespace mediax::sap {
 
 ///

@@ -12,13 +12,20 @@
 /// \file rtph264_depayloader.h
 ///
 
-#ifndef H264_VAAPI_RTPH264_DEPAYLOADER_H_
-#define H264_VAAPI_RTPH264_DEPAYLOADER_H_
+#ifndef H264_GST_NVIDIA_RTP_H264_DEPAYLOADER_H_
+#define H264_GST_NVIDIA_RTP_H264_DEPAYLOADER_H_
+
+#include <gst/app/gstappsink.h>
+#include <gst/gst.h>
 
 #include <vector>
 
-/// The MediaX Intel Video Accelleration API (VAAPI) namespace
-namespace mediax::h264::vaapi {
+#include "rtp/rtp_depayloader.h"
+
+/// The Gstreamer implementation of the Nvidia (NVENC) namespace
+namespace mediax::h264::gst::nvidia {
+
+GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data);
 
 class RtpH264Depayloader : public RtpDepayloader {
  public:
@@ -114,8 +121,6 @@ class RtpH264Depayloader : public RtpDepayloader {
   bool new_rx_frame_ = false;
 };
 
-}  // namespace mediax::h264::vaapi
+}  // namespace mediax::h264::gst::nvidia
 
-#endif  // H264_GST_RTP_H264_DEPAYLOADER_H_
-
-#endif  // H264_VAAPI_RTPH264_DEPAYLOADER_H_
+#endif  // H264_GST_NVIDIA_RTP_H264_DEPAYLOADER_H_
