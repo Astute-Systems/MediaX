@@ -117,13 +117,17 @@ const std::map<ColourspaceType, std::string> kRtpMap = {
     {ColourspaceType::kColourspaceUndefined, "unknown"}, {ColourspaceType::kColourspaceRgb24, "raw"},
     {ColourspaceType::kColourspaceYuv, "raw"},           {ColourspaceType::kColourspaceMono8, "raw"},
     {ColourspaceType::kColourspaceMono16, "raw"},        {ColourspaceType::kColourspaceJpeg2000, "jpeg2000"},
-    {ColourspaceType::kColourspaceH264Part4, "H264"},    {ColourspaceType::kColourspaceH264Part10, "MP4V-ES"}};
+    {ColourspaceType::kColourspaceH264Part4, "nv12"},    {ColourspaceType::kColourspaceH264Part10, "nv12"}};
 /// SDP colourspace if applicable
 const std::map<ColourspaceType, std::string> kColourspace = {
-    {ColourspaceType::kColourspaceUndefined, "unknown"}, {ColourspaceType::kColourspaceRgb24, "RGB"},
-    {ColourspaceType::kColourspaceYuv, "YCbCr-4:2:2"},   {ColourspaceType::kColourspaceMono8, "GRAYSCALE"},
-    {ColourspaceType::kColourspaceMono16, "GRAYSCALE"},  {ColourspaceType::kColourspaceJpeg2000, "YCbCr-4:2:2"},
-    {ColourspaceType::kColourspaceH264Part4, ""},        {ColourspaceType::kColourspaceH264Part10, ""}};
+    {ColourspaceType::kColourspaceUndefined, "unknown"},
+    {ColourspaceType::kColourspaceRgb24, "RGB"},
+    {ColourspaceType::kColourspaceYuv, "YCbCr-4:2:2"},
+    {ColourspaceType::kColourspaceMono8, "GRAYSCALE"},
+    {ColourspaceType::kColourspaceMono16, "GRAYSCALE"},
+    {ColourspaceType::kColourspaceJpeg2000, "YCbCr-4:2:2"},
+    {ColourspaceType::kColourspaceH264Part4, "H264 (Part 4)"},
+    {ColourspaceType::kColourspaceH264Part10, "H264 (Part 10)"}};
 
 /// Store common port information for ingress and egress ports
 struct PortType {
