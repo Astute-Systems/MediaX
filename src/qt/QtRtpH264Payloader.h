@@ -22,6 +22,7 @@
 
 namespace mediax::qt {
 
+/// The H.264 Qt Payloaader wrapper
 class QtRtpH264Payloader : public QObject {
   Q_OBJECT
 

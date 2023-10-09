@@ -9,14 +9,51 @@
 ///
 /// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
 ///
-/// \file rtph_264_payloader.cc
+/// \file rtp_h264_payloader.cc
 ///
 
 #include "h264/gst/nvidia/rtp_h264_payloader.h"
 
-#include "h264/gst/nvidia/rtp_h264_depayloader.h"
+#include <gst/app/gstappsrc.h>
+#include <gst/gst.h>
+
+#include "rtp/rtp.h"
 
 namespace mediax::h264::gst::nvidia {
+
+GstFlowReturn SourceFrameCallback(GstAppSink *appsink, gpointer user_data) {
+  // Get the payloader object
+  RtpH264Payloader *payloader = reinterpret_cast<RtpH264Payloader *>(user_data);
+
+  // Get the sample from the appsink
+  GstSample *sample = gst_app_sink_pull_sample(appsink);
+
+  // Get the buffer from the sample
+  GstBuffer *buffer = gst_sample_get_buffer(sample);
+
+  // Get the caps from the sample
+  GstCaps *caps = gst_sample_get_caps(sample);
+
+  // Get the width and height from the caps
+  GstStructure *structure = gst_caps_get_structure(caps, 0);
+  int width, height;
+  gst_structure_get_int(structure, "width", &width);
+  gst_structure_get_int(structure, "height", &height);
+
+  // Get the data from the buffer
+  GstMapInfo map;
+  gst_buffer_map(buffer, &map, GST_MAP_READ);
+
+  // TODO(Ross Newman): Send video
+
+  // Unmap the buffer
+  gst_buffer_unmap(buffer, &map);
+
+  // Unref the sample
+  gst_sample_unref(sample);
+
+  return GST_FLOW_OK;
+}
 
 RtpH264Payloader::RtpH264Payloader() = default;
 
@@ -32,8 +69,6 @@ void RtpH264Payloader::SetStreamInfo(const ::mediax::StreamInformation &stream_i
   egress_.port_no = stream_information.port;
   egress_.settings_valid = true;
 }
-
-int RtpH264Payloader::Transmit(unsigned char *, bool) { return 0; }
 
 bool RtpH264Payloader::Open() {
   // Setup a gstreamer pipeline to decode H.264 with Intel VAAPI
@@ -52,19 +87,32 @@ bool RtpH264Payloader::Open() {
   g_object_set(G_OBJECT(capsfilter), "caps", caps, nullptr);
   gst_caps_unref(caps);
 
-  // Create a vaapidecode element to decode the H.264 stream
-  GstElement *vaapidecode = gst_element_factory_make("vaapidecode", "rtp-h264-vaapidecode");
+  // Create a nvh264enc element to decode the H.264 stream
+  GstElement *nvh264enc = gst_element_factory_make("nvh264enc", "rtp-h264-nvh264enc");
 
-  // Create a vaapisink element to display the decoded H.264 stream
-  GstElement *vaapisink = gst_element_factory_make("vaapisink", "rtp-h264-vaapisink");
-  g_object_set(G_OBJECT(vaapisink), "sync", false, nullptr);
+  // Create an RTP payloader for the H.264 RTP stream
+  GstElement *rtph264pay = gst_element_factory_make("rtph264pay", "rtp-h264-rtph264pay");
+
+  // Create a udp sink to transmit the RTP stream
+  GstElement *udpsink = gst_element_factory_make("udpsink", "rtp-h264-udpsink");
+  g_object_set(G_OBJECT(udpsink), "host", egress_.hostname.c_str(), "port", egress_.port_no, nullptr);
 
   // Add all elements to the pipeline
-  gst_bin_add_many(GST_BIN(pipeline_), appsrc, capsfilter, vaapidecode, vaapisink, nullptr);
+  gst_bin_add_many(GST_BIN(pipeline_), appsrc, capsfilter, nvh264enc, rtph264pay, udpsink, nullptr);
 
   // Link the elements
-  gst_element_link_many(appsrc, capsfilter, vaapidecode, vaapisink, nullptr);
+  gst_element_link_many(appsrc, capsfilter, nvh264enc, rtph264pay, udpsink, nullptr);
 
+  // Setup the appsrc element
+  // g_object_set(G_OBJECT(appsrc), "emit-signals", true, "do-timestamp", true, nullptr);
+  // g_signal_connect(appsrc, "need-data", G_CALLBACK(SourceFrameCallback), this);
+
+  // Trigger callback every 40 ms
+  gst_base_sink_set_sync(GST_BASE_SINK(appsrc), true);
+
+  // Set the caps on the appsrc element for RAW RGB video
+  GstCaps *appsrc_caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "RGB", "width", G_TYPE_INT, 640,
+                                             "height", G_TYPE_INT, 480, "framerate", GST_TYPE_FRACTION, 25, 1, nullptr);
   return true;
 }
 
@@ -88,6 +136,24 @@ void RtpH264Payloader::Close() {
 void RtpH264Payloader::Start() {
   // Start the pipeline
   gst_element_set_state(pipeline_, GST_STATE_PLAYING);
+}
+
+int RtpH264Payloader::Transmit(uint8_t *rgbframe, bool blocking) {
+  // Get the appsrc element
+  GstElement *appsrc = gst_bin_get_by_name(GST_BIN(pipeline_), "rtp-h264-appsrc");
+
+  // Create a buffer from the RGB frame
+  GstBuffer *buffer =
+      gst_buffer_new_wrapped(rgbframe, egress_.width * egress_.height * mediax::BytesPerPixel(egress_.encoding));
+
+  // Push the buffer to the appsrc element
+  GstFlowReturn ret = gst_app_src_push_buffer(GST_APP_SRC(appsrc), buffer);
+
+  // Unref the appsrc element
+  gst_object_unref(appsrc);
+
+  // Return the result
+  return ret;
 }
 
 void RtpH264Payloader::Stop() {

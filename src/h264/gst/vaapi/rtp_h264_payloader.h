@@ -6,13 +6,11 @@
 // Licensed under the Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
 // License. See the LICENSE file in the project root for full license details.
 //
-/// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
 ///
-/// \file rtph264_payloader.h
-///
+/// \file rtp_h264_payloader.h
 
-#ifndef H264_GST_VAAPI_RTP_H264_PAYLOADER_H_
-#define H264_GST_VAAPI_RTP_H264_PAYLOADER_H_
+#ifndef H264_GST_NVIDIA_RTP_H264_PAYLOADER_H_
+#define H264_GST_NVIDIA_RTP_H264_PAYLOADER_H_
 
 #include <gst/gst.h>
 
@@ -82,4 +80,4 @@ class RtpH264Payloader : public RtpPayloader {
 
 }  // namespace mediax::h264::gst::vaapi
 
-#endif  // H264_GST_VAAPI_RTP_H264_PAYLOADER_H_
+#endif  // H264_GST_NVIDIA_RTP_H264_PAYLOADER_H_

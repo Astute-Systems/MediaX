@@ -13,7 +13,7 @@
 /// Below is a sample pipeline to create video streams using GStreamer:
 /// \code
 /// gst-launch-1.0 -v udpsrc caps="application/x-rtp, media=(string)video, clock-rate=(int)90000,
-/// encoding-name=(string)H264" ! rtph264depay ! h264parse ! queue ! vaapih264dec ! caps="video/x-raw, format=RGB" !
+/// encoding-name=(string)H264" ! rtph264depay ! h264parse ! queue ! nvh264dec ! caps="video/x-raw, format=RGB" !
 /// videoconvert ! appsink
 /// \endcode
 ///
@@ -22,6 +22,7 @@
 
 #include "h264/gst/nvidia/rtp_h264_depayloader.h"
 
+#include <glog/logging.h>
 #include <gst/gst.h>
 
 #include <algorithm>
@@ -85,7 +86,7 @@ GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
     depayloader->SetColourSpace(ColourspaceType::kColourspaceRgba);
   } else {
     depayloader->SetColourSpace(ColourspaceType::kColourspaceUndefined);
-    std::cout << "Unknown colourspace " << colorspace << std::endl;
+    DLOG(WARNING) << "Unknown colourspace " << colorspace;
   }
   depayloader->SetHeight(height);
   depayloader->SetWidth(width);
@@ -117,8 +118,6 @@ bool RtpH264Depayloader::Open() {
   // Create a udpsrc element to receive the RTP stream
   GstElement *udpsrc = gst_element_factory_make("udpsrc", "rtp-h264-udpsrc");
   g_object_set(G_OBJECT(udpsrc), "port", GetPort(), nullptr);
-  // Auto multicast
-  g_object_set(G_OBJECT(udpsrc), "auto-multicast", true, nullptr);
 
   // Create a capsfilter element to set the caps for the RTP stream
   GstElement *capsfilter = gst_element_factory_make("capsfilter", "rtp-h264-capsfilter");
@@ -137,20 +136,20 @@ bool RtpH264Depayloader::Open() {
   GstElement *queue = gst_element_factory_make("queue", "rtp-h264-queue");
 
   // Decode frame using vaapi
-  GstElement *vaapih264dec = gst_element_factory_make("vaapih264dec", "rtp-h264-vaapih264dec");
+  GstElement *nvh264dec = gst_element_factory_make("nvh264dec", "rtp-h264-nvh264dec");
 
   // Create a custom appsrc element to receive the H.264 stream
   GstElement *appsink = gst_element_factory_make("appsink", "rtp-h264-appsrc");
+
   // Set the callback function for the appsink
   GstAppSinkCallbacks callbacks = {.new_sample = NewFrameCallback};
   gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &callbacks, this, nullptr);
 
   // Add all elements to the pipeline
-  gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, rtph264depay, h264parse, queue, vaapih264dec, appsink,
-                   nullptr);
+  gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, rtph264depay, h264parse, queue, nvh264dec, appsink, nullptr);
 
   // Link the elements
-  gst_element_link_many(udpsrc, capsfilter, rtph264depay, h264parse, queue, vaapih264dec, appsink, nullptr);
+  gst_element_link_many(udpsrc, capsfilter, rtph264depay, h264parse, queue, nvh264dec, appsink, nullptr);
 
   return true;
 }
