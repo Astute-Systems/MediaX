@@ -9,8 +9,8 @@
 ///
 /// \file rtp_h264_payloader.h
 
-#ifndef H264_GST_NVIDIA_RTP_H264_PAYLOADER_H_
-#define H264_GST_NVIDIA_RTP_H264_PAYLOADER_H_
+#ifndef H264_GST_VAAPI_RTP_H264_PAYLOADER_H_
+#define H264_GST_VAAPI_RTP_H264_PAYLOADER_H_
 
 #include <gst/gst.h>
 
@@ -80,4 +80,4 @@ class RtpH264Payloader : public RtpPayloader {
 
 }  // namespace mediax::h264::gst::vaapi
 
-#endif  // H264_GST_NVIDIA_RTP_H264_PAYLOADER_H_
+#endif  // H264_GST_VAAPI_RTP_H264_PAYLOADER_H_
