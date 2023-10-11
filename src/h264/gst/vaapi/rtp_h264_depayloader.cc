@@ -46,31 +46,44 @@ void RtpH264Depayloader::SetStreamInfo(const ::mediax::StreamInformation &stream
   ingress_.hostname = stream_information.hostname;
   ingress_.port_no = stream_information.port;
   ingress_.settings_valid = true;
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 }
 
 GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
   gint width = 0;
   gint height = 0;
   auto depayloader = static_cast<RtpH264Depayloader *>(user_data);
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   // Pull the sample from the appsink
   GstSample *sample = gst_app_sink_pull_sample(appsink);
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   // Get the buffer from the sample
   GstBuffer *buffer = gst_sample_get_buffer(sample);
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   // Get the size of the buffer
   gsize size = gst_buffer_get_size(buffer);
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   // Allocate memory for the frame data
   guint8 *data = g_new(guint8, size);
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
+
   depayloader->GetBuffer().resize(size);
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   // Get the buffer height and width
   const GstCaps *caps = gst_sample_get_caps(sample);
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
+
   const GstStructure *structure = gst_caps_get_structure(caps, 0);
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
+
   gst_structure_get_int(structure, "height", &height);
   gst_structure_get_int(structure, "width", &width);
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   // Set the ColourspaceType
   if (const gchar *colorspace = gst_structure_get_string(structure, "format"); strncmp(colorspace, "UYVY", 4) == 0) {
@@ -85,24 +98,34 @@ GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
     depayloader->SetColourSpace(ColourspaceType::kColourspaceUndefined);
     DLOG(WARNING) << "Unknown colourspace " << colorspace;
   }
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
+
   depayloader->SetHeight(height);
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
   depayloader->SetWidth(width);
 
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
   // Get a pointer to the video frame
   GstMapInfo map;
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
   gst_buffer_map(buffer, &map, GST_MAP_READ);
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   // Copy the frame data
   std::copy(map.data, map.data + size, depayloader->GetBuffer().begin());
 
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
   // Unmap the buffer
   gst_buffer_unmap(buffer, &map);
 
   // Release the sample
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
   gst_sample_unref(sample);
 
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
   // Set good frame flag
   depayloader->NewFrame();
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   return GST_FLOW_OK;
 }
