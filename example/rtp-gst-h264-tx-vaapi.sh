@@ -5,16 +5,25 @@
 IP_ADDRESS=127.0.0.1
 PORT=5004
 
-# RTP H.264 Video Stream encode from test source
-gst-launch-1.0 \
-    videotestsrc ! \
-    video/x-raw,width=1280,height=720,framerate=50/1 ! \
-    vaapih264enc keyframe-period=1 max-bframes=0 ! \
-    rtph264pay ! \
-    udpsink host=${IP_ADDRESS} port=${PORT} &
+# Transmit H.264 RTP stream from test source
+./build/bin/rtp-transmit  -source=4 -mode=0 -ipaddr=$IP_ADDRESS -height=480 -width=640 -port=${PORT}  &
 
-# sleep 10
+# RTP H.264 Video Stream decode using Intel VAAPI
+gst-launch-1.0 -v \
+    udpsrc caps="application/x-rtp,media=(string)video,clock-rate=(int)90000,encoding-name=(string)H264,payload=(int)96" port=${PORT} ! \
+    queue ! \
+    rtph264depay ! \
+    h264parse ! \
+    queue ! \
+    vaapih264dec ! \
+    textoverlay text="RTP H.264 Video Stream" shaded-background=true ! \
+    videoconvert ! \
+    glimagesink sync=false & 
 
-# # Kill all the gstremers launch pipelines
-# pkill -f gst-launch-1.0
+# Kill all the gstremers launch pipelines
+sleep 10
+
+pkill -f rtp-transmit 
+pkill -f gst-launch-1.0
+exit
 

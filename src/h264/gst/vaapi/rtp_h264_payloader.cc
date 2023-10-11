@@ -14,6 +14,10 @@
 
 #include "h264/gst/vaapi/rtp_h264_payloader.h"
 
+#include <glog/logging.h>
+#include <gst/app/gstappsrc.h>
+#include <gst/gst.h>
+
 #include "h264/gst/vaapi/rtp_h264_depayloader.h"
 
 namespace mediax::h264::gst::vaapi {
@@ -33,37 +37,74 @@ void RtpH264GstVaapiPayloader::SetStreamInfo(const ::mediax::StreamInformation &
   egress_.settings_valid = true;
 }
 
-int RtpH264GstVaapiPayloader::Transmit(unsigned char *, bool) { return 0; }
+int RtpH264GstVaapiPayloader::Transmit(unsigned char *new_buffer, bool timeout) {
+  if (!started_) {
+    DLOG(ERROR) << "RTP H.264 payloader not started";
+    return -1;
+  }
+
+  // Gstreamer send appsrc
+  // Send a frame
+  GstElement *appsrc = gst_bin_get_by_name(GST_BIN(pipeline_), "rtp-h264-appsrc");
+  int size = egress_.width * egress_.height * 3;
+  GstBuffer *buffer = gst_buffer_new_allocate(nullptr, size, nullptr);
+
+  // Define info
+  GstMapInfo info;
+  gst_buffer_map(buffer, &info, GST_MAP_WRITE);
+
+  // Copy some data
+  memcpy(info.data, new_buffer, size);
+  gst_buffer_unmap(buffer, &info);
+
+  // Set the buffer timestamp
+  GST_BUFFER_PTS(buffer) = GST_CLOCK_TIME_NONE;
+  GST_BUFFER_DTS(buffer) = GST_CLOCK_TIME_NONE;
+
+  // Push the buffer to the appsrc and emit signal
+  gst_app_src_push_buffer(GST_APP_SRC(appsrc), buffer);
+
+  // Release the appsrc
+  gst_object_unref(appsrc);
+
+  return 0;
+}
 
 bool RtpH264GstVaapiPayloader::Open() {
   // Setup a gstreamer pipeline to decode H.264 with Intel VAAPI
 
   // Create a pipeline
   pipeline_ = gst_pipeline_new("rtp-h264-pipeline");
-
   // Create a custom appsrc element to receive the H.264 stream
   GstElement *appsrc = gst_element_factory_make("appsrc", "rtp-h264-appsrc");
   g_object_set(G_OBJECT(appsrc), "stream-type", 0, "format", GST_FORMAT_TIME, nullptr);
 
   // Create a capsfilter element to set the caps for the H.264 stream
   GstElement *capsfilter = gst_element_factory_make("capsfilter", "rtp-h264-capsfilter");
+  // Raw RGB caps
   GstCaps *caps =
-      gst_caps_from_string("video/x-h264, stream-format=byte-stream, alignment=au, profile=high, level=4.1");
+      gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "RGB", "width", G_TYPE_INT, egress_.width, "height",
+                          G_TYPE_INT, egress_.height, "framerate", GST_TYPE_FRACTION, egress_.framerate, 1, nullptr);
   g_object_set(G_OBJECT(capsfilter), "caps", caps, nullptr);
-  gst_caps_unref(caps);
 
-  // Create a vaapidecode element to decode the H.264 stream
-  GstElement *vaapidecode = gst_element_factory_make("vaapidecode", "rtp-h264-vaapidecode");
+  // Convert the video colourspace
+  GstElement *videoconvert = gst_element_factory_make("videoconvert", "rtp-h264-videoconvert");
 
-  // Create a vaapisink element to display the decoded H.264 stream
-  GstElement *vaapisink = gst_element_factory_make("vaapisink", "rtp-h264-vaapisink");
-  g_object_set(G_OBJECT(vaapisink), "sync", false, nullptr);
+  // Create a vaapih264enc element to decode the H.264 stream
+  GstElement *vaapih264enc = gst_element_factory_make("vaapih264enc", "rtp-h264-vaapih264enc");
+
+  // RTP payloader
+  GstElement *rtp264pay = gst_element_factory_make("rtph264pay", "rtp-h264-payloader");
+
+  // Create a udpsink element to stream over ethernet
+  GstElement *udpsink = gst_element_factory_make("udpsink", "rtp-h264-udpsink");
+  g_object_set(G_OBJECT(udpsink), "host", egress_.hostname.c_str(), "port", egress_.port_no, nullptr);
 
   // Add all elements to the pipeline
-  gst_bin_add_many(GST_BIN(pipeline_), appsrc, capsfilter, vaapidecode, vaapisink, nullptr);
+  gst_bin_add_many(GST_BIN(pipeline_), appsrc, capsfilter, videoconvert, vaapih264enc, rtp264pay, udpsink, nullptr);
 
   // Link the elements
-  gst_element_link_many(appsrc, capsfilter, vaapidecode, vaapisink, nullptr);
+  gst_element_link_many(appsrc, capsfilter, videoconvert, vaapih264enc, rtp264pay, udpsink, nullptr);
 
   return true;
 }
@@ -86,11 +127,13 @@ void RtpH264GstVaapiPayloader::Close() {
 }
 
 void RtpH264GstVaapiPayloader::Start() {
+  started_ = true;
   // Start the pipeline
   gst_element_set_state(pipeline_, GST_STATE_PLAYING);
 }
 
 void RtpH264GstVaapiPayloader::Stop() {
+  started_ = false;
   // Stop the pipeline
   gst_element_set_state(pipeline_, GST_STATE_NULL);
 }

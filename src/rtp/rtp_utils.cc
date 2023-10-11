@@ -53,6 +53,9 @@ uint8_t BitsPerPixel(ColourspaceType mode) {
       return 16;
     case ColourspaceType::kColourspaceMono8:
       return 8;
+    case ColourspaceType::kColourspaceH264Part4:
+    case ColourspaceType::kColourspaceH264Part10:
+      return 24;  // Not known but not an error.
     default:
       LOG(ERROR) << "Unknown colourspace type";
       return 0;
@@ -143,6 +146,7 @@ void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::Coloursp
       }
       data[1] = (uint8_t)(y);
     } break;
+    default:
     case mediax::ColourspaceType::kColourspaceRgb24:
       data[0] = (uint8_t)r;
       data[1] = (uint8_t)g;
@@ -162,8 +166,6 @@ void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::Coloursp
       data[0] = mono16_pixel >> 8 & 0xFF;
       data[1] = mono16_pixel & 0xFF;
     } break;
-    default:
-      break;
   }
 }
 

@@ -75,7 +75,10 @@ class RtpH264GstVaapiPayloader : public RtpPayloader {
   void Stop() final;
 
  private:
+  /// Gstreamer pipeline
   GstElement *pipeline_;
+  /// Pipeline started when true
+  bool started_ = false;
 };
 
 }  // namespace mediax::h264::gst::vaapi
