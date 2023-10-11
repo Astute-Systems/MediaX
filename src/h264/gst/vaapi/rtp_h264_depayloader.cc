@@ -147,8 +147,9 @@ bool RtpH264GstVaapiDepayloader::Open() {
   if (IsMulticast(GetIpAddress())) {
     std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
-    g_object_set(G_OBJECT(udpsrc), "address", GetIpAddress(), nullptr);
+    g_object_set(G_OBJECT(udpsrc), "address", GetIpAddress().c_str(), nullptr);
   }
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   // Create a capsfilter element to set the caps for the RTP stream
   GstElement *capsfilter = gst_element_factory_make("capsfilter", "rtp-h264-capsfilter");
