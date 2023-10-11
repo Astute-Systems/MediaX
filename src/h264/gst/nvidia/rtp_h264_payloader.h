@@ -20,19 +20,19 @@
 
 namespace mediax::h264::gst::nvidia {
 
-class RtpH264Payloader : public RtpPayloader {
+class RtpH264GstNvidiaPayloader : public RtpPayloader {
  public:
   ///
   /// \brief Construct a new Rtp H.264 Payloader object
   ///
   ///
-  RtpH264Payloader();
+  RtpH264GstNvidiaPayloader();
 
   ///
   /// \brief Destroy the Rtp H.264 Payloader object
   ///
   ///
-  ~RtpH264Payloader() final;
+  ~RtpH264GstNvidiaPayloader() final;
 
   ///
   /// \brief Set the Stream Info object

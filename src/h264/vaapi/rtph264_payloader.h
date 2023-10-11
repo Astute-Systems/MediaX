@@ -20,18 +20,18 @@
 
 namespace mediax::h264::vaapi {
 
-class RtpH264Payloader : public RtpPayloader {
+class RtpH264VaapiPayloader : public RtpPayloader {
   ///
   /// \brief Construct a new Rtp H.264 Payloader object
   ///
   ///
-  RtpH264Payloader();
+  RtpH264VaapiPayloader();
 
   ///
   /// \brief Destroy the Rtp H.264 Payloader object
   ///
   ///
-  ~RtpH264Payloader() final;
+  ~RtpH264VaapiPayloader() final;
 
   ///
   /// \brief Set the Stream Info object

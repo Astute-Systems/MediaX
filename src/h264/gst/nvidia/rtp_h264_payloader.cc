@@ -23,7 +23,7 @@ namespace mediax::h264::gst::nvidia {
 
 GstFlowReturn SourceFrameCallback(GstAppSink *appsink, gpointer user_data) {
   // Get the payloader object
-  RtpH264Payloader *payloader = reinterpret_cast<RtpH264Payloader *>(user_data);
+  RtpH264GstNvidiaPayloader *payloader = reinterpret_cast<RtpH264GstNvidiaPayloader *>(user_data);
 
   // Get the sample from the appsink
   GstSample *sample = gst_app_sink_pull_sample(appsink);
@@ -55,11 +55,11 @@ GstFlowReturn SourceFrameCallback(GstAppSink *appsink, gpointer user_data) {
   return GST_FLOW_OK;
 }
 
-RtpH264Payloader::RtpH264Payloader() = default;
+RtpH264GstNvidiaPayloader::RtpH264GstNvidiaPayloader() = default;
 
-RtpH264Payloader::~RtpH264Payloader() = default;
+RtpH264GstNvidiaPayloader::~RtpH264GstNvidiaPayloader() = default;
 
-void RtpH264Payloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
+void RtpH264GstNvidiaPayloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
   egress_.encoding = stream_information.encoding;
   egress_.height = stream_information.height;
   egress_.width = stream_information.width;
@@ -70,7 +70,7 @@ void RtpH264Payloader::SetStreamInfo(const ::mediax::StreamInformation &stream_i
   egress_.settings_valid = true;
 }
 
-bool RtpH264Payloader::Open() {
+bool RtpH264GstNvidiaPayloader::Open() {
   // Setup a gstreamer pipeline to decode H.264 with Intel VAAPI
 
   // Create a pipeline
@@ -116,7 +116,7 @@ bool RtpH264Payloader::Open() {
   return true;
 }
 
-void RtpH264Payloader::Close() {
+void RtpH264GstNvidiaPayloader::Close() {
   // Stop the pipeline
   Stop();
 
@@ -133,12 +133,12 @@ void RtpH264Payloader::Close() {
   gst_object_unref(pipeline_);
 }
 
-void RtpH264Payloader::Start() {
+void RtpH264GstNvidiaPayloader::Start() {
   // Start the pipeline
   gst_element_set_state(pipeline_, GST_STATE_PLAYING);
 }
 
-int RtpH264Payloader::Transmit(uint8_t *rgbframe, bool blocking) {
+int RtpH264GstNvidiaPayloader::Transmit(uint8_t *rgbframe, bool blocking) {
   // Get the appsrc element
   GstElement *appsrc = gst_bin_get_by_name(GST_BIN(pipeline_), "rtp-h264-appsrc");
 
@@ -156,7 +156,7 @@ int RtpH264Payloader::Transmit(uint8_t *rgbframe, bool blocking) {
   return ret;
 }
 
-void RtpH264Payloader::Stop() {
+void RtpH264GstNvidiaPayloader::Stop() {
   // Stop the pipeline
   gst_element_set_state(pipeline_, GST_STATE_NULL);
 }

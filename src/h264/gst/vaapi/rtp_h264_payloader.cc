@@ -18,11 +18,11 @@
 
 namespace mediax::h264::gst::vaapi {
 
-RtpH264Payloader::RtpH264Payloader() = default;
+RtpH264GstVaapiPayloader::RtpH264GstVaapiPayloader() = default;
 
-RtpH264Payloader::~RtpH264Payloader() = default;
+RtpH264GstVaapiPayloader::~RtpH264GstVaapiPayloader() = default;
 
-void RtpH264Payloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
+void RtpH264GstVaapiPayloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
   egress_.encoding = stream_information.encoding;
   egress_.height = stream_information.height;
   egress_.width = stream_information.width;
@@ -33,9 +33,9 @@ void RtpH264Payloader::SetStreamInfo(const ::mediax::StreamInformation &stream_i
   egress_.settings_valid = true;
 }
 
-int RtpH264Payloader::Transmit(unsigned char *, bool) { return 0; }
+int RtpH264GstVaapiPayloader::Transmit(unsigned char *, bool) { return 0; }
 
-bool RtpH264Payloader::Open() {
+bool RtpH264GstVaapiPayloader::Open() {
   // Setup a gstreamer pipeline to decode H.264 with Intel VAAPI
 
   // Create a pipeline
@@ -68,7 +68,7 @@ bool RtpH264Payloader::Open() {
   return true;
 }
 
-void RtpH264Payloader::Close() {
+void RtpH264GstVaapiPayloader::Close() {
   // Stop the pipeline
   Stop();
 
@@ -85,12 +85,12 @@ void RtpH264Payloader::Close() {
   gst_object_unref(pipeline_);
 }
 
-void RtpH264Payloader::Start() {
+void RtpH264GstVaapiPayloader::Start() {
   // Start the pipeline
   gst_element_set_state(pipeline_, GST_STATE_PLAYING);
 }
 
-void RtpH264Payloader::Stop() {
+void RtpH264GstVaapiPayloader::Stop() {
   // Stop the pipeline
   gst_element_set_state(pipeline_, GST_STATE_NULL);
 }

@@ -27,19 +27,19 @@ namespace mediax::h264::gst::nvidia {
 
 GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data);
 
-class RtpH264Depayloader : public RtpDepayloader {
+class RtpH264GstNvidiaDepayloader : public RtpDepayloader {
  public:
   ///
   /// \brief Construct a new Rtpvraw Depayloader object
   ///
   ///
-  RtpH264Depayloader() = default;
+  RtpH264GstNvidiaDepayloader() = default;
 
   ///
   /// \brief Destroy the Rtpvraw Depayloader object
   ///
   ///
-  ~RtpH264Depayloader() final;
+  ~RtpH264GstNvidiaDepayloader() final;
 
   ///
   /// \brief Copy operator (Deleted)
@@ -47,14 +47,14 @@ class RtpH264Depayloader : public RtpDepayloader {
   /// \param other
   /// \return RtpH264Depayloader
   ///
-  RtpH264Depayloader &operator=(const RtpH264Depayloader &other) { return *this; }
+  RtpH264GstNvidiaDepayloader &operator=(const RtpH264GstNvidiaDepayloader &other) { return *this; }
 
   ///
   /// \brief Construct a new RtpH264Depayloader object (Deleted)
   ///
   /// \param other
   ///
-  RtpH264Depayloader(RtpH264Depayloader &&other) = delete;
+  RtpH264GstNvidiaDepayloader(RtpH264GstNvidiaDepayloader &&other) = delete;
 
   ///
   /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement

@@ -27,19 +27,19 @@ namespace mediax::h264::gst::vaapi {
 
 GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data);
 
-class RtpH264Depayloader : public RtpDepayloader {
+class RtpH264GstVaapiDepayloader : public RtpDepayloader {
  public:
   ///
   /// \brief Construct a new Rtpvraw Depayloader object
   ///
   ///
-  RtpH264Depayloader() = default;
+  RtpH264GstVaapiDepayloader() = default;
 
   ///
   /// \brief Destroy the Rtpvraw Depayloader object
   ///
   ///
-  ~RtpH264Depayloader() final;
+  ~RtpH264GstVaapiDepayloader() final;
 
   ///
   /// \brief Copy operator (Deleted)
@@ -47,14 +47,14 @@ class RtpH264Depayloader : public RtpDepayloader {
   /// \param other
   /// \return RtpH264Depayloader
   ///
-  RtpH264Depayloader &operator=(const RtpH264Depayloader &other) { return *this; }
+  RtpH264GstVaapiDepayloader &operator=(const RtpH264GstVaapiDepayloader &other) { return *this; }
 
   ///
   /// \brief Construct a new RtpH264Depayloader object (Deleted)
   ///
   /// \param other
   ///
-  RtpH264Depayloader(RtpH264Depayloader &&other) = delete;
+  RtpH264GstVaapiDepayloader(RtpH264GstVaapiDepayloader &&other) = delete;
 
   ///
   /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement

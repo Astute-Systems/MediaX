@@ -20,19 +20,19 @@
 /// The MediaX Intel Video Accelleration API (VAAPI) namespace
 namespace mediax::h264::vaapi {
 
-class RtpH264Depayloader : public RtpDepayloader {
+class RtpH264VaapiDepayloader : public RtpDepayloader {
  public:
   ///
   /// \brief Construct a new Rtpvraw Depayloader object
   ///
   ///
-  RtpH264Depayloader() = default;
+  RtpH264VaapiDepayloader() = default;
 
   ///
   /// \brief Destroy the Rtpvraw Depayloader object
   ///
   ///
-  ~RtpH264Depayloader() final;
+  ~RtpH264VaapiDepayloader() final;
 
   ///
   /// \brief Copy operator (Deleted)
@@ -40,14 +40,14 @@ class RtpH264Depayloader : public RtpDepayloader {
   /// \param other
   /// \return RtpH264Depayloader
   ///
-  RtpH264Depayloader &operator=(const RtpH264Depayloader &other) { return *this; }
+  RtpH264VaapiDepayloader &operator=(const RtpH264VaapiDepayloader &other) { return *this; }
 
   ///
   /// \brief Construct a new RtpH264Depayloader object (Deleted)
   ///
   /// \param other
   ///
-  RtpH264Depayloader(RtpH264Depayloader &&other) = delete;
+  RtpH264VaapiDepayloader(RtpH264VaapiDepayloader &&other) = delete;
 
   ///
   /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement

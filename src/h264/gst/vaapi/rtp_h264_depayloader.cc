@@ -35,9 +35,9 @@
 
 namespace mediax::h264::gst::vaapi {
 
-RtpH264Depayloader::~RtpH264Depayloader() = default;
+RtpH264GstVaapiDepayloader::~RtpH264GstVaapiDepayloader() = default;
 
-void RtpH264Depayloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
+void RtpH264GstVaapiDepayloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
   ingress_.encoding = stream_information.encoding;
   ingress_.height = stream_information.height;
   ingress_.width = stream_information.width;
@@ -52,7 +52,7 @@ void RtpH264Depayloader::SetStreamInfo(const ::mediax::StreamInformation &stream
 GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
   gint width = 0;
   gint height = 0;
-  auto depayloader = static_cast<RtpH264Depayloader *>(user_data);
+  auto depayloader = static_cast<RtpH264GstVaapiDepayloader *>(user_data);
   std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   // Pull the sample from the appsink
@@ -130,7 +130,7 @@ GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
   return GST_FLOW_OK;
 }
 
-bool RtpH264Depayloader::Open() {
+bool RtpH264GstVaapiDepayloader::Open() {
   // Open the pipeline
   // Create a pipeline
   std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
@@ -189,12 +189,12 @@ bool RtpH264Depayloader::Open() {
   return true;
 }
 
-void RtpH264Depayloader::Start() {
+void RtpH264GstVaapiDepayloader::Start() {
   // Start the pipeline
   gst_element_set_state(pipeline_, GST_STATE_PLAYING);
 }
 
-void RtpH264Depayloader::Stop() {
+void RtpH264GstVaapiDepayloader::Stop() {
   // Stop the pipeline
   gst_element_set_state(pipeline_, GST_STATE_NULL);
   std::cout << "Pipeline stopped" << std::endl;
@@ -205,12 +205,12 @@ void RtpH264Depayloader::Stop() {
   gst_object_unref(bus);
 }
 
-void RtpH264Depayloader::Close() {
+void RtpH264GstVaapiDepayloader::Close() {
   // Destroy the pipeline
   gst_object_unref(pipeline_);
 }
 
-bool RtpH264Depayloader::Receive(uint8_t **cpu, int32_t timeout) {
+bool RtpH264GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   auto start_time = std::chrono::high_resolution_clock::now();
 
   while (!new_rx_frame_) {
@@ -229,8 +229,8 @@ bool RtpH264Depayloader::Receive(uint8_t **cpu, int32_t timeout) {
   return true;
 }
 
-std::vector<uint8_t> &RtpH264Depayloader::GetBuffer() { return buffer_in_; }
+std::vector<uint8_t> &RtpH264GstVaapiDepayloader::GetBuffer() { return buffer_in_; }
 
-void RtpH264Depayloader::NewFrame() { new_rx_frame_ = true; }
+void RtpH264GstVaapiDepayloader::NewFrame() { new_rx_frame_ = true; }
 
 }  // namespace mediax::h264::gst::vaapi
