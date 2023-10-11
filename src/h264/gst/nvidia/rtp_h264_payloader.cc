@@ -44,8 +44,6 @@ GstFlowReturn SourceFrameCallback(GstAppSink *appsink, gpointer user_data) {
   GstMapInfo map;
   gst_buffer_map(buffer, &map, GST_MAP_READ);
 
-  // TODO(Ross Newman): Send video
-
   // Unmap the buffer
   gst_buffer_unmap(buffer, &map);
 
