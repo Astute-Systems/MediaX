@@ -3,7 +3,7 @@
 IP_ADDRESS=127.0.0.1
 
 echo 'Starting example application...'
-./build/bin/transmit-example -source=2 -mode=1 -ipaddr=$IP_ADDRESS -height=480 -width=640 -port=5004 &
+./build/bin/rtp-transmit -source=2 -mode=1 -ipaddr=$IP_ADDRESS -height=480 -width=640 -port=5004 &
 
 sleep 1
 
@@ -13,7 +13,7 @@ gst-launch-1.0 udpsrc multicast-group=239.192.1.1 auto-multicast=true port=5004 
 
 sleep 10
 
-pkill -f transmit-example
+pkill -f rtp-transmit 
 pkill -f gst-launch-1.0
 exit
 

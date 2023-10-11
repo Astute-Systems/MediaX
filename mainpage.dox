@@ -102,7 +102,7 @@ cmake -DBUILD_CUDA=OFF -DEXAMPLES=ON -DBUILD_TESTING=ON VAAPI=ON ..
  > NOTE: To enable Intel H.264 acceleration set -DVAAPI to ON, this requires the Intel Media SDK to be installed.
 To enable CUDA acceleration set -DBUILD_CUDA to ON, examples can als be enabled
 ```
-./transmit-example
+./rtp-transmit
 ```
 Command line arguments use **--help** and are listed below:
 ```
@@ -121,7 +121,7 @@ Command line arguments use **--help** and are listed below:
 ```
 The receive example will display the stream (user **--help** for options):
 ```
-./receive-example
+./rtp-receive
 ```
 Receiver has these additional receive command line options, see **--help** for more info:
 ```

@@ -17,7 +17,7 @@ gst-launch-1.0 udpsrc port=5004 caps="application/x-rtp, media=(string)video, cl
 
 sleep 10
 
-pkill -f transmit-example
+pkill -f rtp-transmit 
 pkill -f gst-launch-1.0
 exit
 

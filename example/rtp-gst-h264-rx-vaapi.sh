@@ -7,7 +7,7 @@ IP_ADDRESS=127.0.0.1
 #===========================================
 
 echo 'Starting example application...'
-./build/bin/receive-example -mode=4 -ipaddr=$IP_ADDRESS -height=480 -width=640 -port=5004  &
+./build/bin/rtp-receive -mode=4 -ipaddr=$IP_ADDRESS -height=480 -width=640 -port=5004  &
 
 sleep 1
 
@@ -22,7 +22,7 @@ gst-launch-1.0 \
 
 sleep 10
 
-pkill -f receive-example 
+pkill -f rtp-receive 
 pkill -f gst-launch-1.0
 exit
 

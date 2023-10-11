@@ -114,9 +114,9 @@ int main(int argc, char** argv) {
   gflags::SetUsageMessage(
       "Transmit a video stream using RTP\n"
       "Usage:\n"
-      "    transmit-example [options]\n"
+      "    rtp-transmit [options]\n"
       "Example:\n"
-      "    transmit-example -ipaddr 127.0.0.1 -port 5004 -height 480 -width 640 -source 0\n");
+      "    rtp-transmit -ipaddr 127.0.0.1 -port 5004 -height 480 -width 640 -source 0\n");
   gflags::ParseCommandLineFlags(&argc, &argv, true);
   google::InitGoogleLogging(argv[0]);
   google::InstallFailureSignalHandler();

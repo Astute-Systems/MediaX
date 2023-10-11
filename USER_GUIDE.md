@@ -61,7 +61,7 @@ The examples directory also contains helper scripts to run various demos.
 > **NOTE** : This example has been tested on 64 bit ARM. Target hardware was the Nvidia Jetson TX1/TX2/AGX/Orin.
 
 ```
-./transmit-example
+./rtp-transmit
 ```
 
 Command line arguments use **--help** and are listed below:

@@ -165,9 +165,9 @@ int main(int argc, char *argv[]) {
   gflags::SetUsageMessage(
       "Example RTP receiver\n"
       "Usage:\n"
-      "  receive-example [OPTION]...\n"
+      "  rtp-receive [OPTION]...\n"
       "Example:\n"
-      "  receive-example -ipaddr=127.0.0.1 --port=5004 --height=480 --width=640\n");
+      "  rtp-receive -ipaddr=127.0.0.1 --port=5004 --height=480 --width=640\n");
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
   gtk_init(&argc, &argv);
@@ -183,7 +183,7 @@ int main(int argc, char *argv[]) {
   // Create a new window
   GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-  gtk_window_set_title(GTK_WINDOW(window), "receive-example");
+  gtk_window_set_title(GTK_WINDOW(window), "rtp-receive");
   gtk_window_set_default_size(GTK_WINDOW(window), FLAGS_width, FLAGS_height);
 
   // Create a drawing area widget
