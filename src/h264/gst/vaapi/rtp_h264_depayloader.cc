@@ -63,7 +63,7 @@ GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
   gsize size = gst_buffer_get_size(buffer);
 
   // Allocate memory for the frame data
-  // guint8 *data = g_new(guint8, size);
+  guint8 *data = g_new(guint8, size);
   depayloader->GetBuffer().resize(size);
 
   // Get the buffer height and width
@@ -71,12 +71,9 @@ GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
   const GstStructure *structure = gst_caps_get_structure(caps, 0);
   gst_structure_get_int(structure, "height", &height);
   gst_structure_get_int(structure, "width", &width);
-  // Get the colourspace
-  const gchar *colorspace = gst_structure_get_string(structure, "format");
 
   // Set the ColourspaceType
-
-  if (strncmp(colorspace, "UYVY", 4) == 0) {
+  if (const gchar *colorspace = gst_structure_get_string(structure, "format"); strncmp(colorspace, "UYVY", 4) == 0) {
     depayloader->SetColourSpace(ColourspaceType::kColourspaceYuv);
   } else if (strncmp(colorspace, "RGB", 3) == 0) {
     depayloader->SetColourSpace(ColourspaceType::kColourspaceRgb24);
