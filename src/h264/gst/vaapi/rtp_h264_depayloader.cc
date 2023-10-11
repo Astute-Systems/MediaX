@@ -113,43 +113,58 @@ GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
 bool RtpH264Depayloader::Open() {
   // Open the pipeline
   // Create a pipeline
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
+
   pipeline_ = gst_pipeline_new("rtp-h264-pipeline");
 
   // Create a udpsrc element to receive the RTP stream
   GstElement *udpsrc = gst_element_factory_make("udpsrc", "rtp-h264-udpsrc");
   g_object_set(G_OBJECT(udpsrc), "port", GetPort(), nullptr);
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << " IP Address: " << GetIpAddress()
+            << " Port: " << GetPort() << std::endl;
 
   // Create a capsfilter element to set the caps for the RTP stream
   GstElement *capsfilter = gst_element_factory_make("capsfilter", "rtp-h264-capsfilter");
   GstCaps *caps =
       gst_caps_from_string("application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264");
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
   g_object_set(G_OBJECT(capsfilter), "caps", caps, nullptr);
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
   gst_caps_unref(caps);
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   // Create a rtph264depay element to depayload the RTP stream
   GstElement *rtph264depay = gst_element_factory_make("rtph264depay", "rtp-h264-depay");
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   // H.264 parse
   GstElement *h264parse = gst_element_factory_make("h264parse", "rtp-h264-h264parse");
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   // Queue
   GstElement *queue = gst_element_factory_make("queue", "rtp-h264-queue");
 
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
   // Decode frame using vaapi
   GstElement *vaapih264dec = gst_element_factory_make("vaapih264dec", "rtp-h264-vaapih264dec");
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   // Create a custom appsrc element to receive the H.264 stream
   GstElement *appsink = gst_element_factory_make("appsink", "rtp-h264-appsrc");
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
   // Set the callback function for the appsink
   GstAppSinkCallbacks callbacks = {.new_sample = NewFrameCallback};
   gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &callbacks, this, nullptr);
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   // Add all elements to the pipeline
   gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, rtph264depay, h264parse, queue, vaapih264dec, appsink,
                    nullptr);
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   // Link the elements
   gst_element_link_many(udpsrc, capsfilter, rtph264depay, h264parse, queue, vaapih264dec, appsink, nullptr);
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   return true;
 }
