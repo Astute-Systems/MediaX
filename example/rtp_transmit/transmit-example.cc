@@ -120,7 +120,7 @@ int main(int argc, char** argv) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
   google::InitGoogleLogging(argv[0]);
   google::InstallFailureSignalHandler();
-  mediax::RtpInit(argc, argv);
+  mediax::InitRtp(argc, argv);
 
   uint32_t frame = 0;
   const uint32_t kBuffSize = FLAGS_height * FLAGS_width;

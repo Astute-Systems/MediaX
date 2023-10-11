@@ -9,6 +9,6 @@ int main(int argc, char** argv) {
   google::ParseCommandLineFlags(&argc, &argv, true);
   google::InitGoogleLogging(argv[0]);
   google::InstallFailureSignalHandler();
-  mediax::RtpInit(argc, argv);
+  mediax::InitRtp(argc, argv);
   return RUN_ALL_TESTS();
 }

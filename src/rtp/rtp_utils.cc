@@ -27,7 +27,7 @@
 
 namespace mediax {
 
-void RtpInit(int argc, char *argv[]) {
+void InitRtp(int argc, char *argv[]) {
 #if GST_SUPPORTED
   // Initialize GStreamer
   gst_init(&argc, &argv);

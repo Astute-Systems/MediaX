@@ -16,7 +16,7 @@
 #include "rtp/rtp.h"
 #include "rtp/rtp_utils.h"
 
-TEST(Rtp, Init) { mediax::RtpInit(0, nullptr); }
+TEST(Rtp, Init) { mediax::InitRtp(0, nullptr); }
 
 TEST(Rtp, CleanUp) { mediax::RtpCleanup(); }
 

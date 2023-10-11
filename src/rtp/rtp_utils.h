@@ -39,7 +39,7 @@ namespace mediax {
 /// \param argc from main, used to initialize GStreamer
 /// \param argv from main, used to initialize GStreamer
 ///
-void RtpInit(int argc, char *argv[]);
+void InitRtp(int argc, char *argv[]);
 
 ///
 /// \brief Finalise the RTP library, mainly needed for GStreamer support

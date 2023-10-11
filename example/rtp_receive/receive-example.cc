@@ -172,7 +172,7 @@ int main(int argc, char *argv[]) {
 
   gtk_init(&argc, &argv);
 
-  mediax::RtpInit(argc, argv);
+  mediax::InitRtp(argc, argv);
   LOG(INFO) << "Example RTP streaming (" << FLAGS_width << "x" << FLAGS_height << " " << ModeToString(FLAGS_mode)
             << ") to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port;
 
