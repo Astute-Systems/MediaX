@@ -136,12 +136,19 @@ bool RtpH264GstVaapiDepayloader::Open() {
   std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   pipeline_ = gst_pipeline_new("rtp-h264-pipeline");
+  std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
 
   // Create a udpsrc element to receive the RTP stream
   GstElement *udpsrc = gst_element_factory_make("udpsrc", "rtp-h264-udpsrc");
   g_object_set(G_OBJECT(udpsrc), "port", GetPort(), nullptr);
   std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << " IP Address: " << GetIpAddress()
             << " Port: " << GetPort() << std::endl;
+
+  if (IsMulticast(GetIpAddress())) {
+    std::cout << "Function: " << __FUNCTION__ << " Line: " << __LINE__ << std::endl;
+
+    g_object_set(G_OBJECT(udpsrc), "address", GetIpAddress(), nullptr);
+  }
 
   // Create a capsfilter element to set the caps for the RTP stream
   GstElement *capsfilter = gst_element_factory_make("capsfilter", "rtp-h264-capsfilter");
