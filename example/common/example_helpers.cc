@@ -31,9 +31,9 @@ mediax::ColourspaceType GetMode(int mode) {
 std::string ModeToString(int mode) {
   switch (mode) {
     case 0:
-      return "Uncompressed YUV";
-    case 1:
       return "Uncompressed RGB";
+    case 1:
+      return "Uncompressed YUV";
     case 2:
       return "Mono16";
     case 3:

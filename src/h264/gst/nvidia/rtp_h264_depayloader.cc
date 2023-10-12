@@ -185,7 +185,7 @@ bool RtpH264GstNvidiaDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
       return false;
     }
     // Sleep 1ms and wait for a new frame
-    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
   // Dont start a new thread if a frame is available just return it
   *cpu = buffer_in_.data();
