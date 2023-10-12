@@ -268,7 +268,7 @@ int main(int argc, char** argv) {
       count++;
     }
 
-    std::cout << "Frame: " << frame << "\r" << std::flush;
+    std::cout << "Frame=" << frame << "\r" << std::flush;
     frame++;
   }
   std::cout << "\n";
