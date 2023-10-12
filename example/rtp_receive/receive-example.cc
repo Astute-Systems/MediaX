@@ -41,6 +41,7 @@ DEFINE_uint32(mode, 1,
               "2 - Mono16\n\t"
               "3 - Mono8\n\t"
               "4 - H.264\n\t");
+DEFINE_uint32(num_frames, 0, "The number of frames to send");
 
 struct OnDrawData {
   std::string name;
@@ -54,7 +55,8 @@ struct OnDrawData {
 std::shared_ptr<mediax::RtpDepayloader> rtp_;
 std::shared_ptr<mediax::sap::SAPListener> sap_listener_;
 
-static uint64_t m_frame_counter_ = 0;
+static uint64_t m_frame_counter_ = 1;
+static uint32_t count_ = 1;
 
 gboolean on_draw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer user_data) {
   uint8_t *cpu_buffer;
@@ -113,6 +115,13 @@ gboolean on_draw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer
     cairo_show_text(cr, no_stream.c_str());
   }
   m_frame_counter_++;
+  if (count_ >= FLAGS_num_frames) {
+    std::cout << "\n";
+    std::flush(std::cout);
+    gtk_main_quit();
+  }
+  if (FLAGS_num_frames != 0) count_++;
+
   return FALSE;
 }
 
@@ -172,9 +181,11 @@ int main(int argc, char *argv[]) {
 
   gtk_init(&argc, &argv);
 
+  google::InitGoogleLogging(argv[0]);
+  google::InstallFailureSignalHandler();
   mediax::InitRtp(argc, argv);
-  LOG(INFO) << "Example RTP streaming (" << FLAGS_width << "x" << FLAGS_height << " " << ModeToString(FLAGS_mode)
-            << ") to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port;
+  std::cout << "Example RTP (Rx) streaming (" << FLAGS_width << "x" << FLAGS_height << " " << ModeToString(FLAGS_mode)
+            << ") to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
 
   mediax::ColourspaceType video_mode = GetMode(FLAGS_mode);
 
@@ -214,7 +225,7 @@ int main(int argc, char *argv[]) {
 
   mediax::RtpCleanup();
 
-  LOG(INFO) << "Example terminated...";
+  std::cout << "Example terminated...\n";
 
   return 0;
 }

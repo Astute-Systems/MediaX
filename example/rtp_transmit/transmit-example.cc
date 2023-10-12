@@ -88,13 +88,14 @@ DEFINE_uint32(source, 2,
 DEFINE_string(filename, "testcard.png", "the PNG file to use as the source of the video stream (only with -source 0)");
 DEFINE_string(device, "/dev/video0", "the V4L2 device source (only with -source 1)");
 DEFINE_string(session_name, "TestVideo1", "the SAP/SDP session name");
-DEFINE_uint32(mode, 1,
+DEFINE_uint32(mode, 0,
               "The video mode (0-4)\n\t"
               "0 - Uncompressed RGB\n\t"
               "1 - Uncompressed YUV\n\t"
               "2 - Mono16\n\t"
               "3 - Mono8\n\t"
               "4 - H.264\n\t");
+DEFINE_uint32(num_frames, 0, "The number of frames to send");
 
 static bool application_running = true;
 
@@ -127,7 +128,7 @@ int main(int argc, char** argv) {
   google::InstallFailureSignalHandler();
   mediax::InitRtp(argc, argv);
 
-  uint32_t frame = 0;
+  uint32_t frame = 1;
   const uint32_t kBuffSize = FLAGS_height * FLAGS_width;
   const uint32_t kBuffSizeRGB = kBuffSize * 3;
   std::vector<uint8_t> transmit_buffer;  // Maximum is HD
@@ -136,7 +137,7 @@ int main(int argc, char** argv) {
   signal(SIGINT, signalHandler);
   signal(SIGTERM, signalHandler);
 
-  std::cout << "Example RTP streaming (" << FLAGS_width << "x" << FLAGS_height << " " << ModeToString(FLAGS_mode)
+  std::cout << "Example RTP (Tx) streaming (" << FLAGS_width << "x" << FLAGS_height << " " << ModeToString(FLAGS_mode)
             << ") to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
 
   video_mode = GetMode(FLAGS_mode);
@@ -236,6 +237,7 @@ int main(int argc, char** argv) {
 
   // Convert all the scan lines
   // Loop frames forever
+  uint32_t count = 1;
   while (application_running == true) {
     // Timestamp start
     auto start = std::chrono::high_resolution_clock::now();
@@ -257,8 +259,17 @@ int main(int argc, char** argv) {
       std::this_thread::sleep_for(std::chrono::milliseconds(40 - duration));
     }
 
-    frame++;
+    // Bail out if we are counting frames and meet the requested limit
+    if (count >= FLAGS_num_frames) {
+      application_running = false;
+    }
+
+    if (FLAGS_num_frames > 0) {
+      count++;
+    }
+
     std::cout << "Frame: " << frame << "\r" << std::flush;
+    frame++;
   }
   std::cout << "\n";
   std::cout << "Example terminated...\n";
