@@ -141,7 +141,6 @@ int main(int argc, char** argv) {
 
   video_mode = GetMode(FLAGS_mode);
   transmit_buffer.resize(FLAGS_height * FLAGS_width * BytesPerPixel(video_mode));
-  std::cout << "Size of transmit buffer: " << transmit_buffer.size() << "\n";
 
   // Setup RTP streaming class
   std::unique_ptr<mediax::RtpPayloader> rtp;
