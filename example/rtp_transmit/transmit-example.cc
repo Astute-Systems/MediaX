@@ -88,7 +88,7 @@ DEFINE_uint32(source, 2,
 DEFINE_string(filename, "testcard.png", "the PNG file to use as the source of the video stream (only with -source 0)");
 DEFINE_string(device, "/dev/video0", "the V4L2 device source (only with -source 1)");
 DEFINE_string(session_name, "TestVideo1", "the SAP/SDP session name");
-DEFINE_uint32(mode, 0,
+DEFINE_uint32(mode, 1,
               "The video mode (0-4)\n\t"
               "0 - Uncompressed RGB\n\t"
               "1 - Uncompressed YUV\n\t"
@@ -106,7 +106,8 @@ static bool application_running = true;
 void signalHandler(int signum [[maybe_unused]]) {
   std::cout << "Interrupt signal (" << signum << ") received.\n";
   application_running = false;
-  exit(1);
+  // Sleep 100ms
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
 int main(int argc, char** argv) {
@@ -168,6 +169,7 @@ int main(int argc, char** argv) {
                                                   FLAGS_width,    FLAGS_framerate, video_mode,           false};
   // Add a SAP announcement for the new stream
   sap_announcer.AddSapAnnouncement(stream_information);
+  sap_announcer.Start();
   // Add a SAP announcement for the new stream
   rtp->SetStreamInfo(stream_information);
   rtp->Open();
@@ -284,13 +286,14 @@ int main(int argc, char** argv) {
     std::cout << "Frame=" << frame << "\r" << std::flush;
     frame++;
   }
-  std::cout << "\n";
-  std::cout << "Example terminated...\n";
 
   sap_announcer.Stop();
   rtp->Stop();
   rtp->Close();
   mediax::RtpCleanup();
+
+  std::cout << "\n";
+  std::cout << "Example terminated...\n";
 
   return 0;
 }

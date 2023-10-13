@@ -72,7 +72,7 @@ gboolean on_draw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer
   std::flush(std::cout);
 
   // Fill the surface with video data if available
-  if (rtp_->Receive(&cpu_buffer, 80) == true) {
+  if (rtp_->Receive(&cpu_buffer, 100) == true) {
     unsigned char *surface_data = cairo_image_surface_get_data(data->surface);
 
     // Get the width and height of the surface
