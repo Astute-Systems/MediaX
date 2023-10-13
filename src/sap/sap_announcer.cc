@@ -84,7 +84,7 @@ void SAPAnnouncer::DeleteAllStreams() {
     }
   }
 }
-void SAPAnnouncer::AddSAPAnnouncement(const StreamInformation &stream_information) {
+void SAPAnnouncer::AddSapAnnouncement(const StreamInformation &stream_information) {
   streams_.push_back(stream_information);
 }
 

@@ -23,19 +23,19 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   // Choose a source interface
   sap.ListInterfaces(0);
 
-  sap.AddSAPAnnouncement(
+  sap.AddSapAnnouncement(
       {"Stream 1", "192.168.1.1", 5000, 480, 640, 25, mediax::ColourspaceType::kColourspaceYuv, false});
-  sap.AddSAPAnnouncement(
+  sap.AddSapAnnouncement(
       {"Stream 2", "192.168.1.2", 6000, 800, 600, 30, mediax::ColourspaceType::kColourspaceYuv, false});
-  sap.AddSAPAnnouncement(
+  sap.AddSapAnnouncement(
       {"Stream 3", "192.168.1.3", 7000, 1920, 1024, 60, mediax::ColourspaceType::kColourspaceYuv, false});
-  sap.AddSAPAnnouncement(
+  sap.AddSapAnnouncement(
       {"Stream 4", "192.168.1.4", 8000, 1920, 1024, 60, mediax::ColourspaceType::kColourspaceRgb24, false});
-  sap.AddSAPAnnouncement(
+  sap.AddSapAnnouncement(
       {"Stream 5", "192.168.1.5", 9000, 1920, 1024, 60, mediax::ColourspaceType::kColourspaceMono8, false});
-  sap.AddSAPAnnouncement(
+  sap.AddSapAnnouncement(
       {"Stream 6", "192.168.1.6", 10000, 1920, 1024, 60, mediax::ColourspaceType::kColourspaceJpeg2000, false});
-  sap.AddSAPAnnouncement(
+  sap.AddSapAnnouncement(
       {"Stream 7", "192.168.1.7", 20000, 1920, 1024, 60, mediax::ColourspaceType::kColourspaceH264Part10, false});
 
   // Start all the streams for 10 seconds

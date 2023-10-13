@@ -6,6 +6,7 @@
   - @ref install
 - \ref gst
   - @ref examples
+  - @ref code
 - \ref v4l2
 - \ref uncompressed
   - @ref yuv
@@ -47,7 +48,7 @@ Build the example
 
 ```
 mkdir build
-cmake -DBUILD_CUDA=OFF -DEXAMPLES=ON -DBUILD_TESTING=ON VAAPI=ON ..
+cmake -DBUILD_CUDA=OFF -DEXAMPLES=ON -DBUILD_TESTING=ON GST_SUPPORTED=ON ..
 ```
 
  > NOTE: To enable Intel H.264 acceleration set -DVAAPI to ON, this requires the Intel Media SDK to be installed. To enable CUDA acceleration set -DBUILD_CUDA to ON, examples can als be enabled
@@ -67,24 +68,45 @@ The examples directory also contains helper scripts to run various demos.
 Command line arguments use **--help** and are listed below:
 
 ```
-    -filename (the PNG file to use as the source of the video stream) type: string default: "testcard.png"
-    -height (the height of the image) type: int32 default: 480
-    -ipaddr (the IP address of the transmit stream) type: string default: "239.192.1.1"
-    -port (the port to use for the transmit stream) type: int32 default: 5004
-    -width (the width of the image) type: int32 default: 640
-    -pattern (The test pattern (0-4)
-        0 - Use a PNG file (see -filename), default: 0
-        1 - Colour bars
-        2 - Greyscale bars
-        3 - Scaled RGB values
-        4 - Checkered test card) type: int32 default: 0
+    -device (the V4L2 device source (only with -source 1)) type: string
+      default: "/dev/video0"
+    -filename (the PNG file to use as the source of the video stream (only with
+      -source 0)) type: string default: "testcard.png"
+    -framerate (the image framerate) type: uint32 default: 25
+    -height (the height of the image) type: uint32 default: 480
+    -ipaddr (the IP address of the transmit stream) type: string
+      default: "127.0.0.1"
+    -mode (The video mode (0-4)
+        0 - Uncompressed RGB
+        1 - Uncompressed YUV
+        2 - Mono16
+        3 - Mono8
+        4 - H.264
+        ) type: uint32 default: 0
+    -num_frames (The number of frames to send) type: uint32 default: 0
+    -port (the port to use for the transmit stream) type: uint32 default: 5004
+    -session_name (the SAP/SDP session name) type: string default: "TestVideo1"
+    -source (The video source (0-10)
+        0 - Use a PNG file (see -filename)
+        1 - v4l2src
+        2 - Colour bars
+        3 - Greyscale bars
+        4 - Scaled RGB values
+        5 - Checkered test card
+        6 - Solid white
+        7 - Solid black
+        8 - Solid red
+        9 - Solid green
+        10 - Solid blue
+        ) type: uint32 default: 2
+    -width (the width of the image) type: uint32 default: 640
 
 ```
 
 The receive example will display the stream (user **--help** for options):
 
 ```
-./receive-example
+./rtp-receive
 ```
 
 Receiver has these additional receive command line options, see **--help** for more info:
@@ -99,6 +121,33 @@ Catch the stream using the gstreamer src pipeline in the section below. Followin
 > **NOTE** : This example uses the test image ./images/testcard.png as the source of the video stream, this has the default resolution of 640x480. You can replace the testcard with your own image or use another source for the video data.
 
 ![test card image](testcard.png)
+\section code Code Examples
+\subsection code_transmit Transmit
+
+Include the following
+\snippet simple/transmit.cc Transmit includes
+
+To start a SAP/SDP announcment and RTP stream:
+\snippet simple/transmit.cc Transmit example open
+
+Send a frame
+\snippet simple/transmit.cc Transmit example transmit
+
+Finalise the SAP session and RTP stream
+\snippet simple/transmit.cc Transmit example close
+
+\subsection code_receive Receive
+Include the following
+\snippet simple/receive.cc Receive includes
+
+To start a SAP/SDP listener and RTP stream:
+\snippet simple/receive.cc Receive example open
+
+Receive a frame
+\snippet simple/receive.cc Receive example receive
+
+Finalise the SAP session and RTP stream
+\snippet simple/receive.cc Receive example close
 
 \section gst Gstreamer examples
 The test scripts ./example/rtp-gst-test-rx.sh, ./example/rtp-gst-test-tx.sh runs the example program against gstreamer to ensure interoperability.

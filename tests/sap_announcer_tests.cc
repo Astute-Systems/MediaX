@@ -16,13 +16,13 @@
 #include "rtp/rtp.h"
 #include "sap/sap_announcer.h"
 
-TEST(SAPAnnouncerTest, AddSAPAnnouncement) {
+TEST(SAPAnnouncerTest, AddSapAnnouncement) {
   mediax::sap::SAPAnnouncer &announcer = mediax::sap::SAPAnnouncer::GetInstance();
   announcer.DeleteAllSAPAnnouncements();
   ASSERT_EQ(announcer.GetActiveStreamCount(), 0);
   mediax::StreamInformation message = {
       "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::ColourspaceType::kColourspaceYuv, false};
-  announcer.AddSAPAnnouncement(message);
+  announcer.AddSapAnnouncement(message);
   ASSERT_EQ(announcer.GetActiveStreamCount(), 1);
 }
 
@@ -33,8 +33,8 @@ TEST(SAPAnnouncerTest, AddMultipleSAPAnnouncements) {
       "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::ColourspaceType::kColourspaceYuv, false};
   mediax::StreamInformation message2 = {
       "SD Stream", "239.192.6.1", 5004, 1280, 720, 30, mediax::ColourspaceType::kColourspaceYuv, false};
-  announcer.AddSAPAnnouncement(message1);
-  announcer.AddSAPAnnouncement(message2);
+  announcer.AddSapAnnouncement(message1);
+  announcer.AddSapAnnouncement(message2);
   ASSERT_EQ(announcer.GetActiveStreamCount(), 2);
 }
 
@@ -55,13 +55,13 @@ TEST(SAPAnnouncerTest, DeleteAllSAPAnnouncements) {
       "SD Stream 5", "239.192.6.5", 5004, 1280, 720, 30, mediax::ColourspaceType::kColourspaceYuv, false};
   mediax::StreamInformation message7 = {
       "SD Stream 6", "239.192.6.6", 5004, 1280, 720, 30, mediax::ColourspaceType::kColourspaceYuv, false};
-  announcer.AddSAPAnnouncement(message1);
-  announcer.AddSAPAnnouncement(message2);
-  announcer.AddSAPAnnouncement(message3);
-  announcer.AddSAPAnnouncement(message4);
-  announcer.AddSAPAnnouncement(message5);
-  announcer.AddSAPAnnouncement(message6);
-  announcer.AddSAPAnnouncement(message7);
+  announcer.AddSapAnnouncement(message1);
+  announcer.AddSapAnnouncement(message2);
+  announcer.AddSapAnnouncement(message3);
+  announcer.AddSapAnnouncement(message4);
+  announcer.AddSapAnnouncement(message5);
+  announcer.AddSapAnnouncement(message6);
+  announcer.AddSapAnnouncement(message7);
   ASSERT_EQ(announcer.GetActiveStreamCount(), 7);
   announcer.DeleteAllSAPAnnouncements();
   ASSERT_EQ(announcer.GetActiveStreamCount(), 0);

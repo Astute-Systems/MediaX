@@ -160,11 +160,15 @@ int main(int argc, char** argv) {
   rtp = std::make_unique<mediax::RtpUncompressedPayloader>();
 #endif
 
-  // Setup SAP/SDP announcment
+  // Get the SAP/SDP announcment singleton instance
   mediax::sap::SAPAnnouncer& sap_announcer = mediax::sap::SAPAnnouncer::GetInstance();
 
+  // Create a stream information object
   mediax::StreamInformation stream_information = {FLAGS_filename, FLAGS_ipaddr,    (uint16_t)FLAGS_port, FLAGS_height,
                                                   FLAGS_width,    FLAGS_framerate, video_mode,           false};
+  // Add a SAP announcement for the new stream
+  sap_announcer.AddSapAnnouncement(stream_information);
+  // Add a SAP announcement for the new stream
   rtp->SetStreamInfo(stream_information);
   rtp->Open();
 
@@ -241,6 +245,7 @@ int main(int argc, char** argv) {
       break;
   }
 
+  sap_announcer.Start();
   rtp->Start();
 
   // Convert all the scan lines
@@ -282,6 +287,8 @@ int main(int argc, char** argv) {
   std::cout << "\n";
   std::cout << "Example terminated...\n";
 
+  sap_announcer.Stop();
+  rtp->Stop();
   rtp->Close();
   mediax::RtpCleanup();
 

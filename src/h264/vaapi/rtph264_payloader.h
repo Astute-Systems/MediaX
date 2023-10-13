@@ -65,7 +65,7 @@ class RtpH264VaapiPayloader : public RtpPayloader {
   ///
   /// \param rgbframe pointer to RGB buffer
   /// \param blocking set to true if blocking
-  /// \return int
+  /// \return int error if value is <0, 0 on success
   ///
   int Transmit(uint8_t *rgbframe, bool blocking = true) final;
 

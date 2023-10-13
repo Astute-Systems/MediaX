@@ -29,7 +29,7 @@ message.height = 480
 message.width = 640
 message.framerate = 25
 message.colourspace = rtp_types.ColourspaceType_kColourspaceYuv
-sap.AddSAPAnnouncement(message())
+sap.AddSapAnnouncement(message())
 
 message.sessionName = "Stream 2"
 message.ipAddress = "192.168.1.2"
@@ -38,7 +38,7 @@ message.height = 800
 message.width = 600
 message.framerate = 30
 message.colourspace = rtp_types.ColourspaceType_kColourspaceYuv
-sap.AddSAPAnnouncement(message())
+sap.AddSapAnnouncement(message())
 
 message.sessionName = "Stream 3"
 message.ipAddress = "192.168.1.3"
@@ -47,7 +47,7 @@ message.height = 1920
 message.width = 1024
 message.framerate = 60
 message.colourspace = rtp_types.ColourspaceType_kColourspaceYuv
-sap.AddSAPAnnouncement(message())
+sap.AddSapAnnouncement(message())
 
 message.sessionName = "Stream 4"
 message.ipAddress = "192.168.1.4"
@@ -56,7 +56,7 @@ message.height = 1920
 message.width = 1024
 message.framerate = 60
 message.colourspace = rtp_types.ColourspaceType_kColourspaceRgb24
-sap.AddSAPAnnouncement(message())
+sap.AddSapAnnouncement(message())
 
 message.sessionName = "Stream 5"
 message.ipAddress = "192.168.1.5"
@@ -65,7 +65,7 @@ message.height = 1920
 message.width = 1024
 message.framerate = 60
 message.colourspace = rtp_types.ColourspaceType_kColourspaceMono8
-sap.AddSAPAnnouncement(message())
+sap.AddSapAnnouncement(message())
 
 message.sessionName = "Stream 6"
 message.ipAddress = "192.168.1.6"
@@ -74,7 +74,7 @@ message.height = 1920
 message.width = 1024
 message.framerate = 60
 message.colourspace = rtp_types.ColourspaceType_kColourspaceJpeg2000
-sap.AddSAPAnnouncement(message())
+sap.AddSapAnnouncement(message())
 
 message.sessionName = "Stream 7"
 message.ipAddress = "192.168.1.7"
@@ -83,7 +83,7 @@ message.height = 1920
 message.width = 1024
 message.framerate = 60
 message.colourspace = rtp_types.ColourspaceType_kColourspaceH264Part10
-sap.AddSAPAnnouncement(message())
+sap.AddSapAnnouncement(message())
 
 sap.Start()
 

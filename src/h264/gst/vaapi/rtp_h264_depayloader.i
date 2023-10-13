@@ -1,4 +1,4 @@
-%module rtp_h264_depayloader
+%module rtp_h264_gst_vaapi_depayloader
 
 %import "rtp/rtp_depayloader.i"
 

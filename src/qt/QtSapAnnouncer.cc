@@ -28,8 +28,8 @@ QtSapAnnouncer &QtSapAnnouncer::getInstance() {
   return m_instance;
 }
 
-Q_INVOKABLE void QtSapAnnouncer::addSAPAnnouncement(const ::mediax::StreamInformation &stream_information) {
-  sap_announcer_.AddSAPAnnouncement(stream_information);
+Q_INVOKABLE void QtSapAnnouncer::AddSapAnnouncement(const ::mediax::StreamInformation &stream_information) {
+  sap_announcer_.AddSapAnnouncement(stream_information);
 }
 
 Q_INVOKABLE void QtSapAnnouncer::deleteAllSAPAnnouncements() { sap_announcer_.DeleteAllSAPAnnouncements(); }

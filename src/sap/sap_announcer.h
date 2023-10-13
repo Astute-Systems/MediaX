@@ -76,7 +76,7 @@ class SAPAnnouncer {
   ///
   /// \param message The stream details
   ///
-  void AddSAPAnnouncement(const ::mediax::StreamInformation &stream_information);
+  void AddSapAnnouncement(const ::mediax::StreamInformation &stream_information);
 
   ///
   /// \brief Deletes all announcements, thread is still running. Call Stop() method to terminate the thread
