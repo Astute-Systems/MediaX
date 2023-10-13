@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
   sap.Stop();
   // Close the RTP session
   rtp.Stop();
-  rtp.Stop();
+  rtp.Close();
   mediax::RtpCleanup();
   /// [Receive example close]
 
