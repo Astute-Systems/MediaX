@@ -21,38 +21,6 @@
 
 namespace mediax::h264::gst::nvidia {
 
-GstFlowReturn SourceFrameCallback(GstAppSink *appsink, gpointer user_data) {
-  // Get the payloader object
-  RtpH264GstNvidiaPayloader *payloader = reinterpret_cast<RtpH264GstNvidiaPayloader *>(user_data);
-
-  // Get the sample from the appsink
-  GstSample *sample = gst_app_sink_pull_sample(appsink);
-
-  // Get the buffer from the sample
-  GstBuffer *buffer = gst_sample_get_buffer(sample);
-
-  // Get the caps from the sample
-  GstCaps *caps = gst_sample_get_caps(sample);
-
-  // Get the width and height from the caps
-  GstStructure *structure = gst_caps_get_structure(caps, 0);
-  int width, height;
-  gst_structure_get_int(structure, "width", &width);
-  gst_structure_get_int(structure, "height", &height);
-
-  // Get the data from the buffer
-  GstMapInfo map;
-  gst_buffer_map(buffer, &map, GST_MAP_READ);
-
-  // Unmap the buffer
-  gst_buffer_unmap(buffer, &map);
-
-  // Unref the sample
-  gst_sample_unref(sample);
-
-  return GST_FLOW_OK;
-}
-
 RtpH264GstNvidiaPayloader::RtpH264GstNvidiaPayloader() = default;
 
 RtpH264GstNvidiaPayloader::~RtpH264GstNvidiaPayloader() = default;
@@ -100,10 +68,6 @@ bool RtpH264GstNvidiaPayloader::Open() {
 
   // Link the elements
   gst_element_link_many(appsrc, capsfilter, nvh264enc, rtph264pay, udpsink, nullptr);
-
-  // Setup the appsrc element
-  // g_object_set(G_OBJECT(appsrc), "emit-signals", true, "do-timestamp", true, nullptr);
-  // g_signal_connect(appsrc, "need-data", G_CALLBACK(SourceFrameCallback), this);
 
   // Trigger callback every 40 ms
   gst_base_sink_set_sync(GST_BASE_SINK(appsrc), true);

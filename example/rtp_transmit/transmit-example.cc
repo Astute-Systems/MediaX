@@ -260,7 +260,7 @@ int main(int argc, char** argv) {
     }
 
     // Bail out if we are counting frames and meet the requested limit
-    if (count >= FLAGS_num_frames) {
+    if (count - 1 > FLAGS_num_frames) {
       application_running = false;
     }
 

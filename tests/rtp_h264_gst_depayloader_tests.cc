@@ -36,6 +36,10 @@ TEST(RtpH264DepayloaderTest, Timeout) {
   ASSERT_EQ(rtp->GetSessionName(), "test_session_name");
   rtp->Open();
   EXPECT_FALSE(rtp->Receive(&rgb_test, 80));
+  // Check fire 100 bytes are all zeros
+  for (int i = 0; i < 100; i++) {
+    EXPECT_EQ(rgb_test[i], 0);
+  }
   rtp->Close();
 }
 

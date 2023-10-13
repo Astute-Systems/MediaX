@@ -92,10 +92,10 @@ class RtpH264GstVaapiDepayloader : public RtpDepayloader {
   ///
   /// \brief Recieve a frame or timeout
   ///
-  /// \param cpu the fame buffer in CPU memory.
+  /// \param cpu the fame buffer in CPU memory. I
   /// \param timeout zero will wait forever or a timeout in milliseconds
   /// \return true when frame available
-  /// \return false when no frame was received in the timeout
+  /// \return false when no frame was received in the timeout and the cpu pointer is invalid
   ///
   bool Receive(uint8_t **cpu, int32_t timeout = 0) final;
 

@@ -115,12 +115,12 @@ gboolean on_draw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer
     cairo_show_text(cr, no_stream.c_str());
   }
   m_frame_counter_++;
-  if (count_ >= FLAGS_num_frames) {
+  if (count_ - 1 > FLAGS_num_frames) {
     std::cout << "\n";
     std::flush(std::cout);
     gtk_main_quit();
   }
-  if (FLAGS_num_frames != 0) count_++;
+  if (FLAGS_num_frames > 0) count_++;
 
   return FALSE;
 }
