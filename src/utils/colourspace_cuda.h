@@ -18,10 +18,10 @@
 
 #include "utils/colourspace.h"
 
-/// The video functions namespace for colourspace manipulation
+/// The video functions namespace
 namespace mediax::video {
 
-/// Helper functions for different colour space options
+/// Helper functions for different colour space options, optimised for CUDA (NVidia)
 class ColourSpaceCuda : public ColourSpace {
  public:
   ///

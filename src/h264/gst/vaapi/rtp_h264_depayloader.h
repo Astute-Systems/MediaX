@@ -22,6 +22,8 @@
 
 #include "rtp/rtp_depayloader.h"
 
+/// The H.264 video compression GStreamer namespace
+namespace mediax::rtp::h264::gst {}
 /// The Gstreamer implementation of the Nvidia (NVENC) namespace
 namespace mediax::rtp::h264::gst::vaapi {
 

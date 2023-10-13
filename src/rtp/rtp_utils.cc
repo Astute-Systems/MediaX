@@ -25,6 +25,7 @@
 #include <iomanip>
 #include <iostream>
 
+/// The DefenceX (MediaX) library for video streaming
 namespace mediax {
 
 void InitRtp(int argc, char *argv[]) {

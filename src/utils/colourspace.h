@@ -18,7 +18,7 @@
 
 namespace mediax::video {
 
-/// Helper functions for different colour space options
+/// Helper functions for different colour space options, base class
 class ColourSpace {
  public:
   ///

@@ -20,7 +20,7 @@
 
 namespace mediax::video {
 
-/// Helper functions for different colour space options
+/// Helper functions for different colour space options, optimised for CPU
 class ColourSpaceCpu : public ColourSpace {
  public:
   ///
