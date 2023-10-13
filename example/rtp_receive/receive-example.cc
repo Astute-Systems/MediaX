@@ -39,8 +39,12 @@ DEFINE_uint32(mode, 1,
               "0 - Uncompressed RGB\n\t"
               "1 - Uncompressed YUV\n\t"
               "2 - Mono16\n\t"
+#if GST_SUPPORTED
               "3 - Mono8\n\t"
               "4 - H.264\n\t");
+#else
+              "3 - Mono8\n\t");
+#endif
 DEFINE_uint32(num_frames, 0, "The number of frames to send");
 
 struct OnDrawData {
@@ -131,12 +135,16 @@ gboolean update_callback(gpointer user_data) {
 }
 
 void ProcessVideo(mediax::ColourspaceType mode) {
+#if GST_SUPPORTED
   if ((mode == mediax::ColourspaceType::kColourspaceH264Part10) ||
       (mode == mediax::ColourspaceType::kColourspaceH264Part4)) {
     rtp_ = std::make_shared<mediax::h264::gst::vaapi::RtpH264GstVaapiDepayloader>();
   } else {
     rtp_ = std::make_shared<mediax::RtpUncompressedDepayloader>();
   }
+#else
+  rtp_ = std::make_shared<mediax::RtpUncompressedDepayloader>();
+#endif
 
   // Setup stream
   mediax::StreamInformation stream_information = {

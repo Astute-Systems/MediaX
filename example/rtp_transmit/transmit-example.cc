@@ -93,8 +93,12 @@ DEFINE_uint32(mode, 0,
               "0 - Uncompressed RGB\n\t"
               "1 - Uncompressed YUV\n\t"
               "2 - Mono16\n\t"
+#if GST_SUPPORTED
               "3 - Mono8\n\t"
               "4 - H.264\n\t");
+#else
+              "3 - Mono8\n\t");
+#endif
 DEFINE_uint32(num_frames, 0, "The number of frames to send");
 
 static bool application_running = true;
@@ -145,12 +149,16 @@ int main(int argc, char** argv) {
 
   // Setup RTP streaming class
   std::unique_ptr<mediax::RtpPayloader> rtp;
+#if GST_SUPPORTED
   if ((video_mode == mediax::ColourspaceType::kColourspaceH264Part10) ||
       (video_mode == mediax::ColourspaceType::kColourspaceH264Part4)) {
     rtp = std::make_unique<mediax::h264::gst::vaapi::RtpH264GstVaapiPayloader>();
   } else {
     rtp = std::make_unique<mediax::RtpUncompressedPayloader>();
   }
+#else
+  rtp = std::make_unique<mediax::RtpUncompressedPayloader>();
+#endif
 
   // Setup SAP/SDP announcment
   mediax::sap::SAPAnnouncer& sap_announcer = mediax::sap::SAPAnnouncer::GetInstance();

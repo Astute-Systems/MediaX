@@ -12,8 +12,6 @@ set(CMAKE_SWIG_FLAGS "")
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GST REQUIRED gstreamer-1.0)
 
-message(STATUS "Gstreamer include dirs: ${GST_INCLUDE_DIRS}")
-
 find_package(PythonLibs REQUIRED)
 include_directories(${PYTHON_INCLUDE_PATH} ${GST_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/src)
 
