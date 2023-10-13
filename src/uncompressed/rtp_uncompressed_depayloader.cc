@@ -287,6 +287,7 @@ bool RtpUncompressedDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
       if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
           duration >= to) {
         // Leave the thread to receive the rest of the frame
+        *cpu = nullptr;
         return false;
       }
     }

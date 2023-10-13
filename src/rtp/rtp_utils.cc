@@ -34,6 +34,14 @@ void InitRtp(int argc, char *argv[]) {
 #endif
 }
 
+bool IsRtpInitialised() {
+#if GST_SUPPORTED
+  return gst_is_initialized();
+#else
+  return false;
+#endif
+}
+
 void RtpCleanup() {
 #if GST_SUPPORTED
   // Deinitialize GStreamer

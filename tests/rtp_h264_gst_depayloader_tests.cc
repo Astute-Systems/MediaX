@@ -36,10 +36,9 @@ TEST(RtpH264DepayloaderTest, Timeout) {
   ASSERT_EQ(rtp->GetSessionName(), "test_session_name");
   rtp->Open();
   EXPECT_FALSE(rtp->Receive(&rgb_test, 80));
-  // Check fire 100 bytes are all zeros
-  for (int i = 0; i < 100; i++) {
-    EXPECT_EQ(rgb_test[i], 0);
-  }
+  // Expect pointer to be invalid
+  EXPECT_EQ(rgb_test, nullptr);
+  rtp->Stop();
   rtp->Close();
 }
 
@@ -59,13 +58,10 @@ TEST(RtpH264DepayloaderTest, UnicastOk) {
   rtp.SetHeight(720);
   rtp.SetWidth(1280);
   rtp.SetColourSpace(::mediax::ColourspaceType::kColourspaceH264Part10);
-  std::cout << "Setup" << std::endl;
 
   // Start the stream
   EXPECT_TRUE(rtp.Open());
-  std::cout << "Opened" << std::endl;
   rtp.Start();
-  std::cout << "Started" << std::endl;
   uint8_t* data = rgb_test.data();
   EXPECT_FALSE(rtp.Receive(&data, 80));
   rtp.Stop();
@@ -78,7 +74,6 @@ TEST(RtpH264DepayloaderTest, UnicastOk) {
   EXPECT_EQ(rtp.GetHeight(), 720);
   EXPECT_EQ(rtp.GetWidth(), 1280);
 
-  std::cout << "Received" << std::endl;
   WritePngFile(rgb_test.data(), rtp.GetWidth(), rtp.GetHeight(), "H264_Image.png");
 }
 
@@ -101,13 +96,10 @@ TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfo) {
                                              .encoding = ::mediax::ColourspaceType::kColourspaceH264Part10,
                                              .deleted = false};
   rtp.SetStreamInfo(stream_info);
-  std::cout << "Setup" << std::endl;
 
   // Start the stream
   EXPECT_TRUE(rtp.Open());
-  std::cout << "Opened" << std::endl;
   rtp.Start();
-  std::cout << "Started" << std::endl;
   uint8_t* data = rgb_test.data();
   EXPECT_FALSE(rtp.Receive(&data, 80));
   rtp.Stop();
@@ -120,7 +112,6 @@ TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfo) {
   EXPECT_EQ(rtp.GetHeight(), 720);
   EXPECT_EQ(rtp.GetWidth(), 1280);
 
-  std::cout << "Received" << std::endl;
   WritePngFile(rgb_test.data(), rtp.GetWidth(), rtp.GetHeight(), "H264_Image.png");
 }
 
@@ -143,13 +134,10 @@ TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfoPtr) {
                                              .encoding = ::mediax::ColourspaceType::kColourspaceH264Part10,
                                              .deleted = false};
   rtp->SetStreamInfo(stream_info);
-  std::cout << "Setup" << std::endl;
 
   // Start the stream
   EXPECT_TRUE(rtp->Open());
-  std::cout << "Opened" << std::endl;
   rtp->Start();
-  std::cout << "Started" << std::endl;
   uint8_t* data = rgb_test.data();
   EXPECT_FALSE(rtp->Receive(&data, 80));
   rtp->Stop();
@@ -162,6 +150,5 @@ TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfoPtr) {
   EXPECT_EQ(rtp->GetHeight(), 720);
   EXPECT_EQ(rtp->GetWidth(), 1280);
 
-  std::cout << "Received" << std::endl;
   WritePngFile(rgb_test.data(), rtp->GetWidth(), rtp->GetHeight(), "H264_Image.png");
 }

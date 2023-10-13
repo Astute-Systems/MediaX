@@ -16,9 +16,17 @@
 #include "rtp/rtp.h"
 #include "rtp/rtp_utils.h"
 
-TEST(Rtp, Init) { mediax::InitRtp(0, nullptr); }
+TEST(Rtp, Init) {
+  mediax::InitRtp(0, nullptr);
+  EXPECT_TRUE(mediax::IsRtpInitialised());
+}
 
-TEST(Rtp, CleanUp) { mediax::RtpCleanup(); }
+TEST(Rtp, CleanUp) {
+  if (!mediax::IsRtpInitialised()) {
+    std::cout << "Cleaning up RTP" << std::endl;
+    mediax::RtpCleanup();
+  }
+}
 
 TEST(Rtp, Bits) {
   EXPECT_EQ(mediax::BitsPerPixel(mediax::ColourspaceType::kColourspaceRgba), 32);

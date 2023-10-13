@@ -10,6 +10,7 @@ project(mediax
 add_subdirectory(uncompressed)
 add_subdirectory(sap)
 add_subdirectory(rtp)
+add_subdirectory(h264)
 
 if (BUILD_QT6)
   add_subdirectory(qt)

@@ -42,6 +42,14 @@ namespace mediax {
 void InitRtp(int argc, char *argv[]);
 
 ///
+/// \brief Check if the RTP library has been initialized
+///
+/// \return true If already initialized
+/// \return false If not initialized
+///
+bool IsRtpInitialised();
+
+///
 /// \brief Finalise the RTP library, mainly needed for GStreamer support
 ///
 ///
