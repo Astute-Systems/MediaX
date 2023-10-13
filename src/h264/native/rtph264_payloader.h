@@ -16,7 +16,7 @@
 
 #include "rtp/rtp_payloader.h"
 
-namespace mediax {
+namespace mediax::rtp::h264 {
 
 class RtpH264Payloader : public RtpPayloader {
   ///
@@ -80,6 +80,6 @@ class RtpH264Payloader : public RtpPayloader {
   void Stop() final;
 };
 
-}  // namespace mediax
+}  // namespace mediax::rtp::h264
 
 #endif  // H264_NATIVE_RTPH264_PAYLOADER_H_

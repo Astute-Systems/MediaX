@@ -1,4 +1,3 @@
-
 //
 // Copyright (c) 2023, DefenceX PTY LTD
 //
@@ -8,10 +7,15 @@
 // License. See the LICENSE file in the project root for full license details.
 //
 ///
-/// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
+/// \brief RTP streaming video types
 ///
-/// \file rtph264_payloader.cc
+/// \file sap.h
 
-#include "h264/vaapi/rtph264_payloader.h"
+#ifndef SAP_SAP_H_
+#define SAP_SAP_H_
 
-namespace mediax::rtp::h264::vaapi {}
+#include "sap/sap_announcer.h"
+#include "sap/sap_listener.h"
+#include "sap/sap_utils.h"
+
+#endif  // SAP_SAP_H_

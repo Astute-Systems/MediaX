@@ -41,7 +41,7 @@ class QtRtpUncompressedDepayloader : public QObject {
   ///
   /// \param stream_information
   ///
-  void setStreamInfo(const mediax::StreamInformation& stream_information) {
+  void setStreamInfo(const mediax::rtp::StreamInformation& stream_information) {
     m_rtpDepayloader->SetStreamInfo(stream_information);
   }
 

@@ -122,9 +122,16 @@ Catch the stream using the gstreamer src pipeline in the section below. Followin
 
 ![test card image](testcard.png)
 \section code Code Examples
-\subsection code_transmit Transmit
+\subsection code_sap SAP/SDP Announcer
+An example of the SAP/SDP announcer as found in sap-announcer.cc:
+\snippet sap_announcer/sap-announcer.cc Sap example announcer
 
-Include the following
+And to stop the SAP/SDP announcer:
+\snippet sap_announcer/sap-announcer.cc Sap example stop
+
+\subsection code_transmit RTP Transmit
+
+Include the following to setup an uncompressed video stream as shown in the transmit.cc example
 \snippet simple/transmit.cc Transmit includes
 
 To start a SAP/SDP announcment and RTP stream:
@@ -136,12 +143,15 @@ Send a frame
 Finalise the SAP session and RTP stream
 \snippet simple/transmit.cc Transmit example close
 
-\subsection code_receive Receive
-Include the following
+\subsection code_receive RTP Receive
+Include the following to setup an uncompressed video stream as shown in the receive.cc example
 \snippet simple/receive.cc Receive includes
 
-To start a SAP/SDP listener and RTP stream:
+To start a SAP/SDP listener and RTP stream using hard coded stream information (basic functionality):
 \snippet simple/receive.cc Receive example open
+
+A Better way to set the ::mediax::rtp::StreamInformation is to wait for a SAP/SDP announcment
+\snippet simple/receive.cc Receive example sap
 
 Receive a frame
 \snippet simple/receive.cc Receive example receive
@@ -149,8 +159,17 @@ Receive a frame
 Finalise the SAP session and RTP stream
 \snippet simple/receive.cc Receive example close
 
+\subsection other_code RTP Other encoders
+To swap to another encoder such as H.264 for video compression simply swap out the namespace for the required hardware accelleration
+
+For NVIDIA NVENC using Gstreamer use:
+\snippet simple/receive.cc Receive example nvidia
+
+For Intel's Video Accelleration API (VAAPI)
+\snippet simple/receive.cc Receive example vaapi
+
 \section gst Gstreamer examples
-The test scripts ./example/rtp-gst-test-rx.sh, ./example/rtp-gst-test-tx.sh runs the example program against gstreamer to ensure interoperability.
+The test scripts ./example/rtp-gst-raw-rx-\<colourspace>.sh, ./example/rtp-gst-raw-tx-\<colourspace>.sh runs the example program against gstreamer to ensure interoperability.
 
 Use this pipeline as a test payloader to make sure gstreamer is working:
 
@@ -160,7 +179,7 @@ Use this pipeline to capture the stream:
 
     gst-launch-1.0 -v udpsrc port=5004 caps="application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)RAW, sampling=(string)YCbCr-4:2:2, depth=(string)8, width=(string)640, height=(string)480, payload=(int)96" ! queue ! rtpvrawdepay ! queue ! videoconvert ! ximagesink 
 
-You can also run the provided examples back to back using the script  ./example/rtp-test.sh
+You can also run the provided examples back to back using the script  ./example/rtp-raw-\<colourspace>.sh
 
 > CAUTION: Gstreamer will number scan lines from 0 whereas DEF-STAN 00-082 will start at 1, this is a known incompatibility and when mixed will appear to be one scan line out on a GVA display.
 

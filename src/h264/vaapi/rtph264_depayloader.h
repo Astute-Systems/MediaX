@@ -18,7 +18,7 @@
 #include <vector>
 
 /// The MediaX Intel Video Accelleration API (VAAPI) namespace
-namespace mediax::h264::vaapi {
+namespace mediax::rtp::h264::vaapi {
 
 class RtpH264VaapiDepayloader : public RtpDepayloader {
  public:
@@ -54,7 +54,7 @@ class RtpH264VaapiDepayloader : public RtpDepayloader {
   ///
   /// \param stream_information set the stream information
   ///
-  void SetStreamInfo(const ::mediax::StreamInformation &stream_information) final;
+  void SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) final;
 
   ///
   /// \brief Open the RTP stream
@@ -114,7 +114,7 @@ class RtpH264VaapiDepayloader : public RtpDepayloader {
   bool new_rx_frame_ = false;
 };
 
-}  // namespace mediax::h264::vaapi
+}  // namespace mediax::rtp::h264::vaapi
 
 #endif  // H264_GST_RTP_H264_DEPAYLOADER_H_
 

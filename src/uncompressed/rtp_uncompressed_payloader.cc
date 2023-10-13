@@ -38,7 +38,7 @@
 #include "rtp/rtp_utils.h"
 #include "uncompressed/rtp_uncompressed_payloader.h"
 
-namespace mediax {
+namespace mediax::rtp::uncompressed {
 
 uint32_t RtpUncompressedPayloader::sequence_number_ = 0;
 
@@ -53,7 +53,7 @@ RtpUncompressedPayloader::~RtpUncompressedPayloader(void) {
   }
 }
 
-void RtpUncompressedPayloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
+void RtpUncompressedPayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
   egress_.encoding = stream_information.encoding;
   egress_.height = stream_information.height;
   egress_.width = stream_information.width;
@@ -109,12 +109,12 @@ void RtpUncompressedPayloader::Close() {
   if (tx_thread_.joinable()) tx_thread_.join();
 }
 
-void RtpUncompressedPayloader::UpdateHeader(Header *packet, int line, int bytes_per_pixel, int last, int32_t timestamp,
-                                            int32_t source) const {
-  memset(reinterpret_cast<char *>(packet), 0, sizeof(Header));
-  packet->rtp.protocol = kRtpVersion << 30;
-  packet->rtp.protocol = packet->rtp.protocol | kRtpExtension << 28;
-  packet->rtp.protocol = packet->rtp.protocol | kRtpPayloadType << 16;
+void RtpUncompressedPayloader::UpdateHeader(::mediax::rtp::Header *packet, int line, int bytes_per_pixel, int last,
+                                            int32_t timestamp, int32_t source) const {
+  memset(reinterpret_cast<char *>(packet), 0, sizeof(::mediax::rtp::Header));
+  packet->rtp.protocol = ::mediax::rtp::kRtpVersion << 30;
+  packet->rtp.protocol = packet->rtp.protocol | ::mediax::rtp::kRtpExtension << 28;
+  packet->rtp.protocol = packet->rtp.protocol | ::mediax::rtp::kRtpPayloadType << 16;
   packet->rtp.protocol = packet->rtp.protocol | (sequence_number_ & 0xffff);
   packet->rtp.timestamp = timestamp;
   packet->rtp.source = source;
@@ -132,15 +132,15 @@ void RtpUncompressedPayloader::UpdateHeader(Header *packet, int line, int bytes_
 }
 
 void RtpUncompressedPayloader::SendFrame(RtpUncompressedPayloader *stream) {
-  RtpPacket packet;
+  ::mediax::rtp::RtpPacket packet;
 
   ssize_t n = 0;
   uint32_t timestamp = GenerateTimestamp90kHz();
 
-  if (stream->egress_.encoding == ColourspaceType::kColourspaceUndefined) {
+  if (stream->egress_.encoding == ::mediax::rtp::ColourspaceType::kColourspaceUndefined) {
     std::cerr << "Colourspace not defined!!\n";
   }
-  uint8_t bytes_per_pixel = kColourspaceBytes.at(stream->egress_.encoding);
+  uint8_t bytes_per_pixel = ::mediax::rtp::kColourspaceBytes.at(stream->egress_.encoding);
   int32_t stride = stream->egress_.width * bytes_per_pixel;
 
   /// Note DEF-STAN 00-082 starts line numbers at 1, gstreamer starts at 0 for raw video
@@ -148,10 +148,11 @@ void RtpUncompressedPayloader::SendFrame(RtpUncompressedPayloader *stream) {
     uint32_t last = 0;
 
     if (c == stream->egress_.height) last = 1;
-    stream->UpdateHeader(reinterpret_cast<Header *>(&packet), c, bytes_per_pixel, last, timestamp, kRtpSource);
+    stream->UpdateHeader(reinterpret_cast<::mediax::rtp::Header *>(&packet), c, bytes_per_pixel, last, timestamp,
+                         ::mediax::rtp::kRtpSource);
 
-    EndianSwap32(reinterpret_cast<uint32_t *>(&packet), sizeof(RtpHeader) / 4);
-    EndianSwap16(reinterpret_cast<uint16_t *>(&packet.head.payload), sizeof(PayloadHeader) / 2);
+    EndianSwap32(reinterpret_cast<uint32_t *>(&packet), sizeof(::mediax::rtp::RtpHeader) / 4);
+    EndianSwap16(reinterpret_cast<uint16_t *>(&packet.head.payload), sizeof(::mediax::rtp::PayloadHeader) / 2);
 
     memcpy(reinterpret_cast<void *>(&packet.head.payload.line[2]),
            reinterpret_cast<void *>(&stream->arg_tx.rgb_frame[(c * stride)]), stride);
@@ -180,7 +181,7 @@ int RtpUncompressedPayloader::Transmit(uint8_t *rgbframe, bool blocking) {
 
   if (egress_.port_no == 0) return -1;
 
-  if (kRtpThreaded) {
+  if (::mediax::rtp::kRtpThreaded) {
     // Wait for the last thread to finish
     // if (tx_thread_.joinable()) tx_thread_.join();
     // Start a thread so we can start capturing the next frame while transmitting the data
@@ -216,4 +217,4 @@ int32_t RtpUncompressedPayloader::GenerateTimestamp90kHz() {
   return static_cast<int32_t>(num_90kHz_units);
 }
 
-}  // namespace mediax
+}  // namespace mediax::rtp::uncompressed

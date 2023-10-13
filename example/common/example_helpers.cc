@@ -4,28 +4,28 @@
 
 #include "rtp/rtp_types.h"
 
-mediax::ColourspaceType GetMode(int mode) {
+mediax::rtp::ColourspaceType GetMode(int mode) {
   switch (mode) {
     case 0:
-      return mediax::ColourspaceType::kColourspaceRgb24;
+      return mediax::rtp::ColourspaceType::kColourspaceRgb24;
       break;
     case 1:
-      return mediax::ColourspaceType::kColourspaceYuv;
+      return mediax::rtp::ColourspaceType::kColourspaceYuv;
       break;
     case 2:
-      return mediax::ColourspaceType::kColourspaceMono16;
+      return mediax::rtp::ColourspaceType::kColourspaceMono16;
       break;
     case 3:
-      return mediax::ColourspaceType::kColourspaceMono8;
+      return mediax::rtp::ColourspaceType::kColourspaceMono8;
       break;
     case 4:
-      return mediax::ColourspaceType::kColourspaceH264Part4;
+      return mediax::rtp::ColourspaceType::kColourspaceH264Part4;
       break;
     default:
       LOG(WARNING) << "Invalid video mode " << mode;
-      return mediax::ColourspaceType::kColourspaceYuv;
+      return mediax::rtp::ColourspaceType::kColourspaceYuv;
   }
-  return mediax::ColourspaceType::kColourspaceYuv;
+  return mediax::rtp::ColourspaceType::kColourspaceYuv;
 }
 
 std::string ModeToString(int mode) {

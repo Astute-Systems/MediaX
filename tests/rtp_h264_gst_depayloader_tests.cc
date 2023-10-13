@@ -57,7 +57,7 @@ TEST(RtpH264DepayloaderTest, UnicastOk) {
   rtp.SetSessionName("test_session_name");
   rtp.SetHeight(720);
   rtp.SetWidth(1280);
-  rtp.SetColourSpace(::mediax::ColourspaceType::kColourspaceH264Part10);
+  rtp.SetColourSpace(::mediax::rtp::ColourspaceType::kColourspaceH264Part10);
 
   // Start the stream
   EXPECT_TRUE(rtp.Open());
@@ -67,7 +67,7 @@ TEST(RtpH264DepayloaderTest, UnicastOk) {
   rtp.Stop();
   rtp.Close();
 
-  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::ColourspaceType::kColourspaceH264Part10);
+  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceH264Part10);
   mediax::video::ColourSpaceCpu convert;
   convert.Nv12ToRgb(rtp.GetHeight(), rtp.GetWidth(), data, rgb_test.data());
 
@@ -87,13 +87,13 @@ TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfo) {
   mediax::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
 
   // Set the stream details using set stream info
-  ::mediax::StreamInformation stream_info = {.session_name = "test_session_name",
+  ::mediax::rtp::StreamInformation stream_info = {.session_name = "test_session_name",
                                              .hostname = "127.0.0.1",
                                              .port = 5004,
                                              .height = 720,
                                              .width = 1280,
                                              .framerate = 25,
-                                             .encoding = ::mediax::ColourspaceType::kColourspaceH264Part10,
+                                             .encoding = ::mediax::rtp::ColourspaceType::kColourspaceH264Part10,
                                              .deleted = false};
   rtp.SetStreamInfo(stream_info);
 
@@ -105,7 +105,7 @@ TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfo) {
   rtp.Stop();
   rtp.Close();
 
-  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::ColourspaceType::kColourspaceH264Part10);
+  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceH264Part10);
   mediax::video::ColourSpaceCpu convert;
   convert.Nv12ToRgb(rtp.GetHeight(), rtp.GetWidth(), data, rgb_test.data());
 
@@ -125,13 +125,13 @@ TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfoPtr) {
   auto rtp = std::make_shared<mediax::h264::gst::vaapi::RtpH264GstVaapiDepayloader>();
 
   // Set the stream details using set stream info
-  ::mediax::StreamInformation stream_info = {.session_name = "test_session_name",
+  ::mediax::rtp::StreamInformation stream_info = {.session_name = "test_session_name",
                                              .hostname = "127.0.0.1",
                                              .port = 5004,
                                              .height = 720,
                                              .width = 1280,
                                              .framerate = 25,
-                                             .encoding = ::mediax::ColourspaceType::kColourspaceH264Part10,
+                                             .encoding = ::mediax::rtp::ColourspaceType::kColourspaceH264Part10,
                                              .deleted = false};
   rtp->SetStreamInfo(stream_info);
 
@@ -143,7 +143,7 @@ TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfoPtr) {
   rtp->Stop();
   rtp->Close();
 
-  EXPECT_EQ(rtp->GetColourSpace(), ::mediax::ColourspaceType::kColourspaceH264Part10);
+  EXPECT_EQ(rtp->GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceH264Part10);
   mediax::video::ColourSpaceCpu convert;
   convert.Nv12ToRgb(rtp->GetHeight(), rtp->GetWidth(), data, rgb_test.data());
 

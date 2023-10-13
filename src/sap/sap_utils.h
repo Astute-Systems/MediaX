@@ -18,9 +18,18 @@
 #include <string>
 
 #include "rtp/rtp_types.h"
+#include "sap/sap_listener.h"
 
 /// The Session Announcment Protocol / Session Description Protocol (SAP/SDP) namespace
 namespace mediax::sap {
+
+///
+/// \brief Convert the SDP message to a StreamInformation object
+///
+/// \param sdp_message
+/// \return ::mediax::rtp::StreamInformation
+///
+::mediax::rtp::StreamInformation SapToStreamInformation(const SDPMessage& sdp_message);
 
 ///
 /// \brief Convert a string to a ColourspaceType
@@ -28,7 +37,7 @@ namespace mediax::sap {
 /// \param sampling
 /// \return ColourspaceType
 ///
-ColourspaceType SamplingToColourspaceType(std::string sampling, uint32_t bits_per_pixel);
+mediax::rtp::ColourspaceType SamplingToColourspaceType(std::string sampling, uint32_t bits_per_pixel);
 
 ///
 /// \brief Get the Sdp Colourspace object
@@ -36,7 +45,7 @@ ColourspaceType SamplingToColourspaceType(std::string sampling, uint32_t bits_pe
 /// \param colourspace The colourspace to get the SDP string for
 /// \return std::string
 ///
-std::string GetSdpColourspace(ColourspaceType colourspace);
+std::string GetSdpColourspace(mediax::rtp::ColourspaceType colourspace);
 
 #endif  // SAP_SAP_UTILS_H_
 

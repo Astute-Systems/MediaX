@@ -16,9 +16,9 @@
 
 #include "rtp/rtp_payloader.h"
 
-namespace mediax::h264::gst::vaapi {
+namespace mediax::rtp::h264::gst::vaapi {
 
-class RtpH264GstVaapiPayloader : public RtpPayloader {
+class RtpH264GstVaapiPayloader : public mediax::rtp::RtpPayloader {
  public:
   ///
   /// \brief Construct a new Rtp H.264 Payloader object
@@ -37,7 +37,7 @@ class RtpH264GstVaapiPayloader : public RtpPayloader {
   ///
   /// \param stream_information
   ///
-  void SetStreamInfo(const ::mediax::StreamInformation &stream_information) override;
+  void SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) override;
 
   ///
   /// \brief Open the RTP stream
@@ -81,6 +81,6 @@ class RtpH264GstVaapiPayloader : public RtpPayloader {
   bool started_ = false;
 };
 
-}  // namespace mediax::h264::gst::vaapi
+}  // namespace mediax::rtp::h264::gst::vaapi
 
 #endif  // H264_GST_VAAPI_RTP_H264_PAYLOADER_H_

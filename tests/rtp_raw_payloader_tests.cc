@@ -20,12 +20,12 @@ TEST(RTPDepayloaderTest, SendOneFrameRgb24) {
   std::array<uint8_t, kBuffSize> rtb_test;
 
   mediax::RtpUncompressedPayloader rtp;
-  mediax::StreamInformation stream_information = {
-      "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceRgb24, false};
+  mediax::rtp::StreamInformation stream_information = {
+      "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
   rtp.SetStreamInfo(stream_information);
   ASSERT_EQ(rtp.GetHeight(), 640);
   ASSERT_EQ(rtp.GetWidth(), 480);
-  ASSERT_EQ(rtp.GetColourSpace(), mediax::ColourspaceType::kColourspaceRgb24);
+  ASSERT_EQ(rtp.GetColourSpace(), mediax::rtp::ColourspaceType::kColourspaceRgb24);
   ASSERT_EQ(rtp.GetIpAddress(), "127.0.0.1");
   ASSERT_EQ(rtp.GetPort(), 5004);
   rtp.Open();
@@ -38,12 +38,12 @@ TEST(RTPDepayloaderTest, SendOneFrameYuv) {
   std::array<uint8_t, kBuffSize> rtb_test;
 
   mediax::RtpUncompressedPayloader rtp;
-  mediax::StreamInformation stream_information = {
-      "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceYuv, false};
+  mediax::rtp::StreamInformation stream_information = {
+      "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
   rtp.SetStreamInfo(stream_information);
   ASSERT_EQ(rtp.GetHeight(), 640);
   ASSERT_EQ(rtp.GetWidth(), 480);
-  ASSERT_EQ(rtp.GetColourSpace(), mediax::ColourspaceType::kColourspaceYuv);
+  ASSERT_EQ(rtp.GetColourSpace(), mediax::rtp::ColourspaceType::kColourspaceYuv);
   ASSERT_EQ(rtp.GetIpAddress(), "127.0.0.1");
   ASSERT_EQ(rtp.GetPort(), 5004);
   rtp.Open();
@@ -56,12 +56,12 @@ TEST(RTPDepayloaderTest, SendOneFrameMono16) {
   std::array<uint8_t, kBuffSize> rtb_test;
 
   mediax::RtpUncompressedPayloader rtp;
-  mediax::StreamInformation stream_information = {
-      "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceMono16, false};
+  mediax::rtp::StreamInformation stream_information = {
+      "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceMono16, false};
   rtp.SetStreamInfo(stream_information);
   ASSERT_EQ(rtp.GetHeight(), 640);
   ASSERT_EQ(rtp.GetWidth(), 480);
-  ASSERT_EQ(rtp.GetColourSpace(), mediax::ColourspaceType::kColourspaceMono16);
+  ASSERT_EQ(rtp.GetColourSpace(), mediax::rtp::ColourspaceType::kColourspaceMono16);
   ASSERT_EQ(rtp.GetIpAddress(), "127.0.0.1");
   ASSERT_EQ(rtp.GetPort(), 5004);
   rtp.Open();
@@ -74,12 +74,12 @@ TEST(RTPDepayloaderTest, SendOneFrameMono8) {
   std::array<uint8_t, kBuffSize> rtb_test;
 
   mediax::RtpUncompressedPayloader rtp;
-  mediax::StreamInformation stream_information = {
-      "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceMono8};
+  mediax::rtp::StreamInformation stream_information = {
+      "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceMono8};
   rtp.SetStreamInfo(stream_information);
   ASSERT_EQ(rtp.GetHeight(), 640);
   ASSERT_EQ(rtp.GetWidth(), 480);
-  ASSERT_EQ(rtp.GetColourSpace(), mediax::ColourspaceType::kColourspaceMono8);
+  ASSERT_EQ(rtp.GetColourSpace(), mediax::rtp::ColourspaceType::kColourspaceMono8);
   ASSERT_EQ(rtp.GetIpAddress(), "127.0.0.1");
   ASSERT_EQ(rtp.GetPort(), 5004);
   rtp.Open();

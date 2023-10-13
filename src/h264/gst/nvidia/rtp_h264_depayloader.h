@@ -23,11 +23,11 @@
 #include "rtp/rtp_depayloader.h"
 
 /// The Gstreamer implementation of the Intel Video Accelleration API (VAAPI) namespace
-namespace mediax::h264::gst::nvidia {
+namespace mediax::rtp::h264::gst::nvidia {
 
 GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data);
 
-class RtpH264GstNvidiaDepayloader : public RtpDepayloader {
+class RtpH264GstNvidiaDepayloader : public mediax::rtp::RtpDepayloader {
  public:
   ///
   /// \brief Construct a new Rtpvraw Depayloader object
@@ -61,7 +61,7 @@ class RtpH264GstNvidiaDepayloader : public RtpDepayloader {
   ///
   /// \param stream_information set the stream information
   ///
-  void SetStreamInfo(const ::mediax::StreamInformation &stream_information) final;
+  void SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) final;
 
   ///
   /// \brief Open the RTP stream
@@ -121,6 +121,6 @@ class RtpH264GstNvidiaDepayloader : public RtpDepayloader {
   bool new_rx_frame_ = false;
 };
 
-}  // namespace mediax::h264::gst::nvidia
+}  // namespace mediax::rtp::h264::gst::nvidia
 
 #endif  // H264_GST_NVIDIA_RTP_H264_DEPAYLOADER_H_

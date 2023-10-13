@@ -19,7 +19,8 @@
 
 #include "rtp/rtp_types.h"
 
-namespace mediax {
+/// The Real Time Protocol (RTP) namespace
+namespace mediax::rtp {
 
 ///
 /// \brief Manage an RTP stream
@@ -43,7 +44,7 @@ class RtpDepayloader {
   /// \param height The height of the stream in pixels
   /// \param width The width of the stream in pixels
   ///
-  virtual void SetStreamInfo(const ::mediax::StreamInformation& stream_information) = 0;
+  virtual void SetStreamInfo(const ::mediax::rtp::StreamInformation& stream_information) = 0;
 
   ///
   /// \brief Open the RTP stream
@@ -101,7 +102,7 @@ class RtpDepayloader {
   ///
   /// \return ColourspaceType
   ///
-  ::mediax::ColourspaceType GetColourSpace() const;
+  ::mediax::rtp::ColourspaceType GetColourSpace() const;
 
   ///
   /// \brief Set the Height attribute
@@ -179,14 +180,14 @@ class RtpDepayloader {
   ///
   /// \param colourspace
   ///
-  void SetColourSpace(::mediax::ColourspaceType colourspace);
+  void SetColourSpace(::mediax::rtp::ColourspaceType colourspace);
 
   ///
   /// \brief Get the Colour Space object
   ///
-  /// \return ::mediax::ColourspaceType
+  /// \return ::mediax::rtp::ColourspaceType
   ///
-  ::mediax::ColourspaceType GetColourSpace();
+  ::mediax::rtp::ColourspaceType GetColourSpace();
 
   ///
   /// \brief Check if the IP address is a multicast address
@@ -198,9 +199,9 @@ class RtpDepayloader {
   bool IsMulticast(std::string_view ip_address);
 
   /// Ingress port
-  ::mediax::PortType ingress_ = {};
+  ::mediax::rtp::PortType ingress_ = {};
 };
 
-}  // namespace mediax
+}  // namespace mediax::rtp
 
 #endif  // RTP_RTP_DEPAYLOADER_H_

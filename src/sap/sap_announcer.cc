@@ -42,7 +42,7 @@ SAPAnnouncer::SAPAnnouncer() {
   memset(&multicast_addr_, 0, sizeof(multicast_addr_));
   multicast_addr_.sin_family = AF_INET;
   multicast_addr_.sin_addr.s_addr = inet_addr(kIpaddr);
-  multicast_addr_.sin_port = htons(kPort);
+  multicast_addr_.sin_port = htons(::mediax::rtp::kPort);
 
   // Select first found interface, can be overridden
   SetSourceInterface(0);
@@ -84,36 +84,36 @@ void SAPAnnouncer::DeleteAllStreams() {
     }
   }
 }
-void SAPAnnouncer::AddSapAnnouncement(const StreamInformation &stream_information) {
+void SAPAnnouncer::AddSapAnnouncement(const ::mediax::rtp::StreamInformation &stream_information) {
   streams_.push_back(stream_information);
 }
 
 void SAPAnnouncer::DeleteAllSAPAnnouncements() { streams_.clear(); }
 
-void SAPAnnouncer::SendSAPAnnouncement(const StreamInformation &stream_information) const {
+void SAPAnnouncer::SendSAPAnnouncement(const ::mediax::rtp::StreamInformation &stream_information) const {
   SendSAPPacket(stream_information, false);
 }
 
-void SAPAnnouncer::SendSAPDeletion(const StreamInformation &stream_information) const {
+void SAPAnnouncer::SendSAPDeletion(const ::mediax::rtp::StreamInformation &stream_information) const {
   SendSAPPacket(stream_information, true);
 }
 
 // Function to send a SAP announcement
-void SAPAnnouncer::SendSAPPacket(const StreamInformation &stream_information, bool deletion) const {
+void SAPAnnouncer::SendSAPPacket(const ::mediax::rtp::StreamInformation &stream_information, bool deletion) const {
   std::string depth;
   std::string colorimetry;
 
   switch (stream_information.encoding) {
-    case mediax::ColourspaceType::kColourspaceMono8:
+    case mediax::rtp::ColourspaceType::kColourspaceMono8:
       depth = "8";
       break;
-    case mediax::ColourspaceType::kColourspaceMono16:
+    case mediax::rtp::ColourspaceType::kColourspaceMono16:
       depth = "16";
       break;
-    case mediax::ColourspaceType::kColourspaceRgb24:
+    case mediax::rtp::ColourspaceType::kColourspaceRgb24:
       depth = "8";
       colorimetry = "colorimetry=BT709-2; ";
-    case mediax::ColourspaceType::kColourspaceYuv:
+    case mediax::rtp::ColourspaceType::kColourspaceYuv:
       depth = "8";
       colorimetry = "colorimetry=BT601-5; ";
     default:
@@ -138,13 +138,14 @@ void SAPAnnouncer::SendSAPPacket(const StreamInformation &stream_information, bo
       " RTP/AVP 96\r\n"
       "a=rtpmap:96 raw/90000\r\n"
       "a=fmtp:96 sampling=" +
-      GetSdpColourspace(stream_information.encoding) + "; width=" + std::to_string(stream_information.width) +
-      "; height=" + std::to_string(stream_information.height) + "; depth=" + depth + "; " + colorimetry +
+      ::mediax::sap::GetSdpColourspace(stream_information.encoding) +
+      "; width=" + std::to_string(stream_information.width) + "; height=" + std::to_string(stream_information.height) +
+      "; depth=" + depth + "; " + colorimetry +
       "progressive\r\n"
       "a=framerate:" +
       std::to_string(stream_information.framerate) + "";
 
-  if (stream_information.encoding == mediax::ColourspaceType::kColourspaceMono16) {
+  if (stream_information.encoding == mediax::rtp::ColourspaceType::kColourspaceMono16) {
     sdp_msg +=
         "a=active-pixel-depth:16\r\n"
         "a=number-pixel-flags:2\r\n"
@@ -186,7 +187,7 @@ void SAPAnnouncer::ListInterfaces(uint16_t select) { SetAddressHelper(select, tr
 
 uint32_t SAPAnnouncer::GetActiveStreamCount() const { return (uint32_t)streams_.size(); }
 
-std::vector<::mediax::StreamInformation> &SAPAnnouncer::GetStreams() { return streams_; }
+std::vector<::mediax::rtp::StreamInformation> &SAPAnnouncer::GetStreams() { return streams_; }
 
 void SAPAnnouncer::SetAddressHelper(uint16_t select [[maybe_unused]], bool helper) {
 #ifdef _WIN32

@@ -18,9 +18,9 @@
 
 #include "rtp/rtp_payloader.h"
 
-namespace mediax::h264::gst::nvidia {
+namespace mediax::rtp::h264::gst::nvidia {
 
-class RtpH264GstNvidiaPayloader : public RtpPayloader {
+class RtpH264GstNvidiaPayloader : public mediax::rtp::RtpPayloader {
  public:
   ///
   /// \brief Construct a new Rtp H.264 Payloader object
@@ -39,7 +39,7 @@ class RtpH264GstNvidiaPayloader : public RtpPayloader {
   ///
   /// \param stream_information
   ///
-  void SetStreamInfo(const ::mediax::StreamInformation &stream_information) override;
+  void SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) override;
 
   ///
   /// \brief Open the RTP stream
@@ -80,6 +80,6 @@ class RtpH264GstNvidiaPayloader : public RtpPayloader {
   GstElement *pipeline_;
 };
 
-}  // namespace mediax::h264::gst::nvidia
+}  // namespace mediax::rtp::h264::gst::nvidia
 
 #endif  // H264_GST_NVIDIA_RTP_H264_PAYLOADER_H_

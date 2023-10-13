@@ -63,13 +63,13 @@
 #include "rtp/rtp_types.h"
 
 /// The DefenceX media streaming namespace
-namespace mediax {
+namespace mediax::rtp::uncompressed {
 
 ///
 /// \brief Manage an RTP stream
 ///
 ///
-class RtpUncompressedDepayloader : public RtpDepayloader {
+class RtpUncompressedDepayloader : public ::mediax::rtp::RtpDepayloader {
  public:
   /// The supported colour spaces
 
@@ -121,7 +121,7 @@ class RtpUncompressedDepayloader : public RtpDepayloader {
   /// \param height The height of the stream in pixels
   /// \param width The width of the stream in pixels
   ///
-  void SetStreamInfo(const ::mediax::StreamInformation &stream_information) final;
+  void SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) final;
 
   ///
   /// \brief Open the RTP stream
@@ -166,11 +166,11 @@ class RtpUncompressedDepayloader : public RtpDepayloader {
   /// Flag indicating the thread is running
   bool rx_thread_running_ = true;
   /// Transmit arguments used by the thread
-  TxData arg_tx;
+  ::mediax::rtp::TxData arg_tx;
   /// thread mutex
   pthread_mutex_t mutex_;
   /// UDP data buffer
-  std::array<uint8_t, kMaxUdpData> udpdata;
+  std::array<uint8_t, ::mediax::rtp::kMaxUdpData> udpdata;
   /// UDP data buffer
   static std::vector<uint8_t> buffer_in_;
   /// Arguments sent to thread
@@ -185,7 +185,7 @@ class RtpUncompressedDepayloader : public RtpDepayloader {
   /// \param timestamp the timestamp
   /// \param source the source id
   ///
-  void UpdateHeader(Header *packet, int line, int last, int32_t timestamp, int32_t source) const;
+  void UpdateHeader(::mediax::rtp::Header *packet, int line, int last, int32_t timestamp, int32_t source) const;
 
   ///
   /// \brief Transmit RTP data to the network using a separate thread
@@ -224,9 +224,9 @@ class RtpUncompressedDepayloader : public RtpDepayloader {
   /// \return true
   /// \return false
   ///
-  bool ReadRtpHeader(RtpUncompressedDepayloader *stream, RtpPacket *packet) const;
+  bool ReadRtpHeader(RtpUncompressedDepayloader *stream, ::mediax::rtp::RtpPacket *packet) const;
 };
 
-}  // namespace mediax
+}  // namespace mediax::rtp::uncompressed
 
 #endif  // UNCOMPRESSED_RTP_UNCOMPRESSED_DEPAYLOADER_H_

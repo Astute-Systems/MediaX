@@ -17,13 +17,13 @@
 
 #include <string_view>
 
-namespace mediax {
+namespace mediax::rtp {
 
 void RtpDepayloader::SetSessionName(std::string_view name) { ingress_.name = name; }
 
 std::string RtpDepayloader::GetSessionName() const { return ingress_.name; }
 
-ColourspaceType RtpDepayloader::GetColourSpace() const { return ingress_.encoding; }
+::mediax::rtp::ColourspaceType RtpDepayloader::GetColourSpace() const { return ingress_.encoding; }
 
 void RtpDepayloader::SetHeight(uint32_t height) { ingress_.height = height; }
 
@@ -45,9 +45,9 @@ void RtpDepayloader::SetPort(uint32_t port) { ingress_.port_no = port; }
 
 uint32_t RtpDepayloader::GetPort() const { return ingress_.port_no; }
 
-void RtpDepayloader::SetColourSpace(::mediax::ColourspaceType colourspace) { ingress_.encoding = colourspace; }
+void RtpDepayloader::SetColourSpace(::mediax::rtp::ColourspaceType colourspace) { ingress_.encoding = colourspace; }
 
-::mediax::ColourspaceType RtpDepayloader::GetColourSpace() { return ingress_.encoding; }
+::mediax::rtp::ColourspaceType RtpDepayloader::GetColourSpace() { return ingress_.encoding; }
 
 bool RtpDepayloader::IsMulticast(std::string_view ip_address) {
   struct in_addr addr;
@@ -57,4 +57,4 @@ bool RtpDepayloader::IsMulticast(std::string_view ip_address) {
   return IN_MULTICAST(ntohl(addr.s_addr));
 }
 
-}  // namespace mediax
+}  // namespace mediax::rtp

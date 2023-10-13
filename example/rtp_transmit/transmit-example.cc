@@ -103,6 +103,11 @@ DEFINE_uint32(num_frames, 0, "The number of frames to send");
 
 static bool application_running = true;
 
+///
+/// \brief The signal handler
+///
+/// \param signum the signal number
+///
 void signalHandler(int signum [[maybe_unused]]) {
   std::cout << "Interrupt signal (" << signum << ") received.\n";
   application_running = false;
@@ -110,13 +115,20 @@ void signalHandler(int signum [[maybe_unused]]) {
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
+///
+/// \brief The main entry point
+///
+/// \param argc the argument count
+/// \param argv the argument values
+/// \return int the return code
+///
 int main(int argc, char** argv) {
 #if CUDA_ENABLED
   std::shared_ptr<mediax::video::ColourSpace> convert = std::make_shared<mediax::video::ColourSpaceCuda>();
 #else
   std::shared_ptr<mediax::video::ColourSpace> convert = std::make_shared<mediax::video::ColourSpaceCpu>();
 #endif
-  mediax::ColourspaceType video_mode = mediax::ColourspaceType::kColourspaceYuv;
+  mediax::rtp::ColourspaceType video_mode = mediax::rtp::ColourspaceType::kColourspaceYuv;
 
   std::unique_ptr<V4L2Capture> v4lsource;
 
@@ -146,16 +158,16 @@ int main(int argc, char** argv) {
             << ") to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
 
   video_mode = GetMode(FLAGS_mode);
-  transmit_buffer.resize(FLAGS_height * FLAGS_width * BytesPerPixel(video_mode));
+  transmit_buffer.resize(FLAGS_height * FLAGS_width * ::mediax::BytesPerPixel(video_mode));
 
   // Setup RTP streaming class
-  std::unique_ptr<mediax::RtpPayloader> rtp;
+  std::unique_ptr<mediax::rtp::RtpPayloader> rtp;
 #if GST_SUPPORTED
-  if ((video_mode == mediax::ColourspaceType::kColourspaceH264Part10) ||
-      (video_mode == mediax::ColourspaceType::kColourspaceH264Part4)) {
-    rtp = std::make_unique<mediax::h264::gst::vaapi::RtpH264GstVaapiPayloader>();
+  if ((video_mode == mediax::rtp::ColourspaceType::kColourspaceH264Part10) ||
+      (video_mode == mediax::rtp::ColourspaceType::kColourspaceH264Part4)) {
+    rtp = std::make_unique<mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader>();
   } else {
-    rtp = std::make_unique<mediax::RtpUncompressedPayloader>();
+    rtp = std::make_unique<mediax::rtp::uncompressed::RtpUncompressedPayloader>();
   }
 #else
   rtp = std::make_unique<mediax::RtpUncompressedPayloader>();
@@ -165,8 +177,9 @@ int main(int argc, char** argv) {
   mediax::sap::SAPAnnouncer& sap_announcer = mediax::sap::SAPAnnouncer::GetInstance();
 
   // Create a stream information object
-  mediax::StreamInformation stream_information = {FLAGS_filename, FLAGS_ipaddr,    (uint16_t)FLAGS_port, FLAGS_height,
-                                                  FLAGS_width,    FLAGS_framerate, video_mode,           false};
+  mediax::rtp::StreamInformation stream_information = {FLAGS_filename, FLAGS_ipaddr, (uint16_t)FLAGS_port,
+                                                       FLAGS_height,   FLAGS_width,  FLAGS_framerate,
+                                                       video_mode,     false};
   // Add a SAP announcement for the new stream
   sap_announcer.AddSapAnnouncement(stream_information);
   sap_announcer.Start();
@@ -262,9 +275,10 @@ int main(int argc, char** argv) {
     }
 
     // Clear buffer
-    memset(transmit_buffer.data(), 0, FLAGS_height * FLAGS_width * BytesPerPixel(video_mode));
+    memset(transmit_buffer.data(), 0, FLAGS_height * FLAGS_width * ::mediax::BytesPerPixel(video_mode));
     // Copy new image into buffer
-    memcpy(transmit_buffer.data(), video_buffer.data(), FLAGS_height * FLAGS_width * BytesPerPixel(video_mode));
+    memcpy(transmit_buffer.data(), video_buffer.data(),
+           FLAGS_height * FLAGS_width * ::mediax::BytesPerPixel(video_mode));
 
     // Set buffer to 0xff
     if (rtp->Transmit(transmit_buffer.data(), true) < 0) break;

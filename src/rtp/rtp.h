@@ -14,8 +14,12 @@
 #ifndef RTP_RTP_H_
 #define RTP_RTP_H_
 
+#if GST_SUPPORTED
+#include "h264/gst/nvidia/rtp_h264_depayloader.h"
+#include "h264/gst/nvidia/rtp_h264_payloader.h"
 #include "h264/gst/vaapi/rtp_h264_depayloader.h"
 #include "h264/gst/vaapi/rtp_h264_payloader.h"
+#endif
 #include "rtp/rtp_depayloader.h"
 #include "rtp/rtp_payloader.h"
 #include "rtp/rtp_utils.h"
@@ -27,5 +31,10 @@
 #else
 #include "utils/colourspace_cpu.h"
 #endif
+
+/// The H.264 video compression namespace
+namespace mediax::rtp::h264 {
+// Dummy to get doxygen comment in
+}
 
 #endif  // RTP_RTP_H_

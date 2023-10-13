@@ -56,12 +56,20 @@ struct OnDrawData {
   uint16_t port;
 };
 
-std::shared_ptr<mediax::RtpDepayloader> rtp_;
+std::shared_ptr<mediax::rtp::RtpDepayloader> rtp_;
 std::shared_ptr<mediax::sap::SAPListener> sap_listener_;
 
 static uint64_t m_frame_counter_ = 1;
 static uint32_t count_ = 1;
 
+///
+/// \brief The GTK on_draw callback
+///
+/// \param widget the widget
+/// \param cr the cairo context
+/// \param user_data the user data
+/// \return gboolean true if successful
+///
 gboolean on_draw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer user_data) {
   uint8_t *cpu_buffer;
   auto data = static_cast<OnDrawData *>(user_data);
@@ -129,25 +137,36 @@ gboolean on_draw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer
   return FALSE;
 }
 
+///
+/// \brief The GTK update callback
+///
+/// \param user_data the user data
+/// \return gboolean true if successful
+///
 gboolean update_callback(gpointer user_data) {
   gtk_widget_queue_draw(GTK_WIDGET(user_data));
   return TRUE;
 }
 
-void ProcessVideo(mediax::ColourspaceType mode) {
+///
+/// \brief Start to process the incoming video stream
+///
+/// \param mode the video mode
+///
+void ProcessVideo(mediax::rtp::ColourspaceType mode) {
 #if GST_SUPPORTED
-  if ((mode == mediax::ColourspaceType::kColourspaceH264Part10) ||
-      (mode == mediax::ColourspaceType::kColourspaceH264Part4)) {
-    rtp_ = std::make_shared<mediax::h264::gst::vaapi::RtpH264GstVaapiDepayloader>();
+  if ((mode == mediax::rtp::ColourspaceType::kColourspaceH264Part10) ||
+      (mode == mediax::rtp::ColourspaceType::kColourspaceH264Part4)) {
+    rtp_ = std::make_shared<mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader>();
   } else {
-    rtp_ = std::make_shared<mediax::RtpUncompressedDepayloader>();
+    rtp_ = std::make_shared<mediax::rtp::uncompressed::RtpUncompressedDepayloader>();
   }
 #else
   rtp_ = std::make_shared<mediax::RtpUncompressedDepayloader>();
 #endif
 
   // Setup stream
-  mediax::StreamInformation stream_information = {
+  mediax::rtp::StreamInformation stream_information = {
       FLAGS_session_name, FLAGS_ipaddr, (uint16_t)FLAGS_port, FLAGS_height, FLAGS_width, 25, mode, false};
   if (FLAGS_wait_sap) {
     // Just give the stream name and wait for SAP/SDP announcement
@@ -177,6 +196,13 @@ void ProcessVideo(mediax::ColourspaceType mode) {
   rtp_->Start();
 }
 
+///
+/// \brief The main entry point
+///
+/// \param argc the argument count
+/// \param argv the argument values
+/// \return int the return code
+///
 int main(int argc, char *argv[]) {
   gflags::SetVersionString(kVersion);
   gflags::SetUsageMessage(
@@ -195,7 +221,7 @@ int main(int argc, char *argv[]) {
   std::cout << "Example RTP (Rx) streaming (" << FLAGS_width << "x" << FLAGS_height << " " << ModeToString(FLAGS_mode)
             << ") to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
 
-  mediax::ColourspaceType video_mode = GetMode(FLAGS_mode);
+  mediax::rtp::ColourspaceType video_mode = GetMode(FLAGS_mode);
 
   ProcessVideo(video_mode);
 

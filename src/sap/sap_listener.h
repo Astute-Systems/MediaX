@@ -161,7 +161,7 @@ class SAPListener {
   /// \param stream_information The stream information being updated
   /// \return bool, true if the stream information was updated
   ///
-  bool GetStreamInformation(std::string_view session_name, ::mediax::StreamInformation *stream_information) const;
+  bool GetStreamInformation(std::string_view session_name, ::mediax::rtp::StreamInformation *stream_information) const;
   ///
   /// \brief Start the SAP/SDP announcements thread
   ///
@@ -216,14 +216,14 @@ class SAPListener {
   /// \return true
   /// \return false
   ///
-  bool SapStore(std::array<uint8_t, kMaxUdpData> *udpdata, uint32_t size);
+  bool SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *udpdata, uint32_t size);
 
   /// The list of SAP/SDP announcement callbacks
   std::map<std::string, SapCallback, std::less<>> callbacks_;
   /// The list of SAP/SDP announcements
   std::map<std::string, SDPMessage, std::less<>> announcements_;
   /// The buffer for the UDP data
-  std::array<uint8_t, kMaxUdpData> udpdata_;
+  std::array<uint8_t, mediax::rtp::kMaxUdpData> udpdata_;
   /// The thread for the SAP/SDP announcements
   std::thread thread_;
   /// The socket for the SAP/SDP announcements

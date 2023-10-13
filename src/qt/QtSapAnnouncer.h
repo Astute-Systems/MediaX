@@ -52,7 +52,7 @@ class QtSapAnnouncer : public QObject {
   /// \param stream_information
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE void AddSapAnnouncement(const ::mediax::StreamInformation& stream_information);
+  Q_INVOKABLE void AddSapAnnouncement(const ::mediax::rtp::StreamInformation& stream_information);
 
   ///
   /// \brief Delete all SAP announcements

@@ -16,7 +16,8 @@
 
 #include "rtp/rtp_payloader.h"
 
-namespace mediax {
+/// The H.264 video compression (software only) namespace
+namespace mediax::rtp::h264::nvenc {
 
 class RtpH264Payloader : public RtpPayloader {
   ///
@@ -80,6 +81,6 @@ class RtpH264Payloader : public RtpPayloader {
   void Stop() final;
 };
 
-}  // namespace mediax
+}  // namespace mediax::rtp::h264::nvenc
 
 #endif  // H264_NVENC_RTPH264_PAYLOADER_H_

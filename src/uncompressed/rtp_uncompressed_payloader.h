@@ -62,13 +62,13 @@
 #include "rtp/rtp_payloader.h"
 #include "rtp/rtp_types.h"
 
-namespace mediax {
+namespace mediax::rtp::uncompressed {
 
 ///
 /// \brief Manage an RTP stream
 ///
 ///
-class RtpUncompressedPayloader : public RtpPayloader {
+class RtpUncompressedPayloader : public ::mediax::rtp::RtpPayloader {
  public:
   /// The supported colour spaces
 
@@ -89,14 +89,9 @@ class RtpUncompressedPayloader : public RtpPayloader {
   ///
   /// \brief Configure an RTP output stream
   ///
-  /// \param hostname IP address i.e. 239.192.1.1 for multicast
-  /// \param port defaults to 5004
-  /// \param name The name of the stream
-  /// \param encoding The colour space of the stream
-  /// \param height The height of the stream in pixels
-  /// \param width The width of the stream in pixels
+  /// \param stream_information The stream information
   ///
-  void SetStreamInfo(const ::mediax::StreamInformation &stream_information) final;
+  void SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) final;
 
   ///
   /// \brief Open the RTP stream
@@ -140,7 +135,7 @@ class RtpUncompressedPayloader : public RtpPayloader {
   /// The incremental sequence numer for transmitting RTP packets
   static uint32_t sequence_number_;
   /// Transmit arguments used by the thread
-  TxData arg_tx;
+  rtp::TxData arg_tx;
   /// The server address information
   struct addrinfo *server_out_;
   /// The socket for the outgoing stream
@@ -163,7 +158,8 @@ class RtpUncompressedPayloader : public RtpPayloader {
   /// \param timestamp the timestamp
   /// \param source the source id
   ///
-  void UpdateHeader(Header *packet, int line, int bytes_per_pixel, int last, int32_t timestamp, int32_t source) const;
+  void UpdateHeader(rtp::Header *packet, int line, int bytes_per_pixel, int last, int32_t timestamp,
+                    int32_t source) const;
 
   ///
   /// \brief Transmit RTP data to the network using a separate thread
@@ -180,6 +176,6 @@ class RtpUncompressedPayloader : public RtpPayloader {
   static int32_t GenerateTimestamp90kHz();
 };
 
-}  // namespace mediax
+}  // namespace mediax::rtp::uncompressed
 
 #endif  // UNCOMPRESSED_RTP_UNCOMPRESSED_PAYLOADER_H_

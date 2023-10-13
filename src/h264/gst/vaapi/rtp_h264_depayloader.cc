@@ -33,11 +33,11 @@
 
 #include "rtp/rtp_utils.h"
 
-namespace mediax::h264::gst::vaapi {
+namespace mediax::rtp::h264::gst::vaapi {
 
 RtpH264GstVaapiDepayloader::~RtpH264GstVaapiDepayloader() = default;
 
-void RtpH264GstVaapiDepayloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
+void RtpH264GstVaapiDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
   ingress_.encoding = stream_information.encoding;
   ingress_.height = stream_information.height;
   ingress_.width = stream_information.width;
@@ -75,15 +75,15 @@ GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
 
   // Set the ColourspaceType
   if (const gchar *colorspace = gst_structure_get_string(structure, "format"); strncmp(colorspace, "UYVY", 4) == 0) {
-    depayloader->SetColourSpace(ColourspaceType::kColourspaceYuv);
+    depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceYuv);
   } else if (strncmp(colorspace, "RGB", 3) == 0) {
-    depayloader->SetColourSpace(ColourspaceType::kColourspaceRgb24);
+    depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgb24);
   } else if (strncmp(colorspace, "NV12", 3) == 0) {
-    depayloader->SetColourSpace(ColourspaceType::kColourspaceNv12);
+    depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceNv12);
   } else if (strncmp(colorspace, "RGBA", 4) == 0) {
-    depayloader->SetColourSpace(ColourspaceType::kColourspaceRgba);
+    depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgba);
   } else {
-    depayloader->SetColourSpace(ColourspaceType::kColourspaceUndefined);
+    depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceUndefined);
     DLOG(WARNING) << "Unknown colourspace " << colorspace;
   }
 
@@ -199,4 +199,4 @@ std::vector<uint8_t> &RtpH264GstVaapiDepayloader::GetBuffer() { return buffer_in
 
 void RtpH264GstVaapiDepayloader::NewFrame() { new_rx_frame_ = true; }
 
-}  // namespace mediax::h264::gst::vaapi
+}  // namespace mediax::rtp::h264::gst::vaapi

@@ -19,13 +19,13 @@
 
 #include "rtp/rtp.h"
 
-namespace mediax::h264::gst::nvidia {
+namespace mediax::rtp::h264::gst::nvidia {
 
 RtpH264GstNvidiaPayloader::RtpH264GstNvidiaPayloader() = default;
 
 RtpH264GstNvidiaPayloader::~RtpH264GstNvidiaPayloader() = default;
 
-void RtpH264GstNvidiaPayloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
+void RtpH264GstNvidiaPayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
   egress_.encoding = stream_information.encoding;
   egress_.height = stream_information.height;
   egress_.width = stream_information.width;
@@ -106,7 +106,7 @@ int RtpH264GstNvidiaPayloader::Transmit(uint8_t *rgbframe, bool blocking) {
 
   // Create a buffer from the RGB frame
   GstBuffer *buffer =
-      gst_buffer_new_wrapped(rgbframe, egress_.width * egress_.height * mediax::BytesPerPixel(egress_.encoding));
+      gst_buffer_new_wrapped(rgbframe, egress_.width * egress_.height * ::mediax::BytesPerPixel(egress_.encoding));
 
   // Push the buffer to the appsrc element
   GstFlowReturn ret = gst_app_src_push_buffer(GST_APP_SRC(appsrc), buffer);
@@ -123,4 +123,4 @@ void RtpH264GstNvidiaPayloader::Stop() {
   gst_element_set_state(pipeline_, GST_STATE_NULL);
 }
 
-}  // namespace mediax::h264::gst::nvidia
+}  // namespace mediax::rtp::h264::gst::nvidia

@@ -29,15 +29,15 @@ TEST(TestCard, Solid) {
 
   std::vector<uint8_t> test_card(width * height * 3);
 
-  CreateSolidTestCard(test_card.data(), width, height, 0xFF, 0xFF, 0xFF, mediax::ColourspaceType::kColourspaceRgb24);
+  CreateSolidTestCard(test_card.data(), width, height, 0xFF, 0xFF, 0xFF, mediax::rtp::ColourspaceType::kColourspaceRgb24);
   WritePngFile(test_card.data(), width, height, "Testcard_white.png");
-  CreateSolidTestCard(test_card.data(), width, height, 0xFF, 0xFF, 0xFF, mediax::ColourspaceType::kColourspaceRgb24);
+  CreateSolidTestCard(test_card.data(), width, height, 0xFF, 0xFF, 0xFF, mediax::rtp::ColourspaceType::kColourspaceRgb24);
   WritePngFile(test_card.data(), width, height, "Testcard_black.png");
-  CreateSolidTestCard(test_card.data(), width, height, 0xFF, 0x00, 0x00, mediax::ColourspaceType::kColourspaceRgb24);
+  CreateSolidTestCard(test_card.data(), width, height, 0xFF, 0x00, 0x00, mediax::rtp::ColourspaceType::kColourspaceRgb24);
   WritePngFile(test_card.data(), width, height, "Testcard_red.png");
-  CreateSolidTestCard(test_card.data(), width, height, 0x00, 0xFF, 0x00, mediax::ColourspaceType::kColourspaceRgb24);
+  CreateSolidTestCard(test_card.data(), width, height, 0x00, 0xFF, 0x00, mediax::rtp::ColourspaceType::kColourspaceRgb24);
   WritePngFile(test_card.data(), width, height, "Testcard_green.png");
-  CreateSolidTestCard(test_card.data(), width, height, 0x00, 0x00, 0xFF, mediax::ColourspaceType::kColourspaceRgb24);
+  CreateSolidTestCard(test_card.data(), width, height, 0x00, 0x00, 0xFF, mediax::rtp::ColourspaceType::kColourspaceRgb24);
   WritePngFile(test_card.data(), width, height, "Testcard_blue.png");
 }
 
@@ -48,7 +48,7 @@ TEST(TestCard, Checkered) {
 
   std::vector<uint8_t> test_card(width * height * 3);
 
-  CreateCheckeredTestCard(test_card.data(), width, height, mediax::ColourspaceType::kColourspaceRgb24);
+  CreateCheckeredTestCard(test_card.data(), width, height, mediax::rtp::ColourspaceType::kColourspaceRgb24);
   WritePngFile(test_card.data(), width, height, "Testcard_checkered.png");
 }
 
@@ -59,7 +59,7 @@ TEST(TestCard, ColourBars) {
 
   std::vector<uint8_t> test_card(width * height * 3);
 
-  CreateColourBarTestCard(test_card.data(), width, height, mediax::ColourspaceType::kColourspaceRgb24);
+  CreateColourBarTestCard(test_card.data(), width, height, mediax::rtp::ColourspaceType::kColourspaceRgb24);
   WritePngFile(test_card.data(), width, height, "Testcard_colourbars.png");
 }
 
@@ -70,7 +70,7 @@ TEST(TestCard, GreyBars) {
 
   std::vector<uint8_t> test_card(width * height * 3);
 
-  CreateGreyScaleBarTestCard(test_card.data(), width, height, mediax::ColourspaceType::kColourspaceRgb24);
+  CreateGreyScaleBarTestCard(test_card.data(), width, height, mediax::rtp::ColourspaceType::kColourspaceRgb24);
   WritePngFile(test_card.data(), width, height, "Testcard_greybars.png");
 }
 
@@ -81,6 +81,6 @@ TEST(TestCard, CreateQuadTestCard) {
 
   std::vector<uint8_t> test_card(width * height * 3);
 
-  CreateQuadTestCard(test_card.data(), width, height, mediax::ColourspaceType::kColourspaceRgb24);
+  CreateQuadTestCard(test_card.data(), width, height, mediax::rtp::ColourspaceType::kColourspaceRgb24);
   WritePngFile(test_card.data(), width, height, "Testcard_quad.png");
 }

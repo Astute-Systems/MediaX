@@ -20,7 +20,7 @@
 
 #include "rtp/rtp_types.h"
 
-namespace mediax {
+namespace mediax::rtp {
 
 ///
 /// \brief Manage an RTP stream
@@ -45,7 +45,7 @@ class RtpPayloader {
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
   /// \param port defaults to 5004
   ///
-  virtual void SetStreamInfo(const ::mediax::StreamInformation& stream_information) = 0;
+  virtual void SetStreamInfo(const ::mediax::rtp::StreamInformation& stream_information) = 0;
 
   ///
   /// \brief Open the RTP stream
@@ -88,7 +88,7 @@ class RtpPayloader {
   ///
   /// \return ColourspaceType
   ///
-  mediax::ColourspaceType GetColourSpace() const;
+  mediax::rtp::ColourspaceType GetColourSpace() const;
 
   ///
   /// \brief Get the Height object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
@@ -131,9 +131,9 @@ class RtpPayloader {
   uint32_t GetPort() const;
 
   /// Egress port
-  ::mediax::PortType egress_;
+  ::mediax::rtp::PortType egress_;
 };
 
-}  // namespace mediax
+}  // namespace mediax::rtp
 
 #endif  // RTP_RTP_PAYLOADER_H_

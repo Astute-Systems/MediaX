@@ -20,13 +20,13 @@
 
 #include "h264/gst/vaapi/rtp_h264_depayloader.h"
 
-namespace mediax::h264::gst::vaapi {
+namespace mediax::rtp::h264::gst::vaapi {
 
 RtpH264GstVaapiPayloader::RtpH264GstVaapiPayloader() = default;
 
 RtpH264GstVaapiPayloader::~RtpH264GstVaapiPayloader() = default;
 
-void RtpH264GstVaapiPayloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
+void RtpH264GstVaapiPayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
   egress_.encoding = stream_information.encoding;
   egress_.height = stream_information.height;
   egress_.width = stream_information.width;
@@ -138,4 +138,4 @@ void RtpH264GstVaapiPayloader::Stop() {
   gst_element_set_state(pipeline_, GST_STATE_NULL);
 }
 
-}  // namespace mediax::h264::gst::vaapi
+}  // namespace mediax::rtp::h264::gst::vaapi

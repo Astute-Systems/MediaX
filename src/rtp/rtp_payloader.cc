@@ -15,9 +15,9 @@
 
 #include <string>
 
-namespace mediax {
+namespace mediax::rtp {
 
-ColourspaceType RtpPayloader::GetColourSpace() const { return egress_.encoding; }
+mediax::rtp::ColourspaceType RtpPayloader::GetColourSpace() const { return egress_.encoding; }
 
 uint32_t RtpPayloader::GetHeight() const { return egress_.height; }
 
@@ -37,4 +37,4 @@ void RtpPayloader::Stop() {
   // Nothing to do for base class
 }
 
-}  // namespace mediax
+}  // namespace mediax::rtp

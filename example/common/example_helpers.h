@@ -17,9 +17,9 @@
 /// \brief Get the Mode as an enum
 ///
 /// \param mode
-/// \return mediax::ColourspaceType
+/// \return mediax::rtp::ColourspaceType
 ///
-mediax::ColourspaceType GetMode(int mode);
+mediax::rtp::ColourspaceType GetMode(int mode);
 
 ///
 /// \brief Convert a mode to a string

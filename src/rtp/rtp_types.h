@@ -20,7 +20,7 @@
 #include <map>
 #include <string>
 
-namespace mediax {
+namespace mediax::rtp {
 
 /// SAP/SDP constants
 #define kIpaddr "224.2.127.254"
@@ -204,11 +204,11 @@ struct StreamInformation {
   /// The stream framerate in frames / second
   uint32_t framerate;
   /// Colourspace
-  ::mediax::ColourspaceType encoding;
+  ::mediax::rtp::ColourspaceType encoding;
   /// Flag indicating the stream was deleted
   bool deleted = false;
 };
 
-}  // namespace mediax
+}  // namespace mediax::rtp
 
 #endif  // RTP_RTP_TYPES_H_

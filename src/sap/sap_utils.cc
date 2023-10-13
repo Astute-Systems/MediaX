@@ -18,27 +18,39 @@
 
 namespace mediax::sap {
 
-ColourspaceType SamplingToColourspaceType(std::string sampling, uint32_t bits_per_pixel) {
+::mediax::rtp::StreamInformation SapToStreamInformation(const SDPMessage& sdp_message) {
+  ::mediax::rtp::StreamInformation stream_information;
+  stream_information.session_name = sdp_message.session_name;
+  stream_information.hostname = sdp_message.ip_address;
+  stream_information.port = sdp_message.port;
+  stream_information.height = sdp_message.height;
+  stream_information.width = sdp_message.width;
+  stream_information.framerate = sdp_message.framerate;
+  stream_information.encoding = SamplingToColourspaceType(sdp_message.sampling, sdp_message.bits_per_pixel);
+  return stream_information;
+}
+
+mediax::rtp::ColourspaceType SamplingToColourspaceType(std::string sampling, uint32_t bits_per_pixel) {
   // Convert to lower case
   std::string lower = sampling;
   std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
 
-  if (sampling == "rgb") return ColourspaceType::kColourspaceRgb24;
-  if (sampling == "YCbCr-4:2:2") return ColourspaceType::kColourspaceYuv;
-  if ((sampling == "Mono") && (bits_per_pixel == 8)) return ColourspaceType::kColourspaceMono8;
-  if ((sampling == "Mono") && (bits_per_pixel == 16)) return ColourspaceType::kColourspaceMono16;
-  return ColourspaceType::kColourspaceUndefined;
+  if (sampling == "rgb") return mediax::rtp::ColourspaceType::kColourspaceRgb24;
+  if (sampling == "YCbCr-4:2:2") return mediax::rtp::ColourspaceType::kColourspaceYuv;
+  if ((sampling == "Mono") && (bits_per_pixel == 8)) return mediax::rtp::ColourspaceType::kColourspaceMono8;
+  if ((sampling == "Mono") && (bits_per_pixel == 16)) return mediax::rtp::ColourspaceType::kColourspaceMono16;
+  return mediax::rtp::ColourspaceType::kColourspaceUndefined;
 }
 
-std::string GetSdpColourspace(ColourspaceType colourspace) {
+std::string GetSdpColourspace(mediax::rtp::ColourspaceType colourspace) {
   switch (colourspace) {
-    case ColourspaceType::kColourspaceRgb24:
+    case mediax::rtp::ColourspaceType::kColourspaceRgb24:
       return "RGB";
-    case ColourspaceType::kColourspaceYuv:
+    case mediax::rtp::ColourspaceType::kColourspaceYuv:
       return "YCbCr-4:2:2";
-    case ColourspaceType::kColourspaceMono16:
+    case mediax::rtp::ColourspaceType::kColourspaceMono16:
       return "Mono";
-    case ColourspaceType::kColourspaceMono8:
+    case mediax::rtp::ColourspaceType::kColourspaceMono8:
       return "Mono";
     default:
       return "unknown";

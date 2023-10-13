@@ -26,7 +26,7 @@ void QtRtpH264Deayloader::setStreamInfo(const QString &hostname, int port, const
   stream_information.hostname = hostname.toStdString();
   stream_information.port = port;
   stream_information.session_name = session_name.toStdString();
-  stream_information.encoding = mediax::ColourspaceType::kColourspaceH264Part10;
+  stream_information.encoding = mediax::rtp::ColourspaceType::kColourspaceH264Part10;
   stream_information.height = height;
   stream_information.width = width;
   depayloader_.SetStreamInfo(stream_information);

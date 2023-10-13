@@ -61,7 +61,7 @@ void RtpCleanup();
 /// \param mode
 /// \return uint8_t the bits per pixel
 ///
-uint8_t BitsPerPixel(ColourspaceType mode);
+uint8_t BitsPerPixel(rtp::ColourspaceType mode);
 
 ///
 /// \brief Get the number of bytes per pixel for a given colour space
@@ -69,7 +69,7 @@ uint8_t BitsPerPixel(ColourspaceType mode);
 /// \param mode
 /// \return uint8_t
 ///
-uint8_t BytesPerPixel(ColourspaceType mode);
+uint8_t BytesPerPixel(rtp::ColourspaceType mode);
 
 }  // namespace mediax
 
@@ -104,7 +104,7 @@ void DumpHex(const void *data, size_t size);
 /// \param width the image width in pixels
 /// \param height the image height in pixels
 ///
-void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace);
+void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::rtp::ColourspaceType colourspace);
 
 ///
 /// \brief Create a Grey Scale Bar Test Card object
@@ -113,7 +113,8 @@ void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height, med
 /// \param width the image width in pixels
 /// \param height the image height in pixels
 ///
-void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace);
+void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height,
+                                mediax::rtp::ColourspaceType colourspace);
 
 ///
 /// \brief Create a Smtpe Test Card object
@@ -122,7 +123,7 @@ void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height, 
 /// \param width the image width in pixels
 /// \param height the image height in pixels
 ///
-void CreateQuadTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace);
+void CreateQuadTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::rtp::ColourspaceType colourspace);
 
 ///
 /// \brief Create a Checkerd Test Card object
@@ -131,7 +132,7 @@ void CreateQuadTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::
 /// \param width the image width in pixels
 /// \param height the image height in pixels
 ///
-void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace);
+void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::rtp::ColourspaceType colourspace);
 
 ///
 /// \brief Create a Solid Test Card object
@@ -144,6 +145,6 @@ void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height, med
 /// \param blue RGB value
 ///
 void CreateSolidTestCard(uint8_t *data, uint32_t width, uint32_t height, uint8_t red, uint8_t green, uint8_t blue,
-                         mediax::ColourspaceType colourspace);
+                         mediax::rtp::ColourspaceType colourspace);
 
 #endif  // RTP_RTP_UTILS_H_

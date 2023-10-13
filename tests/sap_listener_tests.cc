@@ -29,8 +29,8 @@ TEST(SAPListenerTest, RegisterSapListenerTest) {
   /// Now make an announcement
   mediax::sap::SAPAnnouncer& announcer = mediax::sap::SAPAnnouncer::GetInstance();
   announcer.DeleteAllSAPAnnouncements();
-  mediax::StreamInformation message = {
-      "test_session_name", "127.0.0.1", 5004, 1920, 1080, 30, mediax::ColourspaceType::kColourspaceYuv, false};
+  mediax::rtp::StreamInformation message = {
+      "test_session_name", "127.0.0.1", 5004, 1920, 1080, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
   announcer.AddSapAnnouncement(message);
   announcer.Start();
   ASSERT_EQ(announcer.GetActiveStreamCount(), 1);

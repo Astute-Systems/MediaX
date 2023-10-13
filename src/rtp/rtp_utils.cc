@@ -49,27 +49,27 @@ void RtpCleanup() {
 #endif
 }
 
-uint8_t BitsPerPixel(ColourspaceType mode) {
+uint8_t BitsPerPixel(rtp::ColourspaceType mode) {
   switch (mode) {
-    case ColourspaceType::kColourspaceRgba:
+    case rtp::ColourspaceType::kColourspaceRgba:
       return 32;
-    case ColourspaceType::kColourspaceRgb24:
+    case rtp::ColourspaceType::kColourspaceRgb24:
       return 24;
-    case ColourspaceType::kColourspaceYuv:
+    case rtp::ColourspaceType::kColourspaceYuv:
       return 16;
-    case ColourspaceType::kColourspaceMono16:
+    case rtp::ColourspaceType::kColourspaceMono16:
       return 16;
-    case ColourspaceType::kColourspaceMono8:
+    case rtp::ColourspaceType::kColourspaceMono8:
       return 8;
-    case ColourspaceType::kColourspaceH264Part4:
-    case ColourspaceType::kColourspaceH264Part10:
+    case rtp::ColourspaceType::kColourspaceH264Part4:
+    case rtp::ColourspaceType::kColourspaceH264Part10:
       return 24;  // Not known but not an error.
     default:
       LOG(ERROR) << "Unknown colourspace type";
       return 0;
   }
 }
-uint8_t BytesPerPixel(ColourspaceType mode) { return BitsPerPixel(mode) / 8; }
+uint8_t BytesPerPixel(rtp::ColourspaceType mode) { return BitsPerPixel(mode) / 8; }
 }  // namespace mediax
 
 void EndianSwap32(uint32_t *data, unsigned int length) {
@@ -139,9 +139,9 @@ void DumpHex(const void *data, size_t size) {
 
 static bool odd = true;
 
-void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::ColourspaceType colourspace) {
+void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::rtp::ColourspaceType colourspace) {
   switch (colourspace) {
-    case mediax::ColourspaceType::kColourspaceYuv: {
+    case mediax::rtp::ColourspaceType::kColourspaceYuv: {
       double y = 0.257 * r + 0.504 * g + 0.098 * b + 16;
       if (odd) {
         double u = -0.148 * r - 0.291 * g + 0.439 * b + 128;
@@ -155,21 +155,21 @@ void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::Coloursp
       data[1] = (uint8_t)(y);
     } break;
     default:
-    case mediax::ColourspaceType::kColourspaceRgb24:
+    case mediax::rtp::ColourspaceType::kColourspaceRgb24:
       data[0] = (uint8_t)r;
       data[1] = (uint8_t)g;
       data[2] = (uint8_t)b;
       break;
-    case mediax::ColourspaceType::kColourspaceRgba:
+    case mediax::rtp::ColourspaceType::kColourspaceRgba:
       data[0] = (uint8_t)r;
       data[1] = (uint8_t)g;
       data[2] = (uint8_t)b;
       data[3] = 0;  // Alpha
       break;
-    case mediax::ColourspaceType::kColourspaceMono8:
+    case mediax::rtp::ColourspaceType::kColourspaceMono8:
       data[0] = (uint8_t)(0.299 * r + 0.587 * g + 0.114 * b);
       break;
-    case mediax::ColourspaceType::kColourspaceMono16: {
+    case mediax::rtp::ColourspaceType::kColourspaceMono16: {
       uint16_t mono16_pixel = (uint16_t)(0.299 * r + 0.587 * g + 0.114 * b);
       data[0] = mono16_pixel >> 8 & 0xFF;
       data[1] = mono16_pixel & 0xFF;
@@ -178,7 +178,7 @@ void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::Coloursp
 }
 
 // Implementation of the CreateColourBarTestCard function
-void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
+void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::rtp::ColourspaceType colourspace) {
   uint32_t stride = mediax::BytesPerPixel(colourspace);
   odd = true;
   for (uint32_t y = 0; y < height; y++) {
@@ -228,7 +228,8 @@ void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height, med
 }
 
 // Implementation of the CreateGreyScaleBarTestCard function
-void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
+void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height,
+                                mediax::rtp::ColourspaceType colourspace) {
   uint32_t stride = mediax::BytesPerPixel(colourspace);
 
   uint32_t bar_width = width / 8;
@@ -244,7 +245,7 @@ void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height, 
   }
 }
 
-void CreateQuadTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
+void CreateQuadTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::rtp::ColourspaceType colourspace) {
   uint32_t stride = mediax::BytesPerPixel(colourspace);
 
   uint32_t size = width * height * stride;
@@ -276,7 +277,7 @@ void CreateQuadTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::
   }
 }
 
-void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::ColourspaceType colourspace) {
+void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::rtp::ColourspaceType colourspace) {
   uint32_t stride = mediax::BytesPerPixel(colourspace);
 
   for (uint32_t y = 0; y < height; y++) {
@@ -300,7 +301,7 @@ void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height, med
 }
 
 void CreateSolidTestCard(uint8_t *data, uint32_t width, uint32_t height, uint8_t red, uint8_t green, uint8_t blue,
-                         mediax::ColourspaceType colourspace) {
+                         mediax::rtp::ColourspaceType colourspace) {
   uint32_t stride = mediax::BytesPerPixel(colourspace);
 
   uint32_t size = width * height * stride;

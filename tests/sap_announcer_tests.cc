@@ -20,8 +20,8 @@ TEST(SAPAnnouncerTest, AddSapAnnouncement) {
   mediax::sap::SAPAnnouncer &announcer = mediax::sap::SAPAnnouncer::GetInstance();
   announcer.DeleteAllSAPAnnouncements();
   ASSERT_EQ(announcer.GetActiveStreamCount(), 0);
-  mediax::StreamInformation message = {
-      "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::ColourspaceType::kColourspaceYuv, false};
+  mediax::rtp::StreamInformation message = {
+      "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
   announcer.AddSapAnnouncement(message);
   ASSERT_EQ(announcer.GetActiveStreamCount(), 1);
 }
@@ -29,10 +29,10 @@ TEST(SAPAnnouncerTest, AddSapAnnouncement) {
 TEST(SAPAnnouncerTest, AddMultipleSAPAnnouncements) {
   mediax::sap::SAPAnnouncer &announcer = mediax::sap::SAPAnnouncer::GetInstance();
   announcer.DeleteAllSAPAnnouncements();
-  mediax::StreamInformation message1 = {
-      "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::ColourspaceType::kColourspaceYuv, false};
-  mediax::StreamInformation message2 = {
-      "SD Stream", "239.192.6.1", 5004, 1280, 720, 30, mediax::ColourspaceType::kColourspaceYuv, false};
+  mediax::rtp::StreamInformation message1 = {
+      "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+  mediax::rtp::StreamInformation message2 = {
+      "SD Stream", "239.192.6.1", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
   announcer.AddSapAnnouncement(message1);
   announcer.AddSapAnnouncement(message2);
   ASSERT_EQ(announcer.GetActiveStreamCount(), 2);
@@ -41,20 +41,20 @@ TEST(SAPAnnouncerTest, AddMultipleSAPAnnouncements) {
 TEST(SAPAnnouncerTest, DeleteAllSAPAnnouncements) {
   mediax::sap::SAPAnnouncer &announcer = mediax::sap::SAPAnnouncer::GetInstance();
   announcer.DeleteAllSAPAnnouncements();
-  mediax::StreamInformation message1 = {
-      "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::ColourspaceType::kColourspaceYuv, false};
-  mediax::StreamInformation message2 = {
-      "SD Stream 1", "239.192.6.1", 5004, 1280, 720, 30, mediax::ColourspaceType::kColourspaceYuv, false};
-  mediax::StreamInformation message3 = {
-      "SD Stream 2", "239.192.6.2", 5004, 1280, 720, 30, mediax::ColourspaceType::kColourspaceYuv, false};
-  mediax::StreamInformation message4 = {
-      "SD Stream 3", "239.192.6.3", 5004, 1280, 720, 30, mediax::ColourspaceType::kColourspaceYuv, false};
-  mediax::StreamInformation message5 = {
-      "SD Stream 4", "239.192.6.4", 5004, 1280, 720, 30, mediax::ColourspaceType::kColourspaceYuv, false};
-  mediax::StreamInformation message6 = {
-      "SD Stream 5", "239.192.6.5", 5004, 1280, 720, 30, mediax::ColourspaceType::kColourspaceYuv, false};
-  mediax::StreamInformation message7 = {
-      "SD Stream 6", "239.192.6.6", 5004, 1280, 720, 30, mediax::ColourspaceType::kColourspaceYuv, false};
+  mediax::rtp::StreamInformation message1 = {
+      "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+  mediax::rtp::StreamInformation message2 = {
+      "SD Stream 1", "239.192.6.1", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+  mediax::rtp::StreamInformation message3 = {
+      "SD Stream 2", "239.192.6.2", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+  mediax::rtp::StreamInformation message4 = {
+      "SD Stream 3", "239.192.6.3", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+  mediax::rtp::StreamInformation message5 = {
+      "SD Stream 4", "239.192.6.4", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+  mediax::rtp::StreamInformation message6 = {
+      "SD Stream 5", "239.192.6.5", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+  mediax::rtp::StreamInformation message7 = {
+      "SD Stream 6", "239.192.6.6", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
   announcer.AddSapAnnouncement(message1);
   announcer.AddSapAnnouncement(message2);
   announcer.AddSapAnnouncement(message3);

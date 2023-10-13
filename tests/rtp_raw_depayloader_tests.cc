@@ -33,12 +33,12 @@
 //   uint8_t* yuv_test;
 
 //   mediax::RtpUncompressedDepayloader rtp;
-//   mediax::StreamInformation stream_info = {
-//       "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceRgb24, false};
+//   mediax::rtp::StreamInformation stream_info = {
+//       "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
 //   rtp.SetStreamInfo(stream_info);
 //   ASSERT_EQ(rtp.GetHeight(), 640);
 //   ASSERT_EQ(rtp.GetWidth(), 480);
-//   ASSERT_EQ(rtp.GetColourSpace(), mediax::ColourspaceType::kColourspaceRgb24);
+//   ASSERT_EQ(rtp.GetColourSpace(), mediax::rtp::ColourspaceType::kColourspaceRgb24);
 //   ASSERT_EQ(rtp.GetIpAddress(), "127.0.0.1");
 //   ASSERT_EQ(rtp.GetPort(), 5004);
 //   ASSERT_EQ(rtp.GetSessionName(), "test_session_name");
@@ -52,14 +52,14 @@
 
 // void SendVideoCheckered(std::string ip, uint32_t height, uint32_t width, uint32_t framerate, uint32_t portno) {
 //   mediax::RtpUncompressedPayloader rtp;
-//   mediax::StreamInformation stream_info = {
-//       "test_session_name", ip, portno, height, width, 25, mediax::ColourspaceType::kColourspaceRgb24, false};
+//   mediax::rtp::StreamInformation stream_info = {
+//       "test_session_name", ip, portno, height, width, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
 //   rtp.SetStreamInfo(stream_info);
 //   rtp.Open();
 //   rtp.Start();
 //   // Create a buffer of 640x480x3 bytes (RGB)
 //   std::vector<uint8_t> buffer(640 * 480 * 3);
-//   CreateCheckeredTestCard(buffer.data(), 640, 480, mediax::ColourspaceType::kColourspaceRgb24);
+//   CreateCheckeredTestCard(buffer.data(), 640, 480, mediax::rtp::ColourspaceType::kColourspaceRgb24);
 //   rtp.Transmit(buffer.data(), 80);
 //   rtp.Stop();
 //   rtp.Close();
@@ -69,8 +69,8 @@
 //   std::array<uint8_t, 640 * 480 * 3> rgb_test;
 //   mediax::video::ColourSpaceCpu colourspace;
 //   mediax::RtpUncompressedDepayloader rtp;
-//   mediax::StreamInformation stream_info = {
-//       "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceRgb24, false};
+//   mediax::rtp::StreamInformation stream_info = {
+//       "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
 //   rtp.SetStreamInfo(stream_info);
 //   rtp.Open();
 //   rtp.Start();
@@ -100,7 +100,7 @@
 
 // //   // Setup ten streams
 // //   for (int i = 0; i < number_of_streams; i++) {
-// //     rtp[i].SetStreamInfo("test_session_name", mediax::ColourspaceType::kColourspaceRgb24, 640, 480, 25,
+// //     rtp[i].SetStreamInfo("test_session_name", mediax::rtp::ColourspaceType::kColourspaceRgb24, 640, 480, 25,
 // "127.0.0.1",
 // //                          base_port + i);
 // //     rtp[i].Open();
@@ -131,8 +131,8 @@
 //   mediax::video::ColourSpaceCpu colourspace;
 
 //   mediax::RtpUncompressedDepayloader rtp;
-//   mediax::StreamInformation stream_info = {
-//       "test_session_name", "239.192.1.200", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceRgb24, false};
+//   mediax::rtp::StreamInformation stream_info = {
+//       "test_session_name", "239.192.1.200", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
 //   rtp.SetStreamInfo(stream_info);
 //   rtp.Open();
 //   rtp.Start();
@@ -150,7 +150,7 @@
 //   std::array<mediax::RtpUncompressedDepayloader, 10> rtp;
 //   for (int i = 0; i < 10; i++) {
 //     LOG(INFO) << "Creating stream number " << i << " with IP:" << ip_pool[i];
-//     mediax::StreamInformation stream_info = {
+//     mediax::rtp::StreamInformation stream_info = {
 //         "test_session_name_" + std::to_string(i),    ip_pool[i], 5004, 640, 480, 25,
 //         mediax ::ColourspaceType::kColourspaceRgb24, false};
 //     rtp[i].SetStreamInfo(stream_info);
@@ -172,8 +172,8 @@
 //   // Open stream 10 times
 //   for (int i = 0; i < 10; i++) {
 //     mediax::RtpUncompressedDepayloader rtp;
-//     mediax::StreamInformation stream_info = {
-//         "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::ColourspaceType::kColourspaceYuv, false};
+//     mediax::rtp::StreamInformation stream_info = {
+//         "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
 //     rtp.SetStreamInfo(stream_info);
 //     rtp.Open();
 //     rtp.Start();
@@ -186,8 +186,8 @@
 //   std::vector<uint8_t> yuv_test;
 //   mediax::RtpUncompressedDepayloader rtp;
 //   yuv_test.resize(height * width * 2);
-//   mediax::StreamInformation stream_info = {"test", ipaddr, 5004, 640, 480, 25,
-//   mediax::ColourspaceType::kColourspaceYuv,
+//   mediax::rtp::StreamInformation stream_info = {"test", ipaddr, 5004, 640, 480, 25,
+//   mediax::rtp::ColourspaceType::kColourspaceYuv,
 //                                            false};
 //   rtp.SetStreamInfo(stream_info);
 //   rtp.Open();

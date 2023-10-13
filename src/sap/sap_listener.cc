@@ -30,6 +30,7 @@
 #include "rtp/rtp_utils.h"
 #include "sap/sap_utils.h"
 
+/// The Session Announcment Protocol (SAP)/ Session Description Protocol (SDP) namespace
 namespace mediax::sap {
 
 bool SAPListener::running_ = false;
@@ -38,7 +39,7 @@ SAPListener::SAPListener() {
   if ((sockfd_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
     perror("socket creation failed");
     exit(EXIT_FAILURE);
-  }  // namespace sap
+  }
 
   // Set the socket to non-blocking mode
 #ifdef _WIN32
@@ -62,7 +63,7 @@ SAPListener::SAPListener() {
 
   memset(&multicast_addr_, 0, sizeof(multicast_addr_));
   multicast_addr_.sin_family = AF_INET;
-  multicast_addr_.sin_port = htons(kPort);
+  multicast_addr_.sin_port = htons(mediax::rtp::kPort);
   multicast_addr_.sin_addr.s_addr = htonl(INADDR_ANY);
 
   // join the multicast group
@@ -76,7 +77,8 @@ SAPListener::SAPListener() {
 
   // bind socket to port
   if (bind(sockfd_, (struct sockaddr *)&multicast_addr_, sizeof(multicast_addr_)) == -1) {
-    std::cout << "SAPListener() " << std::string(strerror(errno)) << " " << kIpaddr << ":" << kPort << "\n";
+    std::cout << "SAPListener() " << std::string(strerror(errno)) << " " << kIpaddr << ":" << mediax::rtp::kPort
+              << "\n";
     exit(-1);
   }
 }
@@ -95,11 +97,12 @@ void SAPListener::SAPListenerThread(SAPListener *sap) {
   read_timeout.tv_usec = 10;
   setsockopt(sap->sockfd_, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
 
-  DLOG(INFO) << "SAP packet received " << kIpaddr << ":" << kPort;
+  DLOG(INFO) << "SAP packet received " << kIpaddr << ":" << mediax::rtp::kPort;
 
   while (running_) {
     ssize_t bytes = 0;
-    if (bytes = recvfrom(sap->sockfd_, sap->udpdata_.data(), kMaxUdpData, 0, nullptr, nullptr); bytes <= 0) {
+    if (bytes = recvfrom(sap->sockfd_, sap->udpdata_.data(), mediax::rtp::kMaxUdpData, 0, nullptr, nullptr);
+        bytes <= 0) {
       std::this_thread::sleep_for(std::chrono::milliseconds(2));
       continue;
     }
@@ -114,7 +117,8 @@ void SAPListener::RegisterSapListener(std::string_view session_name, const SapCa
   callbacks_[std::string(session_name)] = callback;
 }
 
-bool SAPListener::GetStreamInformation(std::string_view session_name, StreamInformation *stream_information) const {
+bool SAPListener::GetStreamInformation(std::string_view session_name,
+                                       mediax::rtp::StreamInformation *stream_information) const {
   auto it = announcements_.find(std::string(session_name));
   if (it != announcements_.end()) {
     stream_information->hostname = it->second.ip_address;
@@ -200,7 +204,7 @@ std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributesEqua
   return attributes;
 }
 
-bool SAPListener::SapStore(std::array<uint8_t, kMaxUdpData> *rawdata, uint32_t size) {
+bool SAPListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdata, uint32_t size) {
   if (size < 8) {
     DLOG(ERROR) << "SAP packet too small";
     return false;

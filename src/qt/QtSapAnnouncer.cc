@@ -28,7 +28,7 @@ QtSapAnnouncer &QtSapAnnouncer::getInstance() {
   return m_instance;
 }
 
-Q_INVOKABLE void QtSapAnnouncer::AddSapAnnouncement(const ::mediax::StreamInformation &stream_information) {
+Q_INVOKABLE void QtSapAnnouncer::AddSapAnnouncement(const ::mediax::rtp::StreamInformation &stream_information) {
   sap_announcer_.AddSapAnnouncement(stream_information);
 }
 

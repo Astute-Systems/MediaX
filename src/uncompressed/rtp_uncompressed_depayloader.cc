@@ -39,7 +39,7 @@
 #include "rtp/rtp_utils.h"
 #include "uncompressed/rtp_uncompressed_depayloader.h"
 
-namespace mediax {
+namespace mediax::rtp::uncompressed {
 
 std::vector<uint8_t> RtpUncompressedDepayloader::buffer_in_;
 
@@ -58,7 +58,7 @@ RtpUncompressedDepayloader &RtpUncompressedDepayloader::operator=(const RtpUncom
 }
 
 // Broadcast the stream to port i.e. 5004
-void RtpUncompressedDepayloader::SetStreamInfo(const ::mediax::StreamInformation &stream_information) {
+void RtpUncompressedDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
   ingress_.encoding = stream_information.encoding;
   ingress_.height = stream_information.height;
   ingress_.width = stream_information.width;
@@ -67,7 +67,7 @@ void RtpUncompressedDepayloader::SetStreamInfo(const ::mediax::StreamInformation
   ingress_.hostname = stream_information.hostname;
   ingress_.port_no = stream_information.port;
   ingress_.settings_valid = true;
-  buffer_in_.resize((ingress_.height * ingress_.width) * kColourspaceBytes.at(ingress_.encoding));
+  buffer_in_.resize((ingress_.height * ingress_.width) * ::mediax::rtp::kColourspaceBytes.at(ingress_.encoding));
 }
 
 bool RtpUncompressedDepayloader::Open() {
@@ -123,21 +123,22 @@ void RtpUncompressedDepayloader::Close() {
   }
 }
 
-bool RtpUncompressedDepayloader::ReadRtpHeader(RtpUncompressedDepayloader *stream, RtpPacket *packet) const {
+bool RtpUncompressedDepayloader::ReadRtpHeader(RtpUncompressedDepayloader *stream,
+                                               ::mediax::rtp::RtpPacket *packet) const {
   int version;
   int payloadType;
 
   //
   // Read in the RTP data
   //
-  if (ssize_t bytes =
-          recvfrom(RtpDepayloader::ingress_.sockfd, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
+  if (ssize_t bytes = recvfrom(RtpDepayloader::ingress_.sockfd, stream->udpdata.data(), ::mediax::rtp::kMaxUdpData, 0,
+                               nullptr, nullptr);
       bytes <= 0) {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     return false;
   }
-  packet = reinterpret_cast<RtpPacket *>(stream->udpdata.data());
-  EndianSwap32(reinterpret_cast<uint32_t *>(packet), sizeof(RtpHeader) / 4);
+  packet = reinterpret_cast<::mediax::rtp::RtpPacket *>(stream->udpdata.data());
+  EndianSwap32(reinterpret_cast<uint32_t *>(packet), sizeof(::mediax::rtp::RtpHeader) / 4);
 
   //
   // Decode Header bits and confirm RTP packet
@@ -151,7 +152,7 @@ bool RtpUncompressedDepayloader::ReadRtpHeader(RtpUncompressedDepayloader *strea
 }
 
 void RtpUncompressedDepayloader::ReceiveThread(RtpUncompressedDepayloader *stream) {
-  RtpPacket *packet{};
+  ::mediax::rtp::RtpPacket *packet{};
   bool receiving = true;
   int scan_count = 0;
   int last_packet;
@@ -178,13 +179,14 @@ void RtpUncompressedDepayloader::ReceiveThread(RtpUncompressedDepayloader *strea
         // Read in the RTP data
         //
 
-        if (ssize_t bytes = recvfrom(stream->ingress_.sockfd, stream->udpdata.data(), kMaxUdpData, 0, nullptr, nullptr);
+        if (ssize_t bytes = recvfrom(stream->ingress_.sockfd, stream->udpdata.data(), ::mediax::rtp::kMaxUdpData, 0,
+                                     nullptr, nullptr);
             bytes <= 0) {
           std::this_thread::sleep_for(std::chrono::milliseconds(2));
           continue;
         }
-        packet = reinterpret_cast<RtpPacket *>(stream->udpdata.data());
-        EndianSwap32(reinterpret_cast<uint32_t *>(packet), sizeof(RtpHeader) / 4);
+        packet = reinterpret_cast<::mediax::rtp::RtpPacket *>(stream->udpdata.data());
+        EndianSwap32(reinterpret_cast<uint32_t *>(packet), sizeof(::mediax::rtp::RtpHeader) / 4);
 
         //
         // Decode Header bits and confirm RTP packet
@@ -208,7 +210,8 @@ void RtpUncompressedDepayloader::ReceiveThread(RtpUncompressedDepayloader *strea
         //
         while (scan_line) {
           int more;
-          EndianSwap16(reinterpret_cast<uint16_t *>(&packet->head.payload.line[scan_count]), sizeof(LineHeader) / 2);
+          EndianSwap16(reinterpret_cast<uint16_t *>(&packet->head.payload.line[scan_count]),
+                       sizeof(::mediax::rtp::LineHeader) / 2);
           more = (packet->head.payload.line[scan_count].offset & 0x8000) >> 15;
           !more ? scan_line = false : scan_line = true;  // The last scan_line
           scan_count++;
@@ -217,7 +220,7 @@ void RtpUncompressedDepayloader::ReceiveThread(RtpUncompressedDepayloader *strea
         //
         // Now we know the number of scan_lines we can copy the data
         //
-        int payload_offset = sizeof(RtpHeader) + 2 + (scan_count * sizeof(LineHeader));
+        int payload_offset = sizeof(::mediax::rtp::RtpHeader) + 2 + (scan_count * sizeof(::mediax::rtp::LineHeader));
         int payload = 0;
 
         last_packet = payload_offset;
@@ -231,9 +234,10 @@ void RtpUncompressedDepayloader::ReceiveThread(RtpUncompressedDepayloader *strea
             // Line numbers start at 1 in DEF-STAN 00-82, gstreamer starts at zero so drop those lines
             break;
           }
-          pixel = ((packet->head.payload.line[c].offset & 0x7FFF) * kColourspaceBytes.at(stream->ingress_.encoding)) +
+          pixel = ((packet->head.payload.line[c].offset & 0x7FFF) *
+                   ::mediax::rtp::kColourspaceBytes.at(stream->ingress_.encoding)) +
                   (((packet->head.payload.line[c].line_number - 1) & 0x7FFF) *
-                   (stream->ingress_.width * kColourspaceBytes.at(stream->ingress_.encoding)));
+                   (stream->ingress_.width * ::mediax::rtp::kColourspaceBytes.at(stream->ingress_.encoding)));
           length = packet->head.payload.line[c].length & 0xFFFF;
 
           memcpy(&RtpUncompressedDepayloader::buffer_in_[pixel], &stream->udpdata[os], length);
@@ -328,4 +332,4 @@ bool RtpUncompressedDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   return false;
 }
 
-}  // namespace mediax
+}  // namespace mediax::rtp::uncompressed

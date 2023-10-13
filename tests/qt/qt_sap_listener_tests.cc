@@ -25,8 +25,8 @@ TEST(QtSapListenerTest, DISABLED_Start) {
   QObject::connect(&listener, &mediax::qt::QtSapListener::sapData, &receiver, &SapReceiver::sapDataReceived);
 
   // Transmit something
-  ::mediax::StreamInformation stream_information = {
-      "test_session", "127.0.0.1", 5004, 480, 640, 25, ::mediax::ColourspaceType::kColourspaceRgb24, false};
+  ::mediax::rtp::StreamInformation stream_information = {
+      "test_session", "127.0.0.1", 5004, 480, 640, 25, ::mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
   mediax::qt::QtSapAnnouncer &announcer = mediax::qt::QtSapAnnouncer::getInstance();
   for (int i = 0; i < 10; i++) {
     stream_information.session_name = "test_session_" + std::to_string(i);
