@@ -68,7 +68,7 @@ SAPListener::SAPListener() {
 
   // join the multicast group
   struct ip_mreq mreq;
-  mreq.imr_multiaddr.s_addr = inet_addr(kIpaddr);
+  mreq.imr_multiaddr.s_addr = inet_addr(mediax::rtp::kIpaddr);
   mreq.imr_interface.s_addr = htonl(INADDR_ANY);
   if (setsockopt(sockfd_, IPPROTO_IP, IP_ADD_MEMBERSHIP, reinterpret_cast<char *>(&mreq), sizeof(mreq)) < 0) {
     perror("setsockopt IP_ADD_MEMBERSHIP");
@@ -77,8 +77,8 @@ SAPListener::SAPListener() {
 
   // bind socket to port
   if (bind(sockfd_, (struct sockaddr *)&multicast_addr_, sizeof(multicast_addr_)) == -1) {
-    std::cout << "SAPListener() " << std::string(strerror(errno)) << " " << kIpaddr << ":" << mediax::rtp::kPort
-              << "\n";
+    std::cout << "SAPListener() " << std::string(strerror(errno)) << " " << mediax::rtp::kIpaddr << ":"
+              << mediax::rtp::kPort << "\n";
     exit(-1);
   }
 }
@@ -97,7 +97,7 @@ void SAPListener::SAPListenerThread(SAPListener *sap) {
   read_timeout.tv_usec = 10;
   setsockopt(sap->sockfd_, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
 
-  DLOG(INFO) << "SAP packet received " << kIpaddr << ":" << mediax::rtp::kPort;
+  DLOG(INFO) << "SAP packet received " << mediax::rtp::kIpaddr << ":" << mediax::rtp::kPort;
 
   while (running_) {
     ssize_t bytes = 0;

@@ -138,10 +138,14 @@ void DumpHex(const void *data, size_t size) {
   std::cout << std::dec << std::endl;
 }
 
-static bool odd = true;
-
 void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::rtp::ColourspaceType colourspace) {
+  static bool odd = true;
   switch (colourspace) {
+    default:
+      data[0] = (uint8_t)r;
+      data[1] = (uint8_t)g;
+      data[2] = (uint8_t)b;
+      break;
     case mediax::rtp::ColourspaceType::kColourspaceYuv: {
       double y = 0.257 * r + 0.504 * g + 0.098 * b + 16;
       if (odd) {
@@ -155,12 +159,6 @@ void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::rtp::Col
       }
       data[1] = (uint8_t)(y);
     } break;
-    default:
-    case mediax::rtp::ColourspaceType::kColourspaceRgb24:
-      data[0] = (uint8_t)r;
-      data[1] = (uint8_t)g;
-      data[2] = (uint8_t)b;
-      break;
     case mediax::rtp::ColourspaceType::kColourspaceRgba:
       data[0] = (uint8_t)r;
       data[1] = (uint8_t)g;
@@ -171,7 +169,7 @@ void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::rtp::Col
       data[0] = (uint8_t)(0.299 * r + 0.587 * g + 0.114 * b);
       break;
     case mediax::rtp::ColourspaceType::kColourspaceMono16: {
-      uint16_t mono16_pixel = (uint16_t)(0.299 * r + 0.587 * g + 0.114 * b);
+      auto mono16_pixel = (uint16_t)(0.299 * r + 0.587 * g + 0.114 * b);
       data[0] = mono16_pixel >> 8 & 0xFF;
       data[1] = mono16_pixel & 0xFF;
     } break;
@@ -181,7 +179,6 @@ void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::rtp::Col
 // Implementation of the CreateColourBarTestCard function
 void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::rtp::ColourspaceType colourspace) {
   uint32_t stride = mediax::BytesPerPixel(colourspace);
-  odd = true;
   for (uint32_t y = 0; y < height; y++) {
     for (uint32_t x = 0; x < width; x++) {
       uint8_t r;
@@ -274,7 +271,7 @@ void CreateQuadTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::
       b = 255;
     }
 
-    PackRgb(&data[i], r, g, b, colourspace);
+    PackRgb(&data[i], static_cast<uint32_t>(r), static_cast<uint32_t>(g), static_cast<uint32_t>(b), colourspace);
   }
 }
 

@@ -18,10 +18,10 @@
 
 namespace mediax::qt {
 
-QtRtpH264Deayloader::QtRtpH264Deayloader(QObject *parent) : QObject(parent) {}
+QtRtpH264Depayloader::QtRtpH264Depayloader(QObject *parent) : QObject(parent) {}
 
-void QtRtpH264Deayloader::setStreamInfo(const QString &hostname, int port, const QString &session_name, int height,
-                                        int width) {
+void QtRtpH264Depayloader::setStreamInfo(const QString &hostname, int port, const QString &session_name, int height,
+                                         int width) {
   rtp::StreamInformation stream_information;
   stream_information.hostname = hostname.toStdString();
   stream_information.port = port;
@@ -32,15 +32,15 @@ void QtRtpH264Deayloader::setStreamInfo(const QString &hostname, int port, const
   depayloader_.SetStreamInfo(stream_information);
 }
 
-Q_INVOKABLE bool QtRtpH264Deayloader::open() { return depayloader_.Open(); }
+Q_INVOKABLE bool QtRtpH264Depayloader::open() { return depayloader_.Open(); }
 
-Q_INVOKABLE void QtRtpH264Deayloader::start() { depayloader_.Start(); }
+Q_INVOKABLE void QtRtpH264Depayloader::start() { depayloader_.Start(); }
 
-Q_INVOKABLE void QtRtpH264Deayloader::stop() { depayloader_.Stop(); }
+Q_INVOKABLE void QtRtpH264Depayloader::stop() { depayloader_.Stop(); }
 
-Q_INVOKABLE void QtRtpH264Deayloader::close() { depayloader_.Close(); }
+Q_INVOKABLE void QtRtpH264Depayloader::close() { depayloader_.Close(); }
 
-Q_INVOKABLE bool QtRtpH264Deayloader::receive(QByteArray *frame, int timeout) {
+Q_INVOKABLE bool QtRtpH264Depayloader::receive(QByteArray *frame, int timeout) {
   uint8_t *cpu = nullptr;
   bool result = depayloader_.Receive(&cpu, timeout);
   if (result) {
@@ -49,7 +49,7 @@ Q_INVOKABLE bool QtRtpH264Deayloader::receive(QByteArray *frame, int timeout) {
   return result;
 }
 
-Q_INVOKABLE QVector<quint8> QtRtpH264Deayloader::getBuffer() {
+Q_INVOKABLE QVector<quint8> QtRtpH264Depayloader::getBuffer() {
   QVector<quint8> buffer(depayloader_.GetBuffer().size());
   // Copy buffer
   std::copy(depayloader_.GetBuffer().begin(), depayloader_.GetBuffer().end(), buffer.begin());

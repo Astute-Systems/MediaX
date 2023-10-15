@@ -49,7 +49,7 @@ class RtpH264GstVaapiDepayloader : public mediax::rtp::RtpDepayloader {
   /// \param other
   /// \return RtpH264Depayloader
   ///
-  RtpH264GstVaapiDepayloader &operator=(const RtpH264GstVaapiDepayloader &other) { return *this; }
+  RtpH264GstVaapiDepayloader &operator=(const RtpH264GstVaapiDepayloader &other);
 
   ///
   /// \brief Construct a new RtpH264Depayloader object (Deleted)

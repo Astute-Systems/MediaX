@@ -73,6 +73,7 @@ class V4L2Capture {
   int height_;
   /// \brief The buffer to store the frame in
   uint8_t* buffer_ = nullptr;
+  void PrintCaps(const v4l2_capability* cap);
 };
 
 #endif  // V4L2_V4L2_SOURCE_H_

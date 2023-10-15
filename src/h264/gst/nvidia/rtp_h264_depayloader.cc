@@ -37,6 +37,11 @@ namespace mediax::rtp::h264::gst::nvidia {
 
 RtpH264GstNvidiaDepayloader::~RtpH264GstNvidiaDepayloader() = default;
 
+RtpH264GstNvidiaDepayloader &RtpH264GstNvidiaDepayloader::operator=(const RtpH264GstNvidiaDepayloader &other
+                                                                    [[maybe_unused]]) {
+  return *this;
+}
+
 void RtpH264GstNvidiaDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
   ingress_.encoding = stream_information.encoding;
   ingress_.height = stream_information.height;
@@ -71,12 +76,9 @@ GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
   const GstStructure *structure = gst_caps_get_structure(caps, 0);
   gst_structure_get_int(structure, "height", &height);
   gst_structure_get_int(structure, "width", &width);
-  // Get the colourspace
-  const gchar *colorspace = gst_structure_get_string(structure, "format");
 
   // Set the ColourspaceType
-
-  if (strncmp(colorspace, "UYVY", 4) == 0) {
+  if (const gchar *colorspace = gst_structure_get_string(structure, "format"); strncmp(colorspace, "UYVY", 4) == 0) {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceYuv);
   } else if (strncmp(colorspace, "RGB", 3) == 0) {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgb24);

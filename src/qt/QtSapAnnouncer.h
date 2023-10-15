@@ -108,7 +108,7 @@ class QtSapAnnouncer : public QObject {
 
  private:
   /// The underlying SAP announcer
-  ::mediax::sap::SAPAnnouncer& sap_announcer_;
+  ::mediax::sap::SAPAnnouncer& sap_announcer_ = ::mediax::sap::SAPAnnouncer::GetInstance();
 };
 
 }  // namespace mediax::qt

@@ -41,7 +41,7 @@ SAPAnnouncer::SAPAnnouncer() {
 
   memset(&multicast_addr_, 0, sizeof(multicast_addr_));
   multicast_addr_.sin_family = AF_INET;
-  multicast_addr_.sin_addr.s_addr = inet_addr(kIpaddr);
+  multicast_addr_.sin_addr.s_addr = inet_addr(mediax::rtp::kIpaddr);
   multicast_addr_.sin_port = htons(::mediax::rtp::kPort);
 
   // Select first found interface, can be overridden
@@ -130,7 +130,7 @@ void SAPAnnouncer::SendSAPPacket(const ::mediax::rtp::StreamInformation &stream_
       stream_information.session_name +
       "\r\n"
       "c=IN IP4 " +
-      kIpaddr +
+      mediax::rtp::kIpaddr +
       "/15\r\n"
       "t=0 0\r\n"
       "m=video " +

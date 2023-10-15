@@ -37,6 +37,11 @@ namespace mediax::rtp::h264::gst::vaapi {
 
 RtpH264GstVaapiDepayloader::~RtpH264GstVaapiDepayloader() = default;
 
+RtpH264GstVaapiDepayloader &RtpH264GstVaapiDepayloader::operator=(const RtpH264GstVaapiDepayloader &other
+                                                                  [[maybe_unused]]) {
+  return *this;
+}
+
 void RtpH264GstVaapiDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
   ingress_.encoding = stream_information.encoding;
   ingress_.height = stream_information.height;

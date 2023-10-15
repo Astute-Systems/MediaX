@@ -23,7 +23,7 @@
 
 namespace mediax::qt {
 
-class QtRtpH264Deayloader : public QObject {
+class QtRtpH264Depayloader : public QObject {
   Q_OBJECT
 
  public:
@@ -32,7 +32,7 @@ class QtRtpH264Deayloader : public QObject {
   ///
   /// \param parent
   ///
-  explicit QtRtpH264Deayloader(QObject *parent = nullptr);
+  explicit QtRtpH264Depayloader(QObject *parent = nullptr);
 
   ///
   /// \brief Set the Stream Info object

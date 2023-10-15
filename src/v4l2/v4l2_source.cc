@@ -20,7 +20,7 @@
 #include <cstring>
 #include <string>
 
-void PrintCaps(v4l2_capability* cap) {
+void V4L2Capture::PrintCaps(const v4l2_capability* cap) {
   std::cout << "\tDriver: " << cap->driver << std::endl;
   std::cout << "\tCard: " << cap->card << std::endl;
   std::cout << "\tBus info: " << cap->bus_info << std::endl;

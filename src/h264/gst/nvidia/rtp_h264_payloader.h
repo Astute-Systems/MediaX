@@ -35,6 +35,21 @@ class RtpH264GstNvidiaPayloader : public mediax::rtp::RtpPayloader {
   ~RtpH264GstNvidiaPayloader() final;
 
   ///
+  /// \brief Delete the copy constructor and copy assignment operator
+  ///
+  /// \param other
+  ///
+  RtpH264GstNvidiaPayloader(const RtpH264GstNvidiaPayloader &other) = delete;
+
+  ///
+  /// \brief Delete the copy constructor and copy assignment operator
+  ///
+  /// \param other
+  /// \return RtpH264GstNvidiaPayloader&
+  ///
+  RtpH264GstNvidiaPayloader &operator=(RtpH264GstNvidiaPayloader &&other) = delete;
+
+  ///
   /// \brief Set the Stream Info object
   ///
   /// \param stream_information
