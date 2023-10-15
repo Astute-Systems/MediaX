@@ -30,8 +30,8 @@ TEST(RtpH264DepayloaderTest, Timeout) {
 
   uint8_t* rgb_test;
 
-  std::shared_ptr<mediax::RtpDepayloader> rtp;
-  rtp = std::make_shared<mediax::h264::gst::vaapi::RtpH264GstVaapiDepayloader>();
+  std::shared_ptr<mediax::rtp::RtpDepayloader> rtp;
+  rtp = std::make_shared<mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader>();
   rtp->SetSessionName("test_session_name");
   ASSERT_EQ(rtp->GetSessionName(), "test_session_name");
   rtp->Open();
@@ -49,7 +49,7 @@ TEST(RtpH264DepayloaderTest, UnicastOk) {
 
   std::array<uint8_t, 1280 * 720 * 3> rgb_test;
   mediax::video::ColourSpaceCpu colourspace;
-  mediax::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
+  mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
 
   // Set the stream details individually
   rtp.SetIpAddress("127.0.0.1");
@@ -84,17 +84,17 @@ TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfo) {
 
   std::array<uint8_t, 1280 * 720 * 3> rgb_test;
   mediax::video::ColourSpaceCpu colourspace;
-  mediax::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
+  mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
 
   // Set the stream details using set stream info
   ::mediax::rtp::StreamInformation stream_info = {.session_name = "test_session_name",
-                                             .hostname = "127.0.0.1",
-                                             .port = 5004,
-                                             .height = 720,
-                                             .width = 1280,
-                                             .framerate = 25,
-                                             .encoding = ::mediax::rtp::ColourspaceType::kColourspaceH264Part10,
-                                             .deleted = false};
+                                                  .hostname = "127.0.0.1",
+                                                  .port = 5004,
+                                                  .height = 720,
+                                                  .width = 1280,
+                                                  .framerate = 25,
+                                                  .encoding = ::mediax::rtp::ColourspaceType::kColourspaceH264Part10,
+                                                  .deleted = false};
   rtp.SetStreamInfo(stream_info);
 
   // Start the stream
@@ -122,17 +122,17 @@ TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfoPtr) {
 
   std::array<uint8_t, 1280 * 720 * 3> rgb_test;
   mediax::video::ColourSpaceCpu colourspace;
-  auto rtp = std::make_shared<mediax::h264::gst::vaapi::RtpH264GstVaapiDepayloader>();
+  auto rtp = std::make_shared<mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader>();
 
   // Set the stream details using set stream info
   ::mediax::rtp::StreamInformation stream_info = {.session_name = "test_session_name",
-                                             .hostname = "127.0.0.1",
-                                             .port = 5004,
-                                             .height = 720,
-                                             .width = 1280,
-                                             .framerate = 25,
-                                             .encoding = ::mediax::rtp::ColourspaceType::kColourspaceH264Part10,
-                                             .deleted = false};
+                                                  .hostname = "127.0.0.1",
+                                                  .port = 5004,
+                                                  .height = 720,
+                                                  .width = 1280,
+                                                  .framerate = 25,
+                                                  .encoding = ::mediax::rtp::ColourspaceType::kColourspaceH264Part10,
+                                                  .deleted = false};
   rtp->SetStreamInfo(stream_info);
 
   // Start the stream
