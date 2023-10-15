@@ -204,7 +204,7 @@ void ProcessVideo(mediax::rtp::ColourspaceType mode) {
 /// \return int the return code
 ///
 int main(int argc, char *argv[]) {
-  gflags::SetVersionString(kVersion);
+  gflags::SetVersionString(mediax::kVersion);
   gflags::SetUsageMessage(
       "Example RTP receiver\n"
       "Usage:\n"

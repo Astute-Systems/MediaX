@@ -9,12 +9,15 @@ message(STATUS "Version (${PROJECT_NAME}): ${MEDIAX_VERSION}")
 
 set(VERSION_FILE ${CMAKE_CURRENT_BINARY_DIR}/include/version.h)
 file(WRITE ${VERSION_FILE} "// This file it automatically generated, no not edit manually\n")
-file(APPEND ${VERSION_FILE} "#include <string>\n")
 file(APPEND ${VERSION_FILE} "#include <cstdint>\n")
+file(APPEND ${VERSION_FILE} "#include <string>\n")
+file(APPEND ${VERSION_FILE} "\n")
+file(APPEND ${VERSION_FILE} "namespace mediax {\n")
 file(APPEND ${VERSION_FILE} "const uint32_t kMajor = ${MEDIAX_MAJOR_VERSION};\n")
 file(APPEND ${VERSION_FILE} "const uint32_t kMinor = ${MEDIAX_MINOR_VERSION};\n")
 file(APPEND ${VERSION_FILE} "const uint32_t kPatch = ${MEDIAX_PATCH_VERSION};\n")
 file(APPEND ${VERSION_FILE} "const std::string kVersion = \"${MEDIAX_VERSION}\";\n")
 file(APPEND ${VERSION_FILE} "const std::string kGitHash = \"${GIT_HASH}\";\n")
+file(APPEND ${VERSION_FILE} "}  // namespace mediax\n")
 
 

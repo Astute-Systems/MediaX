@@ -132,7 +132,7 @@ int main(int argc, char** argv) {
 
   std::unique_ptr<V4L2Capture> v4lsource;
 
-  gflags::SetVersionString(kVersion);
+  gflags::SetVersionString(mediax::kVersion);
   gflags::SetUsageMessage(
       "Transmit a video stream using RTP\n"
       "Usage:\n"
