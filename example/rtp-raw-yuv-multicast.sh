@@ -3,21 +3,9 @@
 IP_ADDRESS=239.192.1.2
 
 echo 'Starting example application...'
-./build/bin/rtp-transmit -mode=1 -source=2 -ipaddr=$IP_ADDRESS -height=480 -width=640 -port=5004  &
-
-sleep 1
+./build/bin/rtp-transmit -num-frames=250 -mode=1 -source=2 -ipaddr=$IP_ADDRESS -height=480 -width=640 -port=5004  &
 
 echo 'Starting receiver...'
-
-./build/bin/rtp-receive -mode=1 -ipaddr=$IP_ADDRESS -height=480 -width=640 -port=5004  &
-
-sleep 10
-
-pkill -f rtp-transmit 
-pkill -f rtp-receive
-exit
-
-
-
+./build/bin/rtp-receive -num-frames=250 -mode=1 -ipaddr=$IP_ADDRESS -height=480 -width=640 -port=5004  &
 
 
