@@ -131,7 +131,7 @@ class RtpPayloader {
   uint32_t GetPort() const;
 
   /// Egress port
-  ::mediax::rtp::PortType egress_;
+  ::mediax::rtp::RtpPortType egress_;
 };
 
 }  // namespace mediax::rtp

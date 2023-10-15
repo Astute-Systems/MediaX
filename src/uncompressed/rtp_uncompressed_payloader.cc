@@ -109,9 +109,9 @@ void RtpUncompressedPayloader::Close() {
   if (tx_thread_.joinable()) tx_thread_.join();
 }
 
-void RtpUncompressedPayloader::UpdateHeader(::mediax::rtp::Header *packet, int line, int bytes_per_pixel, int last,
+void RtpUncompressedPayloader::UpdateHeader(::mediax::rtp::RtpHeader *packet, int line, int bytes_per_pixel, int last,
                                             int32_t timestamp, int32_t source) const {
-  memset(reinterpret_cast<char *>(packet), 0, sizeof(::mediax::rtp::Header));
+  memset(reinterpret_cast<char *>(packet), 0, sizeof(::mediax::rtp::RtpHeader));
   packet->rtp.protocol = ::mediax::rtp::kRtpVersion << 30;
   packet->rtp.protocol = packet->rtp.protocol | ::mediax::rtp::kRtpExtension << 28;
   packet->rtp.protocol = packet->rtp.protocol | ::mediax::rtp::kRtpPayloadType << 16;
@@ -148,11 +148,11 @@ void RtpUncompressedPayloader::SendFrame(RtpUncompressedPayloader *stream) {
     uint32_t last = 0;
 
     if (c == stream->egress_.height) last = 1;
-    stream->UpdateHeader(reinterpret_cast<::mediax::rtp::Header *>(&packet), c, bytes_per_pixel, last, timestamp,
+    stream->UpdateHeader(reinterpret_cast<::mediax::rtp::RtpHeader *>(&packet), c, bytes_per_pixel, last, timestamp,
                          ::mediax::rtp::kRtpSource);
 
-    EndianSwap32(reinterpret_cast<uint32_t *>(&packet), sizeof(::mediax::rtp::RtpHeader) / 4);
-    EndianSwap16(reinterpret_cast<uint16_t *>(&packet.head.payload), sizeof(::mediax::rtp::PayloadHeader) / 2);
+    EndianSwap32(reinterpret_cast<uint32_t *>(&packet), sizeof(::mediax::rtp::RtpHeaderData) / 4);
+    EndianSwap16(reinterpret_cast<uint16_t *>(&packet.head.payload), sizeof(::mediax::rtp::RtpPayloadHeader) / 2);
 
     memcpy(reinterpret_cast<void *>(&packet.head.payload.line[2]),
            reinterpret_cast<void *>(&stream->arg_tx.rgb_frame[(c * stride)]), stride);

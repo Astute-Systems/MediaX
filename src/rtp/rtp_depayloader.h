@@ -199,7 +199,7 @@ class RtpDepayloader {
   bool IsMulticast(std::string_view ip_address);
 
   /// Ingress port
-  ::mediax::rtp::PortType ingress_ = {};
+  ::mediax::rtp::RtpPortType ingress_ = {};
 };
 
 }  // namespace mediax::rtp

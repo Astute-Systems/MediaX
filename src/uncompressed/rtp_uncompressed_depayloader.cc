@@ -138,7 +138,7 @@ bool RtpUncompressedDepayloader::ReadRtpHeader(RtpUncompressedDepayloader *strea
     return false;
   }
   packet = reinterpret_cast<::mediax::rtp::RtpPacket *>(stream->udpdata.data());
-  EndianSwap32(reinterpret_cast<uint32_t *>(packet), sizeof(::mediax::rtp::RtpHeader) / 4);
+  EndianSwap32(reinterpret_cast<uint32_t *>(packet), sizeof(::mediax::rtp::RtpHeaderData) / 4);
 
   //
   // Decode Header bits and confirm RTP packet
@@ -186,7 +186,7 @@ void RtpUncompressedDepayloader::ReceiveThread(RtpUncompressedDepayloader *strea
           continue;
         }
         packet = reinterpret_cast<::mediax::rtp::RtpPacket *>(stream->udpdata.data());
-        EndianSwap32(reinterpret_cast<uint32_t *>(packet), sizeof(::mediax::rtp::RtpHeader) / 4);
+        EndianSwap32(reinterpret_cast<uint32_t *>(packet), sizeof(::mediax::rtp::RtpHeaderData) / 4);
 
         //
         // Decode Header bits and confirm RTP packet
@@ -211,7 +211,7 @@ void RtpUncompressedDepayloader::ReceiveThread(RtpUncompressedDepayloader *strea
         while (scan_line) {
           int more;
           EndianSwap16(reinterpret_cast<uint16_t *>(&packet->head.payload.line[scan_count]),
-                       sizeof(::mediax::rtp::LineHeader) / 2);
+                       sizeof(::mediax::rtp::RtpLineHeader) / 2);
           more = (packet->head.payload.line[scan_count].offset & 0x8000) >> 15;
           !more ? scan_line = false : scan_line = true;  // The last scan_line
           scan_count++;
@@ -220,7 +220,7 @@ void RtpUncompressedDepayloader::ReceiveThread(RtpUncompressedDepayloader *strea
         //
         // Now we know the number of scan_lines we can copy the data
         //
-        int payload_offset = sizeof(::mediax::rtp::RtpHeader) + 2 + (scan_count * sizeof(::mediax::rtp::LineHeader));
+        int payload_offset = sizeof(::mediax::rtp::RtpHeaderData) + 2 + (scan_count * sizeof(::mediax::rtp::RtpLineHeader));
         int payload = 0;
 
         last_packet = payload_offset;

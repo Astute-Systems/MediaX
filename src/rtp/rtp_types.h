@@ -71,7 +71,7 @@ struct float4 {
 };
 
 /// 12 byte RTP Raw video header
-struct RtpHeader {
+struct RtpHeaderData {
   /// RTP version
   int32_t protocol : 32;
   /// sent timestamp
@@ -81,7 +81,7 @@ struct RtpHeader {
 };
 
 /// Line header
-struct LineHeader {
+struct RtpLineHeader {
   /// Length of line in bytes
   int16_t length;
   /// Line number
@@ -130,7 +130,7 @@ const std::map<ColourspaceType, std::string> kColourspace = {
     {ColourspaceType::kColourspaceH264Part10, "H264 (Part 10)"}};
 
 /// Store common port information for ingress and egress ports
-struct PortType {
+struct RtpPortType {
   /// Hostname or IP address
   std::string hostname;
   /// Port number
@@ -154,25 +154,25 @@ struct PortType {
 };
 
 /// RTP Payload header
-struct PayloadHeader {
+struct RtpPayloadHeader {
   /// Extended sequence number
   int16_t extended_sequence_number;
   /// Line header/s
-  std::array<LineHeader, kNumberLinesPerPacket> line;  // This can be multiline min the future
+  std::array<RtpLineHeader, kNumberLinesPerPacket> line;  // This can be multiline min the future
 };
 
 /// RTP packet structure
-struct Header {
+struct RtpHeader {
   /// RTP header
-  RtpHeader rtp;
+  RtpHeaderData rtp;
   /// RTP payload header
-  PayloadHeader payload;
+  RtpPayloadHeader payload;
 };
 
 /// RTP packet structure
 struct RtpPacket {
   /// RTP header
-  Header head;
+  RtpHeader head;
   /// RTP payload
   std::array<int8_t, kMaximumBufferSize> data;
 };
