@@ -235,8 +235,6 @@ bool RtpUncompressedDepayloader::ReceiveLines(::mediax::rtp::RtpPacket *packet, 
     }
 
     marker ? receiving = false : receiving = true;
-
-    scan_count = 0;
   }
   return receiving;
 }

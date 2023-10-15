@@ -78,10 +78,10 @@ bool RtpH264GstNvidiaPayloader::Open() {
   gst_base_sink_set_sync(GST_BASE_SINK(appsrc), true);
 
   // Set the caps on the appsrc element for RAW RGB video
-  GstCaps *appsrc_caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "RGB", "width", G_TYPE_INT, 640,
-                                             "height", G_TYPE_INT, 480, "framerate", GST_TYPE_FRACTION, 25, 1, nullptr);
-
-  if (appsrc_caps == nullptr) {
+  if (const GstCaps *appsrc_caps =
+          gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "RGB", "width", G_TYPE_INT, 640, "height",
+                              G_TYPE_INT, 480, "framerate", GST_TYPE_FRACTION, 25, 1, nullptr);
+      appsrc_caps == nullptr) {
     DLOG(ERROR) << "Failed to create appsrc caps";
     return false;
   }

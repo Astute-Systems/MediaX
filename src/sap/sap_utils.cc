@@ -33,7 +33,7 @@ namespace mediax::sap {
 
 mediax::rtp::ColourspaceType SamplingToColourspaceType(std::string_view sampling, uint32_t bits_per_pixel) {
   // Convert to lower case
-  std::string lower = std::string(sampling);
+  auto lower = std::string(sampling);
   std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
 
   if (sampling == "rgb") return mediax::rtp::ColourspaceType::kColourspaceRgb24;
