@@ -32,7 +32,7 @@ class QtRtpUncompressedPayloader : public QObject {
   /// \param parent
   ///
   explicit QtRtpUncompressedPayloader(QObject* parent = nullptr) : QObject(parent) {
-    m_rtpPayloader = std::make_unique<mediax::RtpUncompressedPayloader>();
+    m_rtpPayloader = std::make_unique<mediax::rtp::uncompressed::RtpUncompressedPayloader>();
   }
 
  public slots:
@@ -56,7 +56,7 @@ class QtRtpUncompressedPayloader : public QObject {
 
  private:
   /// The underlying RTP payloader
-  std::unique_ptr<mediax::RtpPayloader> m_rtpPayloader;
+  std::unique_ptr<mediax::rtp::uncompressed::RtpUncompressedPayloader> m_rtpPayloader;
 };
 
 }  // namespace mediax::qt

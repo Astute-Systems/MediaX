@@ -90,7 +90,7 @@ class QtRtpH264Payloader : public QObject {
   Q_INVOKABLE int transmit(QByteArray *frame, bool blocking = true);
 
  private:
-  ::mediax::h264::gst::vaapi::RtpH264GstVaapiPayloader payloader_;
+  ::mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader payloader_;
 };
 
 }  // namespace mediax::qt

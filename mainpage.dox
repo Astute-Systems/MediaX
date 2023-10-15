@@ -97,9 +97,9 @@ libswscale is required for RGB/RGBA to UYVY colour space conversion.
 Build the example
 ```
 mkdir build
-cmake -DBUILD_CUDA=OFF -DEXAMPLES=ON -DBUILD_TESTING=ON VAAPI=ON ..
+cmake -DBUILD_CUDA=OFF -DEXAMPLES=ON -DBUILD_TESTING=ON -DBUILD_QT6=ON -DGST_SUPPORTED=ON ..
 ```
- > NOTE: To enable Intel H.264 acceleration set -DVAAPI to ON, this requires the Intel Media SDK to be installed.
+ > NOTE: To enable Intel H.264 acceleration optionally set -DGST_SUPPORTED=ON for Gstreamer support, this requires the Intel Media SDK to be installed.
 To enable CUDA acceleration set -DBUILD_CUDA to ON, examples can als be enabled
 ```
 ./rtp-transmit
