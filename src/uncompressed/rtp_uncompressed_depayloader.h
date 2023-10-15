@@ -227,12 +227,12 @@ class RtpUncompressedDepayloader : public ::mediax::rtp::RtpDepayloader {
   bool ReadRtpHeader(RtpUncompressedDepayloader *stream, ::mediax::rtp::RtpPacket *packet) const;
 
   ///
-  /// \brief Receive video
+  /// \brief Receive video lines
   ///
   /// \return true if frame complete
   /// \return false if frame incomplete
   ///
-  bool Receive(::mediax::rtp::RtpPacket *packet, int &scan_count, bool &last_scan_line, int &last_packet);
+  bool ReceiveLines(::mediax::rtp::RtpPacket *packet, bool *last_scan_line, int *last_packet);
 };
 
 }  // namespace mediax::rtp::uncompressed

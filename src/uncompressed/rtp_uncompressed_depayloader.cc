@@ -151,15 +151,14 @@ bool RtpUncompressedDepayloader::ReadRtpHeader(RtpUncompressedDepayloader *strea
   return false;
 }
 
-bool RtpUncompressedDepayloader::Receive(::mediax::rtp::RtpPacket *packet, int &scan_count, bool &last_scan_line,
-                                         int &last_packet) {
+bool RtpUncompressedDepayloader::ReceiveLines(::mediax::rtp::RtpPacket *packet, bool *last_scan_line,
+                                              int *last_packet) {
   bool receiving = true;
-
+  int scan_count = 0;
   int marker;
   int version;
   int payloadType;
   bool valid = false;
-  last_scan_line = false;
 
   //
   // Read data until we get the next RTP header
@@ -182,7 +181,7 @@ bool RtpUncompressedDepayloader::Receive(::mediax::rtp::RtpPacket *packet, int &
     //
     payloadType = (packet->head.rtp.protocol & 0x007F0000) >> 16;
     version = (packet->head.rtp.protocol & 0xC0000000) >> 30;
-    last_scan_line = (packet->head.rtp.protocol & 0x00800000) >> 23;
+    *last_scan_line = (packet->head.rtp.protocol & 0x00800000) >> 23;
     if ((payloadType == 96) && (version == 2)) {
       valid = true;
     }
@@ -212,7 +211,7 @@ bool RtpUncompressedDepayloader::Receive(::mediax::rtp::RtpPacket *packet, int &
     int payload_offset = sizeof(::mediax::rtp::RtpHeaderData) + 2 + (scan_count * sizeof(::mediax::rtp::RtpLineHeader));
     int payload = 0;
 
-    last_packet = payload_offset;
+    *last_packet = payload_offset;
     for (int c = 0; c < scan_count; c++) {
       uint32_t os;
       uint32_t pixel;
@@ -244,8 +243,6 @@ bool RtpUncompressedDepayloader::Receive(::mediax::rtp::RtpPacket *packet, int &
 
 void RtpUncompressedDepayloader::ReceiveThread(RtpUncompressedDepayloader *stream) {
   ::mediax::rtp::RtpPacket *packet{};
-  bool receiving = true;
-  int scan_count = 0;
   int last_packet;
 
   struct timeval read_timeout;
@@ -255,13 +252,10 @@ void RtpUncompressedDepayloader::ReceiveThread(RtpUncompressedDepayloader *strea
 
   while (stream->rx_thread_running_) {
     bool last_scan_line = false;
-    while (receiving && stream->rx_thread_running_) {
-      receiving = stream->Receive(packet, scan_count, last_scan_line, last_packet);
-    }
-
+    stream->ReceiveLines(packet, &last_scan_line, &last_packet);
+    // Have a complete frame now.
     stream->arg_tx.encoded_frame = RtpUncompressedDepayloader::buffer_in_.data();
     stream->new_rx_frame_ = last_scan_line;
-    receiving = true;
   }  // Receive loop
   return;
 }
