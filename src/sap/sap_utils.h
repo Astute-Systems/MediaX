@@ -37,7 +37,7 @@ namespace mediax::sap {
 /// \param sampling
 /// \return ColourspaceType
 ///
-mediax::rtp::ColourspaceType SamplingToColourspaceType(std::string sampling, uint32_t bits_per_pixel);
+mediax::rtp::ColourspaceType SamplingToColourspaceType(std::string_view sampling, uint32_t bits_per_pixel);
 
 ///
 /// \brief Get the Sdp Colourspace object

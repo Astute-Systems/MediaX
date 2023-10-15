@@ -15,6 +15,7 @@
 #include "sap/sap_utils.h"
 // for std::transform
 #include <algorithm>
+#include <string_view>
 
 namespace mediax::sap {
 
@@ -30,9 +31,9 @@ namespace mediax::sap {
   return stream_information;
 }
 
-mediax::rtp::ColourspaceType SamplingToColourspaceType(std::string sampling, uint32_t bits_per_pixel) {
+mediax::rtp::ColourspaceType SamplingToColourspaceType(std::string_view sampling, uint32_t bits_per_pixel) {
   // Convert to lower case
-  std::string lower = sampling;
+  std::string lower = std::string(sampling);
   std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
 
   if (sampling == "rgb") return mediax::rtp::ColourspaceType::kColourspaceRgb24;

@@ -225,6 +225,14 @@ class RtpUncompressedDepayloader : public ::mediax::rtp::RtpDepayloader {
   /// \return false
   ///
   bool ReadRtpHeader(RtpUncompressedDepayloader *stream, ::mediax::rtp::RtpPacket *packet) const;
+
+  ///
+  /// \brief Receive video
+  ///
+  /// \return true if frame complete
+  /// \return false if frame incomplete
+  ///
+  bool Receive(::mediax::rtp::RtpPacket *packet, int &scan_count, bool &last_scan_line, int &last_packet);
 };
 
 }  // namespace mediax::rtp::uncompressed
