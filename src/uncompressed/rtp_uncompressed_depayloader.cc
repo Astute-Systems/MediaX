@@ -220,7 +220,8 @@ void RtpUncompressedDepayloader::ReceiveThread(RtpUncompressedDepayloader *strea
         //
         // Now we know the number of scan_lines we can copy the data
         //
-        int payload_offset = sizeof(::mediax::rtp::RtpHeaderData) + 2 + (scan_count * sizeof(::mediax::rtp::RtpLineHeader));
+        int payload_offset =
+            sizeof(::mediax::rtp::RtpHeaderData) + 2 + (scan_count * sizeof(::mediax::rtp::RtpLineHeader));
         int payload = 0;
 
         last_packet = payload_offset;
