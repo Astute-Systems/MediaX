@@ -22,7 +22,7 @@ QtRtpH264Deayloader::QtRtpH264Deayloader(QObject *parent) : QObject(parent) {}
 
 void QtRtpH264Deayloader::setStreamInfo(const QString &hostname, int port, const QString &session_name, int height,
                                         int width) {
-  StreamInformation stream_information;
+  rtp::StreamInformation stream_information;
   stream_information.hostname = hostname.toStdString();
   stream_information.port = port;
   stream_information.session_name = session_name.toStdString();
