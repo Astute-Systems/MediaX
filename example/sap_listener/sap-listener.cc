@@ -18,7 +18,7 @@
 int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[]) {
   std::cout << argv[0] << " starting\n";
 
-  mediax::sap::SAPListener& sap = mediax::sap::SAPListener::GetInstance();
+  mediax::sap::SapListener& sap = mediax::sap::SapListener::GetInstance();
 
   std::cout << "Waiting for 2 seconds for all SAP/SDP announcements\n";
 
@@ -27,7 +27,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[]) {
   sleep(2);
   sap.Stop();
 
-  const std::map<std::string, mediax::sap::SDPMessage, std::less<>>& announcements = sap.GetSAPAnnouncements();
+  const std::map<std::string, mediax::sap::SdpMessage, std::less<>>& announcements = sap.GetSAPAnnouncements();
 
   if (announcements.empty()) {
     std::cout << "No SAP/SDP announcements seen\n";

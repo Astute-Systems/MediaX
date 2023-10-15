@@ -33,9 +33,9 @@
 /// The Session Announcment Protocol (SAP)/ Session Description Protocol (SDP) namespace
 namespace mediax::sap {
 
-bool SAPListener::running_ = false;
+bool SapListener::running_ = false;
 
-SAPListener::SAPListener() {
+SapListener::SapListener() {
   if ((sockfd_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
     perror("socket creation failed");
     exit(EXIT_FAILURE);
@@ -70,7 +70,8 @@ SAPListener::SAPListener() {
   struct ip_mreq mreq;
   mreq.imr_multiaddr.s_addr = inet_addr(mediax::rtp::kIpaddr);
   mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-  if (setsockopt(sockfd_, IPPROTO_IP, IP_ADD_MEMBERSHIP, reinterpret_cast<char *>(&mreq), sizeof(mreq)) < 0) {
+  if (const auto *byte = reinterpret_cast<std::byte *>(&mreq);
+      setsockopt(sockfd_, IPPROTO_IP, IP_ADD_MEMBERSHIP, byte, sizeof(mreq)) < 0) {
     perror("setsockopt IP_ADD_MEMBERSHIP");
     exit(EXIT_FAILURE);
   }
@@ -83,15 +84,15 @@ SAPListener::SAPListener() {
   }
 }
 
-SAPListener::~SAPListener() { close(sockfd_); }
+SapListener::~SapListener() { close(sockfd_); }
 
-std::unique_ptr<SAPListener> SAPListener::singleton_;
-SAPListener &SAPListener::GetInstance() {
-  if (!singleton_) singleton_ = std::make_unique<SAPListener>();
+std::unique_ptr<SapListener> SapListener::singleton_;
+SapListener &SapListener::GetInstance() {
+  if (!singleton_) singleton_ = std::make_unique<SapListener>();
   return *singleton_;
 }
 
-void SAPListener::SAPListenerThread(SAPListener *sap) {
+void SapListener::SAPListenerThread(SapListener *sap) {
   struct timeval read_timeout;
   read_timeout.tv_sec = 0;
   read_timeout.tv_usec = 10;
@@ -112,15 +113,14 @@ void SAPListener::SAPListenerThread(SAPListener *sap) {
   }
 }
 
-void SAPListener::RegisterSapListener(std::string_view session_name, const SapCallback &callback) {
+void SapListener::RegisterSapListener(std::string_view session_name, const SapCallback &callback) {
   DLOG(INFO) << "Register SAP listener with session-name=" << session_name;
   callbacks_[std::string(session_name)] = callback;
 }
 
-bool SAPListener::GetStreamInformation(std::string_view session_name,
+bool SapListener::GetStreamInformation(std::string_view session_name,
                                        mediax::rtp::StreamInformation *stream_information) const {
-  auto it = announcements_.find(std::string(session_name));
-  if (it != announcements_.end()) {
+  if (auto it = announcements_.find(std::string(session_name)); it != announcements_.end()) {
     stream_information->hostname = it->second.ip_address;
     stream_information->port = it->second.port;
     stream_information->height = it->second.height;
@@ -132,18 +132,18 @@ bool SAPListener::GetStreamInformation(std::string_view session_name,
   return false;
 }
 
-void SAPListener::Start() {
+void SapListener::Start() {
   if (running_) return;
   running_ = true;
   thread_ = std::thread(SAPListenerThread, this);
 }
 
-void SAPListener::Stop() {
+void SapListener::Stop() {
   running_ = false;
   if (thread_.joinable()) thread_.join();
 }
 
-SdpTypeEnum SAPListener::GetType(const std::string_view &line) const {
+SdpTypeEnum SapListener::GetType(const std::string_view &line) const {
   if (line.substr(0, 2).compare("v=") == 0) return SdpTypeEnum::kProtocolVersion;
   if (line.substr(0, 2).compare("o=") == 0) return SdpTypeEnum::kOriginatorSessionIdentifier;
   if (line.substr(0, 2).compare("s=") == 0) return SdpTypeEnum::kSessionName;
@@ -154,7 +154,7 @@ SdpTypeEnum SAPListener::GetType(const std::string_view &line) const {
   return SdpTypeEnum::kUnknown;
 }
 
-std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributes(const std::string_view &line) const {
+std::map<std::string, std::string, std::less<>> SapListener::ParseAttributes(const std::string_view &line) const {
   std::map<std::string, std::string, std::less<>> attributes;
   std::string key;
   std::string value;
@@ -177,7 +177,7 @@ std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributes(con
   return attributes;
 }
 
-std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributesEqual(const std::string &line) const {
+std::map<std::string, std::string, std::less<>> SapListener::ParseAttributesEqual(const std::string &line) const {
   std::map<std::string, std::string, std::less<>> attributes;
   std::string key;
   std::string value;
@@ -204,7 +204,7 @@ std::map<std::string, std::string, std::less<>> SAPListener::ParseAttributesEqua
   return attributes;
 }
 
-bool SAPListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdata, uint32_t size) {
+bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdata, uint32_t size) {
   if (size < 8) {
     DLOG(ERROR) << "SAP packet too small";
     return false;
@@ -212,7 +212,7 @@ bool SAPListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
   std::map<std::string, std::string, std::less<>> attributes_map;
   auto source = reinterpret_cast<uint32_t *>(&rawdata->at(4));
 
-  SDPMessage sdp;
+  SdpMessage sdp;
   sdp.sdp_text.append(rawdata->begin() + 8, rawdata->end());
   // convert to string IP address
   struct in_addr addr;
@@ -322,7 +322,7 @@ bool SAPListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
   return true;
 }
 
-const std::map<std::string, SDPMessage, std::less<>> &SAPListener::GetSAPAnnouncements() const {
+const std::map<std::string, SdpMessage, std::less<>> &SapListener::GetSAPAnnouncements() const {
   return announcements_;
 }
 

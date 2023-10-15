@@ -63,6 +63,13 @@ class V4L2Capture {
   V4L2Capture(const V4L2Capture&) = delete;
 
  private:
+  ///
+  /// \brief Print the capabilities of the V4L2 device
+  ///
+  /// \param cap
+  ///
+  void PrintCaps(const v4l2_capability* cap) const;
+
   /// \brief The file descriptor for the V4L2 device
   int fd_ = -1;
   /// \brief The video capture device
@@ -73,7 +80,6 @@ class V4L2Capture {
   int height_;
   /// \brief The buffer to store the frame in
   uint8_t* buffer_ = nullptr;
-  void PrintCaps(const v4l2_capability* cap);
 };
 
 #endif  // V4L2_V4L2_SOURCE_H_

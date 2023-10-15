@@ -29,7 +29,7 @@ namespace mediax::sap {
 /// \param sdp_message
 /// \return ::mediax::rtp::StreamInformation
 ///
-::mediax::rtp::StreamInformation SapToStreamInformation(const SDPMessage& sdp_message);
+::mediax::rtp::StreamInformation SapToStreamInformation(const SdpMessage& sdp_message);
 
 ///
 /// \brief Convert a string to a ColourspaceType

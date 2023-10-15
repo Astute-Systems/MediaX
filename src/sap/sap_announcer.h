@@ -37,7 +37,7 @@
 namespace mediax::sap {
 
 /// Class to announce the stream details using the SAP protocol
-struct SAPHeader {
+struct SapHeader {
  public:
   /// Protocol version
   uint8_t version;
@@ -46,30 +46,30 @@ struct SAPHeader {
   /// Originating Source, IPV4
   uint32_t originating_source;
   ///
-  /// \brief Construct a new SAPHeader object
+  /// \brief Construct a new SapHeader object
   ///
   /// \param version Protocol version
   /// \param hash This must be unique for this announcement
   /// \param originating_source The originating source identity
   ///
-  SAPHeader(uint8_t version, uint8_t hash, uint32_t originating_source)
+  SapHeader(uint8_t version, uint8_t hash, uint32_t originating_source)
       : version(version), hash(hash), originating_source(originating_source) {}
 };
 
 /// Class to announce the stream details using the SAP protocol
-class SAPAnnouncer {
+class SapAnnouncer {
  public:
   ///
   /// \brief A Singleton get method
   ///
   ///
-  static SAPAnnouncer &GetInstance();
+  static SapAnnouncer &GetInstance();
 
   ///
-  /// \brief Construct a new SAPAnnouncer object, not used so deleted
+  /// \brief Construct a new SapAnnouncer object, not used so deleted
   ///
   ///
-  SAPAnnouncer(SAPAnnouncer const &) = delete;
+  SapAnnouncer(SapAnnouncer const &) = delete;
 
   ///
   /// \brief Add a stream announcement
@@ -126,25 +126,25 @@ class SAPAnnouncer {
 
  private:
   ///
-  /// \brief Construct a new SAPAnnouncer::SAPAnnouncer object
+  /// \brief Construct a new SapAnnouncer::SapAnnouncer object
   ///
   ///
-  SAPAnnouncer();
+  SapAnnouncer();
 
   ///
-  /// \brief Destroy the SAPAnnouncer::SAPAnnouncer object
+  /// \brief Destroy the SapAnnouncer::SapAnnouncer object
   ///
   ///
-  ~SAPAnnouncer();
+  ~SapAnnouncer();
 
   ///
   /// \brief Function to broadcast SAP announcements for a list of streams
   ///
   /// Only needs to be called once to start the broadcast thread
   ///
-  /// \param stream_information The SAPAnnouncer object
+  /// \param stream_information The SapAnnouncer object
   ///
-  static void SAPAnnouncementThread(SAPAnnouncer *stream_information);
+  static void SAPAnnouncementThread(SapAnnouncer *stream_information);
 
   ///
   /// \brief  Function to send a SAP announcement

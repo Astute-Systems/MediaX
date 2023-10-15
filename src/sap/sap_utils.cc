@@ -18,7 +18,7 @@
 
 namespace mediax::sap {
 
-::mediax::rtp::StreamInformation SapToStreamInformation(const SDPMessage& sdp_message) {
+::mediax::rtp::StreamInformation SapToStreamInformation(const SdpMessage& sdp_message) {
   ::mediax::rtp::StreamInformation stream_information;
   stream_information.session_name = sdp_message.session_name;
   stream_information.hostname = sdp_message.ip_address;

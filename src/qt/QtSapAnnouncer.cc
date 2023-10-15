@@ -19,8 +19,7 @@
 
 namespace mediax::qt {
 
-QtSapAnnouncer::QtSapAnnouncer(QObject *parent)
-    : QObject(parent), sap_announcer_(::mediax::sap::SAPAnnouncer::GetInstance()) {}
+QtSapAnnouncer::QtSapAnnouncer(QObject *parent) : QObject(parent) {}
 
 QtSapAnnouncer &QtSapAnnouncer::getInstance() {
   /// The singleton instance

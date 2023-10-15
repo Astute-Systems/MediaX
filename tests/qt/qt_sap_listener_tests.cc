@@ -13,7 +13,7 @@ class SapReceiver : public QObject {
   SapReceiver(QObject *parent = nullptr) : QObject(parent) {}
 
  public slots:
-  void sapDataReceived(const std::string &name, const ::mediax::sap::SDPMessage &message) {
+  void sapDataReceived(const std::string &name, const ::mediax::sap::SdpMessage &message) {
     std::cout << "sapDataReceived SAP Name: " << name << std::endl;
     std::cout << "sapDataReceived SAP Name: " << message.session_name << std::endl;
   }
@@ -36,7 +36,7 @@ TEST(QtSapListenerTest, DISABLED_Start) {
 
   listener.start();
 
-  mediax::sap::SDPMessage sdp_message = {
+  mediax::sap::SdpMessage sdp_message = {
       1, "test_dummy_session", "192.168.1.1", "127.0.0.1", 5004, 480, 640, "RGB", 25, 24, false, "test"};
   emit listener.sapData("this_is_not_a_real_message", sdp_message);
 

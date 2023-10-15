@@ -65,7 +65,7 @@ class QtSapListener : public QObject {
   /// \param name the SAP stream session name
   /// \param message the actual message being recieved
   ///
-  void sapData(const std::string name, const ::mediax::sap::SDPMessage message);
+  void sapData(const std::string name, const ::mediax::sap::SdpMessage message);
 
  private:
   ///
@@ -73,9 +73,9 @@ class QtSapListener : public QObject {
   ///
   /// \param sdp
   ///
-  static void SapCallback(const sap::SDPMessage *sdp);
+  static void SapCallback(const sap::SdpMessage *sdp);
 
-  ::mediax::sap::SAPListener sap_listener_;
+  ::mediax::sap::SapListener sap_listener_;
 };
 
 }  // namespace mediax::qt

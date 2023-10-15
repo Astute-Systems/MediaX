@@ -174,7 +174,7 @@ int main(int argc, char** argv) {
 #endif
 
   // Get the SAP/SDP announcment singleton instance
-  mediax::sap::SAPAnnouncer& sap_announcer = mediax::sap::SAPAnnouncer::GetInstance();
+  mediax::sap::SapAnnouncer& sap_announcer = mediax::sap::SapAnnouncer::GetInstance();
 
   // Create a stream information object
   mediax::rtp::StreamInformation stream_information = {FLAGS_filename, FLAGS_ipaddr, (uint16_t)FLAGS_port,

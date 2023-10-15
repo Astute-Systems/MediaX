@@ -20,7 +20,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
 
   // [Sap example announcer]
   // Get the SAP/SDP announcment singleton instance
-  mediax::sap::SAPAnnouncer &sap = mediax::sap::SAPAnnouncer::GetInstance();
+  mediax::sap::SapAnnouncer &sap = mediax::sap::SapAnnouncer::GetInstance();
   // Choose a source interface
   sap.ListInterfaces(0);
   // Add all your stream announcments here

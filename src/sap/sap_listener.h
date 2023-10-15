@@ -88,7 +88,7 @@ enum class SdpTypeEnum {
 
 /// A simplified SDP message structure
 /// \brief sap_text contains the complete SDP announcement
-struct SDPMessage {
+struct SdpMessage {
   /// Protocol version
   uint32_t protocol_version;
   /// Originator and session identifier
@@ -116,35 +116,35 @@ struct SDPMessage {
 };
 
 /// \brief The SAPListener class is a singleton that listens for SAP/SDP announcements on the network
-using SapCallback = std::function<void(sap::SDPMessage *sdp)>;
+using SapCallback = std::function<void(sap::SdpMessage *sdp)>;
 
 /// Class definition of the SAPListener
-class SAPListener {
+class SapListener {
  public:
   ///
   /// \brief Construct a new SAPListener::SAPListener object
   ///
   ///
-  SAPListener();
+  SapListener();
 
   ///
   /// \brief Destroy the SAPListener::SAPListener object
   ///
   ///
-  ~SAPListener();
+  ~SapListener();
 
   ///
   /// \brief A Singleton get method
   ///
   ///
-  static SAPListener &GetInstance();
+  static SapListener &GetInstance();
 
   ///
   /// \brief Get a list of SAP/SDP streams seen on the network
   ///
   /// \return The vectored list of SAP/SDP streams seen on the network
   ///
-  const std::map<std::string, ::mediax::sap::SDPMessage, std::less<>> &GetSAPAnnouncements() const;
+  const std::map<std::string, ::mediax::sap::SdpMessage, std::less<>> &GetSAPAnnouncements() const;
 
   ///
   /// \brief Register a callback for our session_name
@@ -176,7 +176,7 @@ class SAPListener {
 
  private:
   /// The pointer to the SAPListener singleton
-  static std::unique_ptr<SAPListener> singleton_;
+  static std::unique_ptr<SapListener> singleton_;
 
   ///
   /// \brief Function to broadcast SAP announcements for a list of streams
@@ -185,7 +185,7 @@ class SAPListener {
   ///
   /// \param sap SAPListener object
   ///
-  static void SAPListenerThread(SAPListener *sap);
+  static void SAPListenerThread(SapListener *sap);
 
   ///
   /// \brief Get the SDP attribute type doe a single SDP line of text
@@ -221,7 +221,7 @@ class SAPListener {
   /// The list of SAP/SDP announcement callbacks
   std::map<std::string, SapCallback, std::less<>> callbacks_;
   /// The list of SAP/SDP announcements
-  std::map<std::string, SDPMessage, std::less<>> announcements_;
+  std::map<std::string, SdpMessage, std::less<>> announcements_;
   /// The buffer for the UDP data
   std::array<uint8_t, mediax::rtp::kMaxUdpData> udpdata_;
   /// The thread for the SAP/SDP announcements

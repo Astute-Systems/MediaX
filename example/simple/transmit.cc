@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
   // Setup RTP streaming class for transmit
   mediax::rtp::uncompressed::RtpUncompressedPayloader rtp;
   // Get the SAP/SDP announcment singleton instance
-  mediax::sap::SAPAnnouncer& sap = mediax::sap::SAPAnnouncer::GetInstance();
+  mediax::sap::SapAnnouncer& sap = mediax::sap::SapAnnouncer::GetInstance();
   // Create a stream information object
   mediax::rtp::StreamInformation stream_information = {
       "session_test", "127.0.0.1", 5004, 480, 640, 25, ::mediax::rtp::ColourspaceType::kColourspaceRgb24, false};

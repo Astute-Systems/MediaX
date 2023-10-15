@@ -57,7 +57,7 @@ struct OnDrawData {
 };
 
 std::shared_ptr<mediax::rtp::RtpDepayloader> rtp_;
-std::shared_ptr<mediax::sap::SAPListener> sap_listener_;
+std::shared_ptr<mediax::sap::SapListener> sap_listener_;
 
 static uint64_t m_frame_counter_ = 1;
 static uint32_t count_ = 1;
@@ -171,7 +171,7 @@ void ProcessVideo(mediax::rtp::ColourspaceType mode) {
   if (FLAGS_wait_sap) {
     // Just give the stream name and wait for SAP/SDP announcement
     LOG(INFO) << "Example RTP streaming to " << FLAGS_session_name;
-    sap_listener_ = std::make_shared<mediax::sap::SAPListener>();
+    sap_listener_ = std::make_shared<mediax::sap::SapListener>();
     sap_listener_->Start();
     // Sleep for one second to allow the SAP listener to start
     std::this_thread::sleep_for(std::chrono::seconds(1));

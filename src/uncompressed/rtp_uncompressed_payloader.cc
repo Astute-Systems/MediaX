@@ -119,7 +119,7 @@ void RtpUncompressedPayloader::UpdateHeader(::mediax::rtp::RtpHeader *packet, in
   packet->rtp.timestamp = timestamp;
   packet->rtp.source = source;
   packet->payload.extended_sequence_number = (sequence_number_ >> 16) & 0xffff;
-  packet->payload.line[0].length = (int16_t)egress_.width * bytes_per_pixel;
+  packet->payload.line[0].length = static_cast<uint16_t>(egress_.width * bytes_per_pixel);
   packet->payload.line[0].line_number = (int16_t)line;
   packet->payload.line[0].offset = 0x8000;  // Indicates another line
   packet->payload.line[1].length = 0;

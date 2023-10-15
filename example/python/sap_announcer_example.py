@@ -15,7 +15,7 @@ sys.path.append('/usr/local/lib/python3/dist-packages/mediax')
 import rtp_types
 import sap_announcer
 
-sap = sap_announcer.SAPAnnouncer.GetInstance()
+sap = sap_announcer.SapAnnouncer.GetInstance()
 type = rtp_types.ColourspaceType_kColourspaceYuv
 
 # Choose a source interface

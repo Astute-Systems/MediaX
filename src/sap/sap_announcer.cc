@@ -31,9 +31,9 @@
 
 namespace mediax::sap {
 
-bool SAPAnnouncer::running_ = false;
+bool SapAnnouncer::running_ = false;
 
-SAPAnnouncer::SAPAnnouncer() {
+SapAnnouncer::SapAnnouncer() {
   if ((sockfd_ = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
     DLOG(ERROR) << "socket creation failed";
     exit(EXIT_FAILURE);
@@ -48,19 +48,19 @@ SAPAnnouncer::SAPAnnouncer() {
   SetSourceInterface(0);
 }
 
-SAPAnnouncer::~SAPAnnouncer() {
+SapAnnouncer::~SapAnnouncer() {
   DeleteAllStreams();
   if (sockfd_ != -1) close(sockfd_);
 }
 
-SAPAnnouncer &SAPAnnouncer::GetInstance() {
-  static SAPAnnouncer singleton_;
+SapAnnouncer &SapAnnouncer::GetInstance() {
+  static SapAnnouncer singleton_;
   return singleton_;
 }
 
-void SAPAnnouncer::Start() {
+void SapAnnouncer::Start() {
   if (running_) {
-    DLOG(WARNING) << "SAPAnnouncer already running, called twice?\n";
+    DLOG(WARNING) << "SapAnnouncer already running, called twice?\n";
     return;
   }
   for (auto &stream_ : streams_) {
@@ -69,14 +69,14 @@ void SAPAnnouncer::Start() {
   running_ = true;
   thread_ = std::thread(SAPAnnouncementThread, this);
 }
-void SAPAnnouncer::Stop() {
+void SapAnnouncer::Stop() {
   // Only deletes the streams from the SAP/SDP announcement, they are still in the vector ready to be restarted
   DeleteAllStreams();
   running_ = false;
   if (thread_.joinable()) thread_.join();
 }
 
-void SAPAnnouncer::DeleteAllStreams() {
+void SapAnnouncer::DeleteAllStreams() {
   for (auto &stream_ : streams_) {
     if (stream_.deleted == false) {
       SendSAPDeletion(stream_);
@@ -84,22 +84,22 @@ void SAPAnnouncer::DeleteAllStreams() {
     }
   }
 }
-void SAPAnnouncer::AddSapAnnouncement(const ::mediax::rtp::StreamInformation &stream_information) {
+void SapAnnouncer::AddSapAnnouncement(const ::mediax::rtp::StreamInformation &stream_information) {
   streams_.push_back(stream_information);
 }
 
-void SAPAnnouncer::DeleteAllSAPAnnouncements() { streams_.clear(); }
+void SapAnnouncer::DeleteAllSAPAnnouncements() { streams_.clear(); }
 
-void SAPAnnouncer::SendSAPAnnouncement(const ::mediax::rtp::StreamInformation &stream_information) const {
+void SapAnnouncer::SendSAPAnnouncement(const ::mediax::rtp::StreamInformation &stream_information) const {
   SendSAPPacket(stream_information, false);
 }
 
-void SAPAnnouncer::SendSAPDeletion(const ::mediax::rtp::StreamInformation &stream_information) const {
+void SapAnnouncer::SendSAPDeletion(const ::mediax::rtp::StreamInformation &stream_information) const {
   SendSAPPacket(stream_information, true);
 }
 
 // Function to send a SAP announcement
-void SAPAnnouncer::SendSAPPacket(const ::mediax::rtp::StreamInformation &stream_information, bool deletion) const {
+void SapAnnouncer::SendSAPPacket(const ::mediax::rtp::StreamInformation &stream_information, bool deletion) const {
   std::string depth;
   std::string colorimetry;
 
@@ -155,16 +155,16 @@ void SAPAnnouncer::SendSAPPacket(const ::mediax::rtp::StreamInformation &stream_
   // Oversized 4k buffer for SAP/SDP
   std::array<uint8_t, 4069> buffer;
   if (deletion) {
-    SAPHeader header(0x24, 0, source_ipaddress_);
+    SapHeader header(0x24, 0, source_ipaddress_);
     memcpy(&buffer[0], &header, sizeof(header));
   } else {
-    SAPHeader header(0x20, 0, source_ipaddress_);
+    SapHeader header(0x20, 0, source_ipaddress_);
     memcpy(&buffer[0], &header, sizeof(header));
   }
 
-  memcpy(&buffer[sizeof(SAPHeader)], sdp_msg.data(), sdp_msg.size());
+  memcpy(&buffer[sizeof(SapHeader)], sdp_msg.data(), sdp_msg.size());
 
-  ssize_t sent_bytes = sendto(sockfd_, buffer.data(), sizeof(SAPHeader) + sdp_msg.size(), 0,
+  ssize_t sent_bytes = sendto(sockfd_, buffer.data(), sizeof(SapHeader) + sdp_msg.size(), 0,
                               (const struct sockaddr *)(&multicast_addr_), sizeof(multicast_addr_));
   if (sent_bytes < 0) {
     perror("sendto failed");
@@ -172,7 +172,7 @@ void SAPAnnouncer::SendSAPPacket(const ::mediax::rtp::StreamInformation &stream_
   }
 }
 
-void SAPAnnouncer::SAPAnnouncementThread(SAPAnnouncer *sap) {
+void SapAnnouncer::SAPAnnouncementThread(SapAnnouncer *sap) {
   while (running_) {
     for (const auto &stream_ : sap->GetStreams()) {
       sap->SendSAPAnnouncement(stream_);
@@ -181,15 +181,15 @@ void SAPAnnouncer::SAPAnnouncementThread(SAPAnnouncer *sap) {
   }
 }
 
-void SAPAnnouncer::SetSourceInterface(uint16_t select) { SetAddressHelper(select, false); }
+void SapAnnouncer::SetSourceInterface(uint16_t select) { SetAddressHelper(select, false); }
 
-void SAPAnnouncer::ListInterfaces(uint16_t select) { SetAddressHelper(select, true); }
+void SapAnnouncer::ListInterfaces(uint16_t select) { SetAddressHelper(select, true); }
 
-uint32_t SAPAnnouncer::GetActiveStreamCount() const { return (uint32_t)streams_.size(); }
+uint32_t SapAnnouncer::GetActiveStreamCount() const { return (uint32_t)streams_.size(); }
 
-std::vector<::mediax::rtp::StreamInformation> &SAPAnnouncer::GetStreams() { return streams_; }
+std::vector<::mediax::rtp::StreamInformation> &SapAnnouncer::GetStreams() { return streams_; }
 
-void SAPAnnouncer::SetAddressHelper(uint16_t select [[maybe_unused]], bool helper) {
+void SapAnnouncer::SetAddressHelper(uint16_t select [[maybe_unused]], bool helper) {
 #ifdef _WIN32
 #pragma stream_information("TODO: Implement SetAddressHelper for Windows")
 #else
@@ -211,7 +211,7 @@ void SAPAnnouncer::SetAddressHelper(uint16_t select [[maybe_unused]], bool helpe
 #endif
 }
 
-void SAPAnnouncer::CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t select) {
+void SapAnnouncer::CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t select) {
 #ifdef _WIN32
 #pragma stream_information("TODO: Implement CheckAddresses for Windows")
 #else
