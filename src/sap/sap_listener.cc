@@ -27,6 +27,7 @@
 #include <vector>
 
 #include "glog/logging.h"
+#include "rtp/rtp_internal_types.h"
 #include "rtp/rtp_utils.h"
 #include "sap/sap_utils.h"
 

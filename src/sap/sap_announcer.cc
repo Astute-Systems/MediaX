@@ -26,6 +26,7 @@
 #include <thread>
 #include <vector>
 
+#include "rtp/rtp_internal_types.h"
 #include "rtp/rtp_types.h"
 #include "sap/sap_utils.h"
 

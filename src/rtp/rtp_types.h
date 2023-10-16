@@ -22,9 +22,6 @@
 
 namespace mediax::rtp {
 
-/// SAP/SDP constants
-static const char *kIpaddr = "224.2.127.254";
-
 enum class StatusCode { kStatusOk = 0, kStatusError };
 
 /// SAP/SDP port
