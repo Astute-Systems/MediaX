@@ -180,22 +180,19 @@ void RtpH264GstNvidiaDepayloader::Close() {
 bool RtpH264GstNvidiaDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   auto start_time = std::chrono::high_resolution_clock::now();
 
+  // Dont start a new thread if a frame is available just return it
+  *cpu = buffer_in_.data();
   while (!new_rx_frame_) {
     // Check timeout
     if (auto elapsed = std::chrono::high_resolution_clock::now() - start_time;
         elapsed > std::chrono::milliseconds(timeout)) {
-      GetBuffer().resize(GetHeight() * GetWidth() * 3);
-      std::cout << "Height: " << GetHeight() << " Width: " << GetWidth() << std::endl;
-      *cpu = GetBuffer().data();
-      // Fill buffer_in_ with zeros
-      std::fill(buffer_in_.begin(), buffer_in_.end(), 0);
+      // Blank the buffer, no data
+      memset(buffer_in_.data(), 0, buffer_in_.size());
       return false;
     }
     // Sleep 1ms and wait for a new frame
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
-  // Dont start a new thread if a frame is available just return it
-  *cpu = buffer_in_.data();
 
   new_rx_frame_ = false;
   return true;

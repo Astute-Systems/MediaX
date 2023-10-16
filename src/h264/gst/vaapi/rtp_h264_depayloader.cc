@@ -189,7 +189,8 @@ bool RtpH264GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
     // Check timeout
     if (auto elapsed = std::chrono::high_resolution_clock::now() - start_time;
         elapsed > std::chrono::milliseconds(timeout)) {
-      *cpu = nullptr;
+      // Blank the buffer, no data
+      memset(buffer_in_.data(), 0, buffer_in_.size());
       return false;
     }
     // Sleep 1ms and wait for a new frame
