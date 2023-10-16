@@ -35,7 +35,7 @@ class RtpH264GstVaapiDepayloader : public mediax::rtp::RtpDepayloader {
   /// \brief Construct a new Rtpvraw Depayloader object
   ///
   ///
-  RtpH264GstVaapiDepayloader() = default;
+  RtpH264GstVaapiDepayloader();
 
   ///
   /// \brief Destroy the Rtpvraw Depayloader object
