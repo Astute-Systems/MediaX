@@ -101,7 +101,7 @@ uint8_t BitsPerPixel(rtp::ColourspaceType mode) {
 }
 uint8_t BytesPerPixel(rtp::ColourspaceType mode) {
   // Round up to next byte
-  return static_cast<uint8_t>(std::ceil(BitsPerPixel(mode) / (double)8));
+  return static_cast<uint8_t>(std::ceil(BitsPerPixel(mode) / static_cast<double>(8)));
 }
 }  // namespace mediax
 
