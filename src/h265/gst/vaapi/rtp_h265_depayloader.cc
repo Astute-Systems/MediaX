@@ -13,14 +13,14 @@
 /// Below is a sample pipeline to create video streams using GStreamer:
 /// \code
 /// gst-launch-1.0 -v udpsrc caps="application/x-rtp, media=(string)video, clock-rate=(int)90000,
-/// encoding-name=(string)H264" ! rtph264depay ! h264parse ! queue ! vaapih264dec ! caps="video/x-raw, format=RGB" !
+/// encoding-name=(string)h265" ! rtph265depay ! h265parse ! queue ! vaapih265dec ! caps="video/x-raw, format=RGB" !
 /// videoconvert ! appsink
 /// \endcode
 ///
-/// \file rtph264_depayloader.cc
+/// \file rtph265_depayloader.cc
 ///
 
-#include "h264/gst/vaapi/rtp_h264_depayloader.h"
+#include "h265/gst/vaapi/rtp_h265_depayloader.h"
 
 #include <glog/logging.h>
 #include <gst/gst.h>
@@ -33,21 +33,21 @@
 
 #include "rtp/rtp_utils.h"
 
-namespace mediax::rtp::h264::gst::vaapi {
+namespace mediax::rtp::h265::gst::vaapi {
 
-RtpH264GstVaapiDepayloader::RtpH264GstVaapiDepayloader() {
+RtpH265GstVaapiDepayloader::RtpH265GstVaapiDepayloader() {
   // Set this for empty video buffers
   SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceNv12);
 }
 
-RtpH264GstVaapiDepayloader::~RtpH264GstVaapiDepayloader() = default;
+RtpH265GstVaapiDepayloader::~RtpH265GstVaapiDepayloader() = default;
 
-RtpH264GstVaapiDepayloader &RtpH264GstVaapiDepayloader::operator=(const RtpH264GstVaapiDepayloader &other
+RtpH265GstVaapiDepayloader &RtpH265GstVaapiDepayloader::operator=(const RtpH265GstVaapiDepayloader &other
                                                                   [[maybe_unused]]) {
   return *this;
 }
 
-void RtpH264GstVaapiDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
+void RtpH265GstVaapiDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
   ingress_.encoding = stream_information.encoding;
   ingress_.height = stream_information.height;
   ingress_.width = stream_information.width;
@@ -61,7 +61,7 @@ void RtpH264GstVaapiDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInform
 GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
   gint width = 0;
   gint height = 0;
-  auto depayloader = static_cast<RtpH264GstVaapiDepayloader *>(user_data);
+  auto depayloader = static_cast<RtpH265GstVaapiDepayloader *>(user_data);
 
   // Pull the sample from the appsink
   GstSample *sample = gst_app_sink_pull_sample(appsink);
@@ -119,12 +119,12 @@ GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
   return GST_FLOW_OK;
 }
 
-bool RtpH264GstVaapiDepayloader::Open() {
+bool RtpH265GstVaapiDepayloader::Open() {
   // Create a pipeline
-  pipeline_ = gst_pipeline_new("rtp-h264-pipeline");
+  pipeline_ = gst_pipeline_new("rtp-h265-pipeline");
 
   // Create a udpsrc element to receive the RTP stream
-  GstElement *udpsrc = gst_element_factory_make("udpsrc", "rtp-h264-udpsrc");
+  GstElement *udpsrc = gst_element_factory_make("udpsrc", "rtp-h265-udpsrc");
   g_object_set(G_OBJECT(udpsrc), "port", GetPort(), nullptr);
 
   if (IsMulticast(GetIpAddress())) {
@@ -132,64 +132,61 @@ bool RtpH264GstVaapiDepayloader::Open() {
   }
 
   // Create a capsfilter element to set the caps for the RTP stream
-  GstElement *capsfilter = gst_element_factory_make("capsfilter", "rtp-h264-capsfilter");
+  GstElement *capsfilter = gst_element_factory_make("capsfilter", "rtp-h265-capsfilter");
   GstCaps *caps =
-      gst_caps_from_string("application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264");
+      gst_caps_from_string("application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)h265");
   g_object_set(G_OBJECT(capsfilter), "caps", caps, nullptr);
   gst_caps_unref(caps);
 
-  // Create a rtph264depay element to depayload the RTP stream
-  GstElement *rtph264depay = gst_element_factory_make("rtph264depay", "rtp-h264-depay");
+  // Create a rtph265depay element to depayload the RTP stream
+  GstElement *rtph265depay = gst_element_factory_make("rtph265depay", "rtp-h265-depay");
 
   // H.264 parse
-  GstElement *h264parse = gst_element_factory_make("h264parse", "rtp-h264-h264parse");
+  GstElement *h265parse = gst_element_factory_make("h265parse", "rtp-h265-h265parse");
 
   // Queue
-  GstElement *queue = gst_element_factory_make("queue", "rtp-h264-queue");
+  GstElement *queue = gst_element_factory_make("queue", "rtp-h265-queue");
 
   // Decode frame using vaapi
-  GstElement *vaapih264dec = gst_element_factory_make("vaapih264dec", "rtp-h264-vaapih264dec");
+  GstElement *vaapih265dec = gst_element_factory_make("vaapih265dec", "rtp-h265-vaapih265dec");
 
   // Create a custom appsrc element to receive the H.264 stream
-  GstElement *appsink = gst_element_factory_make("appsink", "rtp-h264-appsrc");
+  GstElement *appsink = gst_element_factory_make("appsink", "rtp-h265-appsrc");
   // Set the callback function for the appsink
   GstAppSinkCallbacks callbacks = {.new_sample = NewFrameCallback};
   gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &callbacks, this, nullptr);
 
   // Add all elements to the pipeline
-  gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, rtph264depay, h264parse, queue, vaapih264dec, appsink,
+  gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, rtph265depay, h265parse, queue, vaapih265dec, appsink,
                    nullptr);
 
   // Link the elements
-  gst_element_link_many(udpsrc, capsfilter, rtph264depay, h264parse, queue, vaapih264dec, appsink, nullptr);
+  gst_element_link_many(udpsrc, capsfilter, rtph265depay, h265parse, queue, vaapih265dec, appsink, nullptr);
 
   return true;
 }
 
-void RtpH264GstVaapiDepayloader::Start() {
+void RtpH265GstVaapiDepayloader::Start() {
   // Start the pipeline
   gst_element_set_state(pipeline_, GST_STATE_PLAYING);
 }
 
-void RtpH264GstVaapiDepayloader::Stop() {
+void RtpH265GstVaapiDepayloader::Stop() {
   // Stop the pipeline
   gst_element_set_state(pipeline_, GST_STATE_NULL);
-}
-
-void RtpH264GstVaapiDepayloader::Close() {
-  Stop();
-
   // Wait for the pipeline to finish
   GstBus *bus = gst_element_get_bus(pipeline_);
 
   // Free resources
   gst_object_unref(bus);
+}
 
+void RtpH265GstVaapiDepayloader::Close() {
   // Destroy the pipeline
   gst_object_unref(pipeline_);
 }
 
-bool RtpH264GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
+bool RtpH265GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   auto start_time = std::chrono::high_resolution_clock::now();
 
   *cpu = buffer_in_.data();
@@ -209,8 +206,8 @@ bool RtpH264GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   return true;
 }
 
-std::vector<uint8_t> &RtpH264GstVaapiDepayloader::GetBuffer() { return buffer_in_; }
+std::vector<uint8_t> &RtpH265GstVaapiDepayloader::GetBuffer() { return buffer_in_; }
 
-void RtpH264GstVaapiDepayloader::NewFrame() { new_rx_frame_ = true; }
+void RtpH265GstVaapiDepayloader::NewFrame() { new_rx_frame_ = true; }
 
-}  // namespace mediax::rtp::h264::gst::vaapi
+}  // namespace mediax::rtp::h265::gst::vaapi

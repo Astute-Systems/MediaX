@@ -99,6 +99,7 @@ enum class ColourspaceType {
   kColourspaceJpeg2000,
   kColourspaceH264Part4,
   kColourspaceH264Part10,
+  kColourspaceH265,
   kColourspaceUndefined
 };
 

@@ -95,7 +95,8 @@ DEFINE_uint32(mode, 1,
               "2 - Mono16\n\t"
 #if GST_SUPPORTED
               "3 - Mono8\n\t"
-              "4 - H.264\n\t");
+              "4 - H.264\n\t"
+              "5 - H.265\n\t");
 #else
               "3 - Mono8\n\t");
 #endif
@@ -163,11 +164,17 @@ int main(int argc, char** argv) {
   // Setup RTP streaming class
   std::unique_ptr<mediax::rtp::RtpPayloader> rtp;
 #if GST_SUPPORTED
-  if ((video_mode == mediax::rtp::ColourspaceType::kColourspaceH264Part10) ||
-      (video_mode == mediax::rtp::ColourspaceType::kColourspaceH264Part4)) {
-    rtp = std::make_unique<mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader>();
-  } else {
-    rtp = std::make_unique<mediax::rtp::uncompressed::RtpUncompressedPayloader>();
+  switch (video_mode) {
+    default:  // Assume uncompressed
+      rtp = std::make_unique<mediax::rtp::uncompressed::RtpUncompressedPayloader>();
+      break;
+    case mediax::rtp::ColourspaceType::kColourspaceH264Part10:
+    case mediax::rtp::ColourspaceType::kColourspaceH264Part4:
+      rtp = std::make_unique<mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader>();
+      break;
+    case mediax::rtp::ColourspaceType::kColourspaceH265:
+      rtp = std::make_unique<mediax::rtp::h265::gst::vaapi::RtpH265GstVaapiPayloader>();
+      break;
   }
 #else
   rtp = std::make_unique<mediax::RtpUncompressedPayloader>();

@@ -20,7 +20,7 @@
 /// \brief Dummy function for example only
 ///
 ///
-void Nvidia() {
+void NvidiaH264() {
   // [Receive example nvidia]
   // To use another payloader, simply change the namespace i.e. Nvidia Video Codec SDK
   mediax::rtp::h264::gst::nvidia::RtpH264GstNvidiaPayloader rtp;
@@ -31,11 +31,22 @@ void Nvidia() {
 /// \brief Dummy function for example only
 ///
 ///
-void Vaapi() {
+void VaapiH264() {
   // [Receive example vaapi]
   // To use another payloader, simply change the namespace i.e. Intel Video Accelleration API (VAAPI)
   mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader rtp;
   // [Receive example vaapi]
+}
+
+///
+/// \brief Dummy function for example only
+///
+///
+void VaapiH265() {
+  // [Receive example vaapi h265]
+  // To use another payloader, simply change the namespace i.e. Intel Video Accelleration API (VAAPI)
+  mediax::rtp::h265::gst::vaapi::RtpH265GstVaapiPayloader rtp;
+  // [Receive example vaapi h265]
 }
 
 int main(int argc, char *argv[]) {

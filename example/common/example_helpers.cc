@@ -21,6 +21,9 @@ mediax::rtp::ColourspaceType GetMode(int mode) {
     case 4:
       return mediax::rtp::ColourspaceType::kColourspaceH264Part4;
       break;
+    case 5:
+      return mediax::rtp::ColourspaceType::kColourspaceH265;
+      break;
     default:
       LOG(WARNING) << "Invalid video mode " << mode;
       return mediax::rtp::ColourspaceType::kColourspaceYuv;
@@ -40,6 +43,8 @@ std::string ModeToString(int mode) {
       return "Mono8";
     case 4:
       return "H.264";
+    case 5:
+      return "H.265";
     default:
       break;
   }

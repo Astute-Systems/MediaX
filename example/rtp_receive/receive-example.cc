@@ -41,7 +41,8 @@ DEFINE_uint32(mode, 1,
               "2 - Mono16\n\t"
 #if GST_SUPPORTED
               "3 - Mono8\n\t"
-              "4 - H.264\n\t");
+              "4 - H.264\n\t"
+              "5 - H.264\n\t");
 #else
               "3 - Mono8\n\t");
 #endif
@@ -153,13 +154,19 @@ gboolean update_callback(gpointer user_data) {
 ///
 /// \param mode the video mode
 ///
-void ProcessVideo(mediax::rtp::ColourspaceType mode) {
+void ProcessVideo(mediax::rtp::ColourspaceType video_mode) {
 #if GST_SUPPORTED
-  if ((mode == mediax::rtp::ColourspaceType::kColourspaceH264Part10) ||
-      (mode == mediax::rtp::ColourspaceType::kColourspaceH264Part4)) {
-    rtp_ = std::make_shared<mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader>();
-  } else {
-    rtp_ = std::make_shared<mediax::rtp::uncompressed::RtpUncompressedDepayloader>();
+  switch (video_mode) {
+    default:  // Assume uncompressed
+      rtp_ = std::make_shared<mediax::rtp::uncompressed::RtpUncompressedDepayloader>();
+      break;
+    case mediax::rtp::ColourspaceType::kColourspaceH264Part10:
+    case mediax::rtp::ColourspaceType::kColourspaceH264Part4:
+      rtp_ = std::make_shared<mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader>();
+      break;
+    case mediax::rtp::ColourspaceType::kColourspaceH265:
+      rtp_ = std::make_shared<mediax::rtp::h265::gst::vaapi::RtpH265GstVaapiDepayloader>();
+      break;
   }
 #else
   rtp_ = std::make_shared<mediax::RtpUncompressedDepayloader>();
@@ -167,7 +174,7 @@ void ProcessVideo(mediax::rtp::ColourspaceType mode) {
 
   // Setup stream
   mediax::rtp::StreamInformation stream_information = {
-      FLAGS_session_name, FLAGS_ipaddr, (uint16_t)FLAGS_port, FLAGS_height, FLAGS_width, 25, mode, false};
+      FLAGS_session_name, FLAGS_ipaddr, (uint16_t)FLAGS_port, FLAGS_height, FLAGS_width, 25, video_mode, false};
   if (FLAGS_wait_sap) {
     // Just give the stream name and wait for SAP/SDP announcement
     LOG(INFO) << "Example RTP streaming to " << FLAGS_session_name;

@@ -19,6 +19,8 @@
 #include "h264/gst/nvidia/rtp_h264_payloader.h"
 #include "h264/gst/vaapi/rtp_h264_depayloader.h"
 #include "h264/gst/vaapi/rtp_h264_payloader.h"
+#include "h265/gst/vaapi/rtp_h265_depayloader.h"
+#include "h265/gst/vaapi/rtp_h265_payloader.h"
 #endif
 #include "rtp/rtp_depayloader.h"
 #include "rtp/rtp_payloader.h"
