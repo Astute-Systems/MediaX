@@ -50,6 +50,31 @@ void RtpCleanup() {
 #endif
 }
 
+std::string ColourspaceTypeToString(rtp::ColourspaceType) {
+  switch (rtp::ColourspaceType::kColourspaceRgba) {
+    case rtp::ColourspaceType::kColourspaceRgba:
+      return "RGBA";
+    case rtp::ColourspaceType::kColourspaceRgb24:
+      return "RGB24";
+    case rtp::ColourspaceType::kColourspaceYuv:
+      return "YUV";
+    case rtp::ColourspaceType::kColourspaceMono16:
+      return "MONO16";
+    case rtp::ColourspaceType::kColourspaceMono8:
+      return "MONO8";
+    case rtp::ColourspaceType::kColourspaceNv12:
+      return "NV12";
+    case rtp::ColourspaceType::kColourspaceH264Part4:
+      return "H264Part4";
+    case rtp::ColourspaceType::kColourspaceH264Part10:
+      return "H264Part10";
+    case rtp::ColourspaceType::kColourspaceH265:
+      return "H265";
+    default:
+      return "Unknown";
+  }
+}
+
 uint8_t BitsPerPixel(rtp::ColourspaceType mode) {
   switch (mode) {
     case rtp::ColourspaceType::kColourspaceRgba:
@@ -62,12 +87,14 @@ uint8_t BitsPerPixel(rtp::ColourspaceType mode) {
       return 16;
     case rtp::ColourspaceType::kColourspaceMono8:
       return 8;
+    case rtp::ColourspaceType::kColourspaceNv12:
+      return 16;
     case rtp::ColourspaceType::kColourspaceH264Part4:
     case rtp::ColourspaceType::kColourspaceH264Part10:
     case rtp::ColourspaceType::kColourspaceH265:
       return 24;  // Not known but not an error.
     default:
-      LOG(ERROR) << "Unknown colourspace type";
+      LOG(ERROR) << "Unknown colourspace type " << ColourspaceTypeToString(mode);
       return 0;
   }
 }

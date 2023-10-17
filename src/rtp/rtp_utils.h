@@ -56,6 +56,13 @@ bool IsRtpInitialised();
 void RtpCleanup();
 
 ///
+/// \brief Convert emun to string
+///
+/// \return std::string
+///
+std::string ColourspaceTypeToString(rtp::ColourspaceType);
+
+///
 /// \brief Get the number of bits per pixel for a given colour space
 ///
 /// \param mode
