@@ -89,7 +89,7 @@ uint8_t BitsPerPixel(rtp::ColourspaceType mode) {
     case rtp::ColourspaceType::kColourspaceMono8:
       return 8;
     case rtp::ColourspaceType::kColourspaceNv12:
-      return 16;
+      return 12;
     case rtp::ColourspaceType::kColourspaceH264Part4:
     case rtp::ColourspaceType::kColourspaceH264Part10:
     case rtp::ColourspaceType::kColourspaceH265:
@@ -99,7 +99,10 @@ uint8_t BitsPerPixel(rtp::ColourspaceType mode) {
       return 0;
   }
 }
-uint8_t BytesPerPixel(rtp::ColourspaceType mode) { return BitsPerPixel(mode) / 8; }
+uint8_t BytesPerPixel(rtp::ColourspaceType mode) {
+  // Round up to next byte
+  return static_cast<uint8_t>(std::ceil(BitsPerPixel(mode) / (double)8));
+}
 }  // namespace mediax
 
 void EndianSwap32(uint32_t *data, unsigned int length) {
