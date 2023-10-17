@@ -76,7 +76,8 @@ uint8_t BitsPerPixel(rtp::ColourspaceType mode);
 /// \brief Get the number of bytes per pixel for a given colour space
 ///
 /// \param mode
-/// \return uint8_t
+/// \return uint8_t The bytes per pixel, this will be rounded up for odd values i.e. NV12 is 12 bits per pixel but 2
+/// bytes
 ///
 uint8_t BytesPerPixel(rtp::ColourspaceType mode);
 
