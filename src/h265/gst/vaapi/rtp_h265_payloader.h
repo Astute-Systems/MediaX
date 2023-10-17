@@ -9,8 +9,8 @@
 ///
 /// \file rtp_h265_payloader.h
 
-#ifndef h265_GST_VAAPI_RTP_h265_PAYLOADER_H_
-#define h265_GST_VAAPI_RTP_h265_PAYLOADER_H_
+#ifndef H265_GST_VAAPI_RTP_H265_PAYLOADER_H_
+#define H265_GST_VAAPI_RTP_H265_PAYLOADER_H_
 
 #include <gst/gst.h>
 
@@ -83,4 +83,4 @@ class RtpH265GstVaapiPayloader : public mediax::rtp::RtpPayloader {
 
 }  // namespace mediax::rtp::h265::gst::vaapi
 
-#endif  // h265_GST_VAAPI_RTP_h265_PAYLOADER_H_
+#endif  // H265_GST_VAAPI_RTP_H265_PAYLOADER_H_
