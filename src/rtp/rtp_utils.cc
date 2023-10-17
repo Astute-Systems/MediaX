@@ -24,6 +24,7 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <string>
 
 /// The DefenceX (MediaX) library for video streaming
 namespace mediax {
