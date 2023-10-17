@@ -29,6 +29,8 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #endif
+#include <string>
+
 #include "rtp/rtp_types.h"
 
 namespace mediax {
