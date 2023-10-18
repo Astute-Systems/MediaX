@@ -198,10 +198,10 @@ bool RtpH265GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
       memset(buffer_in_.data(), 0, buffer_in_.size());
       return false;
     }
-    // Sleep 1ms and wait for a new frame
-    std::this_thread::sleep_for(std::chrono::milliseconds(5));
-  }
 
+    // Sleep 1ms and wait for a new frame
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+  }
   new_rx_frame_ = false;
   return true;
 }

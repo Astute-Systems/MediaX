@@ -10,6 +10,7 @@
         "announcments",
         "appsink",
         "appsrc",
+        "bframes",
         "bitsperpixel",
         "bytep",
         "capsfilter",

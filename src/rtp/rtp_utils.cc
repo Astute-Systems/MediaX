@@ -24,6 +24,7 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <random>
 #include <string>
 
 /// The DefenceX (MediaX) library for video streaming
@@ -337,5 +338,21 @@ void CreateSolidTestCard(uint8_t *data, uint32_t width, uint32_t height, uint8_t
   uint32_t size = width * height * stride;
   for (uint32_t i = 0; i < size; i += stride) {
     PackRgb(&data[i], red, green, blue, colourspace);
+  }
+}
+
+void CreateWhiteNoiseTestCard(uint8_t *data, uint32_t width, uint32_t height,
+                              mediax::rtp::ColourspaceType colourspace) {
+  uint32_t stride = mediax::BytesPerPixel(colourspace);
+
+  uint32_t size = width * height * stride;
+
+  for (uint32_t i = 0; i < size; i += stride) {
+    // random pixel 0 or 255
+    uint8_t pixel = rand() % 2 == 0 ? 0 : 255;
+    uint8_t r = pixel;
+    uint8_t g = pixel;
+    uint8_t b = pixel;
+    PackRgb(&data[i], r, g, b, colourspace);
   }
 }

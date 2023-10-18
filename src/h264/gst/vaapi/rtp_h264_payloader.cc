@@ -67,6 +67,9 @@ int RtpH264GstVaapiPayloader::Transmit(unsigned char *new_buffer, bool timeout) 
   // Release the appsrc
   gst_object_unref(appsrc);
 
+  // Sync
+  gst_element_sync_state_with_parent(appsrc);
+
   return 0;
 }
 
@@ -82,9 +85,10 @@ bool RtpH264GstVaapiPayloader::Open() {
   // Create a capsfilter element to set the caps for the H.264 stream
   GstElement *capsfilter = gst_element_factory_make("capsfilter", "rtp-h264-capsfilter");
   // Raw RGB caps
-  GstCaps *caps =
-      gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "RGB", "width", G_TYPE_INT, egress_.width, "height",
-                          G_TYPE_INT, egress_.height, "framerate", GST_TYPE_FRACTION, egress_.framerate, 1, nullptr);
+  GstCaps *caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "RGB", "width", G_TYPE_INT, egress_.width,
+                                      "height", G_TYPE_INT, egress_.height, "framerate", GST_TYPE_FRACTION,
+                                      egress_.framerate, 1, "media", G_TYPE_STRING, "video", "clock-rate", G_TYPE_INT,
+                                      90000, "encoding-name", G_TYPE_STRING, "RAW", "payload", G_TYPE_INT, 96, nullptr);
   g_object_set(G_OBJECT(capsfilter), "caps", caps, nullptr);
 
   // Convert the video colourspace

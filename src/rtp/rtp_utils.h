@@ -113,6 +113,7 @@ void DumpHex(const void *data, size_t size);
 /// \param data the buffer to write the test card to
 /// \param width the image width in pixels
 /// \param height the image height in pixels
+/// \param colourspace The colourspace to use
 ///
 void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::rtp::ColourspaceType colourspace);
 
@@ -122,6 +123,7 @@ void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height, med
 /// \param data the buffer to write the test card to
 /// \param width the image width in pixels
 /// \param height the image height in pixels
+/// \param colourspace The colourspace to use
 ///
 void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height,
                                 mediax::rtp::ColourspaceType colourspace);
@@ -132,6 +134,7 @@ void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height,
 /// \param data the buffer to write the test card to
 /// \param width the image width in pixels
 /// \param height the image height in pixels
+/// \param colourspace The colourspace to use
 ///
 void CreateQuadTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::rtp::ColourspaceType colourspace);
 
@@ -141,6 +144,7 @@ void CreateQuadTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::
 /// \param data the buffer to write the test card to
 /// \param width the image width in pixels
 /// \param height the image height in pixels
+/// \param colourspace The colourspace to use
 ///
 void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::rtp::ColourspaceType colourspace);
 
@@ -153,8 +157,21 @@ void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height, med
 /// \param red RGB value
 /// \param green RGB value
 /// \param blue RGB value
+/// \param colourspace The colourspace to use
 ///
 void CreateSolidTestCard(uint8_t *data, uint32_t width, uint32_t height, uint8_t red, uint8_t green, uint8_t blue,
                          mediax::rtp::ColourspaceType colourspace);
 
+///
+/// \brief Create a White Noise Test Card object
+///
+/// \param data the buffer to write the test card to
+/// \param width the image width in pixels
+/// \param height the image height in pixels
+/// \param red RGB value
+/// \param green RGB value
+/// \param blue RGB value
+/// \param colourspace The colourspace to use
+///
+void CreateWhiteNoiseTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::rtp::ColourspaceType colourspace);
 #endif  // RTP_RTP_UTILS_H_

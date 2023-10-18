@@ -133,8 +133,7 @@ bool RtpH264GstVaapiDepayloader::Open() {
 
   // Create a capsfilter element to set the caps for the RTP stream
   GstElement *capsfilter = gst_element_factory_make("capsfilter", "rtp-h264-capsfilter");
-  GstCaps *caps =
-      gst_caps_from_string("application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264");
+  GstCaps *caps = gst_caps_from_string("application/x-rtp");
   g_object_set(G_OBJECT(capsfilter), "caps", caps, nullptr);
   gst_caps_unref(caps);
 
@@ -149,6 +148,8 @@ bool RtpH264GstVaapiDepayloader::Open() {
 
   // Decode frame using vaapi
   GstElement *vaapih264dec = gst_element_factory_make("vaapih264dec", "rtp-h264-vaapih264dec");
+  // Set keyframe-period=1 max-bframes=0
+  g_object_set(G_OBJECT(vaapih264dec), "keyframe-period", 1, "max-bframes", 0, nullptr);
 
   // Create a custom appsrc element to receive the H.264 stream
   GstElement *appsink = gst_element_factory_make("appsink", "rtp-h264-appsrc");
@@ -194,15 +195,18 @@ bool RtpH264GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
 
   *cpu = buffer_in_.data();
   while (!new_rx_frame_) {
+    auto elapsed = std::chrono::high_resolution_clock::now() - start_time;
+
     // Check timeout
-    if (auto elapsed = std::chrono::high_resolution_clock::now() - start_time;
-        elapsed > std::chrono::milliseconds(timeout)) {
-      // Blank the buffer, no data
-      memset(buffer_in_.data(), 0, buffer_in_.size());
-      return false;
+    if (timeout) {
+      if (auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count(); ms > timeout) {
+        // Blank the buffer, no data
+        memset(buffer_in_.data(), 0, buffer_in_.size());
+        return false;
+      }
     }
     // Sleep 1ms and wait for a new frame
-    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
 
   new_rx_frame_ = false;

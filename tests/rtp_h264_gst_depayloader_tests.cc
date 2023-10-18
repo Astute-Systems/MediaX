@@ -112,7 +112,7 @@ TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfo) {
   EXPECT_EQ(rtp.GetHeight(), 720);
   EXPECT_EQ(rtp.GetWidth(), 1280);
 
-  WritePngFile(rgb_test.data(), rtp.GetWidth(), rtp.GetHeight(), "H264_Image.png");
+  WritePngFile(rgb_test.data(), rtp.GetWidth(), rtp.GetHeight(), "H264_Image1.png");
 }
 
 TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfoPtr) {
@@ -150,5 +150,5 @@ TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfoPtr) {
   EXPECT_EQ(rtp->GetHeight(), 720);
   EXPECT_EQ(rtp->GetWidth(), 1280);
 
-  WritePngFile(rgb_test.data(), rtp->GetWidth(), rtp->GetHeight(), "H264_Image.png");
+  WritePngFile(rgb_test.data(), rtp->GetWidth(), rtp->GetHeight(), "H264_Image2.png");
 }

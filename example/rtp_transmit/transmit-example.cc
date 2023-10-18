@@ -79,12 +79,13 @@ DEFINE_uint32(source, 2,
               "2 - Colour bars\n\t"
               "3 - Greyscale bars\n\t"
               "4 - Scaled RGB values\n\t"
-              "5 - Checkered test card\n\t"
+              "5 - Chequered test card\n\t"
               "6 - Solid white\n\t"
               "7 - Solid black\n\t"
               "8 - Solid red\n\t"
               "9 - Solid green\n\t"
-              "10 - Solid blue\n\t");
+              "10 - Solid blue\n\t"
+              "11 - White noise\n\t");
 DEFINE_string(filename, "testcard.png", "the PNG file to use as the source of the video stream (only with -source 0)");
 DEFINE_string(device, "/dev/video0", "the V4L2 device source (only with -source 1)");
 DEFINE_string(session_name, "TestVideo1", "the SAP/SDP session name");
@@ -101,6 +102,7 @@ DEFINE_uint32(mode, 1,
               "3 - Mono8\n\t");
 #endif
 DEFINE_uint32(num_frames, 0, "The number of frames to send");
+DEFINE_bool(verbose, false, "For verbose output");
 
 static bool application_running = true;
 
@@ -110,7 +112,7 @@ static bool application_running = true;
 /// \param signum the signal number
 ///
 void signalHandler(int signum [[maybe_unused]]) {
-  std::cout << "Interrupt signal (" << signum << ") received.\n";
+  std::cout << "transmit-example Interrupt signal (" << signum << ") received.\n";
   application_running = false;
   // Sleep 100ms
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -156,7 +158,7 @@ int main(int argc, char** argv) {
   signal(SIGTERM, signalHandler);
 
   std::cout << "Example RTP (Tx) streaming (" << FLAGS_width << "x" << FLAGS_height << " " << ModeToString(FLAGS_mode)
-            << ") to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "\n";
+            << ") to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "@" << FLAGS_framerate << "Htz\n";
 
   video_mode = GetMode(FLAGS_mode);
   transmit_buffer.resize(FLAGS_height * FLAGS_width * ::mediax::BytesPerPixel(video_mode));
@@ -252,6 +254,11 @@ int main(int argc, char** argv) {
       CreateSolidTestCard(video_buffer.data(), FLAGS_width, FLAGS_height, 0, 0, 255, video_mode);
       LOG(INFO) << "Creating solid blue test card";
       break;
+    case 11:  // White noise
+      video_buffer.resize(kBuffSizeRGB);
+      CreateWhiteNoiseTestCard(video_buffer.data(), FLAGS_width, FLAGS_height, video_mode);
+      LOG(INFO) << "Creating white noise test card";
+      break;
     case 0:
       Png image_reader;
       video_buffer = image_reader.ReadPngRgb24(FLAGS_filename);
@@ -273,30 +280,44 @@ int main(int argc, char** argv) {
   // Convert all the scan lines
   // Loop frames forever
   uint32_t count = 1;
+  int32_t interval = 1000 / FLAGS_framerate;
+  auto start = std::chrono::high_resolution_clock::now();
+
   while (application_running == true) {
-    // Timestamp start
-    auto start = std::chrono::high_resolution_clock::now();
     // Clear the YUV buffer
     if (FLAGS_source == 1) {
       v4lsource->CaptureFrame(video_buffer.data());
+    } else {
+      if (FLAGS_source == 11) {
+        // Creat a new white noise test card
+        CreateWhiteNoiseTestCard(transmit_buffer.data(), FLAGS_width, FLAGS_height, video_mode);
+      } else {
+        // Clear buffer
+        memset(transmit_buffer.data(), 0, FLAGS_height * FLAGS_width * ::mediax::BytesPerPixel(video_mode));
+        // Copy new image into buffer
+        memcpy(transmit_buffer.data(), video_buffer.data(),
+               FLAGS_height * FLAGS_width * ::mediax::BytesPerPixel(video_mode));
+      }
     }
 
-    // Clear buffer
-    memset(transmit_buffer.data(), 0, FLAGS_height * FLAGS_width * ::mediax::BytesPerPixel(video_mode));
-    // Copy new image into buffer
-    memcpy(transmit_buffer.data(), video_buffer.data(),
-           FLAGS_height * FLAGS_width * ::mediax::BytesPerPixel(video_mode));
-
-    // Set buffer to 0xff
-    if (rtp->Transmit(transmit_buffer.data(), true) < 0) break;
     auto end = std::chrono::high_resolution_clock::now();
 
-    if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count(); duration < 40) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(40 - duration));
+    if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+        duration < interval) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(interval - duration - 10));
+    } else {
+      std::cout << "Frame took too long to process, overrun by " << duration - interval << "ms\n";
+    }
+    // Timestamp start of transmission
+    start = std::chrono::high_resolution_clock::now();
+
+    // Set buffer to 0xff
+    if (rtp->Transmit(transmit_buffer.data(), true) < 0) {
+      std::cerr << "Failed to transmit frame\n";
     }
 
     // Bail out if we are counting frames and meet the requested limit
-    if (count - 1 > FLAGS_num_frames) {
+    if (count >= FLAGS_num_frames) {
       application_running = false;
     }
 
@@ -304,7 +325,7 @@ int main(int argc, char** argv) {
       count++;
     }
 
-    std::cout << "Frame=" << frame << "\r" << std::flush;
+    if (FLAGS_verbose) std::cout << "Frame=" << frame << "\r" << std::flush;
     frame++;
   }
 
@@ -314,7 +335,7 @@ int main(int argc, char** argv) {
   mediax::RtpCleanup();
 
   std::cout << "\n";
-  std::cout << "Example terminated...\n";
+  std::cout << "RTP (Tx) Example terminated...\n";
 
   return 0;
 }
