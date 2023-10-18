@@ -304,7 +304,7 @@ int main(int argc, char** argv) {
 
     if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
         duration < interval) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(interval - duration - 10));
+      std::this_thread::sleep_for(std::chrono::milliseconds(interval - duration));
     } else {
       std::cout << "Frame took too long to process, overrun by " << duration - interval << "ms\n";
     }
@@ -334,7 +334,6 @@ int main(int argc, char** argv) {
   rtp->Close();
   mediax::RtpCleanup();
 
-  std::cout << "\n";
   std::cout << "RTP (Tx) Example terminated...\n";
 
   return 0;

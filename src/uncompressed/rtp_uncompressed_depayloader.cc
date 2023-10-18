@@ -235,6 +235,17 @@ bool RtpUncompressedDepayloader::ReceiveLines(::mediax::rtp::RtpPacket *packet, 
     }
 
     marker ? receiving = false : receiving = true;
+    if (marker) {
+      uint16_t sequence_number_low = packet->head.rtp.protocol & 0xffff;
+      uint16_t sequence_number_hight = packet->head.payload.extended_sequence_number;
+      EndianSwap16(reinterpret_cast<uint16_t *>(&sequence_number_hight), sizeof(uint16_t));
+      uint32_t new_sequence_number = (((sequence_number_hight & 0xffff) << 16) | sequence_number_low) / ingress_.height;
+
+      if (new_sequence_number != sequence_number_ + 1) {
+        LOG(ERROR) << "Sequence number mismatch " << sequence_number_ << " " << new_sequence_number;
+      }
+      sequence_number_ = new_sequence_number;
+    }
   }
   return receiving;
 }
@@ -272,20 +283,21 @@ void RtpUncompressedDepayloader::Stop() {
 }
 
 bool RtpUncompressedDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
+  *cpu = buffer_in_.data();
   // Wait for completion
   if (timeout <= 0) {
+    // Block till new frame
     while (!new_rx_frame_) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(2));
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
-    *cpu = buffer_in_.data();
-    new_rx_frame_ = false;
     return true;
   } else {
+    // Timeout
     auto to = std::chrono::milliseconds(timeout);
     auto start_time = std::chrono::high_resolution_clock::now();
 
     while (!new_rx_frame_) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(2));
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
       auto end_time = std::chrono::high_resolution_clock::now();
       if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
           duration >= to) {
@@ -296,8 +308,6 @@ bool RtpUncompressedDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
         return false;
       }
     }
-    *cpu = buffer_in_.data();
-    new_rx_frame_ = false;
     return true;
   }
 }
@@ -325,7 +335,8 @@ bool RtpUncompressedDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
     new_rx_frame_ = false;
     return true;
   } else {
-    return WaitForFrame(cpu, timeout);
+    bool ret = WaitForFrame(cpu, timeout);
+    return ret;
   }
 
   // should not ever get here

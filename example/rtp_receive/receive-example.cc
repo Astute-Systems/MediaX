@@ -60,6 +60,7 @@ struct OnDrawData {
   uint16_t port;
 };
 
+GtkWidget *drawing_area = nullptr;
 class Receive {
  public:
   ///
@@ -71,6 +72,9 @@ class Receive {
   /// \return gboolean true if successful
   ///
   static gboolean OnDraw(const GtkWidget *widget [[maybe_unused]], cairo_t *cr, gpointer user_data) {
+    // Time the start of the draw
+    auto start = std::chrono::high_resolution_clock::now();
+
     uint8_t *cpu_buffer;
     auto data = static_cast<OnDrawData *>(user_data);
     mediax::video::ColourSpaceCpu convert;
@@ -78,6 +82,7 @@ class Receive {
     // Overwrite line below to test the frame rate
     if (FLAGS_verbose) std::cout << "Frame=" << frame_counter_ << "\r";
     std::flush(std::cout);
+    frame_counter_++;
 
     // Fill the surface with video data if available
     if (rtp_->Receive(&cpu_buffer, timeout_) == true) {
@@ -128,14 +133,26 @@ class Receive {
       dropped_++;
     }
     if (count_ - 1 > FLAGS_num_frames) {
-      std::cout << "\n";
-      std::flush(std::cout);
       gtk_main_quit();
     }
-    if (FLAGS_num_frames >= 0) count_++;
-    frame_counter_++;
+    if (FLAGS_num_frames > 0) {
+      count_++;
+    }
 
-    return FALSE;
+    // Modify next callback
+    g_source_remove(timeout_id_);
+
+    // Calculate the elapsed time in ms
+    auto elapsed =
+        std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start);
+    guint sleep_time = (1000 / FLAGS_framerate) - elapsed.count();
+    if (elapsed.count() >= (1000 / FLAGS_framerate)) sleep_time = 1;
+
+    // Update the g_timeout_add
+    timeout_id_ = g_timeout_add(sleep_time, Receive::UpdateCallback,
+                                drawing_area);  // framerate is in milliseconds
+
+    return TRUE;
   }
 
   ///
@@ -208,6 +225,7 @@ class Receive {
   static int32_t timeout_;
   static uint32_t count_;
   static uint32_t dropped_;
+  static guint timeout_id_;
 
  private:
   static std::shared_ptr<mediax::sap::SapListener> sap_listener_;
@@ -221,6 +239,7 @@ uint32_t Receive::frame_counter_ = 0;
 uint32_t Receive::count_ = 1;
 uint32_t Receive::dropped_ = 0;
 int32_t Receive::timeout_ = 0;
+guint Receive::timeout_id_ = 0;
 
 ///
 /// \brief The signal handler
@@ -280,7 +299,7 @@ int main(int argc, char *argv[]) {
   gtk_window_set_default_size(GTK_WINDOW(window), FLAGS_width, FLAGS_height);
 
   // Create a drawing area widget
-  GtkWidget *drawing_area = gtk_drawing_area_new();
+  drawing_area = gtk_drawing_area_new();
   gtk_container_add(GTK_CONTAINER(window), drawing_area);
 
   // Create a surface and set it as the user data for the draw area
@@ -297,7 +316,8 @@ int main(int argc, char *argv[]) {
   g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), nullptr);
 
   // Start the update timer
-  g_timeout_add(1000 / FLAGS_framerate, Receive::UpdateCallback, drawing_area);  // framerate is in milliseconds
+  Receive::timeout_id_ =
+      g_timeout_add(1000 / FLAGS_framerate, Receive::UpdateCallback, drawing_area);  // framerate is in milliseconds
 
   gtk_widget_show_all(window);
 

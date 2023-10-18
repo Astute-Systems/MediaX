@@ -349,7 +349,7 @@ void CreateWhiteNoiseTestCard(uint8_t *data, uint32_t width, uint32_t height,
 
   for (uint32_t i = 0; i < size; i += stride) {
     // random pixel 0 or 255
-    uint8_t pixel = rand() % 2 == 0 ? 0 : 255;
+    uint8_t pixel = rand() % 2 == 0 ? 0 : 255;  // NOLINT
     uint8_t r = pixel;
     uint8_t g = pixel;
     uint8_t b = pixel;

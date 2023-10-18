@@ -56,6 +56,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #endif
+#include <atomic>
 #include <limits>
 #include <vector>
 
@@ -161,8 +162,8 @@ class RtpUncompressedDepayloader : public ::mediax::rtp::RtpDepayloader {
   bool Receive(uint8_t **cpu, int32_t timeout = 0) final;
 
  private:
-  /// The incremental sequence numer for transmitting RTP packets
-  bool new_rx_frame_ = false;
+  /// The incremental sequence numer for transmitting RTP packets, atomic
+  std::atomic<bool> new_rx_frame_ = false;
   /// Flag indicating the thread is running
   bool rx_thread_running_ = true;
   /// Transmit arguments used by the thread
@@ -175,6 +176,8 @@ class RtpUncompressedDepayloader : public ::mediax::rtp::RtpDepayloader {
   static std::vector<uint8_t> buffer_in_;
   /// Arguments sent to thread
   std::thread rx_thread_;
+  // The current sequence number
+  uint32_t sequence_number_ = 0;
 
   ///
   /// \brief Populate the RTP header

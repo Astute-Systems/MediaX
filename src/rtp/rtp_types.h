@@ -154,7 +154,7 @@ struct RtpPortType {
 /// RTP Payload header
 struct RtpPayloadHeader {
   /// Extended sequence number
-  int16_t extended_sequence_number;
+  uint16_t extended_sequence_number;
   /// Line header/s
   std::array<RtpLineHeader, kNumberLinesPerPacket> line;  // This can be multiline min the future
 };
