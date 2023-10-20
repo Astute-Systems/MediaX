@@ -48,14 +48,15 @@ RtpH264GstVaapiDepayloader &RtpH264GstVaapiDepayloader::operator=(const RtpH264G
 }
 
 void RtpH264GstVaapiDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
-  ingress_.encoding = stream_information.encoding;
-  ingress_.height = stream_information.height;
-  ingress_.width = stream_information.width;
-  ingress_.framerate = stream_information.framerate;
-  ingress_.name = stream_information.session_name;
-  ingress_.hostname = stream_information.hostname;
-  ingress_.port_no = stream_information.port;
-  ingress_.settings_valid = true;
+  ::mediax::rtp::RtpPortType &stream = GetStream();
+  stream.encoding = stream_information.encoding;
+  stream.height = stream_information.height;
+  stream.width = stream_information.width;
+  stream.framerate = stream_information.framerate;
+  stream.name = stream_information.session_name;
+  stream.hostname = stream_information.hostname;
+  stream.port_no = stream_information.port;
+  stream.settings_valid = true;
 }
 
 GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
@@ -148,8 +149,6 @@ bool RtpH264GstVaapiDepayloader::Open() {
 
   // Decode frame using vaapi
   GstElement *vaapih264dec = gst_element_factory_make("vaapih264dec", "rtp-h264-vaapih264dec");
-  // Set keyframe-period=1 max-bframes=0
-  g_object_set(G_OBJECT(vaapih264dec), "keyframe-period", 1, "max-bframes", 0, nullptr);
 
   // Create a custom appsrc element to receive the H.264 stream
   GstElement *appsink = gst_element_factory_make("appsink", "rtp-h264-appsrc");
@@ -213,8 +212,18 @@ bool RtpH264GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   return true;
 }
 
+void RtpH264GstVaapiDepayloader::Callback(::mediax::rtp::RtpCallbackData frame) const {
+  callback_(static_cast<const RtpDepayloader &>(*this), frame);
+}
+
 std::vector<uint8_t> &RtpH264GstVaapiDepayloader::GetBuffer() { return buffer_in_; }
 
-void RtpH264GstVaapiDepayloader::NewFrame() { new_rx_frame_ = true; }
+void RtpH264GstVaapiDepayloader::NewFrame() {
+  new_rx_frame_ = true;
+  if (CallbackRegistered()) {
+    RtpCallbackData arg_tx = {{GetHeight(), GetWidth()}, buffer_in_.data(), GetColourSpace()};
+    Callback(arg_tx);
+  }
+}
 
 }  // namespace mediax::rtp::h264::gst::vaapi

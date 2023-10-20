@@ -87,7 +87,6 @@ enum class SdpTypeEnum {
 };
 
 /// A simplified SDP message structure
-/// \brief sap_text contains the complete SDP announcement
 struct SdpMessage {
   /// Protocol version
   uint32_t protocol_version;

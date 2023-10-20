@@ -175,6 +175,21 @@ struct RtpPacket {
   std::array<int8_t, kMaximumBufferSize> data;
 };
 
+/// Resolution of a video stream
+struct Resolution {
+  /// The height of the video stream
+  uint32_t height;
+  /// The width of the video stream
+  uint32_t width;
+};
+
+/// The RTP callback data
+struct RtpCallbackData {
+  Resolution resolution;
+  uint8_t *cpu_buffer;
+  mediax::rtp::ColourspaceType encoding;
+};
+
 /// Transmit data structure
 struct TxData {
   /// RGB frame

@@ -15,12 +15,19 @@
 #ifndef RTP_RTP_DEPAYLOADER_H_
 #define RTP_RTP_DEPAYLOADER_H_
 
+#include <functional>
 #include <string>
 
+#include "rtp/rtp_depayloader.h"
 #include "rtp/rtp_types.h"
 
 /// The Real Time Protocol (RTP) namespace
 namespace mediax::rtp {
+
+class RtpDepayloader;
+
+/// \brief The RTP frame callback
+using RtpCallback = std::function<void(const RtpDepayloader& depay, RtpCallbackData frame)>;
 
 ///
 /// \brief Manage an RTP stream
@@ -45,6 +52,14 @@ class RtpDepayloader {
   /// \param width The width of the stream in pixels
   ///
   virtual void SetStreamInfo(const ::mediax::rtp::StreamInformation& stream_information) = 0;
+
+  ///
+  /// \brief Register a callback for our session_name
+  ///
+  /// \param session_name Advertised session name
+  /// \param callback The callback to notify when a frame is received
+  ///
+  void RegisterCallback(const ::mediax::rtp::RtpCallback& callback);
 
   ///
   /// \brief Open the RTP stream
@@ -198,6 +213,43 @@ class RtpDepayloader {
   ///
   bool IsMulticast(std::string_view ip_address);
 
+  ///
+  /// \brief Check is a callback is registered
+  ///
+  /// \return true if one is registered
+  /// \return false if one is not registered
+  ///
+  bool CallbackRegistered() const;
+
+  ///
+  /// \brief Unregister the callback
+  ///
+  ///
+  void UnregisterCallback();
+
+  ///
+  /// \brief Call the registered callback
+  ///
+  /// \param frame the callback frame data
+  ///
+  virtual void Callback(::mediax::rtp::RtpCallbackData frame) const = 0;
+
+  ///
+  /// \brief Get the Port Type object
+  ///
+  /// \return ::mediax::rtp::RtpPortType&
+  ///
+  ::mediax::rtp::RtpPortType& GetStream();
+
+  /// The callback to notify when a frame is received
+  ::mediax::rtp::RtpCallback callback_;
+
+  /// UDP data buffer
+  std::vector<uint8_t> buffer_in_;
+
+ private:
+  /// Indicate if callback has been registered
+  bool callback_registered_ = false;
   /// Ingress port
   ::mediax::rtp::RtpPortType ingress_ = {};
 };

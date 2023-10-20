@@ -41,8 +41,6 @@
 
 namespace mediax::rtp::uncompressed {
 
-std::vector<uint8_t> RtpUncompressedDepayloader::buffer_in_;
-
 RtpUncompressedDepayloader::RtpUncompressedDepayloader() { pthread_mutex_init(&mutex_, nullptr); }
 
 RtpUncompressedDepayloader::~RtpUncompressedDepayloader(void) = default;
@@ -59,80 +57,80 @@ RtpUncompressedDepayloader &RtpUncompressedDepayloader::operator=(const RtpUncom
 
 // Broadcast the stream to port i.e. 5004
 void RtpUncompressedDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
-  ingress_.encoding = stream_information.encoding;
-  ingress_.height = stream_information.height;
-  ingress_.width = stream_information.width;
-  ingress_.name = stream_information.session_name;
-  ingress_.framerate = stream_information.framerate;
-  ingress_.hostname = stream_information.hostname;
-  ingress_.port_no = stream_information.port;
-  ingress_.settings_valid = true;
-  buffer_in_.resize((ingress_.height * ingress_.width) * ::mediax::rtp::kColourspaceBytes.at(ingress_.encoding));
+  GetStream().encoding = stream_information.encoding;
+  GetStream().height = stream_information.height;
+  GetStream().width = stream_information.width;
+  GetStream().name = stream_information.session_name;
+  GetStream().framerate = stream_information.framerate;
+  GetStream().hostname = stream_information.hostname;
+  GetStream().port_no = stream_information.port;
+  GetStream().settings_valid = true;
+  buffer_in_.resize((GetStream().height * GetStream().width) *
+                    ::mediax::rtp::kColourspaceBytes.at(GetStream().encoding));
 }
 
 bool RtpUncompressedDepayloader::Open() {
-  if (!ingress_.port_no) {
+  if (!GetStream().port_no) {
     LOG(ERROR) << "RtpUncompressedDepayloader::Open() No ports set, nothing to open";
     exit(-1);
   }
-  if (ingress_.port_no) {
+  if (GetStream().port_no) {
     struct sockaddr_in addr;
 
     // create a UDP socket
-    if ((ingress_.sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
-      LOG(ERROR) << "RtpUncompressedDepayloader::Open() ERROR opening socket " << ingress_.hostname << ":"
-                 << ingress_.port_no;
+    if ((GetStream().sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
+      LOG(ERROR) << "RtpUncompressedDepayloader::Open() ERROR opening socket " << GetStream().hostname << ":"
+                 << GetStream().port_no;
       exit(-1);
     }
 
-    if (IsMulticast(ingress_.hostname)) {
+    if (IsMulticast(GetStream().hostname)) {
       // Join multicast group
       struct ip_mreq mreq;
-      mreq.imr_multiaddr.s_addr = inet_addr(ingress_.hostname.c_str());
+      mreq.imr_multiaddr.s_addr = inet_addr(GetStream().hostname.c_str());
       mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-      if (setsockopt(ingress_.sockfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
-        LOG(ERROR) << "Can not join multicast group " << ingress_.hostname << ":" << ingress_.port_no;
+      if (setsockopt(GetStream().sockfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
+        LOG(ERROR) << "Can not join multicast group " << GetStream().hostname << ":" << GetStream().port_no;
         exit(-1);
       }
-      LOG(INFO) << "Joining multicast group " << ingress_.hostname << ":" << ingress_.port_no;
+      LOG(INFO) << "Joining multicast group " << GetStream().hostname << ":" << GetStream().port_no;
     }
 
     // zero out the structure
     memset(&addr, 0, sizeof(addr));
 
     addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = inet_addr(ingress_.hostname.c_str());
-    addr.sin_port = htons((uint16_t)ingress_.port_no);
+    addr.sin_addr.s_addr = inet_addr(GetStream().hostname.c_str());
+    addr.sin_port = htons((uint16_t)GetStream().port_no);
     // bind socket to port
-    if (bind(ingress_.sockfd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
-      LOG(ERROR) << "RtpUncompressedDepayloader::Open() ERROR binding socket " << ingress_.hostname << ":"
-                 << ingress_.port_no;
+    if (bind(GetStream().sockfd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+      LOG(ERROR) << "RtpUncompressedDepayloader::Open() ERROR binding socket " << GetStream().hostname << ":"
+                 << GetStream().port_no;
       exit(-1);
     }
-    ingress_.socket_open = true;
+    GetStream().socket_open = true;
   }
 
   return true;
 }
 
 void RtpUncompressedDepayloader::Close() {
-  if (ingress_.port_no) {
-    close(ingress_.sockfd);
-    ingress_.sockfd = 0;
-    ingress_.socket_open = false;
+  if (GetStream().port_no) {
+    close(GetStream().sockfd);
+    GetStream().sockfd = 0;
+    GetStream().socket_open = false;
   }
 }
 
-bool RtpUncompressedDepayloader::ReadRtpHeader(RtpUncompressedDepayloader *stream,
-                                               ::mediax::rtp::RtpPacket *packet) const {
+bool RtpUncompressedDepayloader::ReadRtpHeader(RtpUncompressedDepayloader *stream, ::mediax::rtp::RtpPacket *packet) {
   int version;
   int payloadType;
 
   //
   // Read in the RTP data
   //
-  if (ssize_t bytes = recvfrom(RtpDepayloader::ingress_.sockfd, stream->udpdata.data(), ::mediax::rtp::kMaxUdpData, 0,
-                               nullptr, nullptr);
+  if (ssize_t bytes =
+          recvfrom(GetStream().sockfd, stream->udpdata.data(), ::mediax::rtp::kMaxUdpData, 0, nullptr, nullptr);
       bytes <= 0) {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     return false;
@@ -168,7 +166,7 @@ bool RtpUncompressedDepayloader::ReceiveLines(::mediax::rtp::RtpPacket *packet, 
     // Read in the RTP data
     //
 
-    if (ssize_t bytes = recvfrom(ingress_.sockfd, udpdata.data(), ::mediax::rtp::kMaxUdpData, 0, nullptr, nullptr);
+    if (ssize_t bytes = recvfrom(GetStream().sockfd, udpdata.data(), ::mediax::rtp::kMaxUdpData, 0, nullptr, nullptr);
         bytes <= 0) {
       std::this_thread::sleep_for(std::chrono::milliseconds(2));
       continue;
@@ -223,9 +221,9 @@ bool RtpUncompressedDepayloader::ReceiveLines(::mediax::rtp::RtpPacket *packet, 
         break;
       }
       pixel =
-          ((packet->head.payload.line[c].offset & 0x7FFF) * ::mediax::rtp::kColourspaceBytes.at(ingress_.encoding)) +
+          ((packet->head.payload.line[c].offset & 0x7FFF) * ::mediax::rtp::kColourspaceBytes.at(GetStream().encoding)) +
           (((packet->head.payload.line[c].line_number - 1) & 0x7FFF) *
-           (ingress_.width * ::mediax::rtp::kColourspaceBytes.at(ingress_.encoding)));
+           (GetStream().width * ::mediax::rtp::kColourspaceBytes.at(GetStream().encoding)));
       length = packet->head.payload.line[c].length & 0xFFFF;
 
       memcpy(&RtpUncompressedDepayloader::buffer_in_[pixel], &udpdata[os], length);
@@ -238,12 +236,9 @@ bool RtpUncompressedDepayloader::ReceiveLines(::mediax::rtp::RtpPacket *packet, 
     if (marker) {
       uint16_t sequence_number_low = packet->head.rtp.protocol & 0xffff;
       uint16_t sequence_number_hight = packet->head.payload.extended_sequence_number;
-      EndianSwap16(reinterpret_cast<uint16_t *>(&sequence_number_hight), sizeof(uint16_t));
-      uint32_t new_sequence_number = (((sequence_number_hight & 0xffff) << 16) | sequence_number_low) / ingress_.height;
-
-      if (new_sequence_number != sequence_number_ + 1) {
-        LOG(ERROR) << "Sequence number mismatch " << sequence_number_ << " " << new_sequence_number;
-      }
+      EndianSwap16(&sequence_number_hight, sizeof(uint16_t));
+      uint32_t new_sequence_number =
+          (((sequence_number_hight & 0xffff) << 16) | sequence_number_low) / GetStream().height;
       sequence_number_ = new_sequence_number;
     }
   }
@@ -257,15 +252,22 @@ void RtpUncompressedDepayloader::ReceiveThread(RtpUncompressedDepayloader *strea
   struct timeval read_timeout;
   read_timeout.tv_sec = 0;
   read_timeout.tv_usec = 10;
-  setsockopt(stream->ingress_.sockfd, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
+  setsockopt(stream->GetStream().sockfd, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
 
   while (stream->rx_thread_running_) {
     bool last_scan_line = false;
     stream->ReceiveLines(packet, &last_scan_line, &last_packet);
     // Have a complete frame now.
-    stream->arg_tx.encoded_frame = RtpUncompressedDepayloader::buffer_in_.data();
+    stream->arg_tx.encoded_frame = stream->buffer_in_.data();
     stream->new_rx_frame_ = last_scan_line;
+
+    if ((stream->CallbackRegistered()) && stream->new_rx_frame_) {
+      RtpCallbackData arg_tx = {
+          {stream->GetHeight(), stream->GetWidth()}, stream->buffer_in_.data(), stream->GetColourSpace()};
+      stream->Callback(arg_tx);
+    }
   }  // Receive loop
+
   return;
 }
 
@@ -304,7 +306,7 @@ bool RtpUncompressedDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
         // Blank the buffer, no data
         memset(buffer_in_.data(), 0, buffer_in_.size());
         // Leave the thread to receive the rest of the frame
-        *cpu = buffer_in_.data();
+        *cpu = nullptr;
         return false;
       }
     }
@@ -313,18 +315,19 @@ bool RtpUncompressedDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
 }
 
 bool RtpUncompressedDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
-  if (ingress_.port_no == 0) {
+  *cpu = nullptr;
+  if (GetStream().port_no == 0) {
     LOG(ERROR) << "Port number has not been set";
     return false;
   }
 
-  if (ingress_.settings_valid == false) {
+  if (GetStream().settings_valid == false) {
     LOG(ERROR) << "IP settings are invalid";
     return false;
   }
 
   // Check ports open
-  if ((ingress_.socket_open == false) && (ingress_.settings_valid == true)) {
+  if ((GetStream().socket_open == false) && (GetStream().settings_valid == true)) {
     Open();
   }
 
@@ -342,6 +345,10 @@ bool RtpUncompressedDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   // should not ever get here
   LOG(ERROR) << "Something went wrong should not be here";
   return false;
+}
+
+void RtpUncompressedDepayloader::Callback(::mediax::rtp::RtpCallbackData frame) const {
+  callback_(static_cast<const RtpDepayloader &>(*this), frame);
 }
 
 }  // namespace mediax::rtp::uncompressed

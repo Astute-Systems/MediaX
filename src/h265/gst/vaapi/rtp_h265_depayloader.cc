@@ -48,14 +48,15 @@ RtpH265GstVaapiDepayloader &RtpH265GstVaapiDepayloader::operator=(const RtpH265G
 }
 
 void RtpH265GstVaapiDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
-  ingress_.encoding = stream_information.encoding;
-  ingress_.height = stream_information.height;
-  ingress_.width = stream_information.width;
-  ingress_.framerate = stream_information.framerate;
-  ingress_.name = stream_information.session_name;
-  ingress_.hostname = stream_information.hostname;
-  ingress_.port_no = stream_information.port;
-  ingress_.settings_valid = true;
+  ::mediax::rtp::RtpPortType &stream = GetStream();
+  stream.encoding = stream_information.encoding;
+  stream.height = stream_information.height;
+  stream.width = stream_information.width;
+  stream.framerate = stream_information.framerate;
+  stream.name = stream_information.session_name;
+  stream.hostname = stream_information.hostname;
+  stream.port_no = stream_information.port;
+  stream.settings_valid = true;
 }
 
 GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
@@ -204,6 +205,10 @@ bool RtpH265GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   }
   new_rx_frame_ = false;
   return true;
+}
+
+void RtpH265GstVaapiDepayloader::Callback(::mediax::rtp::RtpCallbackData frame) const {
+  callback_(static_cast<const RtpDepayloader &>(*this), frame);
 }
 
 std::vector<uint8_t> &RtpH265GstVaapiDepayloader::GetBuffer() { return buffer_in_; }

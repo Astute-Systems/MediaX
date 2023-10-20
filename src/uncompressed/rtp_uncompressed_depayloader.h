@@ -161,6 +161,13 @@ class RtpUncompressedDepayloader : public ::mediax::rtp::RtpDepayloader {
   ///
   bool Receive(uint8_t **cpu, int32_t timeout = 0) final;
 
+  ///
+  /// \brief The callback function for the RTP stream
+  ///
+  /// \param frame
+  ///
+  void Callback(::mediax::rtp::RtpCallbackData frame) const;
+
  private:
   /// The incremental sequence numer for transmitting RTP packets, atomic
   std::atomic<bool> new_rx_frame_ = false;
@@ -172,8 +179,6 @@ class RtpUncompressedDepayloader : public ::mediax::rtp::RtpDepayloader {
   pthread_mutex_t mutex_;
   /// UDP data buffer
   std::array<uint8_t, ::mediax::rtp::kMaxUdpData> udpdata;
-  /// UDP data buffer
-  static std::vector<uint8_t> buffer_in_;
   /// Arguments sent to thread
   std::thread rx_thread_;
   // The current sequence number
@@ -227,7 +232,7 @@ class RtpUncompressedDepayloader : public ::mediax::rtp::RtpDepayloader {
   /// \return true
   /// \return false
   ///
-  bool ReadRtpHeader(RtpUncompressedDepayloader *stream, ::mediax::rtp::RtpPacket *packet) const;
+  bool ReadRtpHeader(RtpUncompressedDepayloader *stream, ::mediax::rtp::RtpPacket *packet);
 
   ///
   /// \brief Receive video lines

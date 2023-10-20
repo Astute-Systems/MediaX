@@ -10,9 +10,11 @@
 /// \file rtp_depayloader_tests.cc
 ///
 
+#include <glog/logging.h>
 #include <gtest/gtest.h>
 #include <unistd.h>
 
+#include "rtp/rtp_utils.h"
 #include "uncompressed/rtp_uncompressed_payloader.h"
 
 TEST(RTPDepayloaderTest, SendOneFrameRgb24) {
@@ -85,4 +87,38 @@ TEST(RTPDepayloaderTest, SendOneFrameMono8) {
   rtp.Open();
   rtp.Transmit(rtb_test.data(), true);
   rtp.Close();
+}
+
+TEST(RTPDepayloaderTest, Many) {
+  std::array<std::string, 10> ip_pool = {"239.192.1.1", "239.192.1.2", "239.192.1.3", "239.192.1.4", "239.192.1.5",
+                                         "239.192.1.6", "239.192.1.7", "239.192.1.8", "239.192.1.9", "239.192.1.10"};
+  std::array<mediax::rtp::uncompressed::RtpUncompressedPayloader, 10> rtp;
+  for (int i = 0; i < 10; i++) {
+    LOG(INFO) << "Creating stream number " << i << " with IP:" << ip_pool[i];
+    mediax::rtp::StreamInformation stream_info = {
+        "test_session_name_" + std::to_string(i),         ip_pool[i], 5004, 640, 480, 25,
+        mediax ::rtp::ColourspaceType::kColourspaceRgb24, false};
+    rtp[i].SetStreamInfo(stream_info);
+  }
+
+  // Open and Start
+  for (int i = 0; i < 10; i++) {
+    LOG(INFO) << "Opening stream number " << rtp[i].GetIpAddress() << "\n";
+    rtp[i].Open();
+    rtp[i].Start();
+  }
+
+  // Transmit one frame
+  std::vector<uint8_t> buffer(640 * 480 * 3);
+  CreateCheckeredTestCard(buffer.data(), 640, 480, mediax::rtp::ColourspaceType::kColourspaceRgb24);
+  for (int i = 0; i < 10; i++) {
+    rtp[i].Transmit(buffer.data(), 80);
+  }
+
+  // Stop and Close
+  for (int i = 0; i < 10; i++) {
+    LOG(INFO) << "Opening stream number " << rtp[i].GetIpAddress() << "\n";
+    rtp[i].Stop();
+    rtp[i].Close();
+  }
 }

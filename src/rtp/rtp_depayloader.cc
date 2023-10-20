@@ -15,11 +15,17 @@
 
 #include <arpa/inet.h>
 
+#include <iostream>
 #include <string_view>
 
 namespace mediax::rtp {
 
 void RtpDepayloader::SetSessionName(std::string_view name) { ingress_.name = name; }
+
+void RtpDepayloader::RegisterCallback(const ::mediax::rtp::RtpCallback& callback) {
+  callback_ = callback;
+  callback_registered_ = true;
+}
 
 std::string RtpDepayloader::GetSessionName() const { return ingress_.name; }
 
@@ -56,5 +62,11 @@ bool RtpDepayloader::IsMulticast(std::string_view ip_address) {
   }
   return IN_MULTICAST(ntohl(addr.s_addr));
 }
+
+bool RtpDepayloader::CallbackRegistered() const { return callback_registered_; }
+
+void RtpDepayloader::UnregisterCallback() { callback_registered_ = false; }
+
+::mediax::rtp::RtpPortType& RtpDepayloader::GetStream() { return ingress_; };
 
 }  // namespace mediax::rtp

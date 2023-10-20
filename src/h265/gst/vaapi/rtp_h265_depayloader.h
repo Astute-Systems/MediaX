@@ -102,6 +102,13 @@ class RtpH265GstVaapiDepayloader : public mediax::rtp::RtpDepayloader {
   bool Receive(uint8_t **cpu, int32_t timeout = 0) final;
 
   ///
+  /// \brief Call the callback
+  ///
+  /// \param frame
+  ///
+  void Callback(::mediax::rtp::RtpCallbackData frame) const;
+
+  ///
   /// \brief Get the Buffer object
   ///
   /// \return uint8_t*

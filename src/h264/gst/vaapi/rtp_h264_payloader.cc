@@ -96,6 +96,8 @@ bool RtpH264GstVaapiPayloader::Open() {
 
   // Create a vaapih264enc element to decode the H.264 stream
   GstElement *vaapih264enc = gst_element_factory_make("vaapih264enc", "rtp-h264-vaapih264enc");
+  // Set keyframe-period=1 max-bframes=0
+  g_object_set(G_OBJECT(vaapih264enc), "keyframe-period", 1, "max-bframes", 0, nullptr);
 
   // RTP payloader
   GstElement *rtp264pay = gst_element_factory_make("rtph264pay", "rtp-h264-payloader");
