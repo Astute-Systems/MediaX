@@ -37,10 +37,29 @@ using RtpCallback = std::function<void(const RtpDepayloader& depay, RtpCallbackD
 class RtpDepayloader {
  public:
   ///
+  /// \brief Construct a new Rtp Depayloader object
+  ///
+  ///
+  RtpDepayloader();
+
+  ///
   /// \brief Destroy the Rtp Stream object
   ///
   ///
   virtual ~RtpDepayloader() = default;
+
+  ///
+  /// \brief Construct a new Rtp Payloader object
+  ///
+  ///
+  RtpDepayloader(RtpDepayloader const&) = delete;
+
+  ///
+  /// \brief Construct a new Rtp Payloader object
+  ///
+  /// \return RtpPayloader&
+  ///
+  RtpDepayloader& operator=(RtpDepayloader const&) = delete;
 
   ///
   /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement

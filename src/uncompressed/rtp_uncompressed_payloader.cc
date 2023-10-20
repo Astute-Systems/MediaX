@@ -40,11 +40,11 @@
 
 namespace mediax::rtp::uncompressed {
 
+RtpUncompressedPayloader::RtpUncompressedPayloader() = default;
+
 uint32_t RtpUncompressedPayloader::sequence_number_ = 0;
 
 std::vector<uint8_t> RtpUncompressedPayloader::buffer_in_;
-
-RtpUncompressedPayloader::RtpUncompressedPayloader() = default;
 
 RtpUncompressedPayloader::~RtpUncompressedPayloader(void) {
   if (tx_thread_.joinable()) tx_thread_.join();

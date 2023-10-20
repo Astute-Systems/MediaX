@@ -86,14 +86,12 @@ class RtpUncompressedDepayloader : public ::mediax::rtp::RtpDepayloader {
   /// \brief Destroy the Rtp Stream object
   ///
   ///
-  ~RtpUncompressedDepayloader() final;
+  ~RtpUncompressedDepayloader(void) final = default;
 
   ///
-  /// \brief The copy constructor
+  /// \brief Construct a new Rtp Uncompressed Depayloader object
   ///
   /// \param other
-  /// \return true
-  /// \return false
   ///
   RtpUncompressedDepayloader(const RtpUncompressedDepayloader &other);
 
@@ -217,7 +215,7 @@ class RtpUncompressedDepayloader : public ::mediax::rtp::RtpDepayloader {
   /// \return true
   /// \return false
   ///
-  bool WaitForFrame(uint8_t **cpu, int32_t timeout);
+  bool WaitForFrame(uint8_t **cpu, int32_t timeout) const;
 
   ///
   /// \brief Get a 90Htz timestamp

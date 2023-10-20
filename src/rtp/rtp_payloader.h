@@ -29,10 +29,29 @@ namespace mediax::rtp {
 class RtpPayloader {
  public:
   ///
+  /// \brief Construct a new Rtp Payloader object
+  ///
+  ///
+  RtpPayloader() = default;
+
+  ///
   /// \brief Destroy the Rtp Payloader object
   ///
   ///
   virtual ~RtpPayloader() = default;
+
+  ///
+  /// \brief Construct a new Rtp Payloader object
+  ///
+  ///
+  RtpPayloader(RtpPayloader const &) = delete;
+
+  ///
+  /// \brief Construct a new Rtp Payloader object
+  ///
+  /// \return RtpPayloader&
+  ///
+  RtpPayloader &operator=(RtpPayloader const &) = delete;
 
   ///
   /// \brief Configure an RTP output stream
@@ -45,7 +64,7 @@ class RtpPayloader {
   /// \param hostname IP address i.e. 239.192.1.1 for multicast
   /// \param port defaults to 5004
   ///
-  virtual void SetStreamInfo(const ::mediax::rtp::StreamInformation& stream_information) = 0;
+  virtual void SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) = 0;
 
   ///
   /// \brief Open the RTP stream
@@ -80,7 +99,7 @@ class RtpPayloader {
   /// \param blocking defaults to true, will wait till frame has been transmitted
   /// \return int
   ///
-  virtual int Transmit(uint8_t* rgbframe, bool blocking = true) = 0;
+  virtual int Transmit(uint8_t *rgbframe, bool blocking = true) = 0;
 
   ///
   /// \brief Get the Colour Space object of the incoming stream. \note This may be invalid id no SAP/SDP announcement

@@ -20,6 +20,8 @@
 
 namespace mediax::rtp {
 
+RtpDepayloader::RtpDepayloader() = default;
+
 void RtpDepayloader::SetSessionName(std::string_view name) { ingress_.name = name; }
 
 void RtpDepayloader::RegisterCallback(const ::mediax::rtp::RtpCallback& callback) {

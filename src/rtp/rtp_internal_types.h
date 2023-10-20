@@ -18,8 +18,7 @@
 
 namespace mediax::rtp {
 /// SAP/SDP constants
-static const char *kIpaddr = "224.2.127.254";
-
+constexpr const char* const kIpaddr = "224.2.127.254";
 }  // namespace mediax::rtp
 
 #endif  // RTP_RTP_INTERNAL_TYPES_H_

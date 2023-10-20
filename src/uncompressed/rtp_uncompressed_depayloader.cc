@@ -43,8 +43,6 @@ namespace mediax::rtp::uncompressed {
 
 RtpUncompressedDepayloader::RtpUncompressedDepayloader() { pthread_mutex_init(&mutex_, nullptr); }
 
-RtpUncompressedDepayloader::~RtpUncompressedDepayloader(void) = default;
-
 RtpUncompressedDepayloader::RtpUncompressedDepayloader(const RtpUncompressedDepayloader &other) {
   *this = other;
   pthread_mutex_init(&mutex_, nullptr);
@@ -284,8 +282,8 @@ void RtpUncompressedDepayloader::Stop() {
   }
 }
 
-bool RtpUncompressedDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
-  *cpu = buffer_in_.data();
+bool RtpUncompressedDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) const {
+  *cpu = const_cast<uint8_t *>(buffer_in_.data());
   // Wait for completion
   if (timeout <= 0) {
     // Block till new frame
@@ -303,8 +301,6 @@ bool RtpUncompressedDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
       auto end_time = std::chrono::high_resolution_clock::now();
       if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
           duration >= to) {
-        // Blank the buffer, no data
-        memset(buffer_in_.data(), 0, buffer_in_.size());
         // Leave the thread to receive the rest of the frame
         *cpu = nullptr;
         return false;
