@@ -17,6 +17,7 @@
 
 #include <functional>
 #include <string>
+#include <vector>
 
 #include "rtp/rtp_depayloader.h"
 #include "rtp/rtp_types.h"

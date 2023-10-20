@@ -67,6 +67,6 @@ bool RtpDepayloader::CallbackRegistered() const { return callback_registered_; }
 
 void RtpDepayloader::UnregisterCallback() { callback_registered_ = false; }
 
-::mediax::rtp::RtpPortType& RtpDepayloader::GetStream() { return ingress_; };
+::mediax::rtp::RtpPortType& RtpDepayloader::GetStream() { return ingress_; }
 
 }  // namespace mediax::rtp
