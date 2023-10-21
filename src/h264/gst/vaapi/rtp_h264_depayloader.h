@@ -109,13 +109,6 @@ class RtpH264GstVaapiDepayloader : public mediax::rtp::RtpDepayloader {
   void Callback(::mediax::rtp::RtpCallbackData frame) const final;
 
   ///
-  /// \brief Get the Buffer object
-  ///
-  /// \return uint8_t*
-  ///
-  std::vector<uint8_t> &GetBuffer();
-
-  ///
   /// \brief Set new frame available
   ///
   ///

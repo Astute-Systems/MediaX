@@ -50,6 +50,7 @@ set(LINK_LIBRARIES
   ${SWSCALE_LIBRARIES}
   pthread
   glog
+  gmock
   gflags
 )
 

@@ -195,7 +195,6 @@ bool RtpH264GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   *cpu = GetBuffer().data();
   while (!new_rx_frame_) {
     auto elapsed = std::chrono::high_resolution_clock::now() - start_time;
-
     // Check timeout
     if (timeout) {
       if (auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count(); ms > timeout) {
@@ -204,6 +203,7 @@ bool RtpH264GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
         return false;
       }
     }
+
     // Sleep 1ms and wait for a new frame
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
@@ -215,8 +215,6 @@ bool RtpH264GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
 void RtpH264GstVaapiDepayloader::Callback(::mediax::rtp::RtpCallbackData frame) const {
   GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
 }
-
-std::vector<uint8_t> &RtpH264GstVaapiDepayloader::GetBuffer() { return GetBuffer(); }
 
 void RtpH264GstVaapiDepayloader::NewFrame() {
   new_rx_frame_ = true;

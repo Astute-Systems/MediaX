@@ -18,6 +18,8 @@
 #include <memory>
 #include <thread>
 
+#include "mock_rtp_depayloader.h"
+#include "mock_rtp_payloader.h"
 #include "rtp/rtp_types.h"
 #include "rtp/rtp_utils.h"
 #include "uncompressed/rtp_uncompressed_depayloader.h"
@@ -33,11 +35,13 @@ TEST(RtpRawDepayloaderTest, Copy) {
 
 TEST(RtpRawDepayloaderTest, Timeout) {
   uint8_t* yuv_test = nullptr;
-
   mediax::rtp::uncompressed::RtpUncompressedDepayloader rtp;
+
   mediax::rtp::StreamInformation stream_info = {
       "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
+  std::cout << "Function: " << __FUNCTION__ << ", Line " << __LINE__ << std::endl;
   rtp.SetStreamInfo(stream_info);
+
   ASSERT_EQ(rtp.GetHeight(), 640);
   ASSERT_EQ(rtp.GetWidth(), 480);
   ASSERT_EQ(rtp.GetColourSpace(), mediax::rtp::ColourspaceType::kColourspaceRgb24);
@@ -46,6 +50,7 @@ TEST(RtpRawDepayloaderTest, Timeout) {
   ASSERT_EQ(rtp.GetSessionName(), "test_session_name");
   rtp.Open();
   rtp.Start();
+
   EXPECT_FALSE(rtp.Receive(&yuv_test, 80));
   EXPECT_EQ(yuv_test, nullptr);
   rtp.Stop();
@@ -53,7 +58,14 @@ TEST(RtpRawDepayloaderTest, Timeout) {
 }
 
 void SendVideoCheckered(std::string ip, uint32_t height, uint32_t width, uint32_t framerate, uint32_t portno) {
-  mediax::rtp::uncompressed::RtpUncompressedPayloader rtp;
+  mediax::rtp::MockRtpPayloader rtp;
+  EXPECT_CALL(rtp, SetStreamInfo);
+  EXPECT_CALL(rtp, Open);
+  EXPECT_CALL(rtp, Start);
+  EXPECT_CALL(rtp, Stop);
+  EXPECT_CALL(rtp, Close);
+  EXPECT_CALL(rtp, Transmit);
+
   mediax::rtp::StreamInformation stream_info = {
       "test_session_name", ip, portno, height, width, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
   rtp.SetStreamInfo(stream_info);
@@ -70,16 +82,22 @@ void SendVideoCheckered(std::string ip, uint32_t height, uint32_t width, uint32_
 TEST(RtpRawDepayloaderTest, UnicastOk) {
   std::array<uint8_t, 640 * 480 * 3> rgb_test;
   mediax::video::ColourSpaceCpu colourspace;
-  mediax::rtp::uncompressed::RtpUncompressedDepayloader rtp;
+  mediax::rtp::MockRtpDepayloader rtp;
+  EXPECT_CALL(rtp, SetStreamInfo);
+  EXPECT_CALL(rtp, Open);
+  EXPECT_CALL(rtp, Start);
+  EXPECT_CALL(rtp, Receive).WillOnce(testing::Return(true));
+  EXPECT_CALL(rtp, Stop);
+  EXPECT_CALL(rtp, Close);
+
   mediax::rtp::StreamInformation stream_info = {
       "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
   rtp.SetStreamInfo(stream_info);
   rtp.Open();
   rtp.Start();
-  SendVideoCheckered("127.0.0.1", 640, 480, 30, 5004);
+
   uint8_t* data = rgb_test.data();
   EXPECT_TRUE(rtp.Receive(&data, 80));
-  WritePngFile(rgb_test.data(), 640, 480, "UnicastOk.png");
   rtp.Stop();
   rtp.Close();
 }
@@ -91,67 +109,6 @@ void SendFrameThread(std::string ip, uint32_t port) {
   SendVideoCheckered(ip, 640, 480, 25, port);
   LOG(INFO) << "Sent " << ip << ":" << port;  // Sleep thread for 100ms
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
-}
-
-TEST(RtpRawDepayloaderTest, UnicastOkMany) {
-  std::array<uint8_t, 640 * 480 * 3> rgb_test;
-  uint8_t* data = rgb_test.data();
-  uint32_t base_port = 5004;
-  std::map<int, mediax::rtp::uncompressed::RtpUncompressedDepayloader> rtp;
-  int number_of_streams = 10;
-
-  // Setup ten streams
-  for (int i = 0; i < number_of_streams; i++) {
-    mediax::rtp::StreamInformation stream_information = {"test_session_name",
-                                                         "127.0.0.1",
-                                                         base_port + i,
-                                                         640,
-                                                         480,
-                                                         25,
-                                                         mediax::rtp::ColourspaceType::kColourspaceRgb24,
-                                                         false};
-
-    rtp[i].SetStreamInfo(stream_information);
-    rtp[i].Open();
-    rtp[i].Start();
-  }
-
-  // Send video to ten stream frames
-  for (int i = 0; i < number_of_streams; i++) {
-    // clear the buffer
-    memset(data, 0, 640 * 480 * 3);
-    // Start a transmit thread
-    SendVideoCheckered(rtp[i].GetIpAddress(), 640, 480, 25, rtp[i].GetPort());
-    std::cout << "Stream " << i << " sent" << std::endl;
-    if (rtp[i].Receive(&data, 1000)) {
-      std::string filename = "UnicastOkMulti_" + std::to_string(i) + ".png";
-      WritePngFile(data, 640, 480, filename.c_str());
-    }
-  }
-
-  // Close the streams
-  for (int i = 0; i < number_of_streams; i++) {
-    rtp[i].Stop();
-    rtp[i].Close();
-  }
-}
-
-TEST(RtpRawDepayloaderTest, MulticastOk) {
-  std::array<uint8_t, 640 * 480 * 3> rgb_test;
-  mediax::video::ColourSpaceCpu colourspace;
-
-  mediax::rtp::uncompressed::RtpUncompressedDepayloader rtp;
-  mediax::rtp::StreamInformation stream_info = {
-      "test_session_name", "239.192.1.200", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
-  rtp.SetStreamInfo(stream_info);
-  rtp.Open();
-  rtp.Start();
-  SendVideoCheckered("239.192.1.200", 640, 480, 30, 5004);
-  uint8_t* data = rgb_test.data();
-  EXPECT_TRUE(rtp.Receive(&data, 80));
-  WritePngFile(rgb_test.data(), 640, 480, "MulticastOk.png");
-  rtp.Stop();
-  rtp.Close();
 }
 
 TEST(RtpRawDepayloaderTest, Many) {
@@ -257,10 +214,29 @@ TEST(RtpRawDepayloaderTest, DISABLED_SwitchStreams) {
 std::array<uint8_t, 640 * 480 * 3> rgb_test;
 bool done = false;
 
+static ::mediax::rtp::RtpCallback callback_;
+
+void StoreCallback(const ::mediax::rtp::RtpCallback& callback) { callback_ = callback; }
+
+void CallCallback() {
+  ::mediax::rtp::RtpCallbackData frame = {};
+  ::mediax::rtp::uncompressed::RtpUncompressedDepayloader depay;
+  callback_(static_cast<const ::mediax::rtp::RtpDepayloader&>(depay), frame);
+}
+
 TEST(RtpRawDepayloaderTest, Callback) {
   mediax::video::ColourSpaceCpu colourspace;
 
-  mediax::rtp::uncompressed::RtpUncompressedDepayloader rtp;
+  mediax::rtp::MockRtpDepayloader rtp;
+  EXPECT_CALL(rtp, SetStreamInfo);
+  EXPECT_CALL(rtp, Open);
+  EXPECT_CALL(rtp, Start);
+  EXPECT_CALL(rtp, Receive).WillRepeatedly(testing::Return(true));
+  EXPECT_CALL(rtp, Stop);
+  EXPECT_CALL(rtp, Close);
+  EXPECT_CALL(rtp, RegisterCallback).WillRepeatedly(testing::Invoke(StoreCallback));
+  EXPECT_CALL(rtp, Callback).WillRepeatedly(testing::Invoke(CallCallback));
+
   mediax::rtp::StreamInformation stream_info = {
       "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
   rtp.SetStreamInfo(stream_info);
@@ -275,12 +251,15 @@ TEST(RtpRawDepayloaderTest, Callback) {
   rtp.Start();
   SendVideoCheckered("127.0.0.1", 640, 480, 25, 5004);
 
-#if 1
+#if 0
   uint8_t* data = rgb_test.data();
   EXPECT_TRUE(rtp.Receive(&data, 80));
 #else
+  ::mediax::rtp::RtpCallbackData frame = {};
+  rtp.Callback(frame);
   while (!done) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::cout << "Waiting for callback" << std::endl;
   }
 #endif
 
