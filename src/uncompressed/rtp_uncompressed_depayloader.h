@@ -215,7 +215,7 @@ class RtpUncompressedDepayloader : public ::mediax::rtp::RtpDepayloader {
   /// \return true
   /// \return false
   ///
-  bool WaitForFrame(uint8_t **cpu, int32_t timeout) const;
+  bool WaitForFrame(uint8_t **cpu, int32_t timeout);
 
   ///
   /// \brief Get a 90Htz timestamp

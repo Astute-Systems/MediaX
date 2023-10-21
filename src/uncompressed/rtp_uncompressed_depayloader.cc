@@ -63,8 +63,8 @@ void RtpUncompressedDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInform
   GetStream().hostname = stream_information.hostname;
   GetStream().port_no = stream_information.port;
   GetStream().settings_valid = true;
-  buffer_in_.resize((GetStream().height * GetStream().width) *
-                    ::mediax::rtp::kColourspaceBytes.at(GetStream().encoding));
+  GetBuffer().resize((GetStream().height * GetStream().width) *
+                     ::mediax::rtp::kColourspaceBytes.at(GetStream().encoding));
 }
 
 bool RtpUncompressedDepayloader::Open() {
@@ -224,7 +224,7 @@ bool RtpUncompressedDepayloader::ReceiveLines(::mediax::rtp::RtpPacket *packet, 
            (GetStream().width * ::mediax::rtp::kColourspaceBytes.at(GetStream().encoding)));
       length = packet->head.payload.line[c].length & 0xFFFF;
 
-      memcpy(&RtpUncompressedDepayloader::buffer_in_[pixel], &udpdata[os], length);
+      memcpy(&RtpUncompressedDepayloader::GetBuffer()[pixel], &udpdata[os], length);
 
       last_packet += length;
       payload += length;
@@ -256,12 +256,12 @@ void RtpUncompressedDepayloader::ReceiveThread(RtpUncompressedDepayloader *strea
     bool last_scan_line = false;
     stream->ReceiveLines(packet, &last_scan_line, &last_packet);
     // Have a complete frame now.
-    stream->arg_tx.encoded_frame = stream->buffer_in_.data();
+    stream->arg_tx.encoded_frame = stream->GetBuffer().data();
     stream->new_rx_frame_ = last_scan_line;
 
     if ((stream->CallbackRegistered()) && stream->new_rx_frame_) {
       RtpCallbackData arg_tx = {
-          {stream->GetHeight(), stream->GetWidth()}, stream->buffer_in_.data(), stream->GetColourSpace()};
+          {stream->GetHeight(), stream->GetWidth()}, stream->GetBuffer().data(), stream->GetColourSpace()};
       stream->Callback(arg_tx);
     }
   }  // Receive loop
@@ -282,8 +282,8 @@ void RtpUncompressedDepayloader::Stop() {
   }
 }
 
-bool RtpUncompressedDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) const {
-  *cpu = const_cast<uint8_t *>(buffer_in_.data());
+bool RtpUncompressedDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
+  *cpu = const_cast<uint8_t *>(GetBuffer().data());
   // Wait for completion
   if (timeout <= 0) {
     // Block till new frame
@@ -330,7 +330,7 @@ bool RtpUncompressedDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   // Check if we have a frame ready
   if (new_rx_frame_) {
     // Dont start a new thread if a frame is available just return it
-    *cpu = buffer_in_.data();
+    *cpu = GetBuffer().data();
     new_rx_frame_ = false;
     return true;
   } else {
@@ -344,7 +344,7 @@ bool RtpUncompressedDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
 }
 
 void RtpUncompressedDepayloader::Callback(::mediax::rtp::RtpCallbackData frame) const {
-  callback_(static_cast<const RtpDepayloader &>(*this), frame);
+  GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
 }
 
 }  // namespace mediax::rtp::uncompressed

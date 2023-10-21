@@ -182,13 +182,13 @@ bool RtpH264GstNvidiaDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   auto start_time = std::chrono::high_resolution_clock::now();
 
   // Dont start a new thread if a frame is available just return it
-  *cpu = buffer_in_.data();
+  *cpu = GetBuffer().data();
   while (!new_rx_frame_) {
     // Check timeout
     if (auto elapsed = std::chrono::high_resolution_clock::now() - start_time;
         elapsed > std::chrono::milliseconds(timeout)) {
       // Blank the buffer, no data
-      memset(buffer_in_.data(), 0, buffer_in_.size());
+      memset(GetBuffer().data(), 0, GetBuffer().size());
       return false;
     }
     // Sleep 1ms and wait for a new frame
@@ -200,10 +200,10 @@ bool RtpH264GstNvidiaDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
 }
 
 void RtpH264GstNvidiaDepayloader::Callback(::mediax::rtp::RtpCallbackData frame) const {
-  callback_(static_cast<const RtpDepayloader &>(*this), frame);
+  GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
 }
 
-std::vector<uint8_t> &RtpH264GstNvidiaDepayloader::GetBuffer() { return buffer_in_; }
+std::vector<uint8_t> &RtpH264GstNvidiaDepayloader::GetBuffer() { return GetBuffer(); }
 
 void RtpH264GstNvidiaDepayloader::NewFrame() { new_rx_frame_ = true; }
 

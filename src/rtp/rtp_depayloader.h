@@ -261,13 +261,27 @@ class RtpDepayloader {
   ///
   ::mediax::rtp::RtpPortType& GetStream();
 
+  ///
+  /// \brief Get the Callback object
+  ///
+  /// \return ::mediax::rtp::RtpCallback
+  ///
+  ::mediax::rtp::RtpCallback GetCallback() const { return callback_; }
+
+  ///
+  /// \brief Get the Buffer object
+  ///
+  /// \return std::vector<uint8_t>&
+  ///
+  std::vector<uint8_t>& GetBuffer() { return buffer_in_; }
+
+ private:
   /// The callback to notify when a frame is received
   ::mediax::rtp::RtpCallback callback_;
 
   /// UDP data buffer
   std::vector<uint8_t> buffer_in_;
 
- private:
   /// Indicate if callback has been registered
   bool callback_registered_ = false;
   /// Ingress port

@@ -119,7 +119,7 @@ class RtpH264GstNvidiaDepayloader : public mediax::rtp::RtpDepayloader {
   ///
   /// \param frame
   ///
-  void Callback(::mediax::rtp::RtpCallbackData frame) const;
+  void Callback(::mediax::rtp::RtpCallbackData frame) const final;
 
   ///
   /// \brief Get the Buffer object
