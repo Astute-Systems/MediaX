@@ -210,6 +210,64 @@ void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::rtp::Col
 }
 
 // Implementation of the CreateColourBarTestCard function
+void CreateColourBarEbuTestCard(uint8_t *data, uint32_t width, uint32_t height,
+                                mediax::rtp::ColourspaceType colourspace) {
+  uint32_t stride = mediax::BytesPerPixel(colourspace);
+  for (uint32_t y = 0; y < height; y++) {
+    for (uint32_t x = 0; x < width; x++) {
+      uint8_t r;
+      uint8_t g;
+      uint8_t b;
+      // Set the color of each pixel based on its position in the image.
+      if (x < width / 8) {
+        // white
+        r = 255;
+        g = 255;
+        b = 255;
+      } else if (x < width * 2 / 8) {
+        // yellow
+        r = 255;
+        g = 255;
+        b = 0;
+      } else if (x < width * 3 / 8) {
+        // cyan
+        r = 0;
+        g = 255;
+        b = 255;
+      } else if (x < width * 4 / 8) {
+        // green
+        r = 0;
+        g = 255;
+        b = 0;
+      } else if (x < width * 5 / 8) {
+        // Magenta
+        r = 255;
+        g = 0;
+        b = 255;
+      } else if (x < width * 6 / 8) {
+        // red
+        r = 255;
+        g = 0;
+        b = 0;
+      } else if (x < width * 7 / 8) {
+        // blue
+        r = 0;
+        g = 0;
+        b = 255;
+      } else {
+        // black
+        r = 0;
+        g = 0;
+        b = 0;
+      }
+      // Set the color of the current pixel in the image data buffer.
+      uint32_t index = (y * width + x) * stride;
+      PackRgb(&data[index], r, g, b, colourspace);
+    }
+  }
+}
+
+// Implementation of the CreateColourBarTestCard function
 void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::rtp::ColourspaceType colourspace) {
   uint32_t stride = mediax::BytesPerPixel(colourspace);
   for (uint32_t y = 0; y < height; y++) {

@@ -76,7 +76,7 @@ DEFINE_uint32(source, 2,
               "The video source (0-10)\n\t"
               "0 - Use a PNG file (see -filename)\n\t"
               "1 - v4l2src\n\t"
-              "2 - Colour bars\n\t"
+              "2 - EBU Colour bars \n\t"
               "3 - Greyscale bars\n\t"
               "4 - Scaled RGB values\n\t"
               "5 - Chequered test card\n\t"
@@ -85,7 +85,9 @@ DEFINE_uint32(source, 2,
               "8 - Solid red\n\t"
               "9 - Solid green\n\t"
               "10 - Solid blue\n\t"
-              "11 - White noise\n\t");
+              "11 - White noise\n\t"
+              "12 - Colour bars \n\t");
+
 DEFINE_string(filename, "testcard.png", "the PNG file to use as the source of the video stream (only with -source 0)");
 DEFINE_string(device, "/dev/video0", "the V4L2 device source (only with -source 1)");
 DEFINE_string(session_name, "TestVideo1", "the SAP/SDP session name");
@@ -209,9 +211,9 @@ int main(int argc, char** argv) {
       v4lsource->CaptureFrame(video_buffer.data());
       LOG(INFO) << "Creating V4l2 source device=" + FLAGS_device;
       break;
-    case 2:
+    case 2:  // EBU Colour bars
       video_buffer.resize(kBuffSizeRGB);
-      CreateColourBarTestCard(video_buffer.data(), FLAGS_width, FLAGS_height, video_mode);
+      CreateColourBarEbuTestCard(video_buffer.data(), FLAGS_width, FLAGS_height, video_mode);
       LOG(INFO) << "Creating colour bar test card";
       break;
     case 3:
@@ -258,6 +260,11 @@ int main(int argc, char** argv) {
       video_buffer.resize(kBuffSizeRGB);
       CreateWhiteNoiseTestCard(video_buffer.data(), FLAGS_width, FLAGS_height, video_mode);
       LOG(INFO) << "Creating white noise test card";
+      break;
+    case 12:  // Colourbars
+      video_buffer.resize(kBuffSizeRGB);
+      CreateColourBarTestCard(video_buffer.data(), FLAGS_width, FLAGS_height, video_mode);
+      LOG(INFO) << "Creating colour bar test card";
       break;
     case 0:
       Png image_reader;

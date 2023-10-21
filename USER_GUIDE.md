@@ -121,6 +121,10 @@ Catch the stream using the gstreamer src pipeline in the section below. Followin
 > **NOTE** : This example uses the test image ./images/testcard.png as the source of the video stream, this has the default resolution of 640x480. You can replace the testcard with your own image or use another source for the video data.
 
 ![test card image](testcard.png)
+
+\subsection testcard Test Patterns
+You can use the *rtp-transmit* tool to send synthetic video to the recipient. This video can take the form of one or more of the test card functions built into MediaX. There test card samples are sown below
+
 \section code Code Examples
 \subsection code_sap SAP/SDP Announcer
 An example of the SAP/SDP announcer as found in sap-announcer.cc:
@@ -153,7 +157,7 @@ To start a SAP/SDP listener and RTP stream using hard coded stream information (
 A Better way to set the ::mediax::rtp::StreamInformation is to wait for a SAP/SDP announcment
 \snippet simple/receive.cc Receive example sap
 
-Receive a frame
+Receive a frame using a lambda function. This keeps the video synchronised. It is possible to call the Recieve function with a timeout but this polling method is not recommended as it can drift over time.
 \snippet simple/receive.cc Receive example receive
 
 Finalise the SAP session and RTP stream

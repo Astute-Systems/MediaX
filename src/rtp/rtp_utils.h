@@ -108,6 +108,16 @@ void EndianSwap16(uint16_t *data, unsigned int length);
 void DumpHex(const void *data, size_t size);
 
 ///
+/// \brief Create a Colour Bar Ebu Test Card object
+///
+/// \param data
+/// \param width
+/// \param height
+/// \param colourspace
+///
+void CreateColourBarEbuTestCard(uint8_t *data, uint32_t width, uint32_t height,
+                                mediax::rtp::ColourspaceType colourspace);
+///
 /// \brief Create a Colour Bar Test Card object
 ///
 /// \param data the buffer to write the test card to

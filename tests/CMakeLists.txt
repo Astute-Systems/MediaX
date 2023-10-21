@@ -18,6 +18,7 @@ link_directories(Qt6::Core ${CAIRO_LIBRARY_DIRS})
 
 set(SOURCES
   colourspace_tests.cc
+  create_test_cards_test.cc
   util_tests.cc
   testcard_tests.cc
   rtp_tests.cc
