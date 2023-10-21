@@ -82,18 +82,26 @@ int main(int argc, char *argv[]) {
   // Create a stream information object
   mediax::rtp::StreamInformation stream_information = {
       "session_test", "127.0.0.1", 5004, 480, 640, 25, ::mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
+  // A recieve buffer sized to our needs
+  std::vector<uint8_t> cpu_buffer(stream_information.width * stream_information.heigh *
+                                  ::mediax::BytesPerPixel(stream_information.encoding));
   // Create the RTP stream
   rtp.SetStreamInfo(stream_information);
-  rtp.Start();
   // [Receive example open]
 
   // [Receive example receive]
-  std::vector<uint8_t> cpu_buffer(640 * 480 * ::mediax::BytesPerPixel(stream_information.encoding));
-  if (uint8_t *data = cpu_buffer.data(); rtp.Receive(&data, true) == true) {
-    std::cerr << "Received data\n";
-  } else {
-    std::cerr << "Timedout\n";
-  }
+  // Register a callback to handle the received video
+  rtp.RegisterCallback(
+      [](const mediax::rtp::RtpDepayloader &rtp [[maybe_unused]], mediax::rtp::RtpCallbackData frame [[maybe_unused]]) {
+        // Do something with the frame
+        const uint8_t *data = frame.cpu_buffer;
+        if (data != nullptr) {
+          std::cerr << "Received data, do something with it here\n";
+        } else {
+          std::cerr << "Timedout\n";
+        }
+      });
+  rtp.Start();
   // [Receive example receive]
 
   // [Receive example close]
