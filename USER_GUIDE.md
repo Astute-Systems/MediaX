@@ -123,7 +123,31 @@ Catch the stream using the gstreamer src pipeline in the section below. Followin
 ![test card image](testcard.png)
 
 \subsection testcard Test Patterns
-You can use the *rtp-transmit* tool to send synthetic video to the recipient. This video can take the form of one or more of the test card functions built into MediaX. There test card samples are sown below
+You can use the *rtp-transmit* tool to send synthetic video to the recipient. This video can take the form of one or more of the test card functions built into MediaX. There test card samples are shown below:
+
+![EBU Colour Bars](images/testcards/CreateColourBarEbuTestCard.png)
+
+Colour bars EBU (European Broadcast Union) created using CreateColourBarEbuTestCard()
+
+![Colour Bars](images/testcards/CreateColourBarTestCard.png)
+
+Colour bars created using CreateColourBarTestCard()
+
+![Checked test card](testcards/CreateCheckeredTestCard.png)
+
+Checkered test cards created using CreateCheckeredTestCard()
+
+![Grey Bars](images/testcards/CreateGreyScaleBarTestCard.png)
+
+Colour bars created using CreateGreyScaleBarTestCard()
+
+![Quad Colour](images/testcards/CreateQuadTestCard.png)
+
+Colour bars created using CreateQuadTestCard()
+
+![Noise](images/testcards/CreateWhiteNoiseTestCard.png)
+
+White noise created using CreateQuadTestCard()
 
 \section code Code Examples
 \subsection code_sap SAP/SDP Announcer
