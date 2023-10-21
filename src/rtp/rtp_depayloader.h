@@ -231,7 +231,7 @@ class RtpDepayloader {
   /// \return true
   /// \return false
   ///
-  bool IsMulticast(std::string_view ip_address);
+  bool IsMulticast(std::string_view ip_address) const;
 
   ///
   /// \brief Check is a callback is registered

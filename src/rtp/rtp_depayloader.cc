@@ -57,7 +57,7 @@ void RtpDepayloader::SetColourSpace(::mediax::rtp::ColourspaceType colourspace) 
 
 ::mediax::rtp::ColourspaceType RtpDepayloader::GetColourSpace() { return ingress_.encoding; }
 
-bool RtpDepayloader::IsMulticast(std::string_view ip_address) {
+bool RtpDepayloader::IsMulticast(std::string_view ip_address) const {
   struct in_addr addr;
   if (inet_aton(std::string(ip_address).c_str(), &addr) == 0) {
     return false;

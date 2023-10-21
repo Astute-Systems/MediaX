@@ -211,8 +211,6 @@ void RtpH265GstVaapiDepayloader::Callback(::mediax::rtp::RtpCallbackData frame) 
   GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
 }
 
-std::vector<uint8_t> &RtpH265GstVaapiDepayloader::GetBuffer() { return buffer_in_; }
-
 void RtpH265GstVaapiDepayloader::NewFrame() { new_rx_frame_ = true; }
 
 }  // namespace mediax::rtp::h265::gst::vaapi

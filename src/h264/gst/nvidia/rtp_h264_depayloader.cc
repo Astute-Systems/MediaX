@@ -203,8 +203,6 @@ void RtpH264GstNvidiaDepayloader::Callback(::mediax::rtp::RtpCallbackData frame)
   GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
 }
 
-std::vector<uint8_t> &RtpH264GstNvidiaDepayloader::GetBuffer() { return GetBuffer(); }
-
 void RtpH264GstNvidiaDepayloader::NewFrame() { new_rx_frame_ = true; }
 
 }  // namespace mediax::rtp::h264::gst::nvidia

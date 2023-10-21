@@ -164,7 +164,7 @@ class RtpUncompressedDepayloader : public ::mediax::rtp::RtpDepayloader {
   ///
   /// \param frame
   ///
-  void Callback(::mediax::rtp::RtpCallbackData frame) const;
+  void Callback(::mediax::rtp::RtpCallbackData frame) const final;
 
  private:
   /// The incremental sequence numer for transmitting RTP packets, atomic

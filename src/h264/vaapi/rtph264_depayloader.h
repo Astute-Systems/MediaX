@@ -93,13 +93,6 @@ class RtpH264VaapiDepayloader : public RtpDepayloader {
   bool Receive(uint8_t **cpu, int32_t timeout = 0) final;
 
   ///
-  /// \brief Get the Buffer object
-  ///
-  /// \return uint8_t*
-  ///
-  std::vector<uint8_t> &GetBuffer();
-
-  ///
   /// \brief Set new frame available
   ///
   ///
@@ -108,8 +101,6 @@ class RtpH264VaapiDepayloader : public RtpDepayloader {
  private:
   /// The GStreamer pipeline
   GstElement *pipeline_;
-  /// The video buffer
-  std::vector<uint8_t> buffer_in_;
   /// A flag indication a new frame is available
   bool new_rx_frame_ = false;
 };

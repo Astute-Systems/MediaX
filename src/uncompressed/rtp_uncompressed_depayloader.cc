@@ -283,7 +283,7 @@ void RtpUncompressedDepayloader::Stop() {
 }
 
 bool RtpUncompressedDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
-  *cpu = const_cast<uint8_t *>(GetBuffer().data());
+  *cpu = GetBuffer().data();
   // Wait for completion
   if (timeout <= 0) {
     // Block till new frame
