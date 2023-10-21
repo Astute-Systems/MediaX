@@ -51,6 +51,8 @@ DEFINE_uint32(mode, 1,
 #endif
 DEFINE_uint32(num_frames, 0, "The number of frames to send");
 
+#define CALLBACK 1
+
 struct OnDrawData {
   std::string name;
   cairo_surface_t *surface;
@@ -83,7 +85,6 @@ class Receive {
     if (FLAGS_verbose) std::cout << "Frame=" << frame_counter_ << "\r";
     std::flush(std::cout);
     frame_counter_++;
-
     // Fill the surface with video data if available
     if (rtp_->Receive(&cpu_buffer, timeout_) == true) {
       unsigned char *surface_data = cairo_image_surface_get_data(data->surface);
@@ -132,6 +133,7 @@ class Receive {
       cairo_show_text(cr, no_stream.c_str());
       dropped_++;
     }
+
     if (count_ - 1 > FLAGS_num_frames) {
       gtk_main_quit();
     }
@@ -139,7 +141,9 @@ class Receive {
       count_++;
     }
 
-    // Modify next callback
+// If #if CALLBACK is not 1
+#if !CALLBACK
+    // Modify next callback, we are running off a timer
     g_source_remove(timeout_id_);
 
     // Calculate the elapsed time in ms
@@ -151,7 +155,22 @@ class Receive {
     // Update the g_timeout_add
     timeout_id_ = g_timeout_add(sleep_time, Receive::UpdateCallback,
                                 drawing_area);  // framerate is in milliseconds
+#else
+    if (timeout_id_ != 0) g_source_remove(timeout_id_);
+    timeout_id_ = g_timeout_add(200, Receive::VideoTimeout,
+                                nullptr);  // framerate is in milliseconds
+#endif
+    return TRUE;
+  }
 
+  ///
+  /// \brief Kill the application if streaming stops
+  ///
+  /// \param user_data
+  /// \return gboolean
+  ///
+  static gboolean VideoTimeout(gpointer user_data) {
+    gtk_main_quit();
     return TRUE;
   }
 
@@ -166,29 +185,27 @@ class Receive {
     return TRUE;
   }
 
+#if CALLBACK
+  ///
+  /// \brief Rtp Callback to drive display
+  ///
+  /// \param depay the RTP Depayloader
+  /// \param data the recieved video frame data
+  ///
+  static void RtpCallback(const mediax::rtp::RtpDepayloader &rtp [[maybe_unused]],
+                          mediax::rtp::RtpCallbackData frame [[maybe_unused]]) {
+    // We dont need to render now its safe to call the Recieve function via the GTK callback
+    gtk_widget_queue_draw(GTK_WIDGET(Receive::window));
+    return;
+  }
+#endif
+
   ///
   /// \brief Start to process the incoming video stream
   ///
   /// \param mode the video mode
   ///
-  static void ProcessVideo(mediax::rtp::ColourspaceType video_mode) {
-#if GST_SUPPORTED
-    switch (video_mode) {
-      default:  // Assume uncompressed
-        rtp_ = std::make_shared<mediax::rtp::uncompressed::RtpUncompressedDepayloader>();
-        break;
-      case mediax::rtp::ColourspaceType::kColourspaceH264Part10:
-      case mediax::rtp::ColourspaceType::kColourspaceH264Part4:
-        rtp_ = std::make_shared<mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader>();
-        break;
-      case mediax::rtp::ColourspaceType::kColourspaceH265:
-        rtp_ = std::make_shared<mediax::rtp::h265::gst::vaapi::RtpH265GstVaapiDepayloader>();
-        break;
-    }
-#else
-    rtp_ = std::make_shared<mediax::RtpUncompressedDepayloader>();
-#endif
-
+  static void SetupStream(mediax::rtp::ColourspaceType video_mode) {
     // Setup stream
     mediax::rtp::StreamInformation stream_information = {FLAGS_session_name, FLAGS_ipaddr, (uint16_t)FLAGS_port,
                                                          FLAGS_height,       FLAGS_width,  FLAGS_framerate,
@@ -210,15 +227,7 @@ class Receive {
     } else {
       LOG(INFO) << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port;
       rtp_->SetStreamInfo(stream_information);
-
-      // We have all the information so we can request the ports open now. No need to wait for SAP/SDP
-      if (!rtp_->Open()) {
-        LOG(ERROR) << "Could not open stream, quitting";
-        exit(1);
-      }
     }
-
-    rtp_->Start();
   }
 
   static std::shared_ptr<mediax::rtp::RtpDepayloader> rtp_;
@@ -226,6 +235,8 @@ class Receive {
   static uint32_t count_;
   static uint32_t dropped_;
   static guint timeout_id_;
+  static cairo_surface_t *surface;
+  static GtkWidget *window;
 
  private:
   static std::shared_ptr<mediax::sap::SapListener> sap_listener_;
@@ -240,6 +251,8 @@ uint32_t Receive::count_ = 1;
 uint32_t Receive::dropped_ = 0;
 int32_t Receive::timeout_ = 0;
 guint Receive::timeout_id_ = 0;
+cairo_surface_t *Receive::surface;
+GtkWidget *Receive::window;
 
 ///
 /// \brief The signal handler
@@ -290,36 +303,68 @@ int main(int argc, char *argv[]) {
   // Set the Rx timeout based on framerate
   Receive::timeout_ = (1000 / FLAGS_framerate) * 2;
 
-  Receive::ProcessVideo(video_mode);
-
   // Create a new window
-  GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-  gtk_window_set_title(GTK_WINDOW(window), "rtp-receive");
-  gtk_window_set_default_size(GTK_WINDOW(window), FLAGS_width, FLAGS_height);
+  Receive::window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_position(GTK_WINDOW(Receive::window), GTK_WIN_POS_CENTER);
+  gtk_window_set_title(GTK_WINDOW(Receive::window), "rtp-receive");
+  gtk_window_set_default_size(GTK_WINDOW(Receive::window), FLAGS_width, FLAGS_height);
 
   // Create a drawing area widget
   drawing_area = gtk_drawing_area_new();
-  gtk_container_add(GTK_CONTAINER(window), drawing_area);
+  gtk_container_add(GTK_CONTAINER(Receive::window), drawing_area);
 
   // Create a surface and set it as the user data for the draw area
-  cairo_surface_t *surface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, FLAGS_width, FLAGS_height);
+  Receive::surface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, FLAGS_width, FLAGS_height);
   gtk_widget_set_size_request(drawing_area, FLAGS_width, FLAGS_height);
-  g_object_set_data(G_OBJECT(drawing_area), "surface", surface);
+  g_object_set_data(G_OBJECT(drawing_area), "surface", Receive::surface);
 
   OnDrawData data = {
-      FLAGS_session_name,  surface, static_cast<int>(FLAGS_height), static_cast<int>(FLAGS_width), FLAGS_ipaddr,
-      (uint16_t)FLAGS_port};
+      FLAGS_session_name, Receive::surface,    static_cast<int>(FLAGS_height), static_cast<int>(FLAGS_width),
+      FLAGS_ipaddr,       (uint16_t)FLAGS_port};
 
   // Connect to the "draw" signal of the drawing area
   g_signal_connect(G_OBJECT(drawing_area), "draw", G_CALLBACK(Receive::OnDraw), &data);
-  g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), nullptr);
+  g_signal_connect(Receive::window, "destroy", G_CALLBACK(gtk_main_quit), nullptr);
+
+// Create the required video stream
+#if GST_SUPPORTED
+  switch (video_mode) {
+    default:  // Assume uncompressed
+      Receive::rtp_ = std::make_shared<mediax::rtp::uncompressed::RtpUncompressedDepayloader>();
+      break;
+    case mediax::rtp::ColourspaceType::kColourspaceH264Part10:
+    case mediax::rtp::ColourspaceType::kColourspaceH264Part4:
+      Receive::rtp_ = std::make_shared<mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader>();
+      break;
+    case mediax::rtp::ColourspaceType::kColourspaceH265:
+      Receive::rtp_ = std::make_shared<mediax::rtp::h265::gst::vaapi::RtpH265GstVaapiDepayloader>();
+      break;
+  }
+#else
+  Receive::rtp_ = std::make_shared<mediax::RtpUncompressedDepayloader>();
+#endif
+
+  // Start processing video
+  Receive::SetupStream(video_mode);
+
+#if CALLBACK
+  // Setup the callback if we are event driven
+  Receive::rtp_->RegisterCallback(Receive::RtpCallback);
+#else
 
   // Start the update timer
   Receive::timeout_id_ =
       g_timeout_add(1000 / FLAGS_framerate, Receive::UpdateCallback, drawing_area);  // framerate is in milliseconds
+#endif
 
-  gtk_widget_show_all(window);
+  // We have all the information so we can request the ports open now. No need to wait for SAP/SDP
+  if (!Receive::rtp_->Open()) {
+    LOG(ERROR) << "Could not open stream, quitting";
+    exit(1);
+  }
+  Receive::rtp_->Start();
+
+  gtk_widget_show_all(Receive::window);
 
   gtk_main();
 

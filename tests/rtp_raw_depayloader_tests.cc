@@ -123,7 +123,7 @@ TEST(RtpRawDepayloaderTest, UnicastOkMany) {
     // Start a transmit thread
     // std::thread sender_thread(SendFrameThread, rtp[i].GetIpAddress(), rtp[i].GetPort());
     SendVideoCheckered(rtp[i].GetIpAddress(), 640, 480, 25, rtp[i].GetPort());
-    EXPECT_TRUE(rtp[i].Receive(&data, 1000));
+    ASSERT_TRUE(rtp[i].Receive(&data, 1000));
     std::string filename = "UnicastOkMulti_" + std::to_string(i) + ".png";
     WritePngFile(data, 640, 480, filename.c_str());
   }
