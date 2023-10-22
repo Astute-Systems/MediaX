@@ -323,18 +323,18 @@ int main(int argc, char** argv) {
       std::cerr << "Failed to transmit frame\n";
     }
 
-    // Bail out if we are counting frames and meet the requested limit
-    if (count >= FLAGS_num_frames) {
-      application_running = false;
-    }
-
     if (FLAGS_num_frames > 0) {
-      count++;
+      // Bail out if we are counting frames and meet the requested limit
+      if (count > FLAGS_num_frames) {
+        break;
+      }
     }
 
-    if (FLAGS_verbose) std::cout << "Frame=" << frame << "\r" << std::flush;
-    frame++;
+    if (FLAGS_verbose) std::cout << "Frame=" << count << "\r" << std::flush;
+    count++;
   }
+
+  if (FLAGS_verbose) std::cout << "\n";
 
   sap_announcer.Stop();
   rtp->Stop();

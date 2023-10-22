@@ -210,5 +210,9 @@
         "./build/src/rtp",
         "./build/src/sap"
     ],
-    "cSpell.language": "en-GB"
+    "cSpell.language": "en-GB",
+    "sonarlint.connectedMode.project": {
+        "connectionId": "defencex",
+        "projectKey": "DefenceX_MediaX"
+    }
 }

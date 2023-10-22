@@ -54,6 +54,7 @@ DEFINE_uint32(num_frames, 0, "The number of frames to send");
 #define CALLBACK 1
 
 struct OnDrawData {
+  cairo_t *cr;
   std::string name;
   cairo_surface_t *surface;
   int32_t height;
@@ -135,16 +136,17 @@ class Receive {
     }
 
     if (count_ - 1 > FLAGS_num_frames) {
+      if (timeout_id_ != 0) g_source_remove(timeout_id_);
+
       gtk_main_quit();
     }
     if (FLAGS_num_frames > 0) {
       count_++;
     }
 
-// If #if CALLBACK is not 1
+    if (timeout_id_ != 0) g_source_remove(timeout_id_);
+// If CALLBACK is not 1
 #if !CALLBACK
-    // Modify next callback, we are running off a timer
-    g_source_remove(timeout_id_);
 
     // Calculate the elapsed time in ms
     auto elapsed =
@@ -156,21 +158,11 @@ class Receive {
     timeout_id_ = g_timeout_add(sleep_time, Receive::UpdateCallback,
                                 drawing_area);  // framerate is in milliseconds
 #else
-    if (timeout_id_ != 0) g_source_remove(timeout_id_);
-    timeout_id_ = g_timeout_add(200, Receive::VideoTimeout,
-                                nullptr);  // framerate is in milliseconds
-#endif
-    return TRUE;
-  }
+    data->cr = cr;
+    timeout_id_ = g_timeout_add(200, Receive::UpdateCallback,
+                                drawing_area);  // framerate is in milliseconds
 
-  ///
-  /// \brief Kill the application if streaming stops
-  ///
-  /// \param user_data
-  /// \return gboolean
-  ///
-  static gboolean VideoTimeout(gpointer user_data) {
-    gtk_main_quit();
+#endif
     return TRUE;
   }
 
@@ -318,9 +310,13 @@ int main(int argc, char *argv[]) {
   gtk_widget_set_size_request(drawing_area, FLAGS_width, FLAGS_height);
   g_object_set_data(G_OBJECT(drawing_area), "surface", Receive::surface);
 
-  OnDrawData data = {
-      FLAGS_session_name, Receive::surface,    static_cast<int>(FLAGS_height), static_cast<int>(FLAGS_width),
-      FLAGS_ipaddr,       (uint16_t)FLAGS_port};
+  OnDrawData data = {nullptr,
+                     FLAGS_session_name,
+                     Receive::surface,
+                     static_cast<int>(FLAGS_height),
+                     static_cast<int>(FLAGS_width),
+                     FLAGS_ipaddr,
+                     (uint16_t)FLAGS_port};
 
   // Connect to the "draw" signal of the drawing area
   g_signal_connect(G_OBJECT(drawing_area), "draw", G_CALLBACK(Receive::OnDraw), &data);
