@@ -10,22 +10,15 @@
 #include "rtp_transmit.h"
 #include "version.h"
 
+/// [Create a Qt application]
 int main(int argc, char *argv[]) {
-  google::InstallFailureSignalHandler();
-  google::InitGoogleLogging(argv[0]);
   QCoreApplication a(argc, argv);
-
+  // Initalise the RTP library
   mediax::InitRtp(argc, argv);
-
+  // Create a QtTransmit object
   QtTransmit rtp;
-  // Create a times evert 40 ms
+  // Create a timer 40 ms to start the first frame
   QTimer::singleShot(40, &rtp, SLOT(sendFrame()));
-
-  // COnvert mediax::kVersion to QString
-  QString version = QString::fromStdString(mediax::kVersion);
-
-  // Set version
-  a.setApplicationVersion(version);
-
   return a.exec();
 }
+/// [Create a Qt application]

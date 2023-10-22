@@ -11,7 +11,7 @@
 
 #ifndef QT_RECEIVE_H
 #define QT_RECEIVE_H
-
+/// [QtTransmit example header]
 #include <QObject>
 #include <QTimer>
 
@@ -54,5 +54,6 @@ class QtTransmit : public QObject {
   /// Frame counter
   int frame_count = 0;
 };
+/// [QtTransmit example header]
 
 #endif  // QT_RECEIVE_H

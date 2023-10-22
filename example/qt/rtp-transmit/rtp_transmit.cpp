@@ -9,6 +9,7 @@
 /// \file rtp_receive.cpp
 ///
 
+/// [QtTransmit example code]
 #include "rtp_transmit.h"
 
 #include "rtp/rtp_utils.h"
@@ -46,3 +47,4 @@ void QtTransmit::sendFrame() {
   // Trigger again in 40ms
   QTimer::singleShot(40, this, SLOT(sendFrame()));
 }
+/// [QtTransmit example code]
