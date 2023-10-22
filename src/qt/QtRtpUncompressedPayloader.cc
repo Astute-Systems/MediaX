@@ -16,8 +16,20 @@
 
 namespace mediax::qt {
 
-int QtRtpUncompressedPayloader::transmit(uint8_t* rgbframe, bool blocking) {
-  return m_rtpPayloader->Transmit(rgbframe, blocking);
+Q_INVOKABLE bool QtRtpUncompressedPayloader::open() { return m_rtpPayloader.Open(); }
+
+Q_INVOKABLE void QtRtpUncompressedPayloader::start() { m_rtpPayloader.Start(); }
+
+Q_INVOKABLE void QtRtpUncompressedPayloader::stop() { m_rtpPayloader.Stop(); }
+
+Q_INVOKABLE void QtRtpUncompressedPayloader::close() { m_rtpPayloader.Close(); }
+
+Q_INVOKABLE int QtRtpUncompressedPayloader::transmit(QByteArray *frame, bool blocking) {
+  return m_rtpPayloader.Transmit(reinterpret_cast<uint8_t *>(frame->data()), blocking);
+}
+
+void QtRtpUncompressedPayloader::sendFrame(QByteArray *frame) {
+  m_rtpPayloader.Transmit(reinterpret_cast<uint8_t *>(frame->data()), true);
 }
 
 }  // namespace mediax::qt

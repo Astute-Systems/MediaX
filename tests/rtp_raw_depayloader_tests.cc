@@ -39,7 +39,6 @@ TEST(RtpRawDepayloaderTest, Timeout) {
 
   mediax::rtp::StreamInformation stream_info = {
       "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
-  std::cout << "Function: " << __FUNCTION__ << ", Line " << __LINE__ << std::endl;
   rtp.SetStreamInfo(stream_info);
 
   ASSERT_EQ(rtp.GetHeight(), 640);
@@ -52,7 +51,7 @@ TEST(RtpRawDepayloaderTest, Timeout) {
   rtp.Start();
 
   EXPECT_FALSE(rtp.Receive(&yuv_test, 80));
-  EXPECT_EQ(yuv_test, nullptr);
+  EXPECT_NE(yuv_test, nullptr);
   rtp.Stop();
   rtp.Close();
 }

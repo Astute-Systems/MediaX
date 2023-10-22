@@ -218,7 +218,7 @@ bool RtpUncompressedDepayloader::ReceiveLines(::mediax::rtp::RtpPacket *packet, 
     *last_packet = payload_offset;
     for (int c = 0; c < scan_count; c++) {
       uint32_t os;
-      uint32_t pixel;
+      uint64_t pixel;
       uint32_t length;
 
       os = payload_offset + payload;
@@ -230,9 +230,9 @@ bool RtpUncompressedDepayloader::ReceiveLines(::mediax::rtp::RtpPacket *packet, 
           ((packet->head.payload.line[c].offset & 0x7FFF) * ::mediax::rtp::kColourspaceBytes.at(GetStream().encoding)) +
           (((packet->head.payload.line[c].line_number - 1) & 0x7FFF) *
            (GetStream().width * ::mediax::rtp::kColourspaceBytes.at(GetStream().encoding)));
-      length = packet->head.payload.line[c].length & 0xFFFF;
 
-      memcpy(&RtpUncompressedDepayloader::GetBuffer()[pixel], &udpdata[os], length);
+      length = packet->head.payload.line[c].length & 0xFFFF;
+      memcpy(&GetBuffer().data()[pixel], &udpdata[os], length);
 
       last_packet += length;
       payload += length;
@@ -307,17 +307,16 @@ bool RtpUncompressedDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
     // Timeout
     auto to = std::chrono::milliseconds(timeout);
     auto start_time = std::chrono::high_resolution_clock::now();
-
     while (!new_rx_frame_) {
       std::this_thread::sleep_for(std::chrono::milliseconds(1));
       auto end_time = std::chrono::high_resolution_clock::now();
       if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
           duration >= to) {
-        // Leave the thread to receive the rest of the frame
-        *cpu = nullptr;
+        memset(GetBuffer().data(), 0, GetBuffer().size());
         return false;
       }
     }
+
     return true;
   }
 }

@@ -1,6 +1,6 @@
 
 # Set Qt6 package
-find_package(Qt6 COMPONENTS Core REQUIRED)
+find_package(Qt6 COMPONENTS Core Widgets REQUIRED)
 # Gstreamer
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GST REQUIRED gstreamer-1.0)
@@ -22,7 +22,8 @@ set(SOURCES
 )
 
 add_library(mediaxqt STATIC ${SOURCES})
-target_link_libraries(mediaxqt Qt6::Core)
+target_include_directories(mediaxqt PUBLIC ${CMAKE_SOURCE_DIR}/src t Qt6::Core ${GST_INCLUDE_DIRS})
+target_link_libraries(mediaxqt mediax_static Qt6::Core Qt::Widgets)
 
 # Install qtwrapper
 install(TARGETS mediaxqt DESTINATION lib)

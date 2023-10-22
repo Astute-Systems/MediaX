@@ -6,7 +6,6 @@ cmake_policy(SET CMP0078 NEW)
 # find and build swig interface for python
 find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
-set(CMAKE_SWIG_FLAGS "")
 
 # Gstreamer
 find_package(PkgConfig REQUIRED)
@@ -14,6 +13,9 @@ pkg_check_modules(GST REQUIRED gstreamer-1.0)
 
 find_package(PythonLibs REQUIRED)
 include_directories(${PYTHON_INCLUDE_PATH} ${CMAKE_SOURCE_DIR}/src ${GST_INCLUDE_DIRS})
+
+# add a CFLAG for SWIG
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSWIG")
 
 # build swig interface for payloader
 set_source_files_properties(rtp_uncompressed_payloader.i PROPERTIES CPLUSPLUS ON)

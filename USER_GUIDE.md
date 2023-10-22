@@ -48,7 +48,7 @@ Build the example
 
 ```
 mkdir build
-cmake -DBUILD_CUDA=OFF -DEXAMPLES=ON -DBUILD_TESTING=ON GST_SUPPORTED=ON ..
+cmake -DBUILD_CUDA=OFF -DEXAMPLES=ON -DBUILD_TESTING=ON -DGST_SUPPORTED=ON -DBUILD_QT6=ON ..
 ```
 
  > NOTE: To enable Intel H.264 acceleration set -DVAAPI to ON, this requires the Intel Media SDK to be installed. To enable CUDA acceleration set -DBUILD_CUDA to ON, examples can als be enabled

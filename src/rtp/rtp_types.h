@@ -70,21 +70,21 @@ struct float4 {
 /// 12 byte RTP Raw video header
 struct RtpHeaderData {
   /// RTP version
-  int32_t protocol : 32;
+  uint32_t protocol : 32;
   /// sent timestamp
-  int32_t timestamp : 32;
+  uint32_t timestamp : 32;
   /// source identifier
-  int32_t source : 32;
+  uint32_t source : 32;
 };
 
 /// Line header
 struct RtpLineHeader {
   /// Length of line in bytes
-  int16_t length;
+  uint16_t length;
   /// Line number
-  int16_t line_number;
+  uint16_t line_number;
   /// Offset in bytes from start of line
-  int16_t offset;
+  uint16_t offset;
 };
 
 /// Supported colour spaces

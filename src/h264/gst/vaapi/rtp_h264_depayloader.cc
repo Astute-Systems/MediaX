@@ -57,6 +57,7 @@ void RtpH264GstVaapiDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInform
   stream.hostname = stream_information.hostname;
   stream.port_no = stream_information.port;
   stream.settings_valid = true;
+  GetBuffer().resize(stream.width * stream.height * mediax::BitsPerPixel(stream.encoding) / 8);
 }
 
 GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {

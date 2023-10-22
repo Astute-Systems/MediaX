@@ -133,7 +133,6 @@ void RtpUncompressedPayloader::UpdateHeader(::mediax::rtp::RtpHeader *packet, in
 
 void RtpUncompressedPayloader::SendFrame(RtpUncompressedPayloader *stream) {
   ::mediax::rtp::RtpPacket packet;
-
   ssize_t n = 0;
   uint32_t timestamp = GenerateTimestamp90kHz();
 

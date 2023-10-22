@@ -13,6 +13,7 @@ add_subdirectory(rtp)
 add_subdirectory(h264)
 
 if (BUILD_QT6)
+  find_package(Qt6 REQUIRED COMPONENTS Widgets)
   add_subdirectory(qt)
 endif()
 
@@ -47,7 +48,6 @@ set(SOURCES
   utils/colourspace_cuda.cu
   v4l2/v4l2_source.cc
 )
-
 
 if (GST_SUPPORTED)
   message(STATUS "Adding GST support")
@@ -85,12 +85,12 @@ if (!GST_SUPPORTED AND !VAAPI_SUPPORTED AND !NVENC_SUPPORTED)
   )
 endif()
 
-include_directories(${CMAKE_SOURCE_DIR}/src ${SWSCALE_INCLUDE_DIRS} ${GST_INCLUDE_DIRS})
+include_directories(${CMAKE_SOURCE_DIR}/src ${SWSCALE_INCLUDE_DIRS} ${GST_INCLUDE_DIRS} ${Qt6_INCLUDE_DIRS} Qt6::Widgets)
 add_library(mediax SHARED ${SOURCES})
 if (WIN32)
-  target_link_libraries(mediax png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} wsock32 ws2_32)
+  target_link_libraries(mediax png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} Qt6::Widgets wsock32 ws2_32 )
 else()
-  target_link_libraries(mediax png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS})
+  target_link_libraries(mediax png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} Qt6::Widgets)
 endif()
 
 set_target_properties(mediax PROPERTIES SOVERSION 1)
@@ -100,9 +100,9 @@ target_include_directories(mediax PUBLIC ${CMAKE_SOURCE_DIR}/src ${SWSCALE_INCLU
 
 add_library(mediax_static STATIC ${SOURCES})
 if (WIN32)
-  target_link_libraries(mediax_static png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} ${GST_LIBRARIES} wsock32 ws2_32)
+  target_link_libraries(mediax_static png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} ${GST_LIBRARIES} Qt6::Widgets wsock32 ws2_32)
 else()
-  target_link_libraries(mediax_static png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} ${GST_LIBRARIES})
+  target_link_libraries(mediax_static png glog pthread ${SWSCALE_LIBRARIES} ${MSYS_LIBS} ${GST_LIBRARIES} Qt6::Widgets)
 endif()
 
 target_include_directories(mediax_static PUBLIC ${CMAKE_SOURCE_DIR}/src ${SWSCALE_INCLUDE_DIRS} ${GST_INCLUDE_DIRS})

@@ -31,32 +31,66 @@ class QtRtpUncompressedPayloader : public QObject {
   ///
   /// \param parent
   ///
-  explicit QtRtpUncompressedPayloader(QObject* parent = nullptr) : QObject(parent) {
-    m_rtpPayloader = std::make_unique<mediax::rtp::uncompressed::RtpUncompressedPayloader>();
-  }
+  explicit QtRtpUncompressedPayloader(QObject* parent = nullptr) : QObject(parent) {}
 
- public slots:
   ///
   /// \brief Set the Stream Info object
   ///
   /// \param stream_information
   ///
   void setStreamInfo(const mediax::rtp::StreamInformation& stream_information) {
-    m_rtpPayloader->SetStreamInfo(stream_information);
+    m_rtpPayloader.SetStreamInfo(stream_information);
   }
 
   ///
-  /// \brief Send a frame to the RTP stream
+  /// \brief Open the RTP stream
   ///
-  /// \param rgbframe
-  /// \param blocking
-  /// \return int
+  /// \return Q_INVOKABLE
   ///
-  int transmit(uint8_t* rgbframe, bool blocking = true);
+  Q_INVOKABLE bool open();
+
+  ///
+  /// \brief Start the RTP stream
+  ///
+  /// \return Q_INVOKABLE
+  ///
+  Q_INVOKABLE void start();
+
+  ///
+  /// \brief Stop the RTP stream
+  ///
+  /// \return Q_INVOKABLE
+  ///
+  Q_INVOKABLE void stop();
+
+  ///
+  /// \brief Close the RTP stream
+  ///
+  /// \return Q_INVOKABLE
+  ///
+  Q_INVOKABLE void close();
+
+  ///
+  /// \brief Transmit a frame to the RTP stream
+  ///
+  /// \param frame The frame to transmit
+  /// \param blocking Set to true if blocking
+  /// \return Q_INVOKABLE
+  ///
+  Q_INVOKABLE int transmit(QByteArray* frame, bool blocking = true);
+
+ public slots:
+
+  ///
+  /// \brief A frame to transmit
+  ///
+  /// \param frame The frame to receive
+  ///
+  void sendFrame(QByteArray* frame);
 
  private:
   /// The underlying RTP payloader
-  std::unique_ptr<mediax::rtp::uncompressed::RtpUncompressedPayloader> m_rtpPayloader;
+  mediax::rtp::uncompressed::RtpUncompressedPayloader m_rtpPayloader;
 };
 
 }  // namespace mediax::qt

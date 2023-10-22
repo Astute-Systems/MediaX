@@ -16,7 +16,9 @@
 
 namespace mediax::qt {
 bool QtRtpUncompressedDepayloader::receive(uint8_t** cpu, int32_t timeout) {
-  return m_rtpDepayloader->Receive(cpu, timeout);
+  return m_depayloader->Receive(cpu, timeout);
 }
+
+Q_INVOKABLE mediax::rtp::StreamState QtRtpUncompressedDepayloader::getState() { return m_depayloader->GetState(); }
 
 }  // namespace mediax::qt

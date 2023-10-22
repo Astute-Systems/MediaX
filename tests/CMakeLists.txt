@@ -5,7 +5,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 # Set Qt6 package
-find_package(Qt6 COMPONENTS Core REQUIRED)
+find_package(Qt6 COMPONENTS Core Test REQUIRED)
 
 # find GStreamer
 find_package(PkgConfig REQUIRED)
@@ -35,7 +35,11 @@ set(SOURCES
 if (BUILD_QT6)
   list(APPEND SOURCES qt/qt_sap_announcer_tests.cc)
   list(APPEND SOURCES qt/qt_sap_listener_tests.cc)
+  list(APPEND SOURCES qt/qt_rtp_transmit_tests.cc)
+  list(APPEND SOURCES qt/qt_rtp_receive_tests.cc)
 endif()
+
+include_directories(${Qt6Test_INCLUDE_DIRS})
 
 add_executable(
   tests
@@ -46,6 +50,7 @@ set(LINK_LIBRARIES
   gtest
   mediax
   Qt6::Core
+  Qt6::Test
   ${GST_LIBRARIES}
   ${SWSCALE_LIBRARIES}
   pthread
@@ -65,7 +70,6 @@ target_link_libraries(tests ${LINK_LIBRARIES})
 target_include_directories(
   tests PUBLIC
   ${TEST_INCLUDES}
-  
 )
 
 if (BUILD_QT6)
@@ -74,5 +78,6 @@ endif()
 
 include(GoogleTest)
 
-gtest_discover_tests(tests)
+# gtest_discover_tests(tests)
+gtest_add_tests(tests "" AUTO)
 

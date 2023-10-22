@@ -50,7 +50,8 @@ class QtRtpH264Payloader : public QObject {
   /// \param width the width of the stream
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE void setStreamInfo(const QString &hostname, int port, const QString &name, int height, int width);
+  Q_INVOKABLE void setStreamInfo(const QString &hostname, int port, const QString &name, int height, int width,
+                                 int framerate);
 
   ///
   /// \brief Open the RTP stream
@@ -88,6 +89,15 @@ class QtRtpH264Payloader : public QObject {
   /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE int transmit(QByteArray *frame, bool blocking = true);
+
+ public slots:
+
+  ///
+  /// \brief A frame to transmit
+  ///
+  /// \param frame The frame to receive
+  ///
+  void sendFrame(QByteArray *frame);
 
  private:
   ::mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader payloader_;

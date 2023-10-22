@@ -22,7 +22,7 @@ QtRtpH264Payloader::QtRtpH264Payloader(QObject *parent) : QObject(parent) {}
 QtRtpH264Payloader::~QtRtpH264Payloader() = default;
 
 Q_INVOKABLE void QtRtpH264Payloader::setStreamInfo(const QString &hostname, int port, const QString &session_name,
-                                                   int height, int width) {
+                                                   int height, int width, int framerate) {
   rtp::StreamInformation stream_information;
   stream_information.hostname = hostname.toStdString();
   stream_information.port = port;
@@ -30,6 +30,8 @@ Q_INVOKABLE void QtRtpH264Payloader::setStreamInfo(const QString &hostname, int 
   stream_information.encoding = mediax::rtp::ColourspaceType::kColourspaceH264Part10;
   stream_information.height = height;
   stream_information.width = width;
+  stream_information.framerate = framerate;
+
   payloader_.SetStreamInfo(stream_information);
 }
 
@@ -43,6 +45,10 @@ Q_INVOKABLE void QtRtpH264Payloader::close() { payloader_.Close(); }
 
 Q_INVOKABLE int QtRtpH264Payloader::transmit(QByteArray *frame, bool blocking) {
   return payloader_.Transmit(reinterpret_cast<uint8_t *>(frame->data()), blocking);
+}
+
+void QtRtpH264Payloader::sendFrame(QByteArray *frame) {
+  payloader_.Transmit(reinterpret_cast<uint8_t *>(frame->data()), true);
 }
 
 }  // namespace mediax::qt

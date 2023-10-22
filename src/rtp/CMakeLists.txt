@@ -6,7 +6,8 @@ cmake_policy(SET CMP0078 NEW)
 # find and build swig interface for python
 find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
-set(CMAKE_SWIG_FLAGS "")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSWIG")
+
 
 # Gstreamer
 find_package(PkgConfig REQUIRED)

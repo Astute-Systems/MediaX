@@ -82,10 +82,6 @@ class Receive {
     auto data = static_cast<OnDrawData *>(user_data);
     mediax::video::ColourSpaceCpu convert;
 
-    // Overwrite line below to test the frame rate
-    if (FLAGS_verbose) std::cout << "Frame=" << frame_counter_ << "\r";
-    std::flush(std::cout);
-    frame_counter_++;
     // Fill the surface with video data if available
     if (rtp_->Receive(&cpu_buffer, timeout_) == true) {
       unsigned char *surface_data = cairo_image_surface_get_data(data->surface);
@@ -135,11 +131,16 @@ class Receive {
       dropped_++;
     }
 
-    if (count_ - 1 > FLAGS_num_frames) {
+    if ((FLAGS_num_frames > 0) && (count_ >= FLAGS_num_frames)) {
       if (timeout_id_ != 0) g_source_remove(timeout_id_);
 
       gtk_main_quit();
     }
+
+    // Overwrite line below to test the frame rate
+    if (FLAGS_verbose) std::cout << "Frame=" << count_ << "\r";
+    std::flush(std::cout);
+
     if (FLAGS_num_frames > 0) {
       count_++;
     }

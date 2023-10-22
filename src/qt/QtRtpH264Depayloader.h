@@ -20,6 +20,7 @@
 #include <QVector>
 
 #include "h264/gst/vaapi/rtp_h264_depayloader.h"
+#include "rtp/rtp_depayloader.h"
 
 namespace mediax::qt {
 
@@ -89,6 +90,13 @@ class QtRtpH264Depayloader : public QObject {
   /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE QVector<quint8> getBuffer();
+
+  ///
+  /// \brief Get the State object
+  ///
+  /// \return Q_INVOKABLE
+  ///
+  Q_INVOKABLE mediax::rtp::StreamState getState();
 
  private:
   /// The underlying RTP H.264 depayloader

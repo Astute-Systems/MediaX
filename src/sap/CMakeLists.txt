@@ -6,7 +6,11 @@ cmake_policy(SET CMP0078 NEW)
 # find and build swig interface for python
 find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
-set(CMAKE_SWIG_FLAGS "")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSWIG")
+
+
+# Qt6
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
 # Gstreamer
 find_package(PkgConfig REQUIRED)
@@ -18,12 +22,12 @@ include_directories(${PYTHON_INCLUDE_PATH} ${CMAKE_SOURCE_DIR}/src ${GST_INCLUDE
 # build swig interface for depayloader
 set_source_files_properties(sap_announcer.i PROPERTIES CPLUSPLUS ON)
 swig_add_library(sap_announcer TYPE MODULE LANGUAGE python SOURCES sap_announcer.i sap_announcer.cc sap_utils.cc ../rtp/rtp_utils.cc)
-swig_link_libraries(sap_announcer glog)
+swig_link_libraries(sap_announcer glog Qt6::Widgets)
 
 # Create a ptyhon object just for this package
 set_source_files_properties(sap_listener.i PROPERTIES CPLUSPLUS ON)
 swig_add_library(sap_listener TYPE MODULE LANGUAGE python SOURCES sap_listener.i sap_listener.cc ../rtp/rtp_utils.cc)
-swig_link_libraries(sap_listener glog)
+swig_link_libraries(sap_listener glog Qt6::Widgets)
 
 install(TARGETS sap_announcer DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/sap_announcer.py DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
