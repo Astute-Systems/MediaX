@@ -49,7 +49,7 @@ RtpH264GstVaapiDepayloader &RtpH264GstVaapiDepayloader::operator=(const RtpH264G
 
 void RtpH264GstVaapiDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
   ::mediax::rtp::RtpPortType &stream = GetStream();
-  stream.encoding = stream_information.encoding;
+  stream.encoding = ::mediax::rtp::ColourspaceType::kColourspaceNv12;
   stream.height = stream_information.height;
   stream.width = stream_information.width;
   stream.framerate = stream_information.framerate;
