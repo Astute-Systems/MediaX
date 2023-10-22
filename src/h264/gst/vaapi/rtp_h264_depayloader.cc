@@ -121,6 +121,8 @@ GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
 }
 
 bool RtpH264GstVaapiDepayloader::Open() {
+  // Call the base class
+  RtpDepayloader::Open();
   // Create a pipeline
   pipeline_ = gst_pipeline_new("rtp-h264-pipeline");
 
@@ -167,17 +169,24 @@ bool RtpH264GstVaapiDepayloader::Open() {
 }
 
 void RtpH264GstVaapiDepayloader::Start() {
+  // Call the base class
+  RtpDepayloader::Start();
   // Start the pipeline
   gst_element_set_state(pipeline_, GST_STATE_PLAYING);
 }
 
 void RtpH264GstVaapiDepayloader::Stop() {
+  // Call the base class
+  RtpDepayloader::Stop();
   // Stop the pipeline
   gst_element_set_state(pipeline_, GST_STATE_NULL);
 }
 
 void RtpH264GstVaapiDepayloader::Close() {
   Stop();
+
+  // Call the base class
+  RtpDepayloader::Close();
 
   // Wait for the pipeline to finish
   GstBus *bus = gst_element_get_bus(pipeline_);
@@ -213,7 +222,9 @@ bool RtpH264GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
 }
 
 void RtpH264GstVaapiDepayloader::Callback(::mediax::rtp::RtpCallbackData frame) const {
-  GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
+  if (GetState() == ::mediax::rtp::StreamState::kOpen) {
+    GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
+  }
 }
 
 void RtpH264GstVaapiDepayloader::NewFrame() {

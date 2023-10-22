@@ -30,6 +30,18 @@ class RtpDepayloader;
 /// \brief The RTP frame callback
 using RtpCallback = std::function<void(const RtpDepayloader& depay, RtpCallbackData frame)>;
 
+/// \brief The stream state
+enum class StreamState {
+  /// \brief The stream is closed
+  kClosed,
+  /// \brief The stream is open
+  kOpen,
+  /// \brief The stream is started
+  kStarted,
+  /// \brief The stream is stopped
+  kStopped
+};
+
 ///
 /// \brief Manage an RTP stream
 ///
@@ -87,25 +99,28 @@ class RtpDepayloader {
   /// \return true
   /// \return false
   ///
-  virtual bool Open() = 0;
+  virtual bool Open() {
+    state_ = StreamState::kOpen;
+    return true;
+  }
 
   ///
   /// \brief Start the stream
   ///
   ///
-  virtual void Start() = 0;
+  virtual void Start() { state_ = StreamState::kStarted; }
 
   ///
   /// \brief Stop the stream, can be quickly re-started
   ///
   ///
-  virtual void Stop() = 0;
+  virtual void Stop() { state_ = StreamState::kStopped; }
 
   ///
   /// \brief Close the RTP stream
   ///
   ///
-  virtual void Close() = 0;
+  virtual void Close() { state_ = StreamState::kClosed; }
 
   ///
   /// \brief Recieve a frame or timeout
@@ -275,18 +290,25 @@ class RtpDepayloader {
   ///
   std::vector<uint8_t>& GetBuffer() { return buffer_in_; }
 
+  ///
+  /// \brief Get the State object
+  ///
+  /// \return ::mediax::rtp::StreamState
+  ///
+  ::mediax::rtp::StreamState GetState() const { return state_; }
+
  private:
+  /// Stream state
+  ::mediax::rtp::StreamState state_ = ::mediax::rtp::StreamState::kClosed;
   /// The callback to notify when a frame is received
   ::mediax::rtp::RtpCallback callback_;
-
   /// UDP data buffer
   std::vector<uint8_t> buffer_in_;
-
   /// Indicate if callback has been registered
   bool callback_registered_ = false;
   /// Ingress port
   ::mediax::rtp::RtpPortType ingress_ = {};
-};
+};  // namespace mediax::rtp
 
 }  // namespace mediax::rtp
 

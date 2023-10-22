@@ -17,6 +17,7 @@
 #include <chrono>
 #include <thread>
 
+#include "h264/gst/nvidia/rtp_h264_depayloader.h"
 #include "h264/gst/vaapi/rtp_h264_depayloader.h"
 #include "rtp/rtp_utils.h"
 #include "uncompressed/rtp_uncompressed_payloader.h"
@@ -151,4 +152,40 @@ TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfoPtr) {
   EXPECT_EQ(rtp->GetWidth(), 1280);
 
   WritePngFile(rgb_test.data(), rtp->GetWidth(), rtp->GetHeight(), "H264_Image2.png");
+}
+
+TEST(RtpH264DepayloaderTest, StateCheckNvidia) {
+  mediax::rtp::h264::gst::nvidia::RtpH264GstNvidiaDepayloader rtp;
+  mediax::rtp::StreamInformation stream_info = {
+      "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
+
+  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kClosed);
+  rtp.SetStreamInfo(stream_info);
+  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kClosed);
+  rtp.Open();
+  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kOpen);
+  rtp.Start();
+  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kStarted);
+  rtp.Stop();
+  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kStopped);
+  rtp.Close();
+  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kClosed);
+}
+
+TEST(RtpH264DepayloaderTest, StateCheckVappi) {
+  mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
+  mediax::rtp::StreamInformation stream_info = {
+      "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
+
+  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kClosed);
+  rtp.SetStreamInfo(stream_info);
+  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kClosed);
+  rtp.Open();
+  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kOpen);
+  rtp.Start();
+  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kStarted);
+  rtp.Stop();
+  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kStopped);
+  rtp.Close();
+  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kClosed);
 }

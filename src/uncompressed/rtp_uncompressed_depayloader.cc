@@ -68,6 +68,9 @@ void RtpUncompressedDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInform
 }
 
 bool RtpUncompressedDepayloader::Open() {
+  // Call the base class
+  RtpDepayloader::Open();
+
   if (!GetStream().port_no) {
     LOG(ERROR) << "RtpUncompressedDepayloader::Open() No ports set, nothing to open";
     exit(-1);
@@ -113,6 +116,11 @@ bool RtpUncompressedDepayloader::Open() {
 }
 
 void RtpUncompressedDepayloader::Close() {
+  // Call the base class
+  RtpDepayloader::Close();
+
+  // Call the base class
+  RtpDepayloader::Close();
   if (GetStream().port_no) {
     close(GetStream().sockfd);
     GetStream().sockfd = 0;
@@ -270,11 +278,15 @@ void RtpUncompressedDepayloader::ReceiveThread(RtpUncompressedDepayloader *strea
 }
 
 void RtpUncompressedDepayloader::Start() {
+  // Call the base class
+  RtpDepayloader::Start();
   rx_thread_running_ = true;
   rx_thread_ = std::thread(&RtpUncompressedDepayloader::ReceiveThread, this);
 }
 
 void RtpUncompressedDepayloader::Stop() {
+  // Call the base class
+  RtpDepayloader::Stop();
   rx_thread_running_ = false;
 
   if (rx_thread_.joinable()) {
@@ -344,7 +356,9 @@ bool RtpUncompressedDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
 }
 
 void RtpUncompressedDepayloader::Callback(::mediax::rtp::RtpCallbackData frame) const {
-  GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
+  if (GetState() == ::mediax::rtp::StreamState::kOpen) {
+    GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
+  }
 }
 
 }  // namespace mediax::rtp::uncompressed

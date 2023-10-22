@@ -267,3 +267,21 @@ TEST(RtpRawDepayloaderTest, Callback) {
   rtp.Stop();
   rtp.Close();
 }
+
+TEST(RtpRawDepayloaderTest, StateCheck) {
+  mediax::rtp::uncompressed::RtpUncompressedDepayloader rtp;
+  mediax::rtp::StreamInformation stream_info = {
+      "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
+
+  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kClosed);
+  rtp.SetStreamInfo(stream_info);
+  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kClosed);
+  rtp.Open();
+  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kOpen);
+  rtp.Start();
+  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kStarted);
+  rtp.Stop();
+  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kStopped);
+  rtp.Close();
+  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kClosed);
+}
