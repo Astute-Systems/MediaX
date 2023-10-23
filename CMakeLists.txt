@@ -33,7 +33,7 @@ install(FILES ${HEADER_FILES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Header install function from dir
 function (install_headers_from_dir HEADER_DIR DESTINATION_DIR)
-    file(GLOB_RECURSE HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${HEADER_DIR}/*.h)
+    file(GLOB HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${HEADER_DIR}/*.h)
     install(FILES ${HEADER_FILES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${DESTINATION_DIR})
 endfunction()
 
@@ -41,6 +41,8 @@ endfunction()
 include(GNUInstallDirs)
 install_headers_from_dir(src/rtp mediax/rtp)
 install_headers_from_dir(src/uncompressed mediax/uncompressed)
+install_headers_from_dir(src/h264 mediax/h264)
+install_headers_from_dir(src/h264/nvidia mediax/h264/nvidia)
 install_headers_from_dir(src/h264/vaapi mediax/h264/vaapi)
 install_headers_from_dir(src/h264/gst/vaapi mediax/h264/gst/vaapi)
 install_headers_from_dir(src/h264/gst/nvidia mediax/h264/gst/nvidia)
