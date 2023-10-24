@@ -43,6 +43,26 @@ TEST(RtpH264DepayloaderTest, Timeout) {
   rtp->Close();
 }
 
+TEST(RtpH264DepayloaderTest, GetSet) {
+  mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
+  mediax::rtp::StreamInformation stream_info = {"test_session_name",
+                                                "127.0.0.1",
+                                                5004,
+                                                640,
+                                                480,
+                                                25,
+                                                mediax::rtp::ColourspaceType::kColourspaceH264Part10,
+                                                false};
+  rtp.SetStreamInfo(stream_info);
+
+  ASSERT_EQ(rtp.GetHeight(), 640);
+  ASSERT_EQ(rtp.GetWidth(), 480);
+  ASSERT_EQ(rtp.GetColourSpace(), mediax::rtp::ColourspaceType::kColourspaceNv12);
+  ASSERT_EQ(rtp.GetIpAddress(), "127.0.0.1");
+  ASSERT_EQ(rtp.GetPort(), 5004);
+  ASSERT_EQ(rtp.GetSessionName(), "test_session_name");
+}
+
 TEST(RtpH264DepayloaderTest, UnicastOk) {
 #if !GST_SUPPORTED
   GTEST_SKIP();
