@@ -13,7 +13,7 @@ set(SOURCES
 set(HEADERS
 )
 
-include_directories(${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/src/qt ${CMAKE_BINARY_DIR}/include)
 
 # Create an executable target
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})

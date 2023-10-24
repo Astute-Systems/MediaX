@@ -13,9 +13,8 @@
 #define QT_RECEIVE_H
 /// [QtTransmit example header]
 #include <QObject>
+#include <QRtp>
 #include <QTimer>
-
-#include "qt/QtRtp.h"
 
 class QtTransmit : public QObject {
   Q_OBJECT

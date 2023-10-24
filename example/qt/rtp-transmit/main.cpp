@@ -2,10 +2,10 @@
 
 #include <QCoreApplication>
 #include <QDebug>
+#include <QRtp>
 #include <QString>
 #include <QTimer>
 
-#include "qt/QtRtp.h"
 #include "rtp/rtp_utils.h"
 #include "rtp_transmit.h"
 #include "version.h"
