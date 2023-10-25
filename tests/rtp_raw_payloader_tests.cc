@@ -73,9 +73,11 @@ TEST(RTPDepayloaderTest, SendOneFrameMono16) {
 
 TEST(RTPDepayloaderTest, SendOneFrameMono8) {
   const int kBuffSize = (640 * 480) * 1;
-  std::array<uint8_t, kBuffSize> rtb_test;
 
   mediax::rtp::uncompressed::RtpUncompressedPayloader rtp;
+  rtp.SetBufferSize(kBuffSize);
+  ASSERT_EQ(rtp.GetBufferSize(), kBuffSize);
+
   mediax::rtp::StreamInformation stream_information = {
       "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceMono8};
   rtp.SetStreamInfo(stream_information);
@@ -85,7 +87,7 @@ TEST(RTPDepayloaderTest, SendOneFrameMono8) {
   ASSERT_EQ(rtp.GetIpAddress(), "127.0.0.1");
   ASSERT_EQ(rtp.GetPort(), 5004);
   rtp.Open();
-  rtp.Transmit(rtb_test.data(), true);
+  rtp.Transmit(rtp.GetBuffer().data(), true);
   rtp.Close();
 }
 

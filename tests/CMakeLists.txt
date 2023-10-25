@@ -46,9 +46,11 @@ add_executable(
   ${SOURCES}
 )
 
+link_directories(${CMAKE_BINARY_DIR}/lib)
+
 set(LINK_LIBRARIES
   gtest
-  mediax
+  mediax_static
   Qt6::Core
   Qt6::Test
   ${GST_LIBRARIES}

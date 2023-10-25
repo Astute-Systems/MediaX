@@ -291,6 +291,20 @@ class RtpDepayloader {
   std::vector<uint8_t>& GetBuffer() { return buffer_in_; }
 
   ///
+  /// \brief Get the Buffer Size object
+  ///
+  /// \return uint32_t
+  ///
+  uint32_t GetBufferSize() const { return buffer_in_.size(); }
+
+  ///
+  /// \brief Set the Buffer Size object
+  ///
+  /// \param size
+  ///
+  void SetBufferSize(uint32_t size) { buffer_in_.resize(size); }
+
+  ///
   /// \brief Get the State object
   ///
   /// \return ::mediax::rtp::StreamState

@@ -17,6 +17,7 @@
 #include <iostream>
 #include <string>
 #include <string_view>
+#include <vector>
 
 #include "rtp/rtp_types.h"
 
@@ -149,8 +150,33 @@ class RtpPayloader {
   ///
   uint32_t GetPort() const;
 
+  ///
+  /// \brief Get the Buffer object
+  ///
+  /// \return std::vector<uint8_t>&
+  ///
+  std::vector<uint8_t> &GetBuffer() { return frame_; }
+
+  ///
+  /// \brief Get the Buffer Size object
+  ///
+  /// \return uint32_t
+  ///
+  uint32_t GetBufferSize() const { return frame_.size(); }
+
+  ///
+  /// \brief Set the Buffer Size object
+  ///
+  /// \param size
+  ///
+  void SetBufferSize(uint32_t size) { frame_.resize(size); }
+
   /// Egress port
   ::mediax::rtp::RtpPortType egress_;
+
+ private:
+  /// Data buffer
+  std::vector<uint8_t> frame_;
 };
 
 }  // namespace mediax::rtp

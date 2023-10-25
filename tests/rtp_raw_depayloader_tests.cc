@@ -33,6 +33,14 @@ TEST(RtpRawDepayloaderTest, Copy) {
   rtp = rtp2;
 }
 
+TEST(RtpRawDepayloaderTest, Buffer) {
+  mediax::rtp::uncompressed::RtpUncompressedDepayloader rtp;
+  rtp.SetBufferSize(1000);
+  ASSERT_EQ(rtp.GetBufferSize(), 1000);
+  // fill with 0
+  memset(rtp.GetBuffer().data(), 0, 1000);
+}
+
 TEST(RtpRawDepayloaderTest, Timeout) {
   uint8_t* yuv_test = nullptr;
   mediax::rtp::uncompressed::RtpUncompressedDepayloader rtp;
