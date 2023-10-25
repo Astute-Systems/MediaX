@@ -53,7 +53,6 @@ TEST(SAPListenerTest, Deleted) {
 
     if (message->deleted) {
       deleted = true;
-      std::cout << "Deleted SAP " << message->session_name << std::endl;
     }
   };
   listener.RegisterSapListener(session_name, callback, nullptr);
@@ -75,7 +74,6 @@ TEST(SAPListenerTest, Deleted) {
   announcer.DeleteAllSAPAnnouncements();
   // Teset deleted value for 2 seconds sample every 100ms
   for (int i = 0; i < 20; i++) {
-    std::cout << "deleted " << deleted << std::endl;
     if (deleted) break;
     usleep(100000);
   }

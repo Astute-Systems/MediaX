@@ -217,7 +217,8 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
 
   SdpMessage sdp;
   // Check deletion flag
-  if (rawdata->at(0) && 0x04) {
+  // Print the first byte in hex
+  if (rawdata->at(0) & 0x04) {
     // Deletion flag set
     sdp.deleted = true;
   } else {

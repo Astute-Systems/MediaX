@@ -91,9 +91,7 @@ void SapAnnouncer::AddSapAnnouncement(const ::mediax::rtp::StreamInformation &st
 
 void SapAnnouncer::DeleteAllSAPAnnouncements() {
   // Delete all the live SAP announcements
-  std::cout << "Deleting all SAP announcements" << std::endl;
   for (auto &stream_ : streams_) {
-    std::cout << "Deleting SAP announcement for " << stream_.session_name << std::endl;
     SendSAPDeletion(stream_);
     streams_.clear();
   }
