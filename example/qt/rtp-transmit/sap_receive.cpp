@@ -36,6 +36,6 @@ void QtSapReceiver::newSap(const std::string name, const ::mediax::sap::SdpMessa
     sdp_text.replace(pos, 1, "\n\t");
     pos += 2;
   }
-  std::cout << sdp_text;
+  std::cout << "\n\t" << sdp_text;
   std::cout << std::endl;
 }

@@ -109,6 +109,7 @@ void SapAnnouncer::SendSAPDeletion(const ::mediax::rtp::StreamInformation &strea
 void SapAnnouncer::SendSAPPacket(const ::mediax::rtp::StreamInformation &stream_information, bool deletion) const {
   std::string depth;
   std::string colorimetry;
+  std::string mode = "raw";
 
   switch (stream_information.encoding) {
     case mediax::rtp::ColourspaceType::kColourspaceMono8:
@@ -127,6 +128,21 @@ void SapAnnouncer::SendSAPPacket(const ::mediax::rtp::StreamInformation &stream_
       break;
   }
 
+  std::string sampling = "";
+  uint32_t id;
+  if ((stream_information.encoding == mediax::rtp::ColourspaceType::kColourspaceNv12) ||
+      (stream_information.encoding == mediax::rtp::ColourspaceType::kColourspaceH264Part10)) {
+    id = 103;
+    sampling = " profile-level-id=42A01E; packetisation-mode=0\r\n";
+    mode = "H264";
+  } else {
+    id = 96;
+    sampling = " sampling=" + ::mediax::sap::GetSdpColourspace(stream_information.encoding) +
+               "; width=" + std::to_string(stream_information.width) +
+               "; height=" + std::to_string(stream_information.height) + "; depth=" + depth + "; " + colorimetry +
+               "progressive\r\n";
+  }
+
   // Prepare SDP stream_information
   std::string sdp_msg =
       "v=0\r\n"
@@ -141,16 +157,13 @@ void SapAnnouncer::SendSAPPacket(const ::mediax::rtp::StreamInformation &stream_
       "/15\r\n"
       "t=0 0\r\n"
       "m=video " +
-      std::to_string(stream_information.port) +
-      " RTP/AVP 96\r\n"
-      "a=rtpmap:96 raw/90000\r\n"
-      "a=fmtp:96 sampling=" +
-      ::mediax::sap::GetSdpColourspace(stream_information.encoding) +
-      "; width=" + std::to_string(stream_information.width) + "; height=" + std::to_string(stream_information.height) +
-      "; depth=" + depth + "; " + colorimetry +
-      "progressive\r\n"
-      "a=framerate:" +
-      std::to_string(stream_information.framerate) + "";
+      std::to_string(stream_information.port) + " RTP/AVP " + std::to_string(id) +
+      "\r\n"
+      "a=rtpmap:" +
+      std::to_string(id) + " " + mode +
+      "/90000\r\n"
+      "a=fmtp:" +
+      std::to_string(id) + sampling + "a=framerate:" + std::to_string(stream_information.framerate) + "";
 
   if (stream_information.encoding == mediax::rtp::ColourspaceType::kColourspaceMono16) {
     sdp_msg +=
