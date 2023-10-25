@@ -216,7 +216,7 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
   auto source = reinterpret_cast<uint32_t *>(&rawdata->at(4));
 
   SdpMessage sdp;
-  sdp.sdp_text = std::string(reinterpret_cast<char *>(&rawdata->at(8)), size - 8);
+  sdp.sdp_text = std::string(reinterpret_cast<char *>(&rawdata->at(8)), size - 9);
   sdp.sdp_text.push_back('\0');
   // convert to string IP address
   struct in_addr addr;
