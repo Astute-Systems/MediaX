@@ -312,6 +312,11 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
     sdp.sampling = attributes_map["96sampling"];
   } catch (const std::invalid_argument &e [[maybe_unused]]) {
     DLOG(ERROR) << "Invalid argument in SAP message. SDP text = " << sdp.sdp_text;
+    sdp.sampling = attributes_map["profile-level-id"];
+    if (sdp.sampling == "42A01E") {
+      sdp.sampling = "H264";
+    }
+    sdp.sampling = "H264";
   }
 
   DLOG(INFO) << "Store " << sdp.session_name << " " << sdp.ip_address << ":" << sdp.port << " " << sdp.height << "x"
