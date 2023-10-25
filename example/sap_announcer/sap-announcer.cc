@@ -53,6 +53,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   sap.Start();
   sleep(5);
   // [Sap example stop]
+
+  sap.DeleteAllSAPAnnouncements();
   // Kill the SAP announcer, can be re-started by calling Start(); again
   sap.Stop();
   // [Sap example stop]

@@ -89,7 +89,15 @@ void SapAnnouncer::AddSapAnnouncement(const ::mediax::rtp::StreamInformation &st
   streams_.push_back(stream_information);
 }
 
-void SapAnnouncer::DeleteAllSAPAnnouncements() { streams_.clear(); }
+void SapAnnouncer::DeleteAllSAPAnnouncements() {
+  // Delete all the live SAP announcements
+  std::cout << "Deleting all SAP announcements" << std::endl;
+  for (auto &stream_ : streams_) {
+    std::cout << "Deleting SAP announcement for " << stream_.session_name << std::endl;
+    SendSAPDeletion(stream_);
+    streams_.clear();
+  }
+}
 
 void SapAnnouncer::SendSAPAnnouncement(const ::mediax::rtp::StreamInformation &stream_information) const {
   SendSAPPacket(stream_information, false);
