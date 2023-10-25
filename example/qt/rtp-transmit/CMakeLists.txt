@@ -22,3 +22,6 @@ add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 target_link_libraries(${PROJECT_NAME} 
     mediaxqt
 )
+
+add_executable(qt_sap_listener sap_listener.cpp sap_receive.cpp)
+target_link_libraries(qt_sap_listener mediaxqt)

@@ -58,11 +58,14 @@ int main(int argc, char *argv[]) {
   // Wait 1.1 seconds as the SAP announcement is sent every second and we need a sampling period
   std::this_thread::sleep_for(std::chrono::milliseconds(1100));
   // You can use the SAP callback here instead of polling
-  sap.RegisterSapListener("session_test", [](const ::mediax::sap::SdpMessage *sdp_message) {
-    // do something
-    std::cout << "Got SAP callback\n";
-    std::cout << "  Session name: " << sdp_message->session_name << "\n";
-  });
+  sap.RegisterSapListener(
+      "session_test",
+      [](const ::mediax::sap::SdpMessage *sdp_message, void *user_data [[maybe_unused]]) {
+        // do something
+        std::cout << "Got SAP callback\n";
+        std::cout << "  Session name: " << sdp_message->session_name << "\n";
+      },
+      nullptr);
   // Now get any announcments
   const std::map<std::string, mediax::sap::SdpMessage, std::less<>> &announcements = sap.GetSAPAnnouncements();
 

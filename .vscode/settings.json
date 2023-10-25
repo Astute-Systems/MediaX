@@ -192,7 +192,8 @@
         "rtpvraw_depayloader.h": "c",
         "rtp_h264_depayloader.h": "c",
         "rtp_h264_payloader.h": "c",
-        "qtimer": "cpp"
+        "qtimer": "cpp",
+        "qsap": "cpp"
     },
     "terminal.integrated.shell.windows": "C:\\msys64\\usr\\bin\\bash.exe",
     "terminal.integrated.shellArgs.windows": [

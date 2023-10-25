@@ -18,9 +18,10 @@
 
 namespace mediax::qt {
 
-void QtSapListener::SapCallback(const sap::SdpMessage *sdp) {
-  std::cout << "QtSapListener::SapCallback name = " << sdp->session_name << std::endl;
+void QtSapListener::SapCallback(const sap::SdpMessage *sdp, void *data) {
+  QtSapListener *listener = static_cast<QtSapListener *>(data);
   // emit a signal here in the future
+  emit listener->sapData(sdp->session_name, *sdp);
 }
 
 QtSapListener &QtSapListener::getInstance() {
@@ -28,7 +29,9 @@ QtSapListener &QtSapListener::getInstance() {
   return *m_instance;
 }
 
-QtSapListener::QtSapListener(QObject *parent) : QObject(parent) { sap_listener_.RegisterSapListener("", SapCallback); }
+QtSapListener::QtSapListener(QObject *parent) : QObject(parent) {
+  sap_listener_.RegisterSapListener("", SapCallback, this);
+}
 
 Q_INVOKABLE void QtSapListener::start() { sap_listener_.Start(); }
 

@@ -114,8 +114,10 @@ void SapListener::SAPListenerThread(SapListener *sap) {
   }
 }
 
-void SapListener::RegisterSapListener(std::string_view session_name, const SapCallback &callback) {
+void SapListener::RegisterSapListener(std::string_view session_name, const SapCallback &callback, void *data) {
+  data_ = data;
   DLOG(INFO) << "Register SAP listener with session-name=" << session_name;
+
   callbacks_[std::string(session_name)] = callback;
 }
 
@@ -214,7 +216,8 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
   auto source = reinterpret_cast<uint32_t *>(&rawdata->at(4));
 
   SdpMessage sdp;
-  sdp.sdp_text.append(rawdata->begin() + 8, rawdata->end());
+  sdp.sdp_text = std::string(reinterpret_cast<char *>(&rawdata->at(8)), size - 8);
+  sdp.sdp_text.push_back('\0');
   // convert to string IP address
   struct in_addr addr;
   addr.s_addr = htonl(*source);
@@ -312,14 +315,13 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
   for (const auto &[name, callback] : callbacks_) {
     if (name == sdp.session_name) {
       // We have a match, hit the callback
-      callback(&sdp);
+      callback(&sdp, nullptr);
     }
     // Find the get all callbacks i.e. no name set
     if (name.empty()) {
-      callback(&sdp);
+      callback(&sdp, data_);
     }
   }
-
   return true;
 }
 
