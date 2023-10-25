@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
   listener.start();
 
   // Sleep for 2 seconds
-  std::cout << "Waiting for 2 seconds for all SAP/SDP announcements\n";
+  std::cout << "Waiting SAP/SDP announcements\n";
 
   QtSapReceiver receiver;
 
