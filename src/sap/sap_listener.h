@@ -143,7 +143,7 @@ class SapListener {
   ///
   /// \return The vectored list of SAP/SDP streams seen on the network
   ///
-  const std::map<std::string, ::mediax::sap::SdpMessage, std::less<>> &GetSAPAnnouncements() const;
+  const std::map<std::string, ::mediax::sap::SdpMessage, std::less<>> &GetSapAnnouncements() const;
 
   ///
   /// \brief Register a callback for our session_name
@@ -184,7 +184,7 @@ class SapListener {
   ///
   /// \param sap SAPListener object
   ///
-  static void SAPListenerThread(SapListener *sap);
+  static void SapListenerThread(SapListener *sap);
 
   ///
   /// \brief Get the SDP attribute type doe a single SDP line of text

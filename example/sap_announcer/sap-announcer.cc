@@ -25,19 +25,19 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   sap.ListInterfaces(0);
   // Add all your stream announcments here
   sap.AddSapAnnouncement(
-      {"Stream 1", "192.168.1.1", 5000, 480, 640, 25, mediax::rtp::ColourspaceType::kColourspaceYuv, false});
+      {"Stream 1", "239.192.1.1", 5000, 480, 640, 25, mediax::rtp::ColourspaceType::kColourspaceYuv, false});
   sap.AddSapAnnouncement(
-      {"Stream 2", "192.168.1.2", 6000, 800, 600, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false});
+      {"Stream 2", "239.192.1.2", 6000, 800, 600, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false});
   sap.AddSapAnnouncement(
-      {"Stream 3", "192.168.1.3", 7000, 1920, 1024, 60, mediax::rtp::ColourspaceType::kColourspaceYuv, false});
+      {"Stream 3", "239.192.1.3", 7000, 1920, 1024, 60, mediax::rtp::ColourspaceType::kColourspaceYuv, false});
   sap.AddSapAnnouncement(
-      {"Stream 4", "192.168.1.4", 8000, 1920, 1024, 60, mediax::rtp::ColourspaceType::kColourspaceRgb24, false});
+      {"Stream 4", "239.192.1.4", 8000, 1920, 1024, 60, mediax::rtp::ColourspaceType::kColourspaceRgb24, false});
   sap.AddSapAnnouncement(
-      {"Stream 5", "192.168.1.5", 9000, 1920, 1024, 60, mediax::rtp::ColourspaceType::kColourspaceMono8, false});
+      {"Stream 5", "239.192.1.5", 9000, 1920, 1024, 60, mediax::rtp::ColourspaceType::kColourspaceMono8, false});
   sap.AddSapAnnouncement(
-      {"Stream 6", "192.168.1.6", 10000, 1920, 1024, 60, mediax::rtp::ColourspaceType::kColourspaceJpeg2000, false});
+      {"Stream 6", "239.192.1.6", 10000, 1920, 1024, 60, mediax::rtp::ColourspaceType::kColourspaceJpeg2000, false});
   sap.AddSapAnnouncement(
-      {"Stream 7", "192.168.1.7", 20000, 1920, 1024, 60, mediax::rtp::ColourspaceType::kColourspaceH264Part10, false});
+      {"Stream 7", "239.192.1.7", 20000, 1920, 1024, 60, mediax::rtp::ColourspaceType::kColourspaceH264Part10, false});
   // Start all the streams
   sap.Start();
   // [Sap example announcer]
@@ -54,7 +54,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   sleep(5);
   // [Sap example stop]
 
-  sap.DeleteAllSAPAnnouncements();
+  sap.DeleteAllSapAnnouncements();
   // Kill the SAP announcer, can be re-started by calling Start(); again
   sap.Stop();
   // [Sap example stop]

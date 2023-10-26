@@ -28,7 +28,7 @@ TEST(SAPListenerTest, RegisterSapListenerTest) {
 
   /// Now make an announcement
   mediax::sap::SapAnnouncer& announcer = mediax::sap::SapAnnouncer::GetInstance();
-  announcer.DeleteAllSAPAnnouncements();
+  announcer.DeleteAllSapAnnouncements();
   mediax::rtp::StreamInformation message = {
       "test_session_name", "127.0.0.1", 5004, 1920, 1080, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
   announcer.AddSapAnnouncement(message);
@@ -60,7 +60,7 @@ TEST(SAPListenerTest, Deleted) {
 
   /// Now make an announcement
   mediax::sap::SapAnnouncer& announcer = mediax::sap::SapAnnouncer::GetInstance();
-  announcer.DeleteAllSAPAnnouncements();
+  announcer.DeleteAllSapAnnouncements();
   mediax::rtp::StreamInformation message = {
       "test_session_name", "127.0.0.1", 5004, 1920, 1080, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
   announcer.AddSapAnnouncement(message);
@@ -71,7 +71,7 @@ TEST(SAPListenerTest, Deleted) {
   sleep(2);
 
   ASSERT_TRUE(callback_called);
-  announcer.DeleteAllSAPAnnouncements();
+  announcer.DeleteAllSapAnnouncements();
   // Teset deleted value for 2 seconds sample every 100ms
   for (int i = 0; i < 20; i++) {
     if (deleted) break;

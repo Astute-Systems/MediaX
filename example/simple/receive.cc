@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
       },
       nullptr);
   // Now get any announcments
-  const std::map<std::string, mediax::sap::SdpMessage, std::less<>> &announcements = sap.GetSAPAnnouncements();
+  const std::map<std::string, mediax::sap::SdpMessage, std::less<>> &announcements = sap.GetSapAnnouncements();
 
   if (announcements.empty()) {
     std::cout << "No SAP/SDP announcements seen\n";

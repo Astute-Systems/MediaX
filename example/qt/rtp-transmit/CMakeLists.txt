@@ -23,5 +23,5 @@ target_link_libraries(${PROJECT_NAME}
     mediaxqt
 )
 
-add_executable(qt_sap_listener sap_listener.cpp sap_receive.cpp)
-target_link_libraries(qt_sap_listener mediaxqt)
+add_executable(qt-sap-listener sap_listener.cpp sap_receive.cpp)
+target_link_libraries(qt-sap-listener mediaxqt)

@@ -82,7 +82,7 @@ class SapAnnouncer {
   /// \brief Deletes all announcements, thread is still running. Call Stop() method to terminate the thread
   ///
   ///
-  void DeleteAllSAPAnnouncements();
+  void DeleteAllSapAnnouncements();
 
   ///
   /// \brief Start the SAP/SDP announcements thread
@@ -144,21 +144,21 @@ class SapAnnouncer {
   ///
   /// \param stream_information The SapAnnouncer object
   ///
-  static void SAPAnnouncementThread(SapAnnouncer *stream_information);
+  static void SapAnnouncementThread(SapAnnouncer *stream_information);
 
   ///
   /// \brief  Function to send a SAP announcement
   ///
   /// \param stream_information The stream details
   ///
-  void SendSAPAnnouncement(const ::mediax::rtp::StreamInformation &stream_information) const;
+  void SendSapAnnouncement(const ::mediax::rtp::StreamInformation &stream_information) const;
 
   ///
   /// \brief Function to send a SAP deletion
   ///
   /// \param stream_information The stream details, needed to form the deletion packet
   ///
-  void SendSAPDeletion(const ::mediax::rtp::StreamInformation &stream_information) const;
+  void SendSapDeletion(const ::mediax::rtp::StreamInformation &stream_information) const;
 
   ///
   /// \brief Sed SAP packet
@@ -166,7 +166,7 @@ class SapAnnouncer {
   /// \param stream_information
   /// \param deletion
   ///
-  void SendSAPPacket(const ::mediax::rtp::StreamInformation &stream_information, bool deletion) const;
+  void SendSapPacket(const ::mediax::rtp::StreamInformation &stream_information, bool deletion) const;
 
   ///
   /// \brief Set the Address Helper object, can print interface details if helper is set

@@ -27,7 +27,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[]) {
   sleep(2);
   sap.Stop();
 
-  const std::map<std::string, mediax::sap::SdpMessage, std::less<>>& announcements = sap.GetSAPAnnouncements();
+  const std::map<std::string, mediax::sap::SdpMessage, std::less<>>& announcements = sap.GetSapAnnouncements();
 
   if (announcements.empty()) {
     std::cout << "No SAP/SDP announcements seen\n";

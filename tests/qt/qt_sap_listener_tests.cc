@@ -30,7 +30,7 @@ TEST(QtSapListenerTest, DISABLED_Start) {
   mediax::qt::QtSapAnnouncer &announcer = mediax::qt::QtSapAnnouncer::getInstance();
   for (int i = 0; i < 10; i++) {
     stream_information.session_name = "test_session_" + std::to_string(i);
-    announcer.AddSapAnnouncement(stream_information);
+    announcer.addSapAnnouncement(stream_information);
   }
   announcer.start();
 

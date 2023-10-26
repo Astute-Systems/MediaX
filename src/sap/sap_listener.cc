@@ -93,7 +93,7 @@ SapListener &SapListener::GetInstance() {
   return *singleton_;
 }
 
-void SapListener::SAPListenerThread(SapListener *sap) {
+void SapListener::SapListenerThread(SapListener *sap) {
   struct timeval read_timeout;
   read_timeout.tv_sec = 0;
   read_timeout.tv_usec = 10;
@@ -138,7 +138,7 @@ bool SapListener::GetStreamInformation(std::string_view session_name,
 void SapListener::Start() {
   if (running_) return;
   running_ = true;
-  thread_ = std::thread(SAPListenerThread, this);
+  thread_ = std::thread(SapListenerThread, this);
 }
 
 void SapListener::Stop() {
@@ -224,7 +224,13 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
   } else {
     sdp.deleted = false;
   }
+  // Find 'v=' marking the start of the SDP message in the sdp_text
+
   sdp.sdp_text = std::string(reinterpret_cast<char *>(&rawdata->at(8)), size - 8);
+  std::size_t v_pos = sdp.sdp_text.find("v=");
+  // Strip up to position of 'v='
+  sdp.sdp_text = sdp.sdp_text.substr(v_pos);
+
   sdp.sdp_text.push_back('\0');
   // convert to string IP address
   struct in_addr addr;
@@ -255,11 +261,11 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
       case SdpTypeEnum::kOriginatorSessionIdentifier: {
         size_t lastSpace = line.find_last_of(" ");
         // Extract last word using substr
-        sdp.ip_address = line.substr(lastSpace + 1);
-        size_t pos = sdp.ip_address.find('/');  // Find position of the first forward slash
-        if (pos != std::string::npos) {         // If a forward slash is found
-          sdp.ip_address =
-              sdp.ip_address.substr(0, pos);  // Get substring from start to the position of the forward slash
+        sdp.ip_address_source = line.substr(lastSpace + 1);
+        size_t pos = sdp.ip_address_source.find('/');  // Find position of the first forward slash
+        if (pos != std::string::npos) {                // If a forward slash is found
+          sdp.ip_address_source =
+              sdp.ip_address_source.substr(0, pos);  // Get substring from start to the position of the forward slash
         }
       } break;
       case SdpTypeEnum::kSessionName:
@@ -273,8 +279,17 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
         break;
       case SdpTypeEnum::kPhoneNumber:
         break;
-      case SdpTypeEnum::kConnectionInformation:
-        break;
+      case SdpTypeEnum::kConnectionInformation: {
+        size_t pos = line.find("IP4");            // Find position of "IP4" in the string
+        if (pos != std::string::npos) {           // If "IP4" is found
+          sdp.ip_address = line.substr(pos + 4);  // Get substring from position of "IP4" to the end of the string
+          pos = sdp.ip_address.find("/");         // Find position of the forward slash
+          if (pos != std::string::npos) {         // If a forward slash is found
+            sdp.ip_address =
+                sdp.ip_address.substr(0, pos);  // Get substring from start to the position of the forward slash
+          }
+        }
+      } break;
       case SdpTypeEnum::kBandwidthInformation:
         break;
       case SdpTypeEnum::kSessionAttribute: {
@@ -337,7 +352,7 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
   return true;
 }
 
-const std::map<std::string, SdpMessage, std::less<>> &SapListener::GetSAPAnnouncements() const {
+const std::map<std::string, SdpMessage, std::less<>> &SapListener::GetSapAnnouncements() const {
   return announcements_;
 }
 

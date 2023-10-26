@@ -68,7 +68,7 @@ void SapAnnouncer::Start() {
     stream_.deleted = false;
   }
   running_ = true;
-  thread_ = std::thread(SAPAnnouncementThread, this);
+  thread_ = std::thread(SapAnnouncementThread, this);
 }
 void SapAnnouncer::Stop() {
   // Only deletes the streams from the SAP/SDP announcement, they are still in the vector ready to be restarted
@@ -80,7 +80,7 @@ void SapAnnouncer::Stop() {
 void SapAnnouncer::DeleteAllStreams() {
   for (auto &stream_ : streams_) {
     if (stream_.deleted == false) {
-      SendSAPDeletion(stream_);
+      SendSapDeletion(stream_);
       stream_.deleted = true;
     }
   }
@@ -89,24 +89,24 @@ void SapAnnouncer::AddSapAnnouncement(const ::mediax::rtp::StreamInformation &st
   streams_.push_back(stream_information);
 }
 
-void SapAnnouncer::DeleteAllSAPAnnouncements() {
+void SapAnnouncer::DeleteAllSapAnnouncements() {
   // Delete all the live SAP announcements
-  for (auto &stream_ : streams_) {
-    SendSAPDeletion(stream_);
+  for (const auto &stream : streams_) {
+    SendSapDeletion(stream);
     streams_.clear();
   }
 }
 
-void SapAnnouncer::SendSAPAnnouncement(const ::mediax::rtp::StreamInformation &stream_information) const {
-  SendSAPPacket(stream_information, false);
+void SapAnnouncer::SendSapAnnouncement(const ::mediax::rtp::StreamInformation &stream_information) const {
+  SendSapPacket(stream_information, false);
 }
 
-void SapAnnouncer::SendSAPDeletion(const ::mediax::rtp::StreamInformation &stream_information) const {
-  SendSAPPacket(stream_information, true);
+void SapAnnouncer::SendSapDeletion(const ::mediax::rtp::StreamInformation &stream_information) const {
+  SendSapPacket(stream_information, true);
 }
 
 // Function to send a SAP announcement
-void SapAnnouncer::SendSAPPacket(const ::mediax::rtp::StreamInformation &stream_information, bool deletion) const {
+void SapAnnouncer::SendSapPacket(const ::mediax::rtp::StreamInformation &stream_information, bool deletion) const {
   std::string depth;
   std::string colorimetry;
   std::string mode = "raw";
@@ -142,18 +142,21 @@ void SapAnnouncer::SendSAPPacket(const ::mediax::rtp::StreamInformation &stream_
                "; height=" + std::to_string(stream_information.height) + "; depth=" + depth + "; " + colorimetry +
                "progressive\r\n";
   }
+  // Convert source_ipaddress_ to std::string
+  std::string addr_str;
+  addr_str.resize(INET_ADDRSTRLEN);
+  inet_ntop(AF_INET, &source_ipaddress_, addr_str.data(), INET_ADDRSTRLEN);
+  // Trim to size of string
+  addr_str.resize(strlen(addr_str.c_str()));
 
   // Prepare SDP stream_information
   std::string sdp_msg =
       "v=0\r\n"
       "o=- 3394362021 3394362021 IN IP4 " +
-      stream_information.hostname +
-      "\r\n"
-      "s=" +
-      stream_information.session_name +
+      addr_str + "\r\n" + "s=" + stream_information.session_name +
       "\r\n"
       "c=IN IP4 " +
-      mediax::rtp::kIpaddr +
+      stream_information.hostname +
       "/15\r\n"
       "t=0 0\r\n"
       "m=video " +
@@ -182,7 +185,22 @@ void SapAnnouncer::SendSAPPacket(const ::mediax::rtp::StreamInformation &stream_
     memcpy(&buffer[0], &header, sizeof(header));
   }
 
-  memcpy(&buffer[sizeof(SapHeader)], sdp_msg.data(), sdp_msg.size());
+  // Copy the payload type into the buffer (optional but we send anyway)
+  std::string payload_type = "application/sdp";
+  // Add null terminator
+  payload_type.push_back('\0');
+
+  memcpy(&buffer[sizeof(SapHeader)], payload_type.data(), payload_type.size());
+  // Copy the SDP message into the buffer
+  memcpy(&buffer[sizeof(SapHeader) + payload_type.size()], sdp_msg.data(), sdp_msg.size());
+
+  // Calculate the 16 bit hash dor the SAP message
+  uint16_t hash = 0;
+  for (size_t i = 0; i < sdp_msg.size(); i++) {
+    hash += sdp_msg[i];
+  }
+  // Copy the hash into the buffer
+  memcpy(&buffer[2], &hash, sizeof(hash));
 
   ssize_t sent_bytes = sendto(sockfd_, buffer.data(), sizeof(SapHeader) + sdp_msg.size(), 0,
                               (const struct sockaddr *)(&multicast_addr_), sizeof(multicast_addr_));
@@ -192,10 +210,10 @@ void SapAnnouncer::SendSAPPacket(const ::mediax::rtp::StreamInformation &stream_
   }
 }
 
-void SapAnnouncer::SAPAnnouncementThread(SapAnnouncer *sap) {
+void SapAnnouncer::SapAnnouncementThread(SapAnnouncer *sap) {
   while (running_) {
-    for (const auto &stream_ : sap->GetStreams()) {
-      sap->SendSAPAnnouncement(stream_);
+    for (const auto &stream : sap->GetStreams()) {
+      if (stream.deleted == false) sap->SendSapAnnouncement(stream);
     }
     std::this_thread::sleep_for(std::chrono::seconds(1));
   }

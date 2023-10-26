@@ -24,7 +24,7 @@ TEST_F(QtSapAnnouncerTest, AddSapAnnouncement) {
       "test_session", "127.0.0.1", 5004, 480, 640, 25, ::mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
   qt_sap_announcer_->deleteAllSAPAnnouncements();
   EXPECT_EQ(qt_sap_announcer_->getActiveStreamCount(), 0);
-  qt_sap_announcer_->AddSapAnnouncement(stream_information);
+  qt_sap_announcer_->addSapAnnouncement(stream_information);
   EXPECT_EQ(qt_sap_announcer_->getActiveStreamCount(), 1);
 }
 
@@ -37,7 +37,7 @@ TEST_F(QtSapAnnouncerTest, Start) {
   ::mediax::rtp::StreamInformation stream_information = {
       "test_session", "127.0.0.1", 5004, 480, 640, 25, ::mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
   EXPECT_EQ(qt_sap_announcer_->getActiveStreamCount(), 0);
-  qt_sap_announcer_->AddSapAnnouncement(stream_information);
+  qt_sap_announcer_->addSapAnnouncement(stream_information);
   qt_sap_announcer_->start();
   qt_sap_announcer_->stop();
 }
@@ -72,7 +72,7 @@ TEST_F(QtSapAnnouncerTest, GetActiveStreamCount) {
       "test_session", "127.0.0.1", 5004, 480, 640, 25, ::mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
   qt_sap_announcer_->deleteAllSAPAnnouncements();
   EXPECT_EQ(qt_sap_announcer_->getActiveStreamCount(), 0);
-  for (int i = 0; i < 1000; i++) qt_sap_announcer_->AddSapAnnouncement(stream_information);
+  for (int i = 0; i < 1000; i++) qt_sap_announcer_->addSapAnnouncement(stream_information);
   EXPECT_EQ(qt_sap_announcer_->getActiveStreamCount(), 1000);
   qt_sap_announcer_->deleteAllSAPAnnouncements();
   EXPECT_EQ(qt_sap_announcer_->getActiveStreamCount(), 0);
