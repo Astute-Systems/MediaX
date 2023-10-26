@@ -31,3 +31,10 @@ jobs:
 
       - name: Install
         run: cd build && sudo make install
+
+      - name: Package
+        id: package
+        run: |
+          cd build
+          cpack -G DEB
+          echo "::set-output name=DEB_PACKAGE::$(ls *.deb)"
