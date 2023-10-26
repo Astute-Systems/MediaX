@@ -133,14 +133,14 @@ void SapAnnouncer::SendSapPacket(const ::mediax::rtp::StreamInformation &stream_
   if ((stream_information.encoding == mediax::rtp::ColourspaceType::kColourspaceNv12) ||
       (stream_information.encoding == mediax::rtp::ColourspaceType::kColourspaceH264Part10)) {
     id = 103;
-    sampling = " profile-level-id=42A01E; packetisation-mode=0\r\n";
+    sampling = " profile-level-id=42A01E; packetisation-mode=0";
     mode = "H264";
   } else {
     id = 96;
     sampling = " sampling=" + ::mediax::sap::GetSdpColourspace(stream_information.encoding) +
                "; width=" + std::to_string(stream_information.width) +
                "; height=" + std::to_string(stream_information.height) + "; depth=" + depth + "; " + colorimetry +
-               "progressive\r\n";
+               "progressive";
   }
   // Convert source_ipaddress_ to std::string
   std::string addr_str;
@@ -166,7 +166,7 @@ void SapAnnouncer::SendSapPacket(const ::mediax::rtp::StreamInformation &stream_
       std::to_string(id) + " " + mode +
       "/90000\r\n"
       "a=fmtp:" +
-      std::to_string(id) + sampling + "a=framerate:" + std::to_string(stream_information.framerate) + "";
+      std::to_string(id) + sampling + "\r\n" + "a=framerate:" + std::to_string(stream_information.framerate) + "";
 
   if (stream_information.encoding == mediax::rtp::ColourspaceType::kColourspaceMono16) {
     sdp_msg +=
@@ -174,6 +174,8 @@ void SapAnnouncer::SendSapPacket(const ::mediax::rtp::StreamInformation &stream_
         "a=number-pixel-flags:2\r\n"
         "a=pixel-flags:saturated,ignored";
   }
+
+  std::cout << "DSP:" << sdp_msg << std::endl;
 
   // Oversized 4k buffer for SAP/SDP
   std::array<uint8_t, 4069> buffer;
@@ -202,7 +204,7 @@ void SapAnnouncer::SendSapPacket(const ::mediax::rtp::StreamInformation &stream_
   // Copy the hash into the buffer
   memcpy(&buffer[2], &hash, sizeof(hash));
 
-  ssize_t sent_bytes = sendto(sockfd_, buffer.data(), sizeof(SapHeader) + sdp_msg.size(), 0,
+  ssize_t sent_bytes = sendto(sockfd_, buffer.data(), sizeof(SapHeader) + payload_type.size() + sdp_msg.size(), 0,
                               (const struct sockaddr *)(&multicast_addr_), sizeof(multicast_addr_));
   if (sent_bytes < 0) {
     perror("sendto failed");

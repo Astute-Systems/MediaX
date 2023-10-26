@@ -157,53 +157,60 @@ SdpTypeEnum SapListener::GetType(const std::string_view &line) const {
   return SdpTypeEnum::kUnknown;
 }
 
+std::map<std::string, std::string, std::less<>> SapListener::ParseAttributes1(const std::string_view &line) const {
+  auto line2 = std::string(line);
+  std::map<std::string, std::string, std::less<>> attributes;
+
+  // If line does not contain an equals sign just assign the whole line to the key
+  if (line.find("=") == std::string::npos) {
+    std::string line2 = std::string(line);
+    attributes[line2] = "";
+    return attributes;
+  }
+  // Split string after first space
+  std::string key = line2.substr(0, line.find(" "));
+  std::string value = line2.substr(line.find(" ") + 1);
+  attributes[key] = value;
+  return attributes;
+}
+
 std::map<std::string, std::string, std::less<>> SapListener::ParseAttributes(const std::string_view &line) const {
   std::map<std::string, std::string, std::less<>> attributes;
   std::string key;
   std::string value;
   bool attribute_name = true;
 
+  // If line does not contain an equals sign just assign the whole line to the key
+  if (line.find("=") == std::string::npos) {
+    key = line;
+    value = "";
+    attributes[key] = value;
+    return attributes;
+  }
+
   // Step through characters
   for (char c : line) {
-    if (c == ':') {
-      attribute_name = false;
+    if (c == ' ') {
+      attribute_name = true;
+      attributes[key] = value;
+      // Clear key nd value
+      key.clear();
+      value.clear();
       continue;
     }
     if (attribute_name) {
-      if (c != ' ') key += c;
+      if (c != '=') {
+        key += c;
+      } else {
+        attribute_name = false;
+      }
     } else {
       // attribute_value
-      if (c != ' ') value += c;
+      if (c != ';') value += c;
     }
   }
   attributes[key] = value;
-  return attributes;
-}
 
-std::map<std::string, std::string, std::less<>> SapListener::ParseAttributesEqual(const std::string &line) const {
-  std::map<std::string, std::string, std::less<>> attributes;
-  std::string key;
-  std::string value;
-  bool type = true;
-
-  for (const char c : line) {
-    if (c == '=') {
-      type = false;
-      continue;
-    }
-    if (c == ';') {
-      type = true;
-      attributes[key] = value;
-      key = "";
-      value = "";
-      continue;
-    }
-    if (type) {
-      if (c != ' ') key += c;
-    } else {
-      if (c != ' ') value += c;
-    }
-  }
   return attributes;
 }
 
@@ -230,7 +237,6 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
   std::size_t v_pos = sdp.sdp_text.find("v=");
   // Strip up to position of 'v='
   sdp.sdp_text = sdp.sdp_text.substr(v_pos);
-
   sdp.sdp_text.push_back('\0');
   // convert to string IP address
   struct in_addr addr;
@@ -293,7 +299,7 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
       case SdpTypeEnum::kBandwidthInformation:
         break;
       case SdpTypeEnum::kSessionAttribute: {
-        std::map<std::string, std::string, std::less<>> attributes_map_more = ParseAttributes(line);
+        std::map<std::string, std::string, std::less<>> attributes_map_more = ParseAttributes1(line);
         attributes_map.insert(attributes_map_more.begin(), attributes_map_more.end());
       } break;
       case SdpTypeEnum::kTimeSessionActive:
@@ -316,22 +322,32 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
   }
 
   std::map<std::string, std::string, std::less<>> attributes_map_fmtp;
-  attributes_map_fmtp = ParseAttributesEqual(attributes_map["fmtp"]);
+  attributes_map_fmtp = ParseAttributes(attributes_map["fmtp:103"]);
   attributes_map.insert(attributes_map_fmtp.begin(), attributes_map_fmtp.end());
+  attributes_map_fmtp = ParseAttributes(attributes_map["fmtp:96"]);
+  attributes_map.insert(attributes_map_fmtp.begin(), attributes_map_fmtp.end());
+
+  // Iterate over the attributes_map and split key on :
+  for (const auto &[key, value] : attributes_map) {
+    // If key contains a :
+    if (key.find(":") == std::string::npos) continue;
+    std::string key2 = key.substr(0, key.find(":"));
+    std::string value2 = key.substr(key.find(":") + 1);
+    attributes_map[key2] = value2;
+  }
 
   try {
     sdp.height = std::stoi(attributes_map["height"]);
     sdp.width = std::stoi(attributes_map["width"]);
     sdp.framerate = std::stoi(attributes_map["framerate"]);
     sdp.bits_per_pixel = std::stoi(attributes_map["depth"]);
-    sdp.sampling = attributes_map["96sampling"];
+    sdp.sampling = attributes_map["sampling"];
   } catch (const std::invalid_argument &e [[maybe_unused]]) {
     DLOG(ERROR) << "Invalid argument in SAP message. SDP text = " << sdp.sdp_text;
     sdp.sampling = attributes_map["profile-level-id"];
     if (sdp.sampling == "42A01E") {
       sdp.sampling = "H264";
     }
-    sdp.sampling = "H264";
   }
 
   DLOG(INFO) << "Store " << sdp.session_name << " " << sdp.ip_address << ":" << sdp.port << " " << sdp.height << "x"
