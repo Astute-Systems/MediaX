@@ -89,6 +89,15 @@ void SapAnnouncer::AddSapAnnouncement(const ::mediax::rtp::StreamInformation &st
   streams_.push_back(stream_information);
 }
 
+void SapAnnouncer::DeleteSapAnnouncement(std::string session_name) {
+  for (auto &stream_ : streams_) {
+    if (stream_.session_name == session_name) {
+      SendSapDeletion(stream_);
+      stream_.deleted = true;
+    }
+  }
+}
+
 void SapAnnouncer::DeleteAllSapAnnouncements() {
   // Delete all the live SAP announcements
   for (const auto &stream : streams_) {
@@ -179,8 +188,6 @@ void SapAnnouncer::SendSapPacket(const ::mediax::rtp::StreamInformation &stream_
         "a=number-pixel-flags:2\r\n"
         "a=pixel-flags:saturated,ignored";
   }
-
-  std::cout << "DSP:" << sdp_msg << std::endl;
 
   // Oversized 4k buffer for SAP/SDP
   std::array<uint8_t, 4069> buffer;

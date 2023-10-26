@@ -79,6 +79,13 @@ class SapAnnouncer {
   void AddSapAnnouncement(const ::mediax::rtp::StreamInformation &stream_information);
 
   ///
+  /// \brief Delete a specific session announcement
+  ///
+  /// \param session_name
+  ///
+  void DeleteSapAnnouncement(std::string session_name);
+
+  ///
   /// \brief Deletes all announcements, thread is still running. Call Stop() method to terminate the thread
   ///
   ///
