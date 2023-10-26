@@ -162,7 +162,7 @@ class RtpPayloader {
   ///
   /// \return uint32_t
   ///
-  uint32_t GetBufferSize() const { return frame_.size(); }
+  uint32_t GetBufferSize() const { return static_cast<uint32_t>(frame_.size()); }
 
   ///
   /// \brief Set the Buffer Size object

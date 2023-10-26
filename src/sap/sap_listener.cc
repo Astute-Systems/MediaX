@@ -114,7 +114,7 @@ void SapListener::SapListenerThread(SapListener *sap) {
   }
 }
 
-void SapListener::RegisterSapListener(std::string_view session_name, const SapCallback &callback, void *data) {
+void SapListener::RegisterSapListener(std::string_view session_name, const SapCallback &callback, uint8_t *data) {
   data_ = data;
   DLOG(INFO) << "Register SAP listener with session-name=" << session_name;
 
@@ -349,6 +349,7 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
       sdp.sampling = "H264";
     }
   }
+  if (sdp.sampling.empty()) sdp.sampling = "jpeg2000";
 
   DLOG(INFO) << "Store " << sdp.session_name << " " << sdp.ip_address << ":" << sdp.port << " " << sdp.height << "x"
              << sdp.width << " " << sdp.framerate << "fps " << sdp.sampling;

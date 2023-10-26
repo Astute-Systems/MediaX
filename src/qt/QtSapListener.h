@@ -73,7 +73,7 @@ class QtSapListener : public QObject {
   ///
   /// \param sdp
   ///
-  static void SapCallback(const sap::SdpMessage *sdp, void *data);
+  static void SapCallback(const sap::SdpMessage *sdp, uint8_t *data);
 
   ::mediax::sap::SapListener sap_listener_;
 };

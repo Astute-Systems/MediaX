@@ -115,7 +115,7 @@ struct SdpMessage {
 };
 
 /// \brief The SAPListener class is a singleton that listens for SAP/SDP announcements on the network
-using SapCallback = std::function<void(sap::SdpMessage *sdp, void *data)>;
+using SapCallback = std::function<void(sap::SdpMessage *sdp, uint8_t *data)>;
 
 /// Class definition of the SAPListener
 class SapListener {
@@ -151,7 +151,7 @@ class SapListener {
   /// \param session_name Advertised session name
   /// \param callback The callback to notify when SAP/SDP message received
   ///
-  void RegisterSapListener(std::string_view session_name, const ::mediax::sap::SapCallback &callback, void *data);
+  void RegisterSapListener(std::string_view session_name, const ::mediax::sap::SapCallback &callback, uint8_t *data);
 
   ///
   /// \brief Get the stream information for a given session name
@@ -233,7 +233,7 @@ class SapListener {
   /// The SAP/SDP announcements thread running flag
   static bool running_;
   /// Callback data
-  void *data_;
+  uint8_t *data_;
 };
 
 }  // namespace mediax::sap

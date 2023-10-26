@@ -60,7 +60,7 @@ class QtRtpUncompressedDepayloader : public QObject {
   ///
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE mediax::rtp::StreamState getState();
+  Q_INVOKABLE mediax::rtp::StreamState getState() const;
 
  private:
   /// The underlying RTP depayloader

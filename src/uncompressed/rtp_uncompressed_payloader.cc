@@ -153,8 +153,8 @@ void RtpUncompressedPayloader::SendFrame(RtpUncompressedPayloader *stream) {
     EndianSwap32(reinterpret_cast<uint32_t *>(&packet), sizeof(::mediax::rtp::RtpHeaderData) / 4);
     EndianSwap16(reinterpret_cast<uint16_t *>(&packet.head.payload), sizeof(::mediax::rtp::RtpPayloadHeader) / 2);
 
-    memcpy(reinterpret_cast<void *>(&packet.head.payload.line[2]),
-           reinterpret_cast<void *>(&stream->arg_tx.rgb_frame[c * stride]), stride);
+    memcpy(reinterpret_cast<uint8_t *>(&packet.head.payload.line[2]),
+           reinterpret_cast<uint8_t *>(&stream->arg_tx.rgb_frame[c * stride]), stride);
     n = sendto(stream->egress_.sockfd, &packet, stride + 26, 0, (const sockaddr *)&stream->server_addr_out_,
                stream->server_len_out_);
     if (n != stride + 26) {

@@ -135,6 +135,11 @@ void SapAnnouncer::SendSapPacket(const ::mediax::rtp::StreamInformation &stream_
     id = 103;
     sampling = " profile-level-id=42A01E; packetisation-mode=0";
     mode = "H264";
+  } else if (stream_information.encoding == mediax::rtp::ColourspaceType::kColourspaceJpeg2000) {
+    id = 100;
+    sampling = " sampling=YCbCr-4:2:2; width=" + std::to_string(stream_information.width) +
+               "; height=" + std::to_string(stream_information.height);
+    mode = "jpeg2000";
   } else {
     id = 96;
     sampling = " sampling=" + ::mediax::sap::GetSdpColourspace(stream_information.encoding) +
