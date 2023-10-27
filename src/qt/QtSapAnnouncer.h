@@ -55,11 +55,18 @@ class QtSapAnnouncer : public QObject {
   Q_INVOKABLE void addSapAnnouncement(const ::mediax::rtp::StreamInformation& stream_information);
 
   ///
+  /// \brief Delete a SAP announcement
+  ///
+  /// \return Q_INVOKABLE
+  ///
+  Q_INVOKABLE void deleteSapAnnouncement(std::string_view stream_name);
+
+  ///
   /// \brief Delete all SAP announcements
   ///
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE void deleteAllSAPAnnouncements();
+  Q_INVOKABLE void deleteAllSapAnnouncements();
 
   ///
   /// \brief Start the SAP server

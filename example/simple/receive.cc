@@ -55,21 +55,19 @@ int main(int argc, char *argv[]) {
 
   // Get the SAP/SDP listener singleton instance
   ::mediax::sap::SapListener &sap = ::mediax::sap::SapListener::GetInstance();
-  // Wait 1.1 seconds as the SAP announcement is sent every second and we need a sampling period
-  std::this_thread::sleep_for(std::chrono::milliseconds(1100));
   // You can use the SAP callback here instead of polling
   sap.RegisterSapListener(
       "session_test",
       [](const ::mediax::sap::SdpMessage *sdp_message, void *user_data [[maybe_unused]]) {
-        // do something
         std::cout << "Got SAP callback\n";
         std::cout << "  Session name: " << sdp_message->session_name << "\n";
       },
       nullptr);
-  // Now get any announcments
-  const std::map<std::string, mediax::sap::SdpMessage, std::less<>> &announcements = sap.GetSapAnnouncements();
-
-  if (announcements.empty()) {
+  // Wait 1.1 seconds as the SAP announcement is sent every second and we need a sampling period
+  std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+  // Check for announcments
+  if (const std::map<std::string, mediax::sap::SdpMessage, std::less<>> &announcements = sap.GetSapAnnouncements();
+      announcements.empty()) {
     std::cout << "No SAP/SDP announcements seen\n";
     return 0;
   } else {

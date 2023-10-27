@@ -89,7 +89,7 @@ void SapAnnouncer::AddSapAnnouncement(const ::mediax::rtp::StreamInformation &st
   streams_.push_back(stream_information);
 }
 
-void SapAnnouncer::DeleteSapAnnouncement(std::string session_name) {
+void SapAnnouncer::DeleteSapAnnouncement(std::string_view session_name) {
   for (auto &stream_ : streams_) {
     if (stream_.session_name == session_name) {
       SendSapDeletion(stream_);

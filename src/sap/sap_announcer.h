@@ -83,7 +83,7 @@ class SapAnnouncer {
   ///
   /// \param session_name
   ///
-  void DeleteSapAnnouncement(std::string session_name);
+  void DeleteSapAnnouncement(std::string_view session_name);
 
   ///
   /// \brief Deletes all announcements, thread is still running. Call Stop() method to terminate the thread
