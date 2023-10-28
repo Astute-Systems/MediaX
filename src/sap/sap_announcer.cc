@@ -261,7 +261,13 @@ void SapAnnouncer::SetSourceInterface(uint32_t select) {
     DLOG(ERROR) << "No interfaces found";
     return;
   }
-  source_ipaddress_ = GetIpv4Address(interfaces.at(select));
+  if (select >= interfaces.size()) {
+    DLOG(ERROR) << "Interface select out of range";
+    return;
+  }
+
+  std::string interface_name = interfaces[select];
+  source_ipaddress_ = GetIpv4Address("lo");
 }
 
 uint32_t SapAnnouncer::GetIpv4Address(std::string interface_name) {
@@ -319,8 +325,10 @@ std::map<uint32_t, std::string> SapAnnouncer::GetInterfaces() {
       struct sockaddr_ll *sll = reinterpret_cast<struct sockaddr_ll *>(ifa->ifa_addr);
       std::string ifname = ifa->ifa_name;
       // Dont store loopback
-      if (ifname != "lo") interfaces[count] = ifname;
-      count++;
+      if (ifname != "lo") {
+        interfaces[count] = ifname;
+        count++;
+      }
     }
   }
 

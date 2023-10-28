@@ -27,6 +27,7 @@ class QtSapAnnouncerTest : public Test {
 TEST_F(QtSapAnnouncerTest, AddSapAnnouncement) {
   ::mediax::rtp::StreamInformation stream_information = {
       "test_session", "127.0.0.1", 5004, 480, 640, 25, ::mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
+
   qt_sap_announcer_->deleteAllSapAnnouncements();
   EXPECT_EQ(qt_sap_announcer_->getActiveStreamCount(), 0);
   qt_sap_announcer_->addSapAnnouncement(stream_information);

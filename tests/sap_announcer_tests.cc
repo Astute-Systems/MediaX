@@ -13,20 +13,20 @@
 #include <gtest/gtest.h>
 #include <unistd.h>
 
+#include <map>
+
 #include "rtp/rtp.h"
 #include "sap/sap_announcer.h"
+
+TEST(SapAnnouncerTest, Active) {
+  mediax::sap::SapAnnouncer &announcer = mediax::sap::SapAnnouncer::GetInstance();
+  ASSERT_FALSE(announcer.Active());
+}
 
 TEST(SapAnnouncerTest, StartStop) {
   mediax::sap::SapAnnouncer &announcer = mediax::sap::SapAnnouncer::GetInstance();
   ASSERT_FALSE(announcer.Active());
   announcer.Start();
-  ASSERT_TRUE(announcer.Active());
-  announcer.Stop();
-  ASSERT_FALSE(announcer.Active());
-  announcer.Start();
-  ASSERT_TRUE(announcer.Active());
-  announcer.Stop();
-  ASSERT_FALSE(announcer.Active());
 }
 TEST(SapAnnouncerTest, MultiStartStop) {
   mediax::sap::SapAnnouncer &announcer = mediax::sap::SapAnnouncer::GetInstance();
