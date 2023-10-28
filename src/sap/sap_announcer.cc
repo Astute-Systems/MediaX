@@ -22,6 +22,7 @@
 #include <chrono>
 #include <cstring>
 #include <iostream>
+#include <map>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -235,9 +236,51 @@ void SapAnnouncer::SapAnnouncementThread(SapAnnouncer *sap) {
   }
 }
 
-void SapAnnouncer::SetSourceInterface(uint16_t select) { SetAddressHelper(select, false); }
+void SapAnnouncer::SetSourceInterface(uint32_t select) {
+  std::map<uint32_t, std::string> interfaces;
+  interfaces = GetInterfaces();
+  if (interfaces.empty()) {
+    DLOG(ERROR) << "No interfaces found";
+    return;
+  }
+  source_ipaddress_ = GetIpv4Address(interfaces.at(select));
+}
 
-void SapAnnouncer::ListInterfaces(uint16_t select) { SetAddressHelper(select, true); }
+uint32_t SapAnnouncer::GetIpv4Address(std::string interface_name) {
+  // Get the address tof the interface
+  struct ifaddrs *ifaddr, *ifa;
+  if (getifaddrs(&ifaddr) == -1) {
+    perror("getifaddrs failed");
+    return 0;
+  }
+
+  for (ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
+    if (ifa->ifa_addr == nullptr) {
+      continue;
+    }
+
+    if (ifa->ifa_addr->sa_family == AF_INET && (ifa->ifa_flags & IFF_UP) && (ifa->ifa_flags & IFF_RUNNING)) {
+      struct sockaddr_in *s4 = reinterpret_cast<struct sockaddr_in *>(ifa->ifa_addr);
+      std::string ifname = ifa->ifa_name;
+      if (ifname == interface_name) {
+        freeifaddrs(ifaddr);
+        return s4->sin_addr.s_addr;
+      }
+    }
+  }
+
+  return 0;
+}
+
+std::string SapAnnouncer::GetIpv4AddressString(std::string interface_name) {
+  const uint32_t address = GetIpv4Address(interface_name);
+  std::string addr_str;
+  addr_str.resize(INET_ADDRSTRLEN);
+  inet_ntop(AF_INET, &address, addr_str.data(), INET_ADDRSTRLEN);
+  // Trim to size of string
+  addr_str.resize(strlen(addr_str.c_str()));
+  return addr_str;
+}
 
 std::map<uint32_t, std::string> SapAnnouncer::GetInterfaces() {
   std::map<uint32_t, std::string> interfaces;
@@ -268,55 +311,5 @@ std::map<uint32_t, std::string> SapAnnouncer::GetInterfaces() {
 uint32_t SapAnnouncer::GetActiveStreamCount() const { return (uint32_t)streams_.size(); }
 
 std::vector<::mediax::rtp::StreamInformation> &SapAnnouncer::GetStreams() { return streams_; }
-
-void SapAnnouncer::SetAddressHelper(uint16_t select [[maybe_unused]], bool helper) {
-#ifdef _WIN32
-#pragma stream_information("TODO: Implement SetAddressHelper for Windows")
-#else
-  struct ifaddrs *ifaddr;
-
-  if (getifaddrs(&ifaddr) == -1) {
-    LOG(ERROR) << "Error getting local IP addresses";
-    return;
-  }
-
-  for (struct ifaddrs *ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
-    if (ifa->ifa_addr == nullptr) {
-      continue;
-    }
-
-    CheckAddresses(ifa, helper, select);
-  }
-  freeifaddrs(ifaddr);
-#endif
-}
-
-void SapAnnouncer::CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t select) {
-#ifdef _WIN32
-#pragma stream_information("TODO: Implement CheckAddresses for Windows")
-#else
-  uint16_t count_interfaces = 0;
-  std::array<char, INET_ADDRSTRLEN> addr_str;
-
-  // Check for IPv4 address
-  if (ifa->ifa_addr->sa_family == AF_INET) {
-    auto sa = (struct sockaddr_in *)ifa->ifa_addr;
-    inet_ntop(AF_INET, &(sa->sin_addr), addr_str.data(), INET_ADDRSTRLEN);
-
-    // Exclude the loopback address
-    if (strcmp(addr_str.data(), "127.0.0.1") != 0) {
-      std::string postfix;
-      if (helper) std::cout << "Interface: " << ifa->ifa_name << std::endl;
-      // save the last one
-      if (count_interfaces == select) {
-        source_ipaddress_ = sa->sin_addr.s_addr;
-        postfix = " <- selected";
-      }
-      if (helper) std::cout << "IPv4 Address: " << addr_str.data() << postfix << std::endl;
-      count_interfaces++;
-    }
-  }
-#endif
-}
 
 }  // namespace mediax::sap

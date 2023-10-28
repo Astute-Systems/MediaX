@@ -91,12 +91,11 @@ class QtSapAnnouncer : public QObject {
   Q_INVOKABLE void setSourceInterface(uint16_t select = 0);
 
   ///
-  /// \brief List the interfaces
+  /// \brief Get the interfaces as nic names
   ///
-  /// \param select
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE void listInterfaces(uint16_t select = 0);
+  Q_INVOKABLE std::map<uint32_t, QString> GetInterfaces();
 
   ///
   /// \brief Get the Active Stream Count object

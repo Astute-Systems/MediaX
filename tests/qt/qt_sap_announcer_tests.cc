@@ -1,6 +1,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <map>
+
 #include "qt/QtSapAnnouncer.h"
 #include "qt/QtSapListener.h"
 
@@ -58,13 +60,18 @@ TEST_F(QtSapAnnouncerTest, Restart) {
 }
 
 TEST_F(QtSapAnnouncerTest, SetSourceInterface) {
-  uint16_t select = 0;
+  uint16_t select = 1;
   qt_sap_announcer_->setSourceInterface(select);
 }
 
-TEST_F(QtSapAnnouncerTest, ListInterfaces) {
-  uint16_t select = 0;
-  qt_sap_announcer_->listInterfaces(select);
+TEST_F(QtSapAnnouncerTest, GetInterfaces) {
+  std::map<uint32_t, QString> interfaces;
+  interfaces = qt_sap_announcer_->GetInterfaces();
+  EXPECT_GT(interfaces.size(), 0);
+  // Print the interfaces
+  for (auto& interface : interfaces) {
+    std::cout << "Interface: " << interface.first << " " << interface.second.toStdString() << std::endl;
+  }
 }
 
 TEST_F(QtSapAnnouncerTest, GetActiveStreamCount) {
