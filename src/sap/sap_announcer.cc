@@ -83,7 +83,6 @@ void SapAnnouncer::DeleteAllStreams() {
   for (auto &stream_ : streams_) {
     if (stream_.deleted == false) {
       SendSapDeletion(stream_);
-      stream_.deleted = true;
     }
   }
 }
