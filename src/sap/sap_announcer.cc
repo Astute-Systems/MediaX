@@ -61,9 +61,6 @@ void SapAnnouncer::Start() {
   // Select first found interface, can be overridden
   SetSourceInterface(0);
 
-  for (auto &stream_ : streams_) {
-    stream_.deleted = false;
-  }
   thread_ = std::thread(SapAnnouncementThread, this);
 
   // Wait for thread to start
@@ -245,7 +242,7 @@ void SapAnnouncer::SapAnnouncementThread(SapAnnouncer *sap) {
   sap->running_ = true;
   while (sap->running_) {
     for (const auto &stream : sap->GetStreams()) {
-      if (stream.deleted == false) sap->SendSapAnnouncement(stream);
+      if (!stream.deleted) sap->SendSapAnnouncement(stream);
     }
     std::this_thread::sleep_for(std::chrono::seconds(1));
   }
