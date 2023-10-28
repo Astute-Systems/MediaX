@@ -64,7 +64,7 @@ SapListener::SapListener() {
 
   memset(&multicast_addr_, 0, sizeof(multicast_addr_));
   multicast_addr_.sin_family = AF_INET;
-  multicast_addr_.sin_port = htons(mediax::rtp::kPort);
+  multicast_addr_.sin_port = htons(mediax::rtp::kSapPort);
   multicast_addr_.sin_addr.s_addr = htonl(INADDR_ANY);
 
   // join the multicast group
@@ -80,7 +80,7 @@ SapListener::SapListener() {
   // bind socket to port
   if (bind(sockfd_, (struct sockaddr *)&multicast_addr_, sizeof(multicast_addr_)) == -1) {
     std::cout << "SAPListener() " << std::string(strerror(errno)) << " " << mediax::rtp::kIpaddr << ":"
-              << mediax::rtp::kPort << "\n";
+              << mediax::rtp::kSapPort << "\n";
     exit(-1);
   }
 }
@@ -99,7 +99,7 @@ void SapListener::SapListenerThread(SapListener *sap) {
   read_timeout.tv_usec = 10;
   setsockopt(sap->sockfd_, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
 
-  DLOG(INFO) << "SAP packet received " << mediax::rtp::kIpaddr << ":" << mediax::rtp::kPort;
+  DLOG(INFO) << "SAP packet received " << mediax::rtp::kIpaddr << ":" << mediax::rtp::kSapPort;
 
   while (running_) {
     ssize_t bytes = 0;

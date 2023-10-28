@@ -15,6 +15,8 @@
 #include "sap/sap_announcer.h"
 
 #include <glog/logging.h>
+#include <ifaddrs.h>
+#include <net/if.h>
 
 #include <array>
 #include <chrono>
@@ -43,7 +45,7 @@ SapAnnouncer::SapAnnouncer() {
   memset(&multicast_addr_, 0, sizeof(multicast_addr_));
   multicast_addr_.sin_family = AF_INET;
   multicast_addr_.sin_addr.s_addr = inet_addr(mediax::rtp::kIpaddr);
-  multicast_addr_.sin_port = htons(::mediax::rtp::kPort);
+  multicast_addr_.sin_port = htons(::mediax::rtp::kSapPort);
 
   // Select first found interface, can be overridden
   SetSourceInterface(0);
@@ -236,6 +238,32 @@ void SapAnnouncer::SapAnnouncementThread(SapAnnouncer *sap) {
 void SapAnnouncer::SetSourceInterface(uint16_t select) { SetAddressHelper(select, false); }
 
 void SapAnnouncer::ListInterfaces(uint16_t select) { SetAddressHelper(select, true); }
+
+std::map<uint32_t, std::string> SapAnnouncer::GetInterfaces() {
+  std::map<uint32_t, std::string> interfaces;
+  uint32_t count = 0;
+
+  struct ifaddrs *ifaddr, *ifa;
+  if (getifaddrs(&ifaddr) == -1) {
+    perror("getifaddrs failed");
+    return interfaces;
+  }
+
+  for (ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
+    if (ifa->ifa_addr == nullptr) {
+      continue;
+    }
+
+    if (ifa->ifa_addr->sa_family == AF_PACKET && (ifa->ifa_flags & IFF_UP) && (ifa->ifa_flags & IFF_RUNNING)) {
+      struct sockaddr_ll *sll = reinterpret_cast<struct sockaddr_ll *>(ifa->ifa_addr);
+      std::string ifname = ifa->ifa_name;
+      interfaces[count++] = ifname;
+    }
+  }
+
+  freeifaddrs(ifaddr);
+  return interfaces;
+}
 
 uint32_t SapAnnouncer::GetActiveStreamCount() const { return (uint32_t)streams_.size(); }
 

@@ -118,6 +118,13 @@ class SapAnnouncer {
   void ListInterfaces(uint16_t select = 0);
 
   ///
+  /// \brief Get the Interfaces as a map of strings
+  ///
+  /// \return std::map<uit32_t, std::string>
+  ///
+  std::map<uint32_t, std::string> GetInterfaces();
+
+  ///
   /// \brief Get the Streams object
   ///
   /// \return std::vector<SAPMessage>&
@@ -210,8 +217,10 @@ class SapAnnouncer {
   struct sockaddr_in multicast_addr_;
   /// The flag indicating the SAP thread is active
   static bool running_;
+  /// Source interface set
+  bool enabled_ = false;
 };
-
 }  // namespace mediax::sap
+// namespace mediax::sap
 
 #endif  // SAP_SAP_ANNOUNCER_H_

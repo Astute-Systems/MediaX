@@ -25,7 +25,7 @@ namespace mediax::rtp {
 enum class StatusCode { kStatusOk = 0, kStatusError };
 
 /// SAP/SDP port
-const uint16_t kPort = 9875;
+const uint16_t kSapPort = 9875;
 
 // RTP constants
 /// RFC 1889 Version 2

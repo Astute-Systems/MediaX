@@ -66,3 +66,15 @@ TEST(SapAnnouncerTest, DeleteAllSAPAnnouncements) {
   announcer.DeleteAllSapAnnouncements();
   ASSERT_EQ(announcer.GetActiveStreamCount(), 0);
 }
+
+TEST(SapAnnouncerTest, GetInterfaces) {
+  mediax::sap::SapAnnouncer &announcer = mediax::sap::SapAnnouncer::GetInstance();
+
+  std::map<uint32_t, std::string> interfaces;
+  interfaces = announcer.GetInterfaces();
+  ASSERT_GT(interfaces.size(), 0);
+  // print the interfaces
+  for (auto it = interfaces.begin(); it != interfaces.end(); ++it) {
+    std::cout << it->first << " => " << it->second << '\n';
+  }
+}
