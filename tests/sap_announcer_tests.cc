@@ -16,19 +16,49 @@
 #include "rtp/rtp.h"
 #include "sap/sap_announcer.h"
 
+TEST(SapAnnouncerTest, StartStop) {
+  mediax::sap::SapAnnouncer &announcer = mediax::sap::SapAnnouncer::GetInstance();
+  ASSERT_FALSE(announcer.Active());
+  announcer.Start();
+  ASSERT_TRUE(announcer.Active());
+  announcer.Stop();
+  ASSERT_FALSE(announcer.Active());
+  announcer.Start();
+  ASSERT_TRUE(announcer.Active());
+  announcer.Stop();
+  ASSERT_FALSE(announcer.Active());
+}
+TEST(SapAnnouncerTest, MultiStartStop) {
+  mediax::sap::SapAnnouncer &announcer = mediax::sap::SapAnnouncer::GetInstance();
+
+  announcer.Start();
+  announcer.Start();
+  announcer.Start();
+  announcer.Start();
+  announcer.Stop();
+  announcer.Stop();
+  announcer.Stop();
+}
+
 TEST(SapAnnouncerTest, AddSapAnnouncement) {
   mediax::sap::SapAnnouncer &announcer = mediax::sap::SapAnnouncer::GetInstance();
+  announcer.Start();
+
   announcer.DeleteAllSapAnnouncements();
   ASSERT_EQ(announcer.GetActiveStreamCount(), 0);
   mediax::rtp::StreamInformation message = {
       "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
   announcer.AddSapAnnouncement(message);
   ASSERT_EQ(announcer.GetActiveStreamCount(), 1);
+  announcer.Stop();
 }
 
 TEST(SapAnnouncerTest, AddMultipleSAPAnnouncements) {
   mediax::sap::SapAnnouncer &announcer = mediax::sap::SapAnnouncer::GetInstance();
+  announcer.Start();
   announcer.DeleteAllSapAnnouncements();
+  ASSERT_EQ(announcer.GetActiveStreamCount(), 0);
+
   mediax::rtp::StreamInformation message1 = {
       "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
   mediax::rtp::StreamInformation message2 = {
@@ -36,11 +66,15 @@ TEST(SapAnnouncerTest, AddMultipleSAPAnnouncements) {
   announcer.AddSapAnnouncement(message1);
   announcer.AddSapAnnouncement(message2);
   ASSERT_EQ(announcer.GetActiveStreamCount(), 2);
+  announcer.Stop();
 }
 
 TEST(SapAnnouncerTest, DeleteAllSAPAnnouncements) {
   mediax::sap::SapAnnouncer &announcer = mediax::sap::SapAnnouncer::GetInstance();
+  announcer.Start();
+
   announcer.DeleteAllSapAnnouncements();
+
   mediax::rtp::StreamInformation message1 = {
       "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
   mediax::rtp::StreamInformation message2 = {
@@ -65,10 +99,12 @@ TEST(SapAnnouncerTest, DeleteAllSAPAnnouncements) {
   ASSERT_EQ(announcer.GetActiveStreamCount(), 7);
   announcer.DeleteAllSapAnnouncements();
   ASSERT_EQ(announcer.GetActiveStreamCount(), 0);
+  announcer.Stop();
 }
 
 TEST(SapAnnouncerTest, GetInterfaces) {
   mediax::sap::SapAnnouncer &announcer = mediax::sap::SapAnnouncer::GetInstance();
+  announcer.Start();
 
   std::map<uint32_t, std::string> interfaces;
   interfaces = announcer.GetInterfaces();
@@ -77,4 +113,5 @@ TEST(SapAnnouncerTest, GetInterfaces) {
   for (auto it = interfaces.begin(); it != interfaces.end(); ++it) {
     std::cout << it->first << " => " << it->second << '\n';
   }
+  announcer.Stop();
 }

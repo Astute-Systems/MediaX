@@ -11,7 +11,10 @@ using namespace ::testing;
 
 class QtSapAnnouncerTest : public Test {
  protected:
-  void SetUp() override { qt_sap_announcer_ = std::make_unique<QtSapAnnouncer>(); }
+  void SetUp() override {
+    qt_sap_announcer_ = std::make_unique<QtSapAnnouncer>();
+    qt_sap_announcer_->start();
+  }
 
   void TearDown() override {
     qt_sap_announcer_->stop();

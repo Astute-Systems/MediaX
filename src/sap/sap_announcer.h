@@ -105,6 +105,14 @@ class SapAnnouncer {
   void Stop();
 
   ///
+  /// \brief Returns tru if running, Start() has beed called
+  ///
+  /// \return true
+  /// \return false
+  ///
+  bool Active() const;
+
+  ///
   /// \brief Set the Source Interface object
   ///
   /// \param select The interface to select as the source
@@ -169,12 +177,13 @@ class SapAnnouncer {
   void SendSapDeletion(const ::mediax::rtp::StreamInformation &stream_information) const;
 
   ///
-  /// \brief Sed SAP packet
+  /// \brief Send a SAP packet
   ///
-  /// \param stream_information
-  /// \param deletion
+  /// \param stream_information the SAP packet details
+  /// \param deletion flag indicating SAP deletion
+  /// \return int returns 0 if no errors
   ///
-  void SendSapPacket(const ::mediax::rtp::StreamInformation &stream_information, bool deletion) const;
+  int SendSapPacket(const ::mediax::rtp::StreamInformation &stream_information, bool deletion) const;
 
   ///
   /// \brief Delete all the SAP/SDP streams
@@ -209,7 +218,7 @@ class SapAnnouncer {
   /// The multicast address
   struct sockaddr_in multicast_addr_;
   /// The flag indicating the SAP thread is active
-  static bool running_;
+  bool running_ = false;
   /// Source interface set
   bool enabled_ = false;
 };

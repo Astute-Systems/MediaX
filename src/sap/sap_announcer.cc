@@ -35,26 +35,16 @@
 
 namespace mediax::sap {
 
-bool SapAnnouncer::running_ = false;
-
 SapAnnouncer::SapAnnouncer() {
-  if ((sockfd_ = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-    DLOG(ERROR) << "socket creation failed";
-    exit(EXIT_FAILURE);
-  }
-
   memset(&multicast_addr_, 0, sizeof(multicast_addr_));
   multicast_addr_.sin_family = AF_INET;
   multicast_addr_.sin_addr.s_addr = inet_addr(mediax::rtp::kIpaddr);
   multicast_addr_.sin_port = htons(::mediax::rtp::kSapPort);
-
-  // Select first found interface, can be overridden
-  SetSourceInterface(0);
 }
 
 SapAnnouncer::~SapAnnouncer() {
   DeleteAllStreams();
-  if (sockfd_ != -1) close(sockfd_);
+  Stop();
 }
 
 SapAnnouncer &SapAnnouncer::GetInstance() {
@@ -67,18 +57,30 @@ void SapAnnouncer::Start() {
     DLOG(WARNING) << "SapAnnouncer already running, called twice?\n";
     return;
   }
+
+  // Select first found interface, can be overridden
+  SetSourceInterface(0);
+
   for (auto &stream_ : streams_) {
     stream_.deleted = false;
   }
-  running_ = true;
   thread_ = std::thread(SapAnnouncementThread, this);
+
+  // Wait for thread to start
+  while (running_ == false) {
+    // Wait 1ms;
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+  }
 }
+
 void SapAnnouncer::Stop() {
   // Only deletes the streams from the SAP/SDP announcement, they are still in the vector ready to be restarted
   DeleteAllStreams();
   running_ = false;
   if (thread_.joinable()) thread_.join();
 }
+
+bool SapAnnouncer::Active() const { return running_; }
 
 void SapAnnouncer::DeleteAllStreams() {
   for (auto &stream_ : streams_) {
@@ -88,6 +90,7 @@ void SapAnnouncer::DeleteAllStreams() {
     }
   }
 }
+
 void SapAnnouncer::AddSapAnnouncement(const ::mediax::rtp::StreamInformation &stream_information) {
   streams_.push_back(stream_information);
 }
@@ -104,7 +107,7 @@ void SapAnnouncer::DeleteSapAnnouncement(std::string_view session_name) {
 void SapAnnouncer::DeleteAllSapAnnouncements() {
   // Delete all the live SAP announcements
   for (const auto &stream : streams_) {
-    SendSapDeletion(stream);
+    if (running_) SendSapDeletion(stream);
     streams_.clear();
   }
 }
@@ -118,7 +121,11 @@ void SapAnnouncer::SendSapDeletion(const ::mediax::rtp::StreamInformation &strea
 }
 
 // Function to send a SAP announcement
-void SapAnnouncer::SendSapPacket(const ::mediax::rtp::StreamInformation &stream_information, bool deletion) const {
+int SapAnnouncer::SendSapPacket(const ::mediax::rtp::StreamInformation &stream_information, bool deletion) const {
+  if (sockfd_ == -1) {
+    std::cerr << "SAP socket not open, did you call Start()\n";
+    return 1;
+  }
   std::string depth;
   std::string colorimetry;
   std::string mode = "raw";
@@ -225,15 +232,26 @@ void SapAnnouncer::SendSapPacket(const ::mediax::rtp::StreamInformation &stream_
     perror("sendto failed");
     exit(EXIT_FAILURE);
   }
+  return 0;
 }
 
 void SapAnnouncer::SapAnnouncementThread(SapAnnouncer *sap) {
-  while (running_) {
+  sap->sockfd_ = socket(AF_INET, SOCK_DGRAM, 0);
+
+  // Enable multicast loopback
+  if (int loop = 1; setsockopt(sap->sockfd_, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop)) < 0) {
+    perror("setsockopt");
+  }
+  sap->running_ = true;
+  while (sap->running_) {
     for (const auto &stream : sap->GetStreams()) {
       if (stream.deleted == false) sap->SendSapAnnouncement(stream);
     }
     std::this_thread::sleep_for(std::chrono::seconds(1));
   }
+
+  if (sap->sockfd_ != -1) close(sap->sockfd_);
+  sap->sockfd_ = -1;
 }
 
 void SapAnnouncer::SetSourceInterface(uint32_t select) {
