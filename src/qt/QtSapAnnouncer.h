@@ -17,6 +17,7 @@
 #define QT_QTSAPANNOUNCER_H_
 
 #include <QObject>
+#include <map>
 
 #include "sap/sap_announcer.h"
 
