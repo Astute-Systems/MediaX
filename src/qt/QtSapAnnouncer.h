@@ -60,7 +60,7 @@ class QtSapAnnouncer : public QObject {
   ///
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE void deleteSapAnnouncement(std::string_view stream_name);
+  Q_INVOKABLE void deleteSapAnnouncement(QString stream_name);
 
   ///
   /// \brief Delete all SAP announcements

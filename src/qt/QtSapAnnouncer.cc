@@ -31,8 +31,8 @@ Q_INVOKABLE void QtSapAnnouncer::addSapAnnouncement(const ::mediax::rtp::StreamI
   sap_announcer_.AddSapAnnouncement(stream_information);
 }
 
-Q_INVOKABLE void QtSapAnnouncer::deleteSapAnnouncement(std::string_view stream_name) {
-  sap_announcer_.DeleteSapAnnouncement(stream_name);
+Q_INVOKABLE void QtSapAnnouncer::deleteSapAnnouncement(QString stream_name) {
+  sap_announcer_.DeleteSapAnnouncement(stream_name.toStdString());
 }
 
 Q_INVOKABLE void QtSapAnnouncer::deleteAllSapAnnouncements() { sap_announcer_.DeleteAllSapAnnouncements(); }
