@@ -100,8 +100,8 @@ TEST_F(QtSapAnnouncerTest, GetSapAnnouncment) {
   EXPECT_EQ(qt_sap_announcer_->getSapAnnouncement("test_session").session_name, "test_session");
   EXPECT_EQ(qt_sap_announcer_->getSapAnnouncement("test_session").hostname, "127.0.0.1");
   EXPECT_EQ(qt_sap_announcer_->getSapAnnouncement("test_session").port, 5004);
-  EXPECT_EQ(qt_sap_announcer_->getSapAnnouncement("test_session").width, 480);
-  EXPECT_EQ(qt_sap_announcer_->getSapAnnouncement("test_session").height, 640);
+  EXPECT_EQ(qt_sap_announcer_->getSapAnnouncement("test_session").width, 640);
+  EXPECT_EQ(qt_sap_announcer_->getSapAnnouncement("test_session").height, 480);
   EXPECT_EQ(qt_sap_announcer_->getSapAnnouncement("test_session").framerate, 25);
   EXPECT_EQ(qt_sap_announcer_->getSapAnnouncement("test_session").encoding,
             ::mediax::rtp::ColourspaceType::kColourspaceRgb24);
