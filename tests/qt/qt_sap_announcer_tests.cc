@@ -83,7 +83,11 @@ TEST_F(QtSapAnnouncerTest, GetActiveStreamCount) {
       "test_session", "127.0.0.1", 5004, 480, 640, 25, ::mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
   qt_sap_announcer_->deleteAllSapAnnouncements();
   EXPECT_EQ(qt_sap_announcer_->getActiveStreamCount(), 0);
-  for (int i = 0; i < 1000; i++) qt_sap_announcer_->addSapAnnouncement(stream_information);
+  for (int i = 0; i < 1000; i++) {
+    // Append i to session_name
+    stream_information.session_name = stream_information.session_name + std::to_string(i);
+    qt_sap_announcer_->addSapAnnouncement(stream_information);
+  }
   EXPECT_EQ(qt_sap_announcer_->getActiveStreamCount(), 1000);
   qt_sap_announcer_->deleteAllSapAnnouncements();
   EXPECT_EQ(qt_sap_announcer_->getActiveStreamCount(), 0);

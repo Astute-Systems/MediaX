@@ -220,6 +220,18 @@ struct StreamInformation {
   ::mediax::rtp::ColourspaceType encoding;
   /// Flag indicating the stream was deleted
   bool deleted = false;
+  /// Copy operator
+  StreamInformation &operator=(const StreamInformation &rhs) {
+    session_name = rhs.session_name;
+    hostname = rhs.hostname;
+    port = rhs.port;
+    height = rhs.height;
+    width = rhs.width;
+    framerate = rhs.framerate;
+    encoding = rhs.encoding;
+    deleted = rhs.deleted;
+    return *this;
+  }
 };
 
 }  // namespace mediax::rtp

@@ -94,6 +94,13 @@ void SapAnnouncer::DeleteAllStreams() const {
 }
 
 void SapAnnouncer::AddSapAnnouncement(const ::mediax::rtp::StreamInformation &stream_information) {
+  // Ensure session_name is unique
+  for (auto &stream : streams_) {
+    if (stream.session_name == stream_information.session_name) {
+      stream = stream_information;
+      return;
+    }
+  }
   streams_.push_back(stream_information);
 }
 

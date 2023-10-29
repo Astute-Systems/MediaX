@@ -129,3 +129,28 @@ TEST(SapAnnouncerTest, GetInterfaces) {
   }
   announcer.Stop();
 }
+
+TEST(SapAnnouncerTest, ReAddAnnouncment) {
+  mediax::sap::SapAnnouncer &announcer = mediax::sap::SapAnnouncer::GetInstance();
+  announcer.Start();
+  announcer.DeleteAllSapAnnouncements();
+  ASSERT_EQ(announcer.GetActiveStreamCount(), 0);
+
+  mediax::rtp::StreamInformation message = {
+      "SD Stream 6", "239.192.6.6", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+  mediax::rtp::StreamInformation message_updated = {
+      "SD Stream 6", "255.255.255.255", 5005, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, true};
+
+  announcer.AddSapAnnouncement(message);
+  ASSERT_EQ(announcer.GetActiveStreamCount(), 1);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).hostname, "239.192.6.6");
+  // Re-add announcment
+  announcer.AddSapAnnouncement(message_updated);
+  ASSERT_EQ(announcer.GetActiveStreamCount(), 1);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).hostname, message_updated.hostname);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).port, message_updated.port);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).width, message_updated.width);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).height, message_updated.height);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).framerate, message_updated.framerate);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).encoding, message_updated.encoding);
+}
