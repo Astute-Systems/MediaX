@@ -71,6 +71,14 @@ class QtSapAnnouncer : public QObject {
   Q_INVOKABLE void deleteSapAnnouncement(QString stream_name);
 
   ///
+  /// \brief Undelete a SAP announcement
+  ///
+  /// \param stream_name
+  /// \return Q_INVOKABLE
+  ///
+  Q_INVOKABLE void undeleteSapAnnouncement(QString stream_name);
+
+  ///
   /// \brief Delete all SAP announcements
   ///
   /// \return Q_INVOKABLE

@@ -39,6 +39,10 @@ Q_INVOKABLE void QtSapAnnouncer::deleteSapAnnouncement(QString stream_name) {
   sap_announcer_.DeleteSapAnnouncement(stream_name.toStdString());
 }
 
+Q_INVOKABLE void QtSapAnnouncer::undeleteSapAnnouncement(QString stream_name) {
+  sap_announcer_.UndeleteSapAnnouncement(stream_name.toStdString());
+}
+
 Q_INVOKABLE void QtSapAnnouncer::deleteAllSapAnnouncements() { sap_announcer_.DeleteAllSapAnnouncements(); }
 
 Q_INVOKABLE void QtSapAnnouncer::start() { sap_announcer_.Start(); }
