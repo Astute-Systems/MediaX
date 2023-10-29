@@ -58,9 +58,6 @@ void SapAnnouncer::Start() {
     return;
   }
 
-  // Select first found interface, can be overridden
-  SetSourceInterface(0);
-
   thread_ = std::thread(SapAnnouncementThread, this);
 
   // Wait for thread to start
@@ -77,18 +74,37 @@ void SapAnnouncer::Stop() {
   if (thread_.joinable()) thread_.join();
 }
 
+void SapAnnouncer::Restart() {
+  // Restart any deleted SAP/SDP announcements
+  for (const auto &stream : streams_) {
+    if (stream.deleted) {
+      UndeleteSapAnnouncement(stream.session_name);
+    }
+  }
+}
+
 bool SapAnnouncer::Active() const { return running_; }
 
-void SapAnnouncer::DeleteAllStreams() {
-  for (auto &stream_ : streams_) {
-    if (stream_.deleted == false) {
-      SendSapDeletion(stream_);
+void SapAnnouncer::DeleteAllStreams() const {
+  for (const auto &stream : streams_) {
+    if (stream.deleted == false) {
+      SendSapDeletion(stream);
     }
   }
 }
 
 void SapAnnouncer::AddSapAnnouncement(const ::mediax::rtp::StreamInformation &stream_information) {
   streams_.push_back(stream_information);
+}
+
+::mediax::rtp::StreamInformation &SapAnnouncer::GetSapAnnouncment(std::string session_name) {
+  for (auto &stream_ : streams_) {
+    if (stream_.session_name == session_name) {
+      return stream_;
+    }
+  }
+  // Return the first stream if not found
+  return streams_[0];
 }
 
 void SapAnnouncer::DeleteSapAnnouncement(std::string_view session_name) {
@@ -100,10 +116,19 @@ void SapAnnouncer::DeleteSapAnnouncement(std::string_view session_name) {
   }
 }
 
+void SapAnnouncer::UndeleteSapAnnouncement(std::string_view session_name) {
+  for (auto &stream_ : streams_) {
+    if (stream_.session_name == session_name) {
+      stream_.deleted = false;
+    }
+  }
+}
+
 void SapAnnouncer::DeleteAllSapAnnouncements() {
   // Delete all the live SAP announcements
-  for (const auto &stream : streams_) {
+  for (auto &stream : streams_) {
     if (running_) SendSapDeletion(stream);
+    stream.deleted = true;
     streams_.clear();
   }
 }

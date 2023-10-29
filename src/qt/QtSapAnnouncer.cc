@@ -31,6 +31,10 @@ Q_INVOKABLE void QtSapAnnouncer::addSapAnnouncement(const ::mediax::rtp::StreamI
   sap_announcer_.AddSapAnnouncement(stream_information);
 }
 
+Q_INVOKABLE ::mediax::rtp::StreamInformation &QtSapAnnouncer::getSapAnnouncement(QString session_name) {
+  return sap_announcer_.GetSapAnnouncment(session_name.toStdString());
+}
+
 Q_INVOKABLE void QtSapAnnouncer::deleteSapAnnouncement(QString stream_name) {
   sap_announcer_.DeleteSapAnnouncement(stream_name.toStdString());
 }
@@ -40,6 +44,8 @@ Q_INVOKABLE void QtSapAnnouncer::deleteAllSapAnnouncements() { sap_announcer_.De
 Q_INVOKABLE void QtSapAnnouncer::start() { sap_announcer_.Start(); }
 
 Q_INVOKABLE void QtSapAnnouncer::stop() { sap_announcer_.Stop(); }
+
+Q_INVOKABLE void QtSapAnnouncer::restart() { sap_announcer_.Restart(); }
 
 Q_INVOKABLE void QtSapAnnouncer::setSourceInterface(uint16_t select) { sap_announcer_.SetSourceInterface(select); }
 

@@ -56,6 +56,14 @@ class QtSapAnnouncer : public QObject {
   Q_INVOKABLE void addSapAnnouncement(const ::mediax::rtp::StreamInformation& stream_information);
 
   ///
+  /// \brief Get the Sap Announcement object
+  ///
+  /// \param session_name
+  /// \return Q_INVOKABLE&
+  ///
+  Q_INVOKABLE ::mediax::rtp::StreamInformation& getSapAnnouncement(QString session_name);
+
+  ///
   /// \brief Delete a SAP announcement
   ///
   /// \return Q_INVOKABLE
@@ -82,6 +90,13 @@ class QtSapAnnouncer : public QObject {
   /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void stop();
+
+  ///
+  /// \brief Restart all deleted SAP announcements
+  ///
+  /// \return Q_INVOKABLE
+  ///
+  Q_INVOKABLE void restart();
 
   ///
   /// \brief Set the Source Interface object

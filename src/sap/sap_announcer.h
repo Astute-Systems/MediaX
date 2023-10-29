@@ -73,11 +73,18 @@ class SapAnnouncer {
   SapAnnouncer(SapAnnouncer const &) = delete;
 
   ///
-  /// \brief Add a stream announcement
+  /// \brief Add Sap stream announcement information
   ///
   /// \param stream_information The stream details
   ///
   void AddSapAnnouncement(const ::mediax::rtp::StreamInformation &stream_information);
+
+  ///
+  /// \brief Get the Sap announcment stream information
+  ///
+  /// \return ::mediax::rtp::StreamInformation&
+  ///
+  ::mediax::rtp::StreamInformation &GetSapAnnouncment(std::string session_name);
 
   ///
   /// \brief Delete a specific session announcement
@@ -87,13 +94,21 @@ class SapAnnouncer {
   void DeleteSapAnnouncement(std::string_view session_name);
 
   ///
+  /// \brief Undelete a specific session announcement
+  ///
+  /// \param session_name
+  ///
+  void UndeleteSapAnnouncement(std::string_view session_name);
+
+  ///
   /// \brief Deletes all announcements, thread is still running. Call Stop() method to terminate the thread
   ///
   ///
   void DeleteAllSapAnnouncements();
 
   ///
-  /// \brief Start the SAP/SDP announcements thread
+  /// \brief Start the SAP/SDP announcements thread. Ensure you have set the source interface using SetSourceInterface()
+  /// prior to starting the announcments
   ///
   ///
   void Start();
@@ -103,6 +118,12 @@ class SapAnnouncer {
   ///
   ///
   void Stop();
+
+  ///
+  /// \brief Restart any deleted SAP/SDP announcements
+  ///
+  ///
+  void Restart();
 
   ///
   /// \brief Returns tru if running, Start() has beed called
@@ -189,7 +210,7 @@ class SapAnnouncer {
   /// \brief Delete all the SAP/SDP streams
   ///
   ///
-  void DeleteAllStreams();
+  void DeleteAllStreams() const;
 
   ///
   /// \brief Get the Ipv4 Address as a number

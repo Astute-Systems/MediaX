@@ -88,3 +88,22 @@ TEST_F(QtSapAnnouncerTest, GetActiveStreamCount) {
   qt_sap_announcer_->deleteAllSapAnnouncements();
   EXPECT_EQ(qt_sap_announcer_->getActiveStreamCount(), 0);
 }
+
+TEST_F(QtSapAnnouncerTest, GetSapAnnouncment) {
+  ::mediax::rtp::StreamInformation stream_information = {
+      "test_session", "127.0.0.1", 5004, 480, 640, 25, ::mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
+
+  qt_sap_announcer_->deleteAllSapAnnouncements();
+  EXPECT_EQ(qt_sap_announcer_->getActiveStreamCount(), 0);
+  qt_sap_announcer_->addSapAnnouncement(stream_information);
+  EXPECT_EQ(qt_sap_announcer_->getActiveStreamCount(), 1);
+  EXPECT_EQ(qt_sap_announcer_->getSapAnnouncement("test_session").session_name, "test_session");
+  EXPECT_EQ(qt_sap_announcer_->getSapAnnouncement("test_session").hostname, "127.0.0.1");
+  EXPECT_EQ(qt_sap_announcer_->getSapAnnouncement("test_session").port, 5004);
+  EXPECT_EQ(qt_sap_announcer_->getSapAnnouncement("test_session").width, 480);
+  EXPECT_EQ(qt_sap_announcer_->getSapAnnouncement("test_session").height, 640);
+  EXPECT_EQ(qt_sap_announcer_->getSapAnnouncement("test_session").framerate, 25);
+  EXPECT_EQ(qt_sap_announcer_->getSapAnnouncement("test_session").encoding,
+            ::mediax::rtp::ColourspaceType::kColourspaceRgb24);
+  EXPECT_EQ(qt_sap_announcer_->getSapAnnouncement("test_session").deleted, false);
+}

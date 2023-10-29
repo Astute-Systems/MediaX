@@ -102,6 +102,20 @@ TEST(SapAnnouncerTest, DeleteAllSAPAnnouncements) {
   announcer.Stop();
 }
 
+TEST(SapAnnouncerTest, DeleteSAPAnnouncement) {
+  mediax::sap::SapAnnouncer &announcer = mediax::sap::SapAnnouncer::GetInstance();
+  announcer.Start();
+  mediax::rtp::StreamInformation message = {
+      "SD Stream 6", "239.192.6.6", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+  announcer.AddSapAnnouncement(message);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).deleted, false);
+  announcer.DeleteSapAnnouncement(message.session_name);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).deleted, true);
+  announcer.UndeleteSapAnnouncement(message.session_name);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).deleted, false);
+  announcer.Stop();
+}
+
 TEST(SapAnnouncerTest, GetInterfaces) {
   mediax::sap::SapAnnouncer &announcer = mediax::sap::SapAnnouncer::GetInstance();
   announcer.Start();
