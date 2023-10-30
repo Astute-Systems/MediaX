@@ -13,8 +13,8 @@ class SapReceiver : public QObject {
   SapReceiver(QObject *parent = nullptr) : QObject(parent) {}
 
  public slots:
-  void sapDataReceived(const std::string &name, const ::mediax::sap::SdpMessage &message) {
-    std::cout << "sapDataReceived SAP Name: " << name << std::endl;
+  void sapDataReceived(const QString &name, const ::mediax::sap::SdpMessage &message) {
+    std::cout << "sapDataReceived SAP Name: " << name.toStdString() << std::endl;
     std::cout << "sapDataReceived SAP Name: " << message.session_name << std::endl;
   }
 };

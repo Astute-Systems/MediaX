@@ -27,6 +27,7 @@
 #include <stdint.h>
 #include <unistd.h>
 
+#include <map>
 #include <string>
 #include <thread>
 #include <vector>
@@ -72,18 +73,32 @@ class SapAnnouncer {
   SapAnnouncer(SapAnnouncer const &) = delete;
 
   ///
-  /// \brief Add a stream announcement
+  /// \brief Add Sap stream announcement information
   ///
   /// \param stream_information The stream details
   ///
   void AddSapAnnouncement(const ::mediax::rtp::StreamInformation &stream_information);
 
   ///
+  /// \brief Get the Sap announcment stream information
+  ///
+  /// \return ::mediax::rtp::StreamInformation&
+  ///
+  ::mediax::rtp::StreamInformation &GetSapAnnouncment(std::string session_name);
+
+  ///
   /// \brief Delete a specific session announcement
   ///
   /// \param session_name
   ///
-  void DeleteSapAnnouncement(std::string session_name);
+  void DeleteSapAnnouncement(std::string_view session_name);
+
+  ///
+  /// \brief Undelete a specific session announcement
+  ///
+  /// \param session_name
+  ///
+  void UndeleteSapAnnouncement(std::string_view session_name);
 
   ///
   /// \brief Deletes all announcements, thread is still running. Call Stop() method to terminate the thread
@@ -92,7 +107,8 @@ class SapAnnouncer {
   void DeleteAllSapAnnouncements();
 
   ///
-  /// \brief Start the SAP/SDP announcements thread
+  /// \brief Start the SAP/SDP announcements thread. Ensure you have set the source interface using SetSourceInterface()
+  /// prior to starting the announcments
   ///
   ///
   void Start();
@@ -104,18 +120,32 @@ class SapAnnouncer {
   void Stop();
 
   ///
+  /// \brief Restart any deleted SAP/SDP announcements
+  ///
+  ///
+  void Restart();
+
+  ///
+  /// \brief Returns tru if running, Start() has beed called
+  ///
+  /// \return true
+  /// \return false
+  ///
+  bool Active() const;
+
+  ///
   /// \brief Set the Source Interface object
   ///
   /// \param select The interface to select as the source
   ///
-  void SetSourceInterface(uint16_t select = 0);
+  void SetSourceInterface(uint32_t select = 0);
 
   ///
-  /// \brief Set the Source Interface object and list all interfaces to stdout
+  /// \brief Get the Interfaces as a map of strings
   ///
-  /// \param select The interface to select as the source
+  /// \return std::map<uit32_t, std::string>
   ///
-  void ListInterfaces(uint16_t select = 0);
+  std::map<uint32_t, std::string> GetInterfaces();
 
   ///
   /// \brief Get the Streams object
@@ -168,35 +198,35 @@ class SapAnnouncer {
   void SendSapDeletion(const ::mediax::rtp::StreamInformation &stream_information) const;
 
   ///
-  /// \brief Sed SAP packet
+  /// \brief Send a SAP packet
   ///
-  /// \param stream_information
-  /// \param deletion
+  /// \param stream_information the SAP packet details
+  /// \param deletion flag indicating SAP deletion
+  /// \return int returns 0 if no errors
   ///
-  void SendSapPacket(const ::mediax::rtp::StreamInformation &stream_information, bool deletion) const;
-
-  ///
-  /// \brief Set the Address Helper object, can print interface details if helper is set
-  ///
-  /// \param select The interface to select
-  /// \param helper Print out the list of interfaces if set to true
-  ///
-  void SetAddressHelper(uint16_t select, bool helper);
+  int SendSapPacket(const ::mediax::rtp::StreamInformation &stream_information, bool deletion) const;
 
   ///
   /// \brief Delete all the SAP/SDP streams
   ///
   ///
-  void DeleteAllStreams();
+  void DeleteAllStreams() const;
 
   ///
-  /// \brief Check the interface addresses
+  /// \brief Get the Ipv4 Address as a number
   ///
-  /// \param ifa the IPV4 interface address
-  /// \param helper output helper messages
-  /// \param selected the selected interface
+  /// \param interface_name the interface name
+  /// \return uint32_t
   ///
-  void CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t selected);
+  uint32_t GetIpv4Address(std::string interface_name);
+
+  ///
+  /// \brief Get the Ipv 4 Address as a string
+  ///
+  /// \param interface_name the interface name
+  /// \return std::string
+  ///
+  std::string GetIpv4AddressString(std::string interface_name);
 
   /// A list of active SAP streams
   std::vector<::mediax::rtp::StreamInformation> streams_;
@@ -209,9 +239,11 @@ class SapAnnouncer {
   /// The multicast address
   struct sockaddr_in multicast_addr_;
   /// The flag indicating the SAP thread is active
-  static bool running_;
+  bool running_ = false;
+  /// Source interface set
+  bool enabled_ = false;
 };
-
 }  // namespace mediax::sap
+// namespace mediax::sap
 
 #endif  // SAP_SAP_ANNOUNCER_H_

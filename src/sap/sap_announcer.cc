@@ -15,11 +15,14 @@
 #include "sap/sap_announcer.h"
 
 #include <glog/logging.h>
+#include <ifaddrs.h>
+#include <net/if.h>
 
 #include <array>
 #include <chrono>
 #include <cstring>
 #include <iostream>
+#include <map>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -32,26 +35,16 @@
 
 namespace mediax::sap {
 
-bool SapAnnouncer::running_ = false;
-
 SapAnnouncer::SapAnnouncer() {
-  if ((sockfd_ = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-    DLOG(ERROR) << "socket creation failed";
-    exit(EXIT_FAILURE);
-  }
-
   memset(&multicast_addr_, 0, sizeof(multicast_addr_));
   multicast_addr_.sin_family = AF_INET;
   multicast_addr_.sin_addr.s_addr = inet_addr(mediax::rtp::kIpaddr);
-  multicast_addr_.sin_port = htons(::mediax::rtp::kPort);
-
-  // Select first found interface, can be overridden
-  SetSourceInterface(0);
+  multicast_addr_.sin_port = htons(::mediax::rtp::kSapPort);
 }
 
 SapAnnouncer::~SapAnnouncer() {
   DeleteAllStreams();
-  if (sockfd_ != -1) close(sockfd_);
+  Stop();
 }
 
 SapAnnouncer &SapAnnouncer::GetInstance() {
@@ -64,12 +57,16 @@ void SapAnnouncer::Start() {
     DLOG(WARNING) << "SapAnnouncer already running, called twice?\n";
     return;
   }
-  for (auto &stream_ : streams_) {
-    stream_.deleted = false;
-  }
-  running_ = true;
+
   thread_ = std::thread(SapAnnouncementThread, this);
+
+  // Wait for thread to start
+  while (running_ == false) {
+    // Wait 1ms;
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+  }
 }
+
 void SapAnnouncer::Stop() {
   // Only deletes the streams from the SAP/SDP announcement, they are still in the vector ready to be restarted
   DeleteAllStreams();
@@ -77,19 +74,47 @@ void SapAnnouncer::Stop() {
   if (thread_.joinable()) thread_.join();
 }
 
-void SapAnnouncer::DeleteAllStreams() {
-  for (auto &stream_ : streams_) {
-    if (stream_.deleted == false) {
-      SendSapDeletion(stream_);
-      stream_.deleted = true;
+void SapAnnouncer::Restart() {
+  // Restart any deleted SAP/SDP announcements
+  for (const auto &stream : streams_) {
+    if (stream.deleted) {
+      UndeleteSapAnnouncement(stream.session_name);
     }
   }
 }
+
+bool SapAnnouncer::Active() const { return running_; }
+
+void SapAnnouncer::DeleteAllStreams() const {
+  for (const auto &stream : streams_) {
+    if (stream.deleted == false) {
+      SendSapDeletion(stream);
+    }
+  }
+}
+
 void SapAnnouncer::AddSapAnnouncement(const ::mediax::rtp::StreamInformation &stream_information) {
+  // Ensure session_name is unique
+  for (auto &stream : streams_) {
+    if (stream.session_name == stream_information.session_name) {
+      stream = stream_information;
+      return;
+    }
+  }
   streams_.push_back(stream_information);
 }
 
-void SapAnnouncer::DeleteSapAnnouncement(std::string session_name) {
+::mediax::rtp::StreamInformation &SapAnnouncer::GetSapAnnouncment(std::string session_name) {
+  for (auto &stream_ : streams_) {
+    if (stream_.session_name == session_name) {
+      return stream_;
+    }
+  }
+  // Return the first stream if not found
+  return streams_[0];
+}
+
+void SapAnnouncer::DeleteSapAnnouncement(std::string_view session_name) {
   for (auto &stream_ : streams_) {
     if (stream_.session_name == session_name) {
       SendSapDeletion(stream_);
@@ -98,10 +123,19 @@ void SapAnnouncer::DeleteSapAnnouncement(std::string session_name) {
   }
 }
 
+void SapAnnouncer::UndeleteSapAnnouncement(std::string_view session_name) {
+  for (auto &stream_ : streams_) {
+    if (stream_.session_name == session_name) {
+      stream_.deleted = false;
+    }
+  }
+}
+
 void SapAnnouncer::DeleteAllSapAnnouncements() {
   // Delete all the live SAP announcements
-  for (const auto &stream : streams_) {
-    SendSapDeletion(stream);
+  for (auto &stream : streams_) {
+    if (running_) SendSapDeletion(stream);
+    stream.deleted = true;
     streams_.clear();
   }
 }
@@ -115,7 +149,11 @@ void SapAnnouncer::SendSapDeletion(const ::mediax::rtp::StreamInformation &strea
 }
 
 // Function to send a SAP announcement
-void SapAnnouncer::SendSapPacket(const ::mediax::rtp::StreamInformation &stream_information, bool deletion) const {
+int SapAnnouncer::SendSapPacket(const ::mediax::rtp::StreamInformation &stream_information, bool deletion) const {
+  if (sockfd_ == -1) {
+    std::cerr << "SAP socket not open, did you call Start()\n";
+    return 1;
+  }
   std::string depth;
   std::string colorimetry;
   std::string mode = "raw";
@@ -222,73 +260,112 @@ void SapAnnouncer::SendSapPacket(const ::mediax::rtp::StreamInformation &stream_
     perror("sendto failed");
     exit(EXIT_FAILURE);
   }
+  return 0;
 }
 
 void SapAnnouncer::SapAnnouncementThread(SapAnnouncer *sap) {
-  while (running_) {
+  sap->sockfd_ = socket(AF_INET, SOCK_DGRAM, 0);
+
+  // Enable multicast loopback
+  if (int loop = 1; setsockopt(sap->sockfd_, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop)) < 0) {
+    perror("setsockopt");
+  }
+  sap->running_ = true;
+  while (sap->running_) {
     for (const auto &stream : sap->GetStreams()) {
-      if (stream.deleted == false) sap->SendSapAnnouncement(stream);
+      if (!stream.deleted) sap->SendSapAnnouncement(stream);
     }
     std::this_thread::sleep_for(std::chrono::seconds(1));
   }
+
+  if (sap->sockfd_ != -1) close(sap->sockfd_);
+  sap->sockfd_ = -1;
 }
 
-void SapAnnouncer::SetSourceInterface(uint16_t select) { SetAddressHelper(select, false); }
-
-void SapAnnouncer::ListInterfaces(uint16_t select) { SetAddressHelper(select, true); }
-
-uint32_t SapAnnouncer::GetActiveStreamCount() const { return (uint32_t)streams_.size(); }
-
-std::vector<::mediax::rtp::StreamInformation> &SapAnnouncer::GetStreams() { return streams_; }
-
-void SapAnnouncer::SetAddressHelper(uint16_t select [[maybe_unused]], bool helper) {
-#ifdef _WIN32
-#pragma stream_information("TODO: Implement SetAddressHelper for Windows")
-#else
-  struct ifaddrs *ifaddr;
-
-  if (getifaddrs(&ifaddr) == -1) {
-    LOG(ERROR) << "Error getting local IP addresses";
+void SapAnnouncer::SetSourceInterface(uint32_t select) {
+  std::map<uint32_t, std::string> interfaces;
+  interfaces = GetInterfaces();
+  if (interfaces.empty()) {
+    DLOG(ERROR) << "No interfaces found";
+    return;
+  }
+  if (select >= interfaces.size()) {
+    DLOG(ERROR) << "Interface select out of range";
     return;
   }
 
-  for (struct ifaddrs *ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
+  std::string interface_name = interfaces[select];
+  source_ipaddress_ = GetIpv4Address("lo");
+}
+
+uint32_t SapAnnouncer::GetIpv4Address(std::string interface_name) {
+  // Get the address tof the interface
+  struct ifaddrs *ifaddr, *ifa;
+  if (getifaddrs(&ifaddr) == -1) {
+    perror("getifaddrs failed");
+    return 0;
+  }
+
+  for (ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
     if (ifa->ifa_addr == nullptr) {
       continue;
     }
 
-    CheckAddresses(ifa, helper, select);
-  }
-  freeifaddrs(ifaddr);
-#endif
-}
-
-void SapAnnouncer::CheckAddresses(struct ifaddrs *ifa, bool helper, uint16_t select) {
-#ifdef _WIN32
-#pragma stream_information("TODO: Implement CheckAddresses for Windows")
-#else
-  uint16_t count_interfaces = 0;
-  std::array<char, INET_ADDRSTRLEN> addr_str;
-
-  // Check for IPv4 address
-  if (ifa->ifa_addr->sa_family == AF_INET) {
-    auto sa = (struct sockaddr_in *)ifa->ifa_addr;
-    inet_ntop(AF_INET, &(sa->sin_addr), addr_str.data(), INET_ADDRSTRLEN);
-
-    // Exclude the loopback address
-    if (strcmp(addr_str.data(), "127.0.0.1") != 0) {
-      std::string postfix;
-      if (helper) std::cout << "Interface: " << ifa->ifa_name << std::endl;
-      // save the last one
-      if (count_interfaces == select) {
-        source_ipaddress_ = sa->sin_addr.s_addr;
-        postfix = " <- selected";
+    if (ifa->ifa_addr->sa_family == AF_INET && (ifa->ifa_flags & IFF_UP) && (ifa->ifa_flags & IFF_RUNNING)) {
+      struct sockaddr_in *s4 = reinterpret_cast<struct sockaddr_in *>(ifa->ifa_addr);
+      std::string ifname = ifa->ifa_name;
+      if (ifname == interface_name) {
+        freeifaddrs(ifaddr);
+        return s4->sin_addr.s_addr;
       }
-      if (helper) std::cout << "IPv4 Address: " << addr_str.data() << postfix << std::endl;
-      count_interfaces++;
     }
   }
-#endif
+
+  return 0;
 }
+
+std::string SapAnnouncer::GetIpv4AddressString(std::string interface_name) {
+  const uint32_t address = GetIpv4Address(interface_name);
+  std::string addr_str;
+  addr_str.resize(INET_ADDRSTRLEN);
+  inet_ntop(AF_INET, &address, addr_str.data(), INET_ADDRSTRLEN);
+  // Trim to size of string
+  addr_str.resize(strlen(addr_str.c_str()));
+  return addr_str;
+}
+
+std::map<uint32_t, std::string> SapAnnouncer::GetInterfaces() {
+  std::map<uint32_t, std::string> interfaces;
+  uint32_t count = 0;
+
+  struct ifaddrs *ifaddr, *ifa;
+  if (getifaddrs(&ifaddr) == -1) {
+    perror("getifaddrs failed");
+    return interfaces;
+  }
+
+  for (ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
+    if (ifa->ifa_addr == nullptr) {
+      continue;
+    }
+
+    if (ifa->ifa_addr->sa_family == AF_PACKET && (ifa->ifa_flags & IFF_UP) && (ifa->ifa_flags & IFF_RUNNING)) {
+      struct sockaddr_ll *sll = reinterpret_cast<struct sockaddr_ll *>(ifa->ifa_addr);
+      std::string ifname = ifa->ifa_name;
+      // Dont store loopback
+      if (ifname != "lo") {
+        interfaces[count] = ifname;
+        count++;
+      }
+    }
+  }
+
+  freeifaddrs(ifaddr);
+  return interfaces;
+}
+
+uint32_t SapAnnouncer::GetActiveStreamCount() const { return (uint32_t)streams_.size(); }
+
+std::vector<::mediax::rtp::StreamInformation> &SapAnnouncer::GetStreams() { return streams_; }
 
 }  // namespace mediax::sap

@@ -16,7 +16,7 @@
 #include <ctime>
 #include <iomanip>
 
-void QtSapReceiver::newSap(const std::string name, const ::mediax::sap::SdpMessage message) {
+void QtSapReceiver::newSap(const QString name, const ::mediax::sap::SdpMessage message) {
   // Print the time
   std::time_t t = std::time(nullptr);
   // Concise time

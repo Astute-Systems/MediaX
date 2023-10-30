@@ -40,7 +40,7 @@ class QtSapReceiver : public QObject {
   ///
   /// \param frame
   ///
-  void newSap(const std::string name, const ::mediax::sap::SdpMessage message);
+  void newSap(const QString name, const ::mediax::sap::SdpMessage message);
 
  private:
 };

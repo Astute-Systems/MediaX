@@ -25,7 +25,7 @@ namespace mediax::rtp {
 enum class StatusCode { kStatusOk = 0, kStatusError };
 
 /// SAP/SDP port
-const uint16_t kPort = 9875;
+const uint16_t kSapPort = 9875;
 
 // RTP constants
 /// RFC 1889 Version 2
@@ -220,6 +220,18 @@ struct StreamInformation {
   ::mediax::rtp::ColourspaceType encoding;
   /// Flag indicating the stream was deleted
   bool deleted = false;
+  /// Copy operator
+  StreamInformation &operator=(const StreamInformation &rhs) {
+    session_name = rhs.session_name;
+    hostname = rhs.hostname;
+    port = rhs.port;
+    height = rhs.height;
+    width = rhs.width;
+    framerate = rhs.framerate;
+    encoding = rhs.encoding;
+    deleted = rhs.deleted;
+    return *this;
+  }
 };
 
 }  // namespace mediax::rtp
