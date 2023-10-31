@@ -218,7 +218,7 @@ class SapAnnouncer {
   /// \param interface_name the interface name
   /// \return uint32_t
   ///
-  uint32_t GetIpv4Address(std::string interface_name);
+  uint32_t GetIpv4Address(std::string interface_name) const;
 
   ///
   /// \brief Get the Ipv 4 Address as a string
@@ -243,7 +243,7 @@ class SapAnnouncer {
   /// Source interface set
   bool enabled_ = false;
 };
+
 }  // namespace mediax::sap
-// namespace mediax::sap
 
 #endif  // SAP_SAP_ANNOUNCER_H_

@@ -293,12 +293,11 @@ void SapAnnouncer::SetSourceInterface(uint32_t select) {
     DLOG(ERROR) << "Interface select out of range";
     return;
   }
-
   std::string interface_name = interfaces[select];
-  source_ipaddress_ = GetIpv4Address("lo");
+  source_ipaddress_ = GetIpv4Address(interfaces[select]);
 }
 
-uint32_t SapAnnouncer::GetIpv4Address(std::string interface_name) {
+uint32_t SapAnnouncer::GetIpv4Address(std::string interface_name) const {
   // Get the address tof the interface
   struct ifaddrs *ifaddr, *ifa;
   if (getifaddrs(&ifaddr) == -1) {
