@@ -15,6 +15,7 @@ add_subdirectory(h264)
 if (BUILD_QT6)
   find_package(Qt6 REQUIRED COMPONENTS Widgets)
   add_subdirectory(qt)
+  install(TARGETS mediaxqt DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
 
 if (BUILD_CUDA)
