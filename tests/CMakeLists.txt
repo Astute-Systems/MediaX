@@ -14,7 +14,9 @@ pkg_check_modules(SWSCALE REQUIRED libswscale libavutil) # libavformat libavcode
 
 set(MEDIAX_LIBRARIES ${EXTERNAL_PREFIX}/usr/local/lib/libmediax_static.a ${GST_LIBRARIES} Qt6::Core)
 
+if (BUILD_QT6)
 link_directories(Qt6::Core ${CAIRO_LIBRARY_DIRS})
+endif()
 
 set(SOURCES
   colourspace_tests.cc
@@ -61,7 +63,7 @@ set(LINK_LIBRARIES
   gflags
 )
 
-if (GST_SUPPORTED) 
+if (BUILD_QT6) 
   list(APPEND LINK_LIBRARIES
     mediaxqt
   )
