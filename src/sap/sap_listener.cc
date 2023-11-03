@@ -74,7 +74,6 @@ SapListener::SapListener() {
   if (const auto *byte = reinterpret_cast<std::byte *>(&mreq);
       setsockopt(sockfd_, IPPROTO_IP, IP_ADD_MEMBERSHIP, byte, sizeof(mreq)) < 0) {
     perror("setsockopt IP_ADD_MEMBERSHIP");
-    exit(EXIT_FAILURE);
   }
 
   // bind socket to port
