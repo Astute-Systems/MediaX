@@ -13,23 +13,24 @@ import sys
 sys.path.append('/usr/local/lib/python3/dist-packages/mediax')
 
 import sap_listener
-SAPListener = sap_listener.SAPListener.GetInstance()
+SapListener = sap_listener.SapListener.GetInstance()
 
-SAPListener.Start()
+SapListener.Start()
 
 print("Waiting for 2 seconds for all SAP/SDP announcements")
 
 # Sleep 2 seconds
 time.sleep(2)
 
-SAPListener.Stop()
+SapListener.Stop()
 
-announcements = SAPListener.GetSAPAnnouncements()
+announcements = SapListener.GetSapAnnouncements()
 
 # Dump all discovered announcements.
 if not announcements:
     print("No SAP/SDP announcements seen")
     sys.exit(0)
 
+print ("SAP/SDP announcements seen:")
 for name, sdp in announcements.items():
      print(f"SDP> name: {sdp.session_name}, source: {sdp.ip_address_source}, ipaddr: {sdp.ip_address}:{sdp.port}, height: {sdp.height}, width: {sdp.width}, framerate: {sdp.framerate}, sampling: {sdp.sampling}")

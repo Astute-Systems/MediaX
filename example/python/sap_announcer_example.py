@@ -19,9 +19,9 @@ sap = sap_announcer.SapAnnouncer.GetInstance()
 type = rtp_types.ColourspaceType_kColourspaceYuv
 
 # Choose a source interface
-# sap.ListInterfaces()
+sap.SetSourceInterface(0)
 
-message = sap_announcer.SAPMessage
+message = rtp_types.StreamInformation()
 message.sessionName = "Stream 1"
 message.ipAddress = "192.168.1.1"
 message.port = 5000
@@ -29,7 +29,7 @@ message.height = 480
 message.width = 640
 message.framerate = 25
 message.colourspace = rtp_types.ColourspaceType_kColourspaceYuv
-sap.AddSapAnnouncement(message())
+sap.AddSapAnnouncement(message)
 
 message.sessionName = "Stream 2"
 message.ipAddress = "192.168.1.2"
@@ -38,7 +38,7 @@ message.height = 800
 message.width = 600
 message.framerate = 30
 message.colourspace = rtp_types.ColourspaceType_kColourspaceYuv
-sap.AddSapAnnouncement(message())
+sap.AddSapAnnouncement(message)
 
 message.sessionName = "Stream 3"
 message.ipAddress = "192.168.1.3"
@@ -47,7 +47,7 @@ message.height = 1920
 message.width = 1024
 message.framerate = 60
 message.colourspace = rtp_types.ColourspaceType_kColourspaceYuv
-sap.AddSapAnnouncement(message())
+sap.AddSapAnnouncement(message)
 
 message.sessionName = "Stream 4"
 message.ipAddress = "192.168.1.4"
@@ -56,7 +56,7 @@ message.height = 1920
 message.width = 1024
 message.framerate = 60
 message.colourspace = rtp_types.ColourspaceType_kColourspaceRgb24
-sap.AddSapAnnouncement(message())
+sap.AddSapAnnouncement(message)
 
 message.sessionName = "Stream 5"
 message.ipAddress = "192.168.1.5"
@@ -65,7 +65,7 @@ message.height = 1920
 message.width = 1024
 message.framerate = 60
 message.colourspace = rtp_types.ColourspaceType_kColourspaceMono8
-sap.AddSapAnnouncement(message())
+sap.AddSapAnnouncement(message)
 
 message.sessionName = "Stream 6"
 message.ipAddress = "192.168.1.6"
@@ -74,7 +74,7 @@ message.height = 1920
 message.width = 1024
 message.framerate = 60
 message.colourspace = rtp_types.ColourspaceType_kColourspaceJpeg2000
-sap.AddSapAnnouncement(message())
+sap.AddSapAnnouncement(message)
 
 message.sessionName = "Stream 7"
 message.ipAddress = "192.168.1.7"
@@ -83,11 +83,14 @@ message.height = 1920
 message.width = 1024
 message.framerate = 60
 message.colourspace = rtp_types.ColourspaceType_kColourspaceH264Part10
-sap.AddSapAnnouncement(message())
+sap.AddSapAnnouncement(message)
 
 sap.Start()
 
 # Sleep 10 seconds
 time.sleep(10)
 
+sap.DeleteAllSapAnnouncements()
 sap.Stop()
+
+print("Done")

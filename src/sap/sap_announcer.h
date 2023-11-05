@@ -27,6 +27,7 @@
 #include <stdint.h>
 #include <unistd.h>
 
+#include <array>
 #include <map>
 #include <string>
 #include <thread>

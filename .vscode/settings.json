@@ -194,7 +194,9 @@
         "rtp_h264_payloader.h": "c",
         "qtimer": "cpp",
         "qsap": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "sap_listener.h": "c",
+        "rtp_types.h": "c"
     },
     "terminal.integrated.shell.windows": "C:\\msys64\\usr\\bin\\bash.exe",
     "terminal.integrated.shellArgs.windows": [
