@@ -22,8 +22,9 @@ type = rtp_types.ColourspaceType_kColourspaceYuv
 sap.SetSourceInterface(0)
 
 message = rtp_types.StreamInformation()
-message.sessionName = "Stream 1"
-message.ipAddress = "192.168.1.1"
+# Set the session name SWIG
+message.session_name = "Stream 1"
+message.hostname = "192.168.1.1"
 message.port = 5000
 message.height = 480
 message.width = 640

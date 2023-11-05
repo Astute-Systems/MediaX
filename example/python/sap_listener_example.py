@@ -33,4 +33,10 @@ if not announcements:
 
 print ("SAP/SDP announcements seen:")
 for name, sdp in announcements.items():
-     print(f"SDP> name: {sdp.session_name}, source: {sdp.ip_address_source}, ipaddr: {sdp.ip_address}:{sdp.port}, height: {sdp.height}, width: {sdp.width}, framerate: {sdp.framerate}, sampling: {sdp.sampling}")
+    from datetime import datetime
+    print(datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ":", end="")
+
+    print(f":{sdp.session_name}:{sdp.ip_address_source}:{sdp.ip_address}:{sdp.port}:{sdp.height}:{sdp.width}:{sdp.framerate}:{sdp.sampling}")
+    ## sdp.sdp insert /t after /n to make it more readable
+    sdp.sdp_text = sdp.sdp_text.replace("\n", "\n\t")
+    print(f"\t{sdp.sdp_text}")

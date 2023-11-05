@@ -2,10 +2,14 @@
 
 %apply int { uint32_t };  
 
-%include <std_map.i>
-%include <std_string.i>
-%template(MapUint32String) std::map<uint32_t, std::string>;
+%include "typemaps.i"
 
+%include <std_string.i>
+%rename("string") std::string;
+
+%include <std_map.i>
+
+%template(MapUint32String) std::map<uint32_t, std::string>;
 
 %{
 #include "sap/sap_announcer.h"
