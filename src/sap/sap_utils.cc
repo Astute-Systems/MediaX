@@ -15,6 +15,7 @@
 #include "sap/sap_utils.h"
 // for std::transform
 #include <algorithm>
+#include <string>
 #include <string_view>
 
 namespace mediax::sap {

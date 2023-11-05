@@ -15,6 +15,8 @@
 #ifndef SAP_SAP_UTILS_H_
 #define SAP_SAP_UTILS_H_
 
+#include <string>
+
 #include "rtp/rtp_types.h"
 #include "sap/sap_listener.h"
 
