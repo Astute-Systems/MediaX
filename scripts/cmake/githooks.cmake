@@ -7,4 +7,3 @@ execute_process (
     OUTPUT_VARIABLE outVar
 
 )
-message (STATUS "Symlinked git hooks")
