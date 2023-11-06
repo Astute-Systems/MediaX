@@ -11,9 +11,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSWIG")
 # Set C++17
 set(CMAKE_CXX_STANDARD 17)
 
-# Qt6
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
-
 # Gstreamer
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GST REQUIRED gstreamer-1.0)
