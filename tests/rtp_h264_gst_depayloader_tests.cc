@@ -227,3 +227,27 @@ TEST(RtpH264DepayloaderTest, StateCheckVappi) {
   EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kClosed);
   EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceNv12);
 }
+
+TEST(RtpH264DepayloaderTest, FailToOpen) {
+#if !GST_SUPPORTED
+  GTEST_SKIP();
+#endif
+
+  std::array<uint8_t, 1280 * 720 * 3> rgb_test;
+  mediax::video::ColourSpaceCpu colourspace;
+  mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
+
+  // Set the stream details using set stream info
+  ::mediax::rtp::StreamInformation stream_info = {.session_name = "test_session_name",
+                                                  .hostname = "127.0.0.1",
+                                                  .port = 5004,
+                                                  .height = 720,
+                                                  .width = 1280,
+                                                  .framerate = 25,
+                                                  .encoding = ::mediax::rtp::ColourspaceType::kColourspaceH264Part10,
+                                                  .deleted = false};
+  rtp.SetStreamInfo(stream_info);
+
+  rtp.Stop();
+  rtp.Close();
+}

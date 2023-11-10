@@ -170,6 +170,9 @@ bool RtpH264GstVaapiDepayloader::Open() {
 }
 
 void RtpH264GstVaapiDepayloader::Start() {
+  if (GetState() == ::mediax::rtp::StreamState::kStarted) {
+    return;
+  }
   // Call the base class
   RtpDepayloader::Start();
   // Start the pipeline
@@ -177,6 +180,9 @@ void RtpH264GstVaapiDepayloader::Start() {
 }
 
 void RtpH264GstVaapiDepayloader::Stop() {
+  if (GetState() != ::mediax::rtp::StreamState::kStarted) {
+    return;
+  }
   // Call the base class
   RtpDepayloader::Stop();
   // Stop the pipeline
@@ -184,6 +190,13 @@ void RtpH264GstVaapiDepayloader::Stop() {
 }
 
 void RtpH264GstVaapiDepayloader::Close() {
+  if (GetState() != ::mediax::rtp::StreamState::kStopped) {
+    Stop();
+  }
+
+  if (GetState() == ::mediax::rtp::StreamState::kClosed) {
+    return;
+  }
   Stop();
 
   // Call the base class
