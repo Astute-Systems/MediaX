@@ -76,7 +76,11 @@ SapListener::SapListener() {
     perror("setsockopt IP_ADD_MEMBERSHIP");
   }
 
-  // bind socket to port
+  // bind socket to port allow multiple bindings
+  int opt = 1;
+  if (setsockopt(sockfd_, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char *>(&opt), sizeof(opt)) < 0) {
+    perror("setsockopt SO_REUSEADDR");
+  }
   if (bind(sockfd_, (struct sockaddr *)&multicast_addr_, sizeof(multicast_addr_)) == -1) {
     std::cout << "SAPListener() " << std::string(strerror(errno)) << " " << mediax::rtp::kIpaddr << ":"
               << mediax::rtp::kSapPort << "\n";
@@ -230,6 +234,11 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
   } else {
     sdp.deleted = false;
   }
+  // Decode hash
+  sdp.hash = (rawdata->at(2) & 0xff) << 8 | rawdata->at(3);
+  std::cout << "SAP packet received " << mediax::rtp::kIpaddr << ":" << mediax::rtp::kSapPort << " " << sdp.hash
+            << "\n";
+
   // Find 'v=' marking the start of the SDP message in the sdp_text
 
   sdp.sdp_text = std::string(reinterpret_cast<char *>(&rawdata->at(8)), size - 8);
