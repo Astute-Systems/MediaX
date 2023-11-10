@@ -104,8 +104,9 @@ bool RtpUncompressedDepayloader::Open() {
     addr.sin_addr.s_addr = inet_addr(GetStream().hostname.c_str());
     addr.sin_port = htons((uint16_t)GetStream().port_no);
     // bind socket to port, allow reuse
-    int opt = 1;
-    if (setsockopt(GetStream().sockfd, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0) {
+
+    if (int opt = 1;
+        setsockopt(GetStream().sockfd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char *>(&opt), sizeof(opt)) < 0) {
       LOG(ERROR) << "RtpUncompressedDepayloader::Open() ERROR setting socket options " << GetStream().hostname << ":"
                  << GetStream().port_no;
       exit(-1);
