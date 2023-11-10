@@ -43,8 +43,10 @@ struct SapHeader {
  public:
   /// Protocol version
   uint8_t version;
+  /// Authentication length
+  uint8_t auth_len;
   /// Hash, must be unique for this announcement
-  uint8_t hash;
+  uint16_t hash;
   /// Originating Source, IPV4
   uint32_t originating_source;
   ///
@@ -54,7 +56,7 @@ struct SapHeader {
   /// \param hash This must be unique for this announcement
   /// \param originating_source The originating source identity
   ///
-  SapHeader(uint8_t version, uint8_t hash, uint32_t originating_source)
+  SapHeader(uint8_t version, uint16_t hash, uint32_t originating_source)
       : version(version), hash(hash), originating_source(originating_source) {}
 };
 
