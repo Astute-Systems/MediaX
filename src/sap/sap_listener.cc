@@ -236,8 +236,6 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
   }
   // Decode hash
   sdp.hash = (rawdata->at(2) & 0xff) << 8 | rawdata->at(3);
-  std::cout << "SAP packet received " << mediax::rtp::kIpaddr << ":" << mediax::rtp::kSapPort << " " << sdp.hash
-            << "\n";
 
   // Find 'v=' marking the start of the SDP message in the sdp_text
 
