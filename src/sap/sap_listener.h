@@ -91,7 +91,7 @@ struct SdpMessage {
   /// Protocol version
   uint32_t protocol_version;
   /// Message hash
-  uint32_t hash;
+  uint16_t hash;
   /// Originator and session identifier
   std::string session_name;
   /// Session IPV4 source address
