@@ -45,7 +45,8 @@ class QtRtpH264Depayloader : public QObject {
   /// \param width
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE void setStreamInfo(const QString &hostname, int port, const QString &session_name, int height, int width);
+  Q_INVOKABLE void setStreamInfo(const QString &hostname, int port, const QString &session_name, int height, int width,
+                                 int framerate);
 
   ///
   /// \brief Open the RTP stream

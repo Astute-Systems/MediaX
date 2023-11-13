@@ -37,7 +37,7 @@ TEST(QtSapListenerTest, DISABLED_Start) {
   listener.start();
 
   mediax::sap::SdpMessage sdp_message = {
-      1, "test_dummy_session", "192.168.1.1", "127.0.0.1", 5004, 480, 640, "RGB", 25, 24, false, "test"};
+      1, 0, "test_dummy_session", "192.168.1.1", "127.0.0.1", 5004, 480, 640, "RGB", 25, 24, false, "test"};
   emit listener.sapData("this_is_not_a_real_message", sdp_message);
 
   // Sleep for two seconds
