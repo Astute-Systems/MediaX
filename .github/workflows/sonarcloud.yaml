@@ -30,7 +30,7 @@ jobs:
           java --version
 
       - name: Apt Install
-          run: |
+        run: |
             sudo ./scripts/init_build_machine.sh
 
       - name: Run build-wrapper
