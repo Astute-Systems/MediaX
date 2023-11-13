@@ -22,11 +22,16 @@ jobs:
       - name: Apt Update
         run: sudo apt-get update
 
-      - name: Apt Install
+      - name: Apt Upgrade to JAVA 17
         run: |
           sudo apt-get install openjdk-17-jdk openjdk-17-jre
+          # Set java 17 as default
+          sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
           java --version
-          sudo ./scripts/init_build_machine.sh
+
+      - name: Apt Install
+          run: |
+            sudo ./scripts/init_build_machine.sh
 
       - name: Run build-wrapper
         run: |
