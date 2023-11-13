@@ -56,8 +56,8 @@ struct SapHeader {
   /// \param hash This must be unique for this announcement
   /// \param originating_source The originating source identity
   ///
-  SapHeader(uint8_t version, uint16_t hash, uint32_t originating_source)
-      : version(version), hash(hash), originating_source(originating_source) {}
+  SapHeader(uint8_t version, uint8_t auth_len, uint16_t hash, uint32_t originating_source)
+      : version(version), auth_len(auth_len), hash(hash), originating_source(originating_source) {}
 };
 
 /// Class to announce the stream details using the SAP protocol

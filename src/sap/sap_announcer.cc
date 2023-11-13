@@ -230,10 +230,10 @@ int SapAnnouncer::SendSapPacket(const ::mediax::rtp::StreamInformation &stream_i
   // Oversized 4k buffer for SAP/SDP
   std::array<uint8_t, 4069> buffer;
   if (deletion) {
-    SapHeader header(0x24, 0, source_ipaddress_);
+    SapHeader header(0x24, 0, 0, source_ipaddress_);
     memcpy(&buffer[0], &header, sizeof(header));
   } else {
-    SapHeader header(0x20, 0, source_ipaddress_);
+    SapHeader header(0x20, 0, 0, source_ipaddress_);
     memcpy(&buffer[0], &header, sizeof(header));
   }
 
