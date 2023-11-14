@@ -15,12 +15,23 @@
 
 #include "sap/sap_listener.h"
 
+// Callback to get SAP announcments
+void Callback(const mediax::sap::SdpMessage* message, void* data) {
+  std::cout << "SDP> name: " << message->session_name << ", source: " << message->ip_address_source
+            << ", ipaddr: " << message->ip_address << ":" << message->port << ", height: " << message->height
+            << ", width: " << message->width << ", framerate: " << message->framerate
+            << ", sampling: " << message->sampling << "\n";
+}
+
 int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[]) {
   std::cout << argv[0] << " starting\n";
 
   mediax::sap::SapListener& sap = mediax::sap::SapListener::GetInstance();
 
   std::cout << "Waiting for 2 seconds for all SAP/SDP announcements\n";
+
+  // Hook up the callback
+  sap.RegisterSapListener("", Callback, nullptr);
 
   // Listen for 2 seconds and dump out the SAP announcements seen
   sap.Start();
@@ -32,12 +43,6 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[]) {
   if (announcements.empty()) {
     std::cout << "No SAP/SDP announcements seen\n";
     return 0;
-  }
-
-  for (const auto& [name, sdp] : announcements) {
-    std::cout << "SDP> name: " << sdp.session_name << ", source: " << sdp.ip_address_source
-              << ", ipaddr: " << sdp.ip_address << ":" << sdp.port << ", height: " << sdp.height
-              << ", width: " << sdp.width << ", framerate: " << sdp.framerate << ", sampling: " << sdp.sampling << "\n";
   }
 
   return 0;

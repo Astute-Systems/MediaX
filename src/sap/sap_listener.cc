@@ -345,7 +345,6 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
   try {
     sdp.height = std::stoi(attributes_map["height"]);
     sdp.width = std::stoi(attributes_map["width"]);
-    sdp.framerate = std::stoi(attributes_map["framerate"]);
     sdp.bits_per_pixel = std::stoi(attributes_map["depth"]);
     sdp.sampling = attributes_map["sampling"];
   } catch (const std::invalid_argument &e [[maybe_unused]]) {
@@ -355,6 +354,14 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
       sdp.sampling = "H264";
     }
   }
+
+  try {
+    sdp.framerate = std::stoi(attributes_map["framerate"]);
+  } catch (const std::invalid_argument &e [[maybe_unused]]) {
+    LOG(ERROR) << "Invalid framerate = " << sdp.sdp_text;
+    sdp.framerate = 0;
+  }
+
   if (sdp.sampling.empty()) sdp.sampling = "jpeg2000";
 
   DLOG(INFO) << "Store " << sdp.session_name << " " << sdp.ip_address << ":" << sdp.port << " " << sdp.height << "x"
