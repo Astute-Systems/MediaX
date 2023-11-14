@@ -33,7 +33,6 @@ namespace mediax {
 
 void InitRtp(int argc, char *argv[]) {
 #if GST_SUPPORTED
-  LOG(INFO) << "GStreamer version: " << GST_VERSION_MAJOR << "." << GST_VERSION_MINOR << "." << GST_VERSION_MICRO;
   // Initialize GStreamer
   gst_init(&argc, &argv);
 #endif
