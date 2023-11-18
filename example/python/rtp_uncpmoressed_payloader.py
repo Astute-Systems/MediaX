@@ -8,4 +8,12 @@
 # License. See the LICENSE file in the project root for full license details.
 #
 
-import rtpvraw_payloader
+import sys
+sys.path.append('/usr/local/lib/python3/dist-packages/mediax')
+import rtp_uncompressed_payloader
+
+# Create a RTPVrawPayloader object
+
+rtp = rtp_uncompressed_payloader.rtp_uncompressed_payloader()
+
+

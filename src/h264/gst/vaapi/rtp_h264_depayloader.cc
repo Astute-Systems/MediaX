@@ -22,7 +22,6 @@
 
 #include "h264/gst/vaapi/rtp_h264_depayloader.h"
 
-#include <glog/logging.h>
 #include <gst/gst.h>
 
 #include <algorithm>
@@ -96,7 +95,7 @@ GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgba);
   } else {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceUndefined);
-    DLOG(WARNING) << "Unknown colourspace " << colorspace;
+    std::cerr << "Unknown colourspace " << colorspace << "\n";
   }
 
   depayloader->SetHeight(height);
@@ -122,6 +121,11 @@ GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
 }
 
 bool RtpH264GstVaapiDepayloader::Open() {
+  // Check that the stream info has been set
+  if (!GetStream().settings_valid) {
+    return false;
+  }
+
   // Call the base class
   RtpDepayloader::Open();
   // Create a pipeline
@@ -170,6 +174,13 @@ bool RtpH264GstVaapiDepayloader::Open() {
 }
 
 void RtpH264GstVaapiDepayloader::Start() {
+  // Return if not open
+  if (GetState() == ::mediax::rtp::StreamState::kClosed) {
+    std::cerr << "Stream not open so cant be started"
+              << "\n";
+    return;
+  }
+
   if (GetState() == ::mediax::rtp::StreamState::kStarted) {
     return;
   }

@@ -74,11 +74,21 @@ TEST(RtpH264DepayloaderTest, UnicastOk) {
 
   // Set the stream details individually
   rtp.SetIpAddress("127.0.0.1");
+  EXPECT_FALSE(rtp.SettingsValid());
   rtp.SetPort(5004);
+  EXPECT_FALSE(rtp.SettingsValid());
   rtp.SetSessionName("test_session_name");
+  EXPECT_FALSE(rtp.SettingsValid());
   rtp.SetHeight(720);
+  EXPECT_FALSE(rtp.SettingsValid());
   rtp.SetWidth(1280);
+  EXPECT_FALSE(rtp.SettingsValid());
   rtp.SetColourSpace(::mediax::rtp::ColourspaceType::kColourspaceH264Part10);
+  EXPECT_FALSE(rtp.SettingsValid());
+  rtp.SetFramerate(25);
+
+  // When all the setting are manually set then the settings are valid
+  EXPECT_TRUE(rtp.SettingsValid());
 
   // Start the stream
   EXPECT_TRUE(rtp.Open());
@@ -248,6 +258,26 @@ TEST(RtpH264DepayloaderTest, FailToOpen) {
                                                   .deleted = false};
   rtp.SetStreamInfo(stream_info);
 
+  rtp.Stop();
+  rtp.Close();
+}
+
+TEST(RtpH264DepayloaderTest, TestMany) {
+#if !GST_SUPPORTED
+  GTEST_SKIP();
+#endif
+
+  std::array<uint8_t, 1280 * 720 * 3> rgb_test;
+  mediax::video::ColourSpaceCpu colourspace;
+  mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
+
+  // Dont set the stream details, will error
+
+  // Start the stream
+  EXPECT_FALSE(rtp.Open());
+  rtp.Start();
+  uint8_t* data = rgb_test.data();
+  EXPECT_FALSE(rtp.Receive(&data, 80));
   rtp.Stop();
   rtp.Close();
 }

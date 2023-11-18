@@ -24,7 +24,7 @@ class QtTest : public QObject {
     // Create a frame of RGB pixels in QByteArray
     QByteArray frame;
     frame.resize(640 * 480 * 3);
-    frame.fill(0);
+    frame.fill(0xff);
     // Send the frame to the payloader
     emit newFrame(&frame);
   }

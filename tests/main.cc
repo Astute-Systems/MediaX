@@ -10,5 +10,7 @@ int main(int argc, char** argv) {
   google::InitGoogleLogging(argv[0]);
   google::InstallFailureSignalHandler();
   mediax::InitRtp(argc, argv);
-  return RUN_ALL_TESTS();
+  int ret = RUN_ALL_TESTS();
+  mediax::RtpCleanup();
+  return ret;
 }

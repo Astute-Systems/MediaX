@@ -8,4 +8,6 @@
 # License. See the LICENSE file in the project root for full license details.
 #
 
-import rtpvraw_depayloader
+import sys
+sys.path.append('/usr/local/lib/python3/dist-packages/mediax')
+import rtp_gst_h264_depayloader

@@ -35,7 +35,7 @@ import rtpvraw_depayloader
 
 # Qt6 bindings
 
-These bindings are currently available for testing. Please find documentation [here](https://defencex.github.io/MediaX/namespacemediax_1_1qt.html).
+These bindings are production ready and underpin our GUI toolchain. Please find documentation [here](https://defencex.github.io/MediaX/namespacemediax_1_1qt.html) and code examples [here](https://defencex.github.io/MediaX/index.html#qtcode)
 
 To build from source add with Qt6 add:
 

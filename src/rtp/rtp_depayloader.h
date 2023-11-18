@@ -42,6 +42,18 @@ enum class StreamState {
   kStopped
 };
 
+/// \brief The RTP stream information valid mask
+enum class SettingsMask {
+  hostname = 0b00000001,
+  port = 0b00000010,
+  name = 0b00000100,
+  height = 0b00001000,
+  width = 0b00010000,
+  framerate = 0b00100000,
+  encoding = 0b01000000,
+  all = 0b01111111
+};
+
 ///
 /// \brief Manage an RTP stream
 ///
@@ -144,7 +156,7 @@ class RtpDepayloader {
   ///
   /// \return std::string The SAP/SDP session name
   ///
-  std::string GetSessionName() const;
+  std::string GetSessionName();
 
   ///
   /// \brief Get the Colour Space object of the incoming stream. \note This may be invalid id no SAP/SDP announcement
@@ -152,7 +164,7 @@ class RtpDepayloader {
   ///
   /// \return ColourspaceType
   ///
-  ::mediax::rtp::ColourspaceType GetColourSpace() const;
+  ::mediax::rtp::ColourspaceType GetColourSpace();
 
   ///
   /// \brief Set the Height attribute
@@ -194,7 +206,7 @@ class RtpDepayloader {
   ///
   /// \return uint32_t
   ///
-  uint32_t GetFrameRate() const;
+  uint32_t GetFrameRate();
 
   ///
   /// \brief Get the Ip Address of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
@@ -202,7 +214,7 @@ class RtpDepayloader {
   ///
   /// \return std::string
   ///
-  std::string GetIpAddress() const;
+  std::string GetIpAddress();
 
   ///
   /// \brief Set the Ip Address attribute
@@ -223,7 +235,7 @@ class RtpDepayloader {
   ///
   /// \return uint32_t
   ///
-  uint32_t GetPort() const;
+  uint32_t GetPort();
 
   ///
   /// \brief Set the Colour Space object
@@ -233,11 +245,19 @@ class RtpDepayloader {
   void SetColourSpace(::mediax::rtp::ColourspaceType colourspace);
 
   ///
+  /// \brief Check if the settings are valid. All stream information was set
+  ///
+  /// \return true
+  /// \return false
+  ///
+  bool SettingsValid();
+
+  ///
   /// \brief Get the Colour Space object
   ///
   /// \return ::mediax::rtp::ColourspaceType
   ///
-  ::mediax::rtp::ColourspaceType GetColourSpace();
+  ::mediax::rtp::ColourspaceType GetColourSpace() const;
 
   ///
   /// \brief Check if the IP address is a multicast address
@@ -322,6 +342,8 @@ class RtpDepayloader {
   bool callback_registered_ = false;
   /// Ingress port
   ::mediax::rtp::RtpPortType ingress_ = {};
+  /// Settings valid mask
+  uint32_t settings_mask_ = 0;
 };  // namespace mediax::rtp
 
 }  // namespace mediax::rtp
