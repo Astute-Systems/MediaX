@@ -23,16 +23,10 @@
 namespace mediax::qt {
 
 class QtRtpUncompressedPayloader : public QObject {
+  using QObject::QObject;
   Q_OBJECT
 
  public:
-  ///
-  /// \brief Construct a new Qt Rtp Uncompressed Payloader object
-  ///
-  /// \param parent
-  ///
-  explicit QtRtpUncompressedPayloader(QObject* parent = nullptr) : QObject(parent) {}
-
   ///
   /// \brief Set the Stream Info object
   ///

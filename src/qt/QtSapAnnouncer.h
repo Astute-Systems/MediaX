@@ -119,7 +119,7 @@ class QtSapAnnouncer : public QObject {
   ///
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE std::map<uint32_t, QString> GetInterfaces();
+  Q_INVOKABLE std::map<uint32_t, QString> getInterfaces() const;
 
   ///
   /// \brief Get the Active Stream Count object

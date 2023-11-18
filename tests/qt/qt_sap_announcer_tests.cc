@@ -70,7 +70,7 @@ TEST_F(QtSapAnnouncerTest, SetSourceInterface) {
 
 TEST_F(QtSapAnnouncerTest, GetInterfaces) {
   std::map<uint32_t, QString> interfaces;
-  interfaces = qt_sap_announcer_->GetInterfaces();
+  interfaces = qt_sap_announcer_->getInterfaces();
   EXPECT_GT(interfaces.size(), 0);
   // Print the interfaces
   for (auto& interface : interfaces) {

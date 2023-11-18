@@ -352,7 +352,6 @@ std::map<uint32_t, std::string> SapAnnouncer::GetInterfaces() const {
     }
 
     if (ifa->ifa_addr->sa_family == AF_PACKET && (ifa->ifa_flags & IFF_UP) && (ifa->ifa_flags & IFF_RUNNING)) {
-      struct sockaddr_ll *sll = reinterpret_cast<struct sockaddr_ll *>(ifa->ifa_addr);
       std::string ifname = ifa->ifa_name;
       // Dont store loopback
       if (ifname != "lo") {

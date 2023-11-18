@@ -77,8 +77,8 @@ SapListener::SapListener() {
   }
 
   // bind socket to port allow multiple bindings
-  int opt = 1;
-  if (setsockopt(sockfd_, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char *>(&opt), sizeof(opt)) < 0) {
+
+  if (int opt = 1; setsockopt(sockfd_, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char *>(&opt), sizeof(opt)) < 0) {
     perror("setsockopt SO_REUSEADDR");
   }
   if (bind(sockfd_, (struct sockaddr *)&multicast_addr_, sizeof(multicast_addr_)) == -1) {
@@ -166,8 +166,8 @@ std::map<std::string, std::string, std::less<>> SapListener::ParseAttributes1(co
 
   // If line does not contain an equals sign just assign the whole line to the key
   if (line.find("=") == std::string::npos) {
-    std::string line2 = std::string(line);
-    attributes[line2] = "";
+    auto line_tmp = std::string(line);
+    attributes[line_tmp] = "";
     return attributes;
   }
   // Split string after first space
@@ -235,7 +235,7 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
     sdp.deleted = false;
   }
   // Decode hash
-  sdp.hash = (rawdata->at(2) & 0xff) << 8 | rawdata->at(3);
+  sdp.hash = static_cast<uint16_t>((rawdata->at(2) & 0xff) << 8 | rawdata->at(3));
 
   // Find 'v=' marking the start of the SDP message in the sdp_text
 

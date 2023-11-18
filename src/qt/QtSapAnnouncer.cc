@@ -53,7 +53,7 @@ Q_INVOKABLE void QtSapAnnouncer::restart() { sap_announcer_.Restart(); }
 
 Q_INVOKABLE void QtSapAnnouncer::setSourceInterface(uint16_t select) { sap_announcer_.SetSourceInterface(select); }
 
-Q_INVOKABLE std::map<uint32_t, QString> QtSapAnnouncer::GetInterfaces() {
+Q_INVOKABLE std::map<uint32_t, QString> QtSapAnnouncer::getInterfaces() const {
   std::map<uint32_t, QString> interfaces;
   for (const auto &[name, interface] : sap_announcer_.GetInterfaces()) {
     std::cout << "Interface: " << name << " " << interface << std::endl;
