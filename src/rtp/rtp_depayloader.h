@@ -315,7 +315,7 @@ class RtpDepayloader {
   ///
   /// \return uint32_t
   ///
-  uint32_t GetBufferSize() const { return buffer_in_.size(); }
+  uint32_t GetBufferSize() const { return static_cast<uint32_t>(buffer_in_.size()); }
 
   ///
   /// \brief Set the Buffer Size object
