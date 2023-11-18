@@ -243,8 +243,6 @@ class SapAnnouncer {
   struct sockaddr_in multicast_addr_;
   /// The flag indicating the SAP thread is active
   bool running_ = false;
-  /// Source interface set
-  bool enabled_ = false;
 };
 
 }  // namespace mediax::sap
