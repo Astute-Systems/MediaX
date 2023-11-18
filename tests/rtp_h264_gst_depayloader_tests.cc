@@ -262,7 +262,7 @@ TEST(RtpH264DepayloaderTest, FailToOpen) {
   rtp.Close();
 }
 
-TEST(RtpH264DepayloaderTest, TestMany) {
+TEST(RtpH264DepayloaderTest, TestNoStreamSet) {
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
@@ -280,4 +280,58 @@ TEST(RtpH264DepayloaderTest, TestMany) {
   EXPECT_FALSE(rtp.Receive(&data, 80));
   rtp.Stop();
   rtp.Close();
+}
+
+void Stream(mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader* rtp, std::string name, std::string ip,
+            uint16_t port) {
+  // Set the stream details using set stream info
+  ::mediax::rtp::StreamInformation stream_info = {.session_name = name,
+                                                  .hostname = ip,
+                                                  .port = port,
+                                                  .height = 720,
+                                                  .width = 1280,
+                                                  .framerate = 25,
+                                                  .encoding = ::mediax::rtp::ColourspaceType::kColourspaceH264Part10,
+                                                  .deleted = false};
+  rtp->SetStreamInfo(stream_info);
+  // Start the stream
+  EXPECT_TRUE(rtp->Open());
+}
+
+TEST(RtpH264DepayloaderTest, StartSwitchManyPayloaders) {
+#if !GST_SUPPORTED
+  GTEST_SKIP();
+#endif
+
+  int last_stream = -1;
+  int current_stream = -1;
+
+  std::array<uint8_t, 1280 * 720 * 3> rgb_test;
+  mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp[5];
+
+  // Open five streams
+  for (int i = 0; i < 5; i++) {
+    std::string name = "test_session_name_" + std::to_string(i);
+    std::string ip = "239.192.1." + std::to_string(i);
+    Stream(&rtp[i], name, ip, 5004);
+  }
+
+  // Randomly switch active streams 100 times
+  for (int i = 0; i < 10; i++) {
+    if (last_stream >= 0) {
+      rtp[last_stream].Stop();
+    }
+    current_stream = rand() % 5;
+    rtp[current_stream].Start();
+    // Transmit a frame
+    uint8_t* data = rgb_test.data();
+    EXPECT_FALSE(rtp[current_stream].Receive(&data, 1));
+    last_stream = current_stream;
+  }
+  rtp[current_stream].Stop();
+
+  // Stop and close
+  for (int i = 0; i < 5; i++) {
+    rtp[i].Close();
+  }
 }

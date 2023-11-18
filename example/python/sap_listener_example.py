@@ -13,9 +13,27 @@ import sys
 sys.path.append('/usr/local/lib/python3/dist-packages/mediax')
 
 import sap_listener
+import rtp_types
+
+# Register a callback
+def callback(sdp):
+   print("Callback called with SDP:")
+
+
 SapListener = sap_listener.SapListener.GetInstance()
 
+info = rtp_types.StreamInformation()
+
+# Create a swig standard string
+s = rtp_types.StandardString()
+
+
+sv = s.to_string_view()
+SapListener.GetStreamInformation(s, info)
+# SapListener.RegisterSapListener("", callback, 0)
+
 SapListener.Start()
+
 
 print("Waiting for 2 seconds for all SAP/SDP announcements")
 
@@ -23,6 +41,10 @@ print("Waiting for 2 seconds for all SAP/SDP announcements")
 time.sleep(2)
 
 SapListener.Stop()
+
+
+
+
 
 announcements = SapListener.GetSapAnnouncements()
 
