@@ -206,7 +206,7 @@ class RtpDepayloader {
   ///
   /// \return uint32_t
   ///
-  uint32_t GetFrameRate();
+  uint32_t GetFrameRate() const;
 
   ///
   /// \brief Get the Ip Address of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
@@ -214,7 +214,7 @@ class RtpDepayloader {
   ///
   /// \return std::string
   ///
-  std::string GetIpAddress();
+  std::string GetIpAddress() const;
 
   ///
   /// \brief Set the Ip Address attribute
@@ -235,7 +235,7 @@ class RtpDepayloader {
   ///
   /// \return uint32_t
   ///
-  uint32_t GetPort();
+  uint32_t GetPort() const;
 
   ///
   /// \brief Set the Colour Space object
@@ -250,7 +250,7 @@ class RtpDepayloader {
   /// \return true
   /// \return false
   ///
-  bool SettingsValid();
+  bool SettingsValid() const;
 
   ///
   /// \brief Get the Colour Space object

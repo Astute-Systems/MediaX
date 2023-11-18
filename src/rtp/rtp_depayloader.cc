@@ -58,9 +58,9 @@ void RtpDepayloader::SetFramerate(uint32_t framerate) {
   ingress_.framerate = framerate;
 }
 
-uint32_t RtpDepayloader::GetFrameRate() { return ingress_.framerate; }
+uint32_t RtpDepayloader::GetFrameRate() const { return ingress_.framerate; }
 
-std::string RtpDepayloader::GetIpAddress() { return ingress_.hostname; }
+std::string RtpDepayloader::GetIpAddress() const { return ingress_.hostname; }
 
 void RtpDepayloader::SetIpAddress(std::string_view ip_address) {
   settings_mask_ = static_cast<uint8_t>(settings_mask_) | static_cast<uint8_t>(SettingsMask::hostname);
@@ -72,14 +72,14 @@ void RtpDepayloader::SetPort(uint32_t port) {
   ingress_.port_no = port;
 }
 
-uint32_t RtpDepayloader::GetPort() { return ingress_.port_no; }
+uint32_t RtpDepayloader::GetPort() const { return ingress_.port_no; }
 
 void RtpDepayloader::SetColourSpace(::mediax::rtp::ColourspaceType colourspace) {
   settings_mask_ = static_cast<uint8_t>(settings_mask_) | static_cast<uint8_t>(SettingsMask::encoding);
   ingress_.encoding = colourspace;
 }
 
-bool RtpDepayloader::SettingsValid() {
+bool RtpDepayloader::SettingsValid() const {
   return static_cast<uint8_t>(settings_mask_) == static_cast<uint8_t>(SettingsMask::all);
 }
 

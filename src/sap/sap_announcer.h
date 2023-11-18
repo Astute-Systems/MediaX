@@ -148,7 +148,7 @@ class SapAnnouncer {
   ///
   /// \return std::map<uit32_t, std::string>
   ///
-  std::map<uint32_t, std::string> GetInterfaces();
+  std::map<uint32_t, std::string> GetInterfaces() const;
 
   ///
   /// \brief Get the Streams object

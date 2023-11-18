@@ -335,11 +335,12 @@ std::string SapAnnouncer::GetIpv4AddressString(std::string_view interface_name) 
   return addr_str;
 }
 
-std::map<uint32_t, std::string> SapAnnouncer::GetInterfaces() {
+std::map<uint32_t, std::string> SapAnnouncer::GetInterfaces() const {
   std::map<uint32_t, std::string> interfaces;
   uint32_t count = 0;
 
-  struct ifaddrs *ifaddr, *ifa;
+  struct ifaddrs *ifaddr;
+  struct ifaddrs *ifa;
   if (getifaddrs(&ifaddr) == -1) {
     perror("getifaddrs failed");
     return interfaces;
