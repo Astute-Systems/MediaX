@@ -62,7 +62,7 @@ void SapAnnouncer::Start() {
 
   // Wait for thread to start
   while (running_ == false) {
-    // Wait 1ms;
+    // Wait for 1ms;
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
 }
@@ -104,7 +104,7 @@ void SapAnnouncer::AddSapAnnouncement(const ::mediax::rtp::StreamInformation &st
   streams_.push_back(stream_information);
 }
 
-::mediax::rtp::StreamInformation &SapAnnouncer::GetSapAnnouncment(std::string session_name) {
+::mediax::rtp::StreamInformation &SapAnnouncer::GetSapAnnouncment(std::string_view session_name) {
   for (auto &stream_ : streams_) {
     if (stream_.session_name == session_name) {
       return stream_;
@@ -248,15 +248,16 @@ int SapAnnouncer::SendSapPacket(const ::mediax::rtp::StreamInformation &stream_i
 
   // Calculate the 16 bit hash dor the SAP message
   uint16_t hash = 0;
-  for (size_t i = 0; i < sdp_msg.size(); i++) {
-    hash += sdp_msg[i];
-  }
+
+  // Calculate the hash
+  std::for_each(sdp_msg.begin(), sdp_msg.end(), [&hash](char c) { hash += c; });
+
   // Copy the hash into the buffer
   memcpy(&buffer[2], &hash, sizeof(hash));
 
-  ssize_t sent_bytes = sendto(sockfd_, buffer.data(), sizeof(SapHeader) + payload_type.size() + sdp_msg.size(), 0,
-                              (const struct sockaddr *)(&multicast_addr_), sizeof(multicast_addr_));
-  if (sent_bytes < 0) {
+  if (ssize_t sent_bytes = sendto(sockfd_, buffer.data(), sizeof(SapHeader) + payload_type.size() + sdp_msg.size(), 0,
+                                  (const struct sockaddr *)(&multicast_addr_), sizeof(multicast_addr_));
+      sent_bytes < 0) {
     perror("sendto failed");
     exit(EXIT_FAILURE);
   }
@@ -297,21 +298,22 @@ void SapAnnouncer::SetSourceInterface(uint32_t select) {
   source_ipaddress_ = GetIpv4Address(interfaces[select]);
 }
 
-uint32_t SapAnnouncer::GetIpv4Address(std::string interface_name) const {
+uint32_t SapAnnouncer::GetIpv4Address(std::string_view interface_name) const {
   // Get the address tof the interface
-  struct ifaddrs *ifaddr, *ifa;
+  struct ifaddrs *ifaddr;
+
   if (getifaddrs(&ifaddr) == -1) {
     perror("getifaddrs failed");
     return 0;
   }
 
-  for (ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
+  for (struct ifaddrs *ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
     if (ifa->ifa_addr == nullptr) {
       continue;
     }
 
     if (ifa->ifa_addr->sa_family == AF_INET && (ifa->ifa_flags & IFF_UP) && (ifa->ifa_flags & IFF_RUNNING)) {
-      struct sockaddr_in *s4 = reinterpret_cast<struct sockaddr_in *>(ifa->ifa_addr);
+      const struct sockaddr_in *s4 = reinterpret_cast<struct sockaddr_in *>(ifa->ifa_addr);
       std::string ifname = ifa->ifa_name;
       if (ifname == interface_name) {
         freeifaddrs(ifaddr);
@@ -323,7 +325,7 @@ uint32_t SapAnnouncer::GetIpv4Address(std::string interface_name) const {
   return 0;
 }
 
-std::string SapAnnouncer::GetIpv4AddressString(std::string interface_name) {
+std::string SapAnnouncer::GetIpv4AddressString(std::string_view interface_name) const {
   const uint32_t address = GetIpv4Address(interface_name);
   std::string addr_str;
   addr_str.resize(INET_ADDRSTRLEN);

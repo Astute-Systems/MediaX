@@ -87,7 +87,7 @@ class SapAnnouncer {
   ///
   /// \return ::mediax::rtp::StreamInformation&
   ///
-  ::mediax::rtp::StreamInformation &GetSapAnnouncment(std::string session_name);
+  ::mediax::rtp::StreamInformation &GetSapAnnouncment(std::string_view session_name);
 
   ///
   /// \brief Delete a specific session announcement
@@ -221,7 +221,7 @@ class SapAnnouncer {
   /// \param interface_name the interface name
   /// \return uint32_t
   ///
-  uint32_t GetIpv4Address(std::string interface_name) const;
+  uint32_t GetIpv4Address(std::string_view interface_name) const;
 
   ///
   /// \brief Get the Ipv 4 Address as a string
@@ -229,7 +229,7 @@ class SapAnnouncer {
   /// \param interface_name the interface name
   /// \return std::string
   ///
-  std::string GetIpv4AddressString(std::string interface_name);
+  std::string GetIpv4AddressString(std::string_view interface_name) const;
 
   /// A list of active SAP streams
   std::vector<::mediax::rtp::StreamInformation> streams_;
