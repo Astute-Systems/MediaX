@@ -9,77 +9,64 @@
 ///
 /// \brief RTP streaming video class for uncompressed DEF-STAN 00-82 video streams
 ///
-/// \file QtRtpH264Payloader.h
+/// \file QtRtpPayloader.h
 ///
 
-#ifndef QT_QTRTPH264PAYLOADER_H_
-#define QT_QTRTPH264PAYLOADER_H_
+#ifndef QT_QTRTPPAYLOADER_H_
+#define QT_QTRTPPAYLOADER_H_
 
 #include <QByteArray>
 #include <QObject>
 
-#include "h264/gst/vaapi/rtp_h264_payloader.h"
-#include "qt/QtRtpPayloader.h"
+#include "rtp/rtp.h"
 
 namespace mediax::qt {
 
-/// The H.264 Qt Payloaader wrapper
-class QtRtpH264Payloader : public QtRtpPayloader {
+class QtRtpPayloader : public QObject {
   Q_OBJECT
 
  public:
   ///
-  /// \brief Construct a new Qt Rtp H 2 6 4 Payloader object
+  /// \brief Construct a new Qt Rtp Payloader object
   ///
   /// \param parent
   ///
-  explicit QtRtpH264Payloader(QObject *parent = nullptr);
-
-  ///
-  /// \brief Destroy the Qt Rtp H 2 6 4 Payloader object
-  ///
-  ///
-  ~QtRtpH264Payloader() final;
+  explicit QtRtpPayloader(QObject* parent = nullptr);
 
   ///
   /// \brief Set the Stream Info object
   ///
-  /// \param hostname the IPV4 address
-  /// \param port the port number
-  /// \param name the name of the stream
-  /// \param height the height of the stream
-  /// \param width the width of the stream
-  /// \return Q_INVOKABLE
+  /// \param stream_information
   ///
-  Q_INVOKABLE void setStreamInfo(const mediax::rtp::StreamInformation &stream_information) final;
+  virtual void setStreamInfo(const mediax::rtp::StreamInformation& stream_information) = 0;
 
   ///
   /// \brief Open the RTP stream
   ///
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE bool open() final;
+  Q_INVOKABLE virtual bool open() = 0;
 
   ///
   /// \brief Start the RTP stream
   ///
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE void start() final;
+  Q_INVOKABLE virtual void start() = 0;
 
   ///
   /// \brief Stop the RTP stream
   ///
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE void stop() final;
+  Q_INVOKABLE virtual void stop() = 0;
 
   ///
   /// \brief Close the RTP stream
   ///
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE void close() final;
+  Q_INVOKABLE virtual void close() = 0;
 
   ///
   /// \brief Transmit a frame to the RTP stream
@@ -88,7 +75,7 @@ class QtRtpH264Payloader : public QtRtpPayloader {
   /// \param blocking Set to true if blocking
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE int transmit(QByteArray *frame, bool blocking = true);
+  Q_INVOKABLE virtual int transmit(QByteArray* frame, bool blocking = true) = 0;
 
  public slots:
 
@@ -97,12 +84,9 @@ class QtRtpH264Payloader : public QtRtpPayloader {
   ///
   /// \param frame The frame to receive
   ///
-  void sendFrame(QByteArray *frame) final;
-
- private:
-  ::mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader payloader_;
+  virtual void sendFrame(QByteArray* frame) = 0;
 };
 
 }  // namespace mediax::qt
 
-#endif  // QT_QTRTPH264PAYLOADER_H_
+#endif  // QT_QTRTPPAYLOADER_H_

@@ -15,6 +15,11 @@
 #include "qt/QtRtpUncompressedPayloader.h"
 
 namespace mediax::qt {
+QtRtpUncompressedPayloader::QtRtpUncompressedPayloader(QObject *parent) : QtRtpPayloader(parent) {}
+
+void QtRtpUncompressedPayloader::setStreamInfo(const mediax::rtp::StreamInformation &stream_information) {
+  m_rtpPayloader.SetStreamInfo(stream_information);
+}
 
 Q_INVOKABLE bool QtRtpUncompressedPayloader::open() { return m_rtpPayloader.Open(); }
 

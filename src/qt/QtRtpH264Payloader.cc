@@ -17,21 +17,11 @@
 
 namespace mediax::qt {
 
-QtRtpH264Payloader::QtRtpH264Payloader(QObject *parent) : QObject(parent) {}
+QtRtpH264Payloader::QtRtpH264Payloader(QObject *parent) : QtRtpPayloader(parent) {}
 
 QtRtpH264Payloader::~QtRtpH264Payloader() = default;
 
-Q_INVOKABLE void QtRtpH264Payloader::setStreamInfo(const QString &hostname, int port, const QString &session_name,
-                                                   int height, int width, int framerate) {
-  rtp::StreamInformation stream_information;
-  stream_information.hostname = hostname.toStdString();
-  stream_information.port = port;
-  stream_information.session_name = session_name.toStdString();
-  stream_information.encoding = mediax::rtp::ColourspaceType::kColourspaceH264Part10;
-  stream_information.height = height;
-  stream_information.width = width;
-  stream_information.framerate = framerate;
-
+Q_INVOKABLE void QtRtpH264Payloader::setStreamInfo(const mediax::rtp::StreamInformation &stream_information) {
   payloader_.SetStreamInfo(stream_information);
 }
 

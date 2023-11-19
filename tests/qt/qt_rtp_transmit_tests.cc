@@ -34,7 +34,9 @@ class QtTest : public QObject {
 };
 
 QtTest::QtTest() {
-  rtp.setStreamInfo("127.0.0.1", 5004, "qt-test", 480, 640, 25);
+  mediax::rtp::StreamInformation stream_info = {
+      "test-session", "127.0.0.1", 5004, 480, 640, 25, ::mediax::rtp::ColourspaceType::kColourspaceH264Part10};
+  rtp.setStreamInfo(stream_info);
   rtp.open();
   rtp.start();
 

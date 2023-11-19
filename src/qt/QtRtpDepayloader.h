@@ -99,10 +99,6 @@ class QtRtpDepayloader : public QObject {
 
  signals:
   virtual void newFrame(QByteArray *frame);
-
- private:
-  /// The underlying RTP H.264 depayloader
-  mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader depayloader_;
 };
 
 }  // namespace mediax::qt
