@@ -25,6 +25,7 @@ namespace mediax::qt {
 
 class QtRtpUncompressedDepayloader : public QtRtpDepayloader {
   Q_OBJECT
+
  public:
   ///
   /// \brief Construct a new Rtp Uncompressed Depayloader object

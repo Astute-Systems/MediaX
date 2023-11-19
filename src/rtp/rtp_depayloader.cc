@@ -11,6 +11,8 @@
 /// \file rtp_depayloader.cc
 ///
 
+#include "rtp/rtp_depayloader.h"
+
 #include <arpa/inet.h>
 
 #include <iostream>
