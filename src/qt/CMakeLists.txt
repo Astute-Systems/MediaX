@@ -15,6 +15,7 @@ include_directories(${CMAKE_SOURCE_DIR}/src Qt6::Core ${GST_INCLUDE_DIRS})
 set(SOURCES
   QtSapAnnouncer.cc
   QtSapListener.cc
+  QtRtpDepayloader.cc
   QtRtpUncompressedDepayloader.cc
   QtRtpUncompressedPayloader.cc
   QtRtpH264Payloader.cc

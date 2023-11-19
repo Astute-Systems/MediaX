@@ -18,7 +18,7 @@
 
 namespace mediax::qt {
 
-QtRtpH264Depayloader::QtRtpH264Depayloader(QObject *parent) : QObject(parent) {}
+QtRtpH264Depayloader::QtRtpH264Depayloader(QObject *parent) : QtRtpDepayloader(parent) {}
 
 void QtRtpH264Depayloader::setStreamInfo(const QString &hostname, int port, const QString &session_name, int height,
                                          int width, int framerate) {

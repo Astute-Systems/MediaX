@@ -9,29 +9,29 @@
 ///
 /// \brief RTP streaming video class for uncompressed DEF-STAN 00-82 video streams
 ///
-/// \file QtRtpH264Depayloader.h
+/// \file QtRtpDepayloader.h
 ///
 
-#ifndef QT_QTRTPH264DEPAYLOADER_H_
-#define QT_QTRTPH264DEPAYLOADER_H_
+#ifndef QT_QTRTPDEPAYLOADER_H_
+#define QT_QTRTPDEPAYLOADER_H_
 
 #include <QByteArray>
 #include <QObject>
-#include <QVector>
 
-#include "h264/gst/vaapi/rtp_h264_depayloader.h"
-#include "qt/QtRtpDepayloader.h"
+#include "rtp/rtp.h"
 
 namespace mediax::qt {
 
-class QtRtpH264Depayloader : public QtRtpDepayloader {
+class QtRtpDepayloader : public QObject {
+  Q_OBJECT
+
  public:
   ///
-  /// \brief Construct a new Qt Rtp H 2 6 4 Deayloader object
+  /// \brief Construct a new Qt Rtp Depayloader object
   ///
   /// \param parent
   ///
-  explicit QtRtpH264Depayloader(QObject *parent = nullptr);
+  explicit QtRtpDepayloader(QObject *parent = nullptr);
 
   ///
   /// \brief Set the Stream Info object
@@ -43,36 +43,36 @@ class QtRtpH264Depayloader : public QtRtpDepayloader {
   /// \param width
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE void setStreamInfo(const QString &hostname, int port, const QString &session_name, int height, int width,
-                                 int framerate) final;
+  Q_INVOKABLE virtual void setStreamInfo(const QString &hostname, int port, const QString &session_name, int height,
+                                         int width, int framerate) = 0;
 
   ///
   /// \brief Open the RTP stream
   ///
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE bool open() final;
+  Q_INVOKABLE virtual bool open() = 0;
 
   ///
   /// \brief Start the RTP stream
   ///
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE void start() final;
+  Q_INVOKABLE virtual void start() = 0;
 
   ///
   /// \brief Stop the RTP stream
   ///
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE void stop() final;
+  Q_INVOKABLE virtual void stop() = 0;
 
   ///
   /// \brief Close the RTP stream
   ///
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE void close() final;
+  Q_INVOKABLE virtual void close() = 0;
 
   ///
   /// \brief Receive a frame from the RTP stream
@@ -81,21 +81,24 @@ class QtRtpH264Depayloader : public QtRtpDepayloader {
   /// \param timeout timeout in milliseconds, if zero wait for ever (blocking)
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE bool receive(QByteArray *frame, int timeout = 0) final;
+  Q_INVOKABLE virtual bool receive(QByteArray *frame, int timeout = 0) = 0;
 
   ///
   /// \brief Get the Buffer object
   ///
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE QVector<quint8> getBuffer() final;
+  Q_INVOKABLE virtual QVector<quint8> getBuffer() = 0;
 
   ///
   /// \brief Get the State object
   ///
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE mediax::rtp::StreamState getState() const final;
+  Q_INVOKABLE virtual mediax::rtp::StreamState getState() const = 0;
+
+ signals:
+  virtual void newFrame(QByteArray *frame);
 
  private:
   /// The underlying RTP H.264 depayloader
@@ -104,4 +107,4 @@ class QtRtpH264Depayloader : public QtRtpDepayloader {
 
 }  // namespace mediax::qt
 
-#endif  // QT_QTRTPH264DEPAYLOADER_H_
+#endif  // QT_QTRTPDEPAYLOADER_H_
