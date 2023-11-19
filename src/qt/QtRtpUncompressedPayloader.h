@@ -27,7 +27,7 @@ class QtRtpUncompressedPayloader : public QtRtpPayloader {
   Q_OBJECT
 
  public:
-  QtRtpUncompressedPayloader(QObject* parent = nullptr);
+  explicit QtRtpUncompressedPayloader(QObject* parent = nullptr);
 
   ///
   /// \brief Set the Stream Info object
