@@ -99,6 +99,7 @@ class UncompressedRecieve : public QObject {
     m_count++;
     EXPECT_EQ(frame.height, 480);
     EXPECT_EQ(frame.width, 640);
+    EXPECT_EQ(frame.video.size(), 640 * 480 * 3);
 
     // std::cout << "Frame received: " << m_count << std::endl;
   }
@@ -156,6 +157,7 @@ class H264Recieve : public QObject {
     m_count++;
     EXPECT_EQ(frame.height, 480);
     EXPECT_EQ(frame.width, 640);
+    EXPECT_EQ(frame.video.size(), 640 * 480 * 1.5);
 
     // std::cout << "Frame received: " << m_count << std::endl;
   }

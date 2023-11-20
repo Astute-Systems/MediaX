@@ -28,6 +28,7 @@ class QtTest : public QObject {
     frame.height = 480;
     frame.width = 640;
     frame.encoding = ::mediax::rtp::ColourspaceType::kColourspaceRgb24;
+
     // Send the frame to the payloader
     emit newFrame(frame);
   }
