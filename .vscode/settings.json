@@ -197,7 +197,8 @@
         "*.ipp": "cpp",
         "sap_listener.h": "c",
         "rtp_types.h": "c",
-        "*.moc": "cpp"
+        "*.moc": "cpp",
+        "qthread": "cpp"
     },
     "terminal.integrated.shell.windows": "C:\\msys64\\usr\\bin\\bash.exe",
     "terminal.integrated.shellArgs.windows": [

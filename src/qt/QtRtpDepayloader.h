@@ -43,8 +43,7 @@ class QtRtpDepayloader : public QObject {
   /// \param width
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE virtual void setStreamInfo(const QString &hostname, int port, const QString &session_name, int height,
-                                         int width, int framerate) = 0;
+  Q_INVOKABLE virtual void setStreamInfo(const mediax::rtp::StreamInformation &stream_information) = 0;
 
   ///
   /// \brief Open the RTP stream

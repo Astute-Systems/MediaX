@@ -43,8 +43,7 @@ class QtRtpH264Depayloader : public QtRtpDepayloader {
   /// \param width
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE void setStreamInfo(const QString &hostname, int port, const QString &session_name, int height, int width,
-                                 int framerate) final;
+  Q_INVOKABLE void setStreamInfo(const mediax::rtp::StreamInformation &stream_information) final;
 
   ///
   /// \brief Open the RTP stream
@@ -99,7 +98,7 @@ class QtRtpH264Depayloader : public QtRtpDepayloader {
 
  private:
   /// The underlying RTP H.264 depayloader
-  mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader depayloader_;
+  mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader m_depayloader;
 };
 
 }  // namespace mediax::qt

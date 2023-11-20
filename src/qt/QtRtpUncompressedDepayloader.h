@@ -44,8 +44,7 @@ class QtRtpUncompressedDepayloader : public QtRtpDepayloader {
   /// \param width
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE void setStreamInfo(const QString& hostname, int port, const QString& session_name, int height, int width,
-                                 int framerate) final;
+  Q_INVOKABLE void setStreamInfo(const mediax::rtp::StreamInformation& stream_information) final;
 
   ///
   /// \brief Open the RTP stream

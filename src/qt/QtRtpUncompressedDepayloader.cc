@@ -22,16 +22,7 @@ namespace mediax::qt {
 
 QtRtpUncompressedDepayloader::QtRtpUncompressedDepayloader(QObject* parent) : QtRtpDepayloader(parent) {}
 
-void QtRtpUncompressedDepayloader::setStreamInfo(const QString& hostname, int port, const QString& session_name,
-                                                 int height, int width, int framerate) {
-  ::mediax::rtp::StreamInformation stream_information;
-  stream_information.hostname = hostname.toStdString();
-  stream_information.port = port;
-  stream_information.session_name = session_name.toStdString();
-  stream_information.height = height;
-  stream_information.width = width;
-  stream_information.framerate = framerate;
-  stream_information.encoding = mediax::rtp::ColourspaceType::kColourspaceRgb24;
+void QtRtpUncompressedDepayloader::setStreamInfo(const mediax::rtp::StreamInformation& stream_information) {
   m_depayloader.SetStreamInfo(stream_information);
 
   // Register callback to emit new frame
