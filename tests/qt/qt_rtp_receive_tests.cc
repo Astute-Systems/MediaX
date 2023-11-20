@@ -158,7 +158,8 @@ class H264Recieve : public QObject {
   int m_count = 0;
 };
 
-TEST_F(QtRtpReceive, disabled_RtpH264) {
+//
+TEST_F(QtRtpReceive, DISABLED_RtpH264) {
   running = true;
   H264Recieve rtp;
   EXPECT_EQ(rtp.getState(), ::mediax::rtp::StreamState::kStarted);
