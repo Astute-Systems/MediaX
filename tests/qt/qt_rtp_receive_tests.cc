@@ -20,8 +20,11 @@ class QtRtpReceive : public ::testing::Test {
   QCoreApplication* app;
 };
 
-mediax::rtp::StreamInformation stream_info = {
+mediax::rtp::StreamInformation stream_info_rgb24 = {
     "test-session", "127.0.0.1", 5004, 480, 640, 25, ::mediax::rtp::ColourspaceType::kColourspaceRgb24};
+
+mediax::rtp::StreamInformation stream_info_h264 = {
+    "test-session-h264", "127.0.0.1", 5004, 480, 640, 25, ::mediax::rtp::ColourspaceType::kColourspaceH264Part10};
 
 bool running = false;
 
@@ -31,7 +34,7 @@ void CreateTransmitter() {
   frame.video.resize(640 * 480 * 3);
   frame.video.fill(0xff);
   mediax::qt::QtRtpUncompressedPayloader rtp;
-  rtp.setStreamInfo(stream_info);
+  rtp.setStreamInfo(stream_info_rgb24);
   rtp.open();
   rtp.start();
   while (running) {
@@ -51,11 +54,11 @@ void CreateTransmitter2() {
   frame.width = 640;
   frame.encoding = ::mediax::rtp::ColourspaceType::kColourspaceH264Part10;
   mediax::qt::QtRtpH264Payloader rtp;
-  rtp.setStreamInfo(stream_info);
+  rtp.setStreamInfo(stream_info_h264);
   rtp.open();
   rtp.start();
   while (running) {
-    emit rtp.sendFrame(frame);
+    rtp.transmit(&frame, false);
     QTest::qWait(40);
     QCoreApplication::processEvents();
   }
@@ -75,7 +78,7 @@ class UncompressedRecieve : public QObject {
  public:
   UncompressedRecieve() {  // Set the stream info
 
-    uncompressed_depayloader.setStreamInfo(stream_info);
+    uncompressed_depayloader.setStreamInfo(stream_info_rgb24);
 
     // Connect signal to slot for newFrame
     connect(&uncompressed_depayloader, &mediax::qt::QtRtpUncompressedDepayloader::newFrame, this,
@@ -134,7 +137,11 @@ class H264Recieve : public QObject {
  public:
   H264Recieve() {  // Set the stream info
 
-    compressed_depayloader.setStreamInfo(stream_info);
+    // This should be set from the stream
+    stream_info_h264.height = 0;
+    stream_info_h264.width = 0;
+
+    compressed_depayloader.setStreamInfo(stream_info_h264);
 
     // Connect signal to slot for newFrame
     connect(&compressed_depayloader, &mediax::qt::QtRtpH264Depayloader::newFrame, this, &H264Recieve::newFrame);
@@ -159,7 +166,7 @@ class H264Recieve : public QObject {
     EXPECT_EQ(frame.width, 640);
     EXPECT_EQ(frame.video.size(), 640 * 480 * 1.5);
 
-    // std::cout << "Frame received: " << m_count << std::endl;
+    std::cout << "Frame received: " << m_count << " Size: " << frame.video.size() << std::endl;
   }
 
  private:

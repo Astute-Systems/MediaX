@@ -30,8 +30,8 @@ void QtRtpH264Depayloader::setStreamInfo(const mediax::rtp::StreamInformation &s
         frame_data.video.resize(frame.resolution.height * frame.resolution.width * 3);
         memcpy(frame_data.video.data(), frame.cpu_buffer, frame.resolution.height * frame.resolution.width * 3);
 
-        frame_data.height = frame.resolution.height;
-        frame_data.width = frame.resolution.width;
+        frame_data.height = m_depayloader.GetHeight();
+        frame_data.width = m_depayloader.GetWidth();
         frame_data.encoding = frame.encoding;
 
         emit newFrame(frame_data);
