@@ -19,6 +19,7 @@
 #include <QObject>
 
 #include "h264/gst/vaapi/rtp_h264_payloader.h"
+#include "qt/QtCommon.h"
 #include "qt/QtRtpPayloader.h"
 
 namespace mediax::qt {
@@ -88,7 +89,7 @@ class QtRtpH264Payloader : public QtRtpPayloader {
   /// \param blocking Set to true if blocking
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE int transmit(QByteArray *frame, bool blocking = true);
+  Q_INVOKABLE int transmit(Frame *frame, bool blocking = true);
 
  public slots:
 
@@ -97,7 +98,7 @@ class QtRtpH264Payloader : public QtRtpPayloader {
   ///
   /// \param frame The frame to receive
   ///
-  void sendFrame(QByteArray *frame) final;
+  void sendFrame(Frame frame) final;
 
  private:
   ::mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader payloader_;

@@ -18,6 +18,7 @@
 #include <QByteArray>
 #include <QObject>
 
+#include "qt/QtCommon.h"
 #include "rtp/rtp.h"
 
 namespace mediax::qt {
@@ -97,7 +98,7 @@ class QtRtpDepayloader : public QObject {
   Q_INVOKABLE virtual mediax::rtp::StreamState getState() const = 0;
 
  signals:
-  virtual void newFrame(QByteArray *frame);
+  virtual void newFrame(Frame frame);
 };
 
 }  // namespace mediax::qt

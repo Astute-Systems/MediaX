@@ -31,15 +31,14 @@ QtTransmit::~QtTransmit() {
   rtp.close();
 }
 
-void QtTransmit::sendFrame() {
+void QtTransmit::sendFrame(Frame frame) {
   // Create a frame of RGB pixels in QByteArray
-  QByteArray frame;
-  frame.resize(640 * 480 * 3);
+  frame.video.resize(640 * 480 * 3);
 
-  CreateColourBarEbuTestCard(reinterpret_cast<uint8_t*>(frame.data()), 640, 480,
+  CreateColourBarEbuTestCard(reinterpret_cast<uint8_t*>(frame.video.data()), 640, 480,
                              mediax::rtp::ColourspaceType::kColourspaceYuv);
   // Send the frame to the payloader
-  emit newFrame(&frame);
+  emit newFrame(frame);
   // Update counter
   frame_count++;
   // Print out frame count

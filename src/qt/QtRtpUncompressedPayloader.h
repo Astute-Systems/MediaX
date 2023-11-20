@@ -18,6 +18,7 @@
 #include <QObject>
 #include <memory>
 
+#include "qt/QtCommon.h"
 #include "qt/QtRtpH264Payloader.h"
 #include "uncompressed/rtp_uncompressed_payloader.h"
 
@@ -71,7 +72,7 @@ class QtRtpUncompressedPayloader : public QtRtpPayloader {
   /// \param blocking Set to true if blocking
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE int transmit(QByteArray* frame, bool blocking = true) final;
+  Q_INVOKABLE int transmit(Frame* frame, bool blocking = true) final;
 
  public slots:
 
@@ -80,7 +81,7 @@ class QtRtpUncompressedPayloader : public QtRtpPayloader {
   ///
   /// \param frame The frame to receive
   ///
-  void sendFrame(QByteArray* frame) final;
+  void sendFrame(Frame frame) final;
 
  private:
   /// The underlying RTP payloader

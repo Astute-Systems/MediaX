@@ -17,16 +17,19 @@ class QtTest : public QObject {
   }
 
  signals:
-  void newFrame(QByteArray *frame);
+  void newFrame(Frame frame);
 
  public:
   void sendFrame() {
     // Create a frame of RGB pixels in QByteArray
-    QByteArray frame;
-    frame.resize(640 * 480 * 3);
-    frame.fill(0xff);
+    Frame frame;
+    frame.video.resize(640 * 480 * 3);
+    frame.video.fill(0xff);
+    frame.height = 480;
+    frame.width = 640;
+    frame.encoding = ::mediax::rtp::ColourspaceType::kColourspaceRgb24;
     // Send the frame to the payloader
-    emit newFrame(&frame);
+    emit newFrame(frame);
   }
 
  private:

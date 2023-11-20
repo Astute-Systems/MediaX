@@ -104,7 +104,7 @@ class QtRtpUncompressedDepayloader : public QtRtpDepayloader {
   ///
   /// \param frame frame bytes
   ///
-  void newFrame(QByteArray* frame) final;
+  void newFrame(Frame frame) final;
 
  private:
   /// The underlying RTP depayloader

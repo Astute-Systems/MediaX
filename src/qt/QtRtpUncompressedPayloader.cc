@@ -29,12 +29,12 @@ Q_INVOKABLE void QtRtpUncompressedPayloader::stop() { m_rtpPayloader.Stop(); }
 
 Q_INVOKABLE void QtRtpUncompressedPayloader::close() { m_rtpPayloader.Close(); }
 
-Q_INVOKABLE int QtRtpUncompressedPayloader::transmit(QByteArray *frame, bool blocking) {
-  return m_rtpPayloader.Transmit(reinterpret_cast<uint8_t *>(frame->data()), blocking);
+Q_INVOKABLE int QtRtpUncompressedPayloader::transmit(Frame *frame, bool blocking) {
+  return m_rtpPayloader.Transmit(reinterpret_cast<uint8_t *>(frame->video.data()), blocking);
 }
 
-void QtRtpUncompressedPayloader::sendFrame(QByteArray *frame) {
-  m_rtpPayloader.Transmit(reinterpret_cast<uint8_t *>(frame->data()), true);
+void QtRtpUncompressedPayloader::sendFrame(Frame frame) {
+  m_rtpPayloader.Transmit(reinterpret_cast<uint8_t *>(frame.video.data()), true);
 }
 
 }  // namespace mediax::qt

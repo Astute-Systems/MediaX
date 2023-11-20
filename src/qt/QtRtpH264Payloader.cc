@@ -33,12 +33,12 @@ Q_INVOKABLE void QtRtpH264Payloader::stop() { payloader_.Stop(); }
 
 Q_INVOKABLE void QtRtpH264Payloader::close() { payloader_.Close(); }
 
-Q_INVOKABLE int QtRtpH264Payloader::transmit(QByteArray *frame, bool blocking) {
-  return payloader_.Transmit(reinterpret_cast<uint8_t *>(frame->data()), blocking);
+Q_INVOKABLE int QtRtpH264Payloader::transmit(Frame *frame, bool blocking) {
+  return payloader_.Transmit(reinterpret_cast<uint8_t *>(frame->video.data()), blocking);
 }
 
-void QtRtpH264Payloader::sendFrame(QByteArray *frame) {
-  payloader_.Transmit(reinterpret_cast<uint8_t *>(frame->data()), true);
+void QtRtpH264Payloader::sendFrame(Frame frame) {
+  payloader_.Transmit(reinterpret_cast<uint8_t *>(frame.video.data()), true);
 }
 
 }  // namespace mediax::qt

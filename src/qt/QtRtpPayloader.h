@@ -18,6 +18,7 @@
 #include <QByteArray>
 #include <QObject>
 
+#include "qt/QtCommon.h"
 #include "rtp/rtp.h"
 
 namespace mediax::qt {
@@ -75,7 +76,7 @@ class QtRtpPayloader : public QObject {
   /// \param blocking Set to true if blocking
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE virtual int transmit(QByteArray* frame, bool blocking = true) = 0;
+  Q_INVOKABLE virtual int transmit(Frame* frame, bool blocking = true) = 0;
 
  public slots:
 
@@ -84,7 +85,7 @@ class QtRtpPayloader : public QObject {
   ///
   /// \param frame The frame to receive
   ///
-  virtual void sendFrame(QByteArray* frame) = 0;
+  virtual void sendFrame(Frame frame) = 0;
 };
 
 }  // namespace mediax::qt

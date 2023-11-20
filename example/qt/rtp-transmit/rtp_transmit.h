@@ -38,14 +38,14 @@ class QtTransmit : public QObject {
   ///
   /// \param frame
   ///
-  void newFrame(QByteArray *frame);
+  void newFrame(Frame frame);
 
  public slots:
   ///
   /// \brief Send a single frame to the payloader
   ///
   ///
-  void sendFrame();
+  void sendFrame(Frame frame);
 
  private:
   /// The Qt RTP payloader

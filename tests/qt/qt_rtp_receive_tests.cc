@@ -27,15 +27,15 @@ bool running = false;
 
 // Create a transmitter
 void CreateTransmitter() {
-  QByteArray frame;
-  frame.resize(640 * 480 * 3);
-  frame.fill(0xff);
+  Frame frame;
+  frame.video.resize(640 * 480 * 3);
+  frame.video.fill(0xff);
   mediax::qt::QtRtpUncompressedPayloader rtp;
   rtp.setStreamInfo(stream_info);
   rtp.open();
   rtp.start();
   while (running) {
-    emit rtp.sendFrame(&frame);
+    emit rtp.sendFrame(frame);
     QTest::qWait(40);
     QCoreApplication::processEvents();
   }
@@ -44,15 +44,18 @@ void CreateTransmitter() {
 }
 
 void CreateTransmitter2() {
-  QByteArray frame;
-  frame.resize(640 * 480 * 3);
-  frame.fill(0xff);
+  Frame frame;
+  frame.video.resize(640 * 480 * 3);
+  frame.video.fill(0xff);
+  frame.height = 480;
+  frame.width = 640;
+  frame.encoding = ::mediax::rtp::ColourspaceType::kColourspaceH264Part10;
   mediax::qt::QtRtpH264Payloader rtp;
   rtp.setStreamInfo(stream_info);
   rtp.open();
   rtp.start();
   while (running) {
-    emit rtp.sendFrame(&frame);
+    emit rtp.sendFrame(frame);
     QTest::qWait(40);
     QCoreApplication::processEvents();
   }
@@ -91,9 +94,12 @@ class UncompressedRecieve : public QObject {
   mediax::rtp::StreamState getState() const { return uncompressed_depayloader.getState(); }
 
  public slots:
-  void newFrame(QByteArray* frame) {
+  void newFrame(Frame frame) {
     // Do something with the frame
     m_count++;
+    EXPECT_EQ(frame.height, 480);
+    EXPECT_EQ(frame.width, 640);
+
     // std::cout << "Frame received: " << m_count << std::endl;
   }
 
@@ -145,9 +151,12 @@ class H264Recieve : public QObject {
   mediax::rtp::StreamState getState() const { return compressed_depayloader.getState(); }
 
  public slots:
-  void newFrame(QByteArray* frame) {
+  void newFrame(Frame frame) {
     // Do something with the frame
     m_count++;
+    EXPECT_EQ(frame.height, 480);
+    EXPECT_EQ(frame.width, 640);
+
     // std::cout << "Frame received: " << m_count << std::endl;
   }
 
