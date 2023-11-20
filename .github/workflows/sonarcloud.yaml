@@ -46,6 +46,7 @@ jobs:
 
       - name: Collect coverage into one XML report
         run: |
+          gst-inspect-1.0 vaapi
           gcovr --sonarqube > coverage.xml
 
       - name: Run sonar-scanner
