@@ -24,12 +24,13 @@ void QtRtpH264Depayloader::setStreamInfo(const mediax::rtp::StreamInformation &s
   m_depayloader.SetStreamInfo(stream_information);
 
   // Register callback to emit new frame
-  m_depayloader.RegisterCallback([this](const mediax::rtp::RtpDepayloader &depay, mediax::rtp::RtpCallbackData frame) {
-    QByteArray frame_data(reinterpret_cast<const char *>(frame.cpu_buffer),
-                          frame.resolution.height * frame.resolution.width * 3);
+  m_depayloader.RegisterCallback(
+      [this](const mediax::rtp::RtpDepayloader &depay [[maybe_unused]], mediax::rtp::RtpCallbackData frame) {
+        QByteArray frame_data(reinterpret_cast<const char *>(frame.cpu_buffer),
+                              frame.resolution.height * frame.resolution.width * 3);
 
-    emit newFrame(&frame_data);
-  });
+        emit newFrame(&frame_data);
+      });
 }
 
 Q_INVOKABLE bool QtRtpH264Depayloader::open() { return m_depayloader.Open(); }

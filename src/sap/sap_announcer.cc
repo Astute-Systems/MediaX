@@ -340,13 +340,13 @@ std::map<uint32_t, std::string> SapAnnouncer::GetInterfaces() const {
   uint32_t count = 0;
 
   struct ifaddrs *ifaddr;
-  struct ifaddrs *ifa;
+
   if (getifaddrs(&ifaddr) == -1) {
     perror("getifaddrs failed");
     return interfaces;
   }
 
-  for (ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
+  for (struct ifaddrs *ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
     if (ifa->ifa_addr == nullptr) {
       continue;
     }

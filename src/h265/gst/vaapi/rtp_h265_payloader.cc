@@ -27,14 +27,14 @@ RtpH265GstVaapiPayloader::RtpH265GstVaapiPayloader() = default;
 RtpH265GstVaapiPayloader::~RtpH265GstVaapiPayloader() = default;
 
 void RtpH265GstVaapiPayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
-  egress_.encoding = stream_information.encoding;
-  egress_.height = stream_information.height;
-  egress_.width = stream_information.width;
-  egress_.framerate = stream_information.framerate;
-  egress_.name = stream_information.session_name;
-  egress_.hostname = stream_information.hostname;
-  egress_.port_no = stream_information.port;
-  egress_.settings_valid = true;
+  GetEgressPort().encoding = stream_information.encoding;
+  GetEgressPort().height = stream_information.height;
+  GetEgressPort().width = stream_information.width;
+  GetEgressPort().framerate = stream_information.framerate;
+  GetEgressPort().name = stream_information.session_name;
+  GetEgressPort().hostname = stream_information.hostname;
+  GetEgressPort().port_no = stream_information.port;
+  GetEgressPort().settings_valid = true;
 }
 
 int RtpH265GstVaapiPayloader::Transmit(unsigned char *new_buffer, bool timeout) {
@@ -46,7 +46,7 @@ int RtpH265GstVaapiPayloader::Transmit(unsigned char *new_buffer, bool timeout) 
   // Gstreamer send appsrc
   // Send a frame
   GstElement *appsrc = gst_bin_get_by_name(GST_BIN(pipeline_), "rtp-h265-appsrc");
-  int size = egress_.width * egress_.height * 3;
+  int size = GetEgressPort().width * GetEgressPort().height * 3;
   GstBuffer *buffer = gst_buffer_new_allocate(nullptr, size, nullptr);
 
   // Define info
@@ -82,9 +82,9 @@ bool RtpH265GstVaapiPayloader::Open() {
   // Create a capsfilter element to set the caps for the H.264 stream
   GstElement *capsfilter = gst_element_factory_make("capsfilter", "rtp-h265-capsfilter");
   // Raw RGB caps
-  GstCaps *caps =
-      gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "RGB", "width", G_TYPE_INT, egress_.width, "height",
-                          G_TYPE_INT, egress_.height, "framerate", GST_TYPE_FRACTION, egress_.framerate, 1, nullptr);
+  GstCaps *caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "RGB", "width", G_TYPE_INT,
+                                      GetEgressPort().width, "height", G_TYPE_INT, GetEgressPort().height, "framerate",
+                                      GST_TYPE_FRACTION, GetEgressPort().framerate, 1, nullptr);
   g_object_set(G_OBJECT(capsfilter), "caps", caps, nullptr);
 
   // Convert the video colourspace
@@ -98,7 +98,7 @@ bool RtpH265GstVaapiPayloader::Open() {
 
   // Create a udpsink element to stream over ethernet
   GstElement *udpsink = gst_element_factory_make("udpsink", "rtp-h265-udpsink");
-  g_object_set(G_OBJECT(udpsink), "host", egress_.hostname.c_str(), "port", egress_.port_no, nullptr);
+  g_object_set(G_OBJECT(udpsink), "host", GetEgressPort().hostname.c_str(), "port", GetEgressPort().port_no, nullptr);
 
   // Add all elements to the pipeline
   gst_bin_add_many(GST_BIN(pipeline_), appsrc, capsfilter, videoconvert, vaapih265enc, rtp264pay, udpsink, nullptr);

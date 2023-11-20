@@ -48,69 +48,69 @@ std::vector<uint8_t> RtpUncompressedPayloader::buffer_in_;
 
 RtpUncompressedPayloader::~RtpUncompressedPayloader(void) {
   if (tx_thread_.joinable()) tx_thread_.join();
-  if (egress_.sockfd) {
-    close(egress_.sockfd);
+  if (GetEgressPort().sockfd) {
+    close(GetEgressPort().sockfd);
   }
 }
 
 void RtpUncompressedPayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
-  egress_.encoding = stream_information.encoding;
-  egress_.height = stream_information.height;
-  egress_.width = stream_information.width;
-  egress_.framerate = stream_information.framerate;
-  egress_.name = stream_information.session_name;
-  egress_.hostname = stream_information.hostname;
-  egress_.port_no = stream_information.port;
-  egress_.settings_valid = true;
-  buffer_in_.resize(egress_.height * egress_.width * 2);
+  GetEgressPort().encoding = stream_information.encoding;
+  GetEgressPort().height = stream_information.height;
+  GetEgressPort().width = stream_information.width;
+  GetEgressPort().framerate = stream_information.framerate;
+  GetEgressPort().name = stream_information.session_name;
+  GetEgressPort().hostname = stream_information.hostname;
+  GetEgressPort().port_no = stream_information.port;
+  GetEgressPort().settings_valid = true;
+  buffer_in_.resize(GetEgressPort().height * GetEgressPort().width * 2);
 }
 
 bool RtpUncompressedPayloader::Open() {
-  if (!egress_.port_no) {
+  if (!GetEgressPort().port_no) {
     std::cerr << "No ports set, nothing to open";
     exit(-1);
   }
 
-  if (egress_.port_no) {
+  if (GetEgressPort().port_no) {
     // socket: create the outbound socket
-    egress_.sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    if (egress_.sockfd < 0) {
+    GetEgressPort().sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (GetEgressPort().sockfd < 0) {
       std::cerr << "ERROR opening socket\n";
       exit(-1);
     }
 
     // gethostbyname: get the server's DNS entry
-    getaddrinfo(egress_.hostname.c_str(), nullptr, nullptr, &server_out_);
+    getaddrinfo(GetEgressPort().hostname.c_str(), nullptr, nullptr, &server_out_);
     if (server_out_ == nullptr) {
-      std::cerr << "ERROR, no such host as " << egress_.hostname << "\n";
+      std::cerr << "ERROR, no such host as " << GetEgressPort().hostname << "\n";
       exit(-1);
     }
 
     // build the server's Internet address
     memset(&server_addr_out_, 0, sizeof(server_addr_out_));
     server_addr_out_.sin_family = AF_INET;
-    server_addr_out_.sin_addr.s_addr = inet_addr(egress_.hostname.c_str());
-    server_addr_out_.sin_port = htons((uint16_t)egress_.port_no);
+    server_addr_out_.sin_addr.s_addr = inet_addr(GetEgressPort().hostname.c_str());
+    server_addr_out_.sin_port = htons((uint16_t)GetEgressPort().port_no);
 
     // send the message to the server
     server_len_out_ = sizeof(server_addr_out_);
-    egress_.socket_open = true;
+    GetEgressPort().socket_open = true;
   }
 
   return true;
 }
 
 void RtpUncompressedPayloader::Close() {
-  if (egress_.port_no) {
-    close(egress_.sockfd);
-    egress_.sockfd = 0;
-    egress_.socket_open = false;
+  if (GetEgressPort().port_no) {
+    close(GetEgressPort().sockfd);
+    GetEgressPort().sockfd = 0;
+    GetEgressPort().socket_open = false;
   }
   if (tx_thread_.joinable()) tx_thread_.join();
 }
 
 void RtpUncompressedPayloader::UpdateHeader(::mediax::rtp::RtpHeader *packet, int line, int bytes_per_pixel, int last,
-                                            int32_t timestamp, int32_t source) const {
+                                            int32_t timestamp, int32_t source) {
   memset(reinterpret_cast<std::byte *>(packet), 0, sizeof(::mediax::rtp::RtpHeader));
   packet->rtp.protocol = ::mediax::rtp::kRtpVersion << 30;
   packet->rtp.protocol = packet->rtp.protocol | ::mediax::rtp::kRtpExtension << 28;
@@ -119,7 +119,7 @@ void RtpUncompressedPayloader::UpdateHeader(::mediax::rtp::RtpHeader *packet, in
   packet->rtp.timestamp = timestamp;
   packet->rtp.source = source;
   packet->payload.extended_sequence_number = (sequence_number_ >> 16) & 0xffff;
-  packet->payload.line[0].length = static_cast<uint16_t>(egress_.width * bytes_per_pixel);
+  packet->payload.line[0].length = static_cast<uint16_t>(GetEgressPort().width * bytes_per_pixel);
   packet->payload.line[0].line_number = (int16_t)line;
   packet->payload.line[0].offset = 0x8000;  // Indicates another line
   packet->payload.line[1].length = 0;
@@ -136,17 +136,17 @@ void RtpUncompressedPayloader::SendFrame(RtpUncompressedPayloader *stream) {
   ssize_t n = 0;
   uint32_t timestamp = GenerateTimestamp90kHz();
 
-  if (stream->egress_.encoding == ::mediax::rtp::ColourspaceType::kColourspaceUndefined) {
+  if (stream->GetEgressPort().encoding == ::mediax::rtp::ColourspaceType::kColourspaceUndefined) {
     std::cerr << "Colourspace not defined!!\n";
   }
-  uint8_t bytes_per_pixel = ::mediax::rtp::kColourspaceBytes.at(stream->egress_.encoding);
-  int32_t stride = stream->egress_.width * bytes_per_pixel;
+  uint8_t bytes_per_pixel = ::mediax::rtp::kColourspaceBytes.at(stream->GetEgressPort().encoding);
+  int32_t stride = stream->GetEgressPort().width * bytes_per_pixel;
 
   /// Note DEF-STAN 00-082 starts line numbers at 1, gstreamer starts at 0 for raw video
-  for (uint32_t c = 1; c <= (stream->egress_.height); c++) {
+  for (uint32_t c = 1; c <= (stream->GetEgressPort().height); c++) {
     uint32_t last = 0;
 
-    if (c == stream->egress_.height) last = 1;
+    if (c == stream->GetEgressPort().height) last = 1;
     stream->UpdateHeader(reinterpret_cast<::mediax::rtp::RtpHeader *>(&packet), c, bytes_per_pixel, last, timestamp,
                          ::mediax::rtp::kRtpSource);
 
@@ -155,14 +155,14 @@ void RtpUncompressedPayloader::SendFrame(RtpUncompressedPayloader *stream) {
 
     memcpy(reinterpret_cast<uint8_t *>(&packet.head.payload.line[2]),
            reinterpret_cast<uint8_t *>(&stream->arg_tx.rgb_frame[c * stride]), stride);
-    n = sendto(stream->egress_.sockfd, &packet, stride + 26, 0, (const sockaddr *)&stream->server_addr_out_,
+    n = sendto(stream->GetEgressPort().sockfd, &packet, stride + 26, 0, (const sockaddr *)&stream->server_addr_out_,
                stream->server_len_out_);
     if (n != stride + 26) {
-      LOG(ERROR) << "Transmit socket failure fd=" << stream->egress_.sockfd;
+      LOG(ERROR) << "Transmit socket failure fd=" << stream->GetEgressPort().sockfd;
     }
 
     if (n == 0) {
-      LOG(ERROR) << "Transmit socket failure fd=" << stream->egress_.sockfd;
+      LOG(ERROR) << "Transmit socket failure fd=" << stream->GetEgressPort().sockfd;
       return;
     }
   }
@@ -178,7 +178,7 @@ void RtpUncompressedPayloader::TransmitThread(RtpUncompressedPayloader *stream) 
 int RtpUncompressedPayloader::Transmit(uint8_t *rgbframe, bool blocking) {
   arg_tx.rgb_frame = rgbframe;
 
-  if (egress_.port_no == 0) return -1;
+  if (GetEgressPort().port_no == 0) return -1;
 
   if (::mediax::rtp::kRtpThreaded) {
     // Wait for the last thread to finish

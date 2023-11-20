@@ -171,10 +171,17 @@ class RtpPayloader {
   ///
   void SetBufferSize(uint32_t size) { frame_.resize(size); }
 
-  /// Egress port
-  ::mediax::rtp::RtpPortType egress_;
+ protected:
+  ///
+  /// \brief Get the Egress Port object
+  ///
+  /// \return ::mediax::rtp::RtpPortType&
+  ///
+  ::mediax::rtp::RtpPortType &GetEgressPort();
 
  private:
+  /// Egress port
+  ::mediax::rtp::RtpPortType egress_;
   /// Data buffer
   std::vector<uint8_t> frame_;
 };

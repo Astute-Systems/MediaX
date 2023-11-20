@@ -27,14 +27,14 @@ RtpH264GstNvidiaPayloader::RtpH264GstNvidiaPayloader() = default;
 RtpH264GstNvidiaPayloader::~RtpH264GstNvidiaPayloader() = default;
 
 void RtpH264GstNvidiaPayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
-  egress_.encoding = stream_information.encoding;
-  egress_.height = stream_information.height;
-  egress_.width = stream_information.width;
-  egress_.framerate = stream_information.framerate;
-  egress_.name = stream_information.session_name;
-  egress_.hostname = stream_information.hostname;
-  egress_.port_no = stream_information.port;
-  egress_.settings_valid = true;
+  GetEgressPort().encoding = stream_information.encoding;
+  GetEgressPort().height = stream_information.height;
+  GetEgressPort().width = stream_information.width;
+  GetEgressPort().framerate = stream_information.framerate;
+  GetEgressPort().name = stream_information.session_name;
+  GetEgressPort().hostname = stream_information.hostname;
+  GetEgressPort().port_no = stream_information.port;
+  GetEgressPort().settings_valid = true;
 }
 
 bool RtpH264GstNvidiaPayloader::Open() {
@@ -66,7 +66,7 @@ bool RtpH264GstNvidiaPayloader::Open() {
 
   // Create a udp sink to transmit the RTP stream
   GstElement *udpsink = gst_element_factory_make("udpsink", "rtp-h264-udpsink");
-  g_object_set(G_OBJECT(udpsink), "host", egress_.hostname.c_str(), "port", egress_.port_no, nullptr);
+  g_object_set(G_OBJECT(udpsink), "host", GetEgressPort().hostname.c_str(), "port", GetEgressPort().port_no, nullptr);
 
   // Add all elements to the pipeline
   gst_bin_add_many(GST_BIN(pipeline_), appsrc, capsfilter, nvh264enc, rtph264pay, udpsink, nullptr);
@@ -115,8 +115,8 @@ int RtpH264GstNvidiaPayloader::Transmit(uint8_t *rgbframe, bool blocking) {
   GstElement *appsrc = gst_bin_get_by_name(GST_BIN(pipeline_), "rtp-h264-appsrc");
 
   // Create a buffer from the RGB frame
-  GstBuffer *buffer =
-      gst_buffer_new_wrapped(rgbframe, egress_.width * egress_.height * ::mediax::BytesPerPixel(egress_.encoding));
+  GstBuffer *buffer = gst_buffer_new_wrapped(
+      rgbframe, GetEgressPort().width * GetEgressPort().height * ::mediax::BytesPerPixel(GetEgressPort().encoding));
 
   // Push the buffer to the appsrc element
   GstFlowReturn ret = gst_app_src_push_buffer(GST_APP_SRC(appsrc), buffer);

@@ -158,8 +158,7 @@ class RtpUncompressedPayloader : public ::mediax::rtp::RtpPayloader {
   /// \param timestamp the timestamp
   /// \param source the source id
   ///
-  void UpdateHeader(rtp::RtpHeader *packet, int line, int bytes_per_pixel, int last, int32_t timestamp,
-                    int32_t source) const;
+  void UpdateHeader(rtp::RtpHeader *packet, int line, int bytes_per_pixel, int last, int32_t timestamp, int32_t source);
 
   ///
   /// \brief Transmit RTP data to the network using a separate thread

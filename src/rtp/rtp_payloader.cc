@@ -37,4 +37,6 @@ void RtpPayloader::Stop() {
   // Nothing to do for base class
 }
 
+::mediax::rtp::RtpPortType &RtpPayloader::GetEgressPort() { return egress_; }
+
 }  // namespace mediax::rtp
