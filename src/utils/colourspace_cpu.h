@@ -18,6 +18,9 @@
 
 #include "utils/colourspace.h"
 
+extern "C" {
+#include "libswscale/swscale.h"
+}
 namespace mediax::video {
 
 /// Helper functions for different colour space options, optimised for CPU
@@ -30,6 +33,9 @@ class ColourSpaceCpu : public ColourSpace {
   ColourSpaceCpu() = default;
 
   ~ColourSpaceCpu() final = default;
+
+  int Convert(uint32_t width, uint32_t height, uint8_t *in, AVPixelFormat in_format, uint8_t in_bytes, uint8_t *out,
+              AVPixelFormat out_format, uint8_t out_bytes) const;
 
   ///
   /// \brief Convert YUV to RGBA on the CPU
@@ -171,6 +177,17 @@ class ColourSpaceCpu : public ColourSpace {
   /// \param rgba The RGBA image buffer
   ///
   int Mono8ToRgba(uint32_t width, uint32_t height, uint8_t *mono8, uint8_t *rgba) const final;
+
+  ///
+  /// \brief Convert Mono8 to RGB on the CPU
+  ///
+  /// \param width
+  /// \param height
+  /// \param mono8
+  /// \param rgb
+  /// \return int
+  ///
+  int Mono8ToRgb(uint32_t width, uint32_t height, uint8_t *mono8, uint8_t *rgb) const;
 
   ///
   /// \brief Convert Mono16 to RGBA on the CPU
