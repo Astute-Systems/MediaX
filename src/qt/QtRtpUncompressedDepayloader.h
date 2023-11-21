@@ -97,15 +97,6 @@ class QtRtpUncompressedDepayloader : public QtRtpDepayloader {
   ///
   Q_INVOKABLE mediax::rtp::StreamState getState() const final;
 
- signals:
-
-  ///
-  /// \brief Receive a frame from the RTP stream
-  ///
-  /// \param frame frame bytes
-  ///
-  void newFrame(Frame frame) final;
-
  private:
   /// The underlying RTP depayloader
   mediax::rtp::uncompressed::RtpUncompressedDepayloader m_depayloader;
