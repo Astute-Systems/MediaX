@@ -135,11 +135,11 @@ int ColourSpaceCpu::Mono16ToBgra(uint32_t width, uint32_t height, uint8_t *mono1
 }
 
 int ColourSpaceCpu::Nv12ToBgra(uint32_t height, uint32_t width, uint8_t *nv12, uint8_t *bgra) const {
-  return Convert(width, height, nv12, AV_PIX_FMT_NV12, 1, bgra, AV_PIX_FMT_BGRA, 4);
+  return Convert(width, height, nv12, AV_PIX_FMT_NV12, 2, bgra, AV_PIX_FMT_BGRA, 4);
 }
 
 int ColourSpaceCpu::Nv12ToRgb(uint32_t height, uint32_t width, uint8_t *nv12, uint8_t *rgb) const {
-  return Convert(width, height, nv12, AV_PIX_FMT_NV12, 1, rgb, AV_PIX_FMT_RGB24, 3);
+  return Convert(width, height, nv12, AV_PIX_FMT_NV12, 2, rgb, AV_PIX_FMT_RGB24, 3);
 }
 
 int ColourSpaceCpu::YuvToArgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *argb) const {
