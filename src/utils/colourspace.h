@@ -146,12 +146,23 @@ class ColourSpace {
   ///
   /// \brief Convert Mono8 to RGBA on the CPU
   ///
-  /// \param width  The height of the image
+  /// \param width The height of the image
   /// \param height The width of the image
   /// \param mono8 The monochrome 8 bit image
   /// \param rgba The RGBA image buffer
   ///
   virtual int Mono8ToRgba(uint32_t width, uint32_t height, uint8_t *mono8, uint8_t *rgba) const = 0;
+
+  ///
+  /// \brief Convert Mono8 to RGB on the CPU
+  ///
+  /// \param width The height of the image
+  /// \param height The width of the image
+  /// \param mono8 The monochrome 8 bit image
+  /// \param rgb The RGB image buffer
+  /// \return int
+  ///
+  virtual int Mono8ToRgb(uint32_t width, uint32_t height, uint8_t *mono8, uint8_t *rgb) const = 0;
 
   ///
   /// \brief Convert Mono16 to RGBA on the CPU
@@ -162,6 +173,16 @@ class ColourSpace {
   /// \param rgba The RGBA image buffer
   ///
   virtual int Mono16ToRgba(uint32_t width, uint32_t height, uint8_t *mono16, uint8_t *rgba) const = 0;
+
+  ///
+  /// \brief Convert Mono16 to RGBA on the CPU
+  ///
+  /// \param width The height of the image
+  /// \param height The width of the image
+  /// \param mono16 The monochrome 16 bit image
+  /// \param rgb The RGB image buffer
+  ///
+  virtual int Mono16ToRgb(uint32_t width, uint32_t height, uint8_t *mono16, uint8_t *rgb) const = 0;
 
   ///
   /// \brief Convert YUV to RGB

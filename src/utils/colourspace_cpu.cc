@@ -166,6 +166,10 @@ int ColourSpaceCpu::Mono16ToRgba(uint32_t width, uint32_t height, uint8_t *mono1
   return Convert(width, height, mono16, AV_PIX_FMT_GRAY16, 2, rgba, AV_PIX_FMT_RGBA, 4);
 }
 
+int ColourSpaceCpu::Mono16ToRgb(uint32_t width, uint32_t height, uint8_t *mono16, uint8_t *rgb) const {
+  return Convert(width, height, mono16, AV_PIX_FMT_GRAY16, 2, rgb, AV_PIX_FMT_RGB24, 3);
+}
+
 int ColourSpaceCpu::ScaleToSizeRgb(uint32_t source_height, uint32_t source_width, uint8_t *source_rgb_buffer,
                                    uint32_t target_height, uint32_t target_width, uint8_t *target_rgb_buffer) const {
   return Convert(source_width, source_height, source_rgb_buffer, AV_PIX_FMT_RGB24, 3, target_rgb_buffer,

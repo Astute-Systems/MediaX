@@ -187,7 +187,7 @@ class ColourSpaceCpu : public ColourSpace {
   /// \param rgb
   /// \return int
   ///
-  int Mono8ToRgb(uint32_t width, uint32_t height, uint8_t *mono8, uint8_t *rgb) const;
+  int Mono8ToRgb(uint32_t width, uint32_t height, uint8_t *mono8, uint8_t *rgb) const final;
 
   ///
   /// \brief Convert Mono16 to RGBA on the CPU
@@ -198,6 +198,16 @@ class ColourSpaceCpu : public ColourSpace {
   /// \param rgba The RGBA image buffer
   ///
   int Mono16ToRgba(uint32_t width, uint32_t height, uint8_t *mono16, uint8_t *rgba) const final;
+
+  ///
+  /// \brief Convert Mono16 to RGBA on the CPU
+  ///
+  /// \param width The height of the image
+  /// \param height The width of the image
+  /// \param mono16 The monochrome 16 bit image
+  /// \param rgb The RGB image buffer
+  ///
+  int Mono16ToRgb(uint32_t width, uint32_t height, uint8_t *mono16, uint8_t *rgb) const final;
 
   ///
   /// \brief Convert YUV to RGBA on the CPU
