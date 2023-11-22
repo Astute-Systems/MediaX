@@ -12,13 +12,10 @@
 ///
 
 #include "rtp/rtp.h"
-
 int main(int argc, char *argv[]) {
-  mediax::RtpSapTransmit<mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader> rtp("238.192.1.1", 5004, "test", 640,
-                                                                                      480, 30, "H264");
-  std::vector<uint8_t> data;
-  data.resize(640 * 480 * 3);
-  // Fill the buffer white
+  mediax::RtpSapTransmit<mediax::rtp::uncompressed::RtpUncompressedPayloader> rtp("238.192.1.1", 5004, "test", 640, 480,
+                                                                                  30, "RGB");
+  std::vector<uint8_t> data(640 * 480 * 3);
   std::fill(data.begin(), data.end(), 255);
   while (true) {
     rtp.Transmit(data.data(), false);

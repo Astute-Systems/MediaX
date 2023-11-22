@@ -221,5 +221,6 @@
     "sonarlint.connectedMode.project": {
         "connectionId": "defencex",
         "projectKey": "DefenceX_MediaX"
-    }
+    },
+    "editor.guides.indentation": false
 }

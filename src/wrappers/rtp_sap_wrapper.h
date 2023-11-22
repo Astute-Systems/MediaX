@@ -11,8 +11,8 @@
 ///
 /// \file rtp_sap_wrapper.h
 
-#ifndef RTP_SAP_WRAPPER_H
-#define RTP_SAP_WRAPPER_H
+#ifndef WRAPPERS_RTP_SAP_WRAPPER_H_
+#define WRAPPERS_RTP_SAP_WRAPPER_H_
 
 #include <chrono>
 #include <string>
@@ -98,4 +98,4 @@ class RtpSapTransmit {
 
 }  // namespace mediax
 
-#endif  // RTP_SAP_WRAPPER_H
+#endif  // WRAPPERS_RTP_SAP_WRAPPER_H_
