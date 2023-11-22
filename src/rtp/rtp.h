@@ -27,6 +27,7 @@
 #include "rtp/rtp_utils.h"
 #include "uncompressed/rtp_uncompressed_depayloader.h"
 #include "uncompressed/rtp_uncompressed_payloader.h"
+#include "wrappers/rtp_sap_wrapper.h"
 
 #if CUDA_ENABLED
 #include "utils/colourspace_cuda.h"

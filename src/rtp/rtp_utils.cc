@@ -78,6 +78,30 @@ std::string ColourspaceTypeToString(rtp::ColourspaceType) {
   }
 }
 
+rtp::ColourspaceType ColourspaceTypeFromString(std::string str) {
+  if (str == "RGBA") {
+    return rtp::ColourspaceType::kColourspaceRgba;
+  } else if (str == "RGB24") {
+    return rtp::ColourspaceType::kColourspaceRgb24;
+  } else if (str == "YUV") {
+    return rtp::ColourspaceType::kColourspaceYuv;
+  } else if (str == "MONO16") {
+    return rtp::ColourspaceType::kColourspaceMono16;
+  } else if (str == "MONO8") {
+    return rtp::ColourspaceType::kColourspaceMono8;
+  } else if (str == "NV12") {
+    return rtp::ColourspaceType::kColourspaceNv12;
+  } else if (str == "H264Part4") {
+    return rtp::ColourspaceType::kColourspaceH264Part4;
+  } else if (str == "H264Part10") {
+    return rtp::ColourspaceType::kColourspaceH264Part10;
+  } else if (str == "H265") {
+    return rtp::ColourspaceType::kColourspaceH265;
+  } else {
+    return rtp::ColourspaceType::kColourspaceUndefined;
+  }
+}
+
 uint8_t BitsPerPixel(rtp::ColourspaceType mode) {
   switch (mode) {
     case rtp::ColourspaceType::kColourspaceRgba:
