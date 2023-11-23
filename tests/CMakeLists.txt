@@ -20,6 +20,7 @@ endif()
 
 set(SOURCES
   colourspace_tests.cc
+  colourspace_cpu_tests.cc
   create_test_cards_test.cc
   util_tests.cc
   testcard_tests.cc

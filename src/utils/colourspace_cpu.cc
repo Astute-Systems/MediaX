@@ -187,7 +187,7 @@ int ColourSpaceCpu::ScaleToSizeRgb(uint32_t source_height, uint32_t source_width
       &sws_freeContext);
   if (!ctx) {
     // Handle allocation failure gracefully
-    return 1;
+    return 2;
   }
 
   const std::array<uint8_t *, 1> inData = {source_rgb_buffer};
@@ -214,7 +214,7 @@ int ColourSpaceCpu::ScaleToSizeRgba(uint32_t source_height, uint32_t source_widt
       &sws_freeContext);
   if (!ctx) {
     // Handle allocation failure gracefully
-    return 1;
+    return 2;
   }
 
   const std::array<uint8_t *, 1> inData = {source_rgb_buffer};
@@ -241,7 +241,7 @@ int ColourSpaceCpu::ScaleToSizeBgra(uint32_t source_height, uint32_t source_widt
       &sws_freeContext);
   if (!ctx) {
     // Handle allocation failure gracefully
-    return 1;
+    return 2;
   }
 
   const std::array<uint8_t *, 1> inData = {source_rgb_buffer};
