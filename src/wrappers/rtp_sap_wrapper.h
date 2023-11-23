@@ -38,10 +38,10 @@ class RtpSapTransmit {
   /// \param framerate The framerate of the stream
   /// \param encoding The encoding of the stream
   ///
-  RtpSapTransmit(std::string hostname, uint16_t port, std::string session_name, uint16_t height, uint16_t width,
-                 uint16_t framerate, std::string encoding) {
-    stream_info_ = {.session_name = session_name,
-                    .hostname = hostname,
+  RtpSapTransmit(std::string_view hostname, uint16_t port, std::string_view session_name, uint16_t height,
+                 uint16_t width, uint16_t framerate, std::string_view encoding) {
+    stream_info_ = {.session_name = std::string(session_name),
+                    .hostname = std::string(hostname),
                     .port = port,
                     .height = height,
                     .width = width,
@@ -191,10 +191,10 @@ class RtpSapRecieve {
   /// \param hostname The IPV4 multicast address
   /// \param port The IPV4 multicast port
   ///
-  RtpSapRecieve(std::string hostname, uint16_t port, std::string session_name, uint16_t height, uint16_t width,
-                uint16_t framerate, std::string encoding) {
-    stream_info_ = {.session_name = session_name,
-                    .hostname = hostname,
+  RtpSapRecieve(std::string_view hostname, uint16_t port, std::string_view session_name, uint16_t height,
+                uint16_t width, uint16_t framerate, std::string_view encoding) {
+    stream_info_ = {.session_name = std::string(session_name),
+                    .hostname = std::string(hostname),
                     .port = port,
                     .height = height,
                     .width = width,
@@ -203,7 +203,7 @@ class RtpSapRecieve {
                     .deleted = true};  // MArk as deleted as its not valid yet
 
     if (!mediax::IsRtpInitialised()) mediax::InitRtp(0, nullptr);
-    sap_listener_.RegisterSapListener(stream_info_.session_name, &Callback, reinterpret_cast<void*>(this));
+    sap_listener_.RegisterSapListener(stream_info_.session_name, &Callback, static_cast<void*>(this));
     sap_listener_.Start();
   }
 
@@ -222,8 +222,8 @@ class RtpSapRecieve {
   /// \brief The SAP callback
   ///
   ///
-  static void Callback(sap::SdpMessage* sdp, void* data) {
-    auto rtp = reinterpret_cast<RtpSapRecieve*>(data);
+  static void Callback(const sap::SdpMessage* sdp, void* data) {
+    auto rtp = static_cast<RtpSapRecieve*>(data);
     std::cout << "Address this2 " << rtp << std::endl;
 
     if (rtp->stream_info_.deleted == true) {
@@ -265,7 +265,7 @@ class RtpSapRecieve {
   }
 
  private:
-  bool CheckSapOk() { return !stream_info_.deleted; }
+  bool CheckSapOk() const { return !stream_info_.deleted; }
 
   /// The RTP depayloader
   T rtp_depayloader_;
