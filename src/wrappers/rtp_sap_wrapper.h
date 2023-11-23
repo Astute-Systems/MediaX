@@ -16,6 +16,7 @@
 
 #include <chrono>
 #include <string>
+#include <vector>
 
 #include "rtp/rtp.h"
 #include "sap/sap.h"
@@ -179,6 +180,51 @@ class RtpSapTransmit {
   std::vector<uint8_t> data_buffer_;
   /// Last transmit timestamp
   std::chrono::system_clock::time_point last_transmit_timestamp_;
+};
+
+template <typename T>
+class RtpSapReceive {
+ public:
+  ///
+  /// \brief Construct a new Rtp Sap Receive object
+  ///
+  /// \param hostname The IPV4 multicast address
+  /// \param port The IPV4 multicast port
+  ///
+  RtpSapReceive(std::string hostname, uint16_t port) {
+    if (!mediax::IsRtpInitialised()) mediax::InitRtp(0, nullptr);
+  }
+
+  ///
+  /// \brief Destroy the Rtp Sap Receive object
+  ///
+  ///
+  ~RtpSapReceive() {
+    rtp_depayloader_.Stop();
+    rtp_depayloader_.Close();
+    ::mediax::RtpCleanup();
+  }
+
+  ///
+  /// \brief The frame receive function, this will receive the frame over RTP
+  ///
+  /// \param data The RGB frame data
+  /// \param size The size of the RGB frame data
+  ///
+  void Receive(uint8_t* data, size_t size) {
+    if (CheckSapOk()) {
+      rtp_depayloader_.Receive(data, size);
+    }
+  }
+
+ private:
+  bool CheckSapOk() { return true; }
+  /// The RTP depayloader
+  T rtp_depayloader_;
+  /// The SAP listener
+  sap::SapListener sap_listener_ = ::mediax::sap::SapListener::GetInstance();
+  /// The stream information
+  ::mediax::rtp::StreamInformation stream_info_;
 };
 
 }  // namespace mediax
