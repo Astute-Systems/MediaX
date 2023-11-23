@@ -46,8 +46,9 @@ class RtpSapTransmit {
                     .width = width,
                     .framerate = framerate,
                     .encoding = ::mediax::ColourspaceTypeFromString(encoding)};
-    mediax::InitRtp(0, nullptr);
+    if (!mediax::IsRtpInitialised()) mediax::InitRtp(0, nullptr);
     sap_announcer_.AddSapAnnouncement(stream_info_);
+    sap_announcer_.SetSourceInterface();
     sap_announcer_.Start();
     rtp_payloader_.SetStreamInfo(stream_info_);
     rtp_payloader_.Open();

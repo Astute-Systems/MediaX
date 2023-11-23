@@ -18,13 +18,20 @@ This library (compliant to ISO/IEC 14882 C++17) implements [RFC 4421](https://da
 Transmit streams emit a SAP/SDP announcement every second as per RFC 2974 and RFC 4566. Also referenced as in DEF STAN 00-082. Below is an example of how to stream video using the C++17 template class.
 
 ``` .cpp
-# include "rtp/rtp.h"
+#include "rtp/rtp.h"
 int main(int argc, char *argv[]) {
   mediax::RtpSapTransmit<mediax::rtp::uncompressed::RtpUncompressedPayloader> rtp(
-      "238.192.1.1", 5004, "test-session-name", 640, 480, 30, "RGB");
+      "238.192.1.1", 5004, "test-session-name", 640, 480, 30, "RGB24");
   std::vector<uint8_t> &data = rtp.GetBufferTestPattern();
-  while (true) rtp.Transmit(data.data(), false);
+  for (int count = 0; count < 1000; count++) rtp.Transmit(data.data(), false);
 }
+```
+
+To use another RTP payloader just change the template class i.e. To switch to H.264 use:
+
+``` .cpp
+  mediax::RtpSapTransmit<mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader> rtp(
+      "238.192.1.2", 5004, "test-session-name-compressed", 640, 480, 30, "H264");
 ```
 
 ## Python bindings
