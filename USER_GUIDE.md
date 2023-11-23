@@ -201,7 +201,13 @@ For Intel's Video Accelleration API (VAAPI)
 \section wrappers Helper Wrappers
 For this most simple use cases you can use the RTP and SAP/SDP wrappers to simplify the process of transmitting and receiving data. The example below is the simplest working example for sending a test video stream containing the default test card. More test patterns can be specified see  mediax::RtpSapTransmit::GetBufferTestPattern() and rtp_utils.h
 
+Recieve example:
 \snippet rtp_sap_transmit/rtp_sap_transmit.cc Transmit example wrapper
+
+Transmit example:
+\snippet rtp_sap_receive/rtp_sap_receive.cc Receive example wrapper
+
+\note These wrappers may be adapted to meet your specific needs if different behaviours are required and are provided to show basic use cases.
 
 \section qtcode Qt6 Code Examples
 

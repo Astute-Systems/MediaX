@@ -317,6 +317,7 @@ bool RtpUncompressedDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
     while (!new_rx_frame_) {
       std::this_thread::sleep_for(std::chrono::milliseconds(1));
       auto end_time = std::chrono::high_resolution_clock::now();
+
       if (auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
           duration >= to) {
         memset(GetBuffer().data(), 0, GetBuffer().size());

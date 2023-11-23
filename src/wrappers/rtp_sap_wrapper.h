@@ -183,7 +183,7 @@ class RtpSapTransmit {
 };
 
 template <typename T>
-class RtpSapReceive {
+class RtpSapRecieve {
  public:
   ///
   /// \brief Construct a new Rtp Sap Receive object
@@ -191,18 +191,58 @@ class RtpSapReceive {
   /// \param hostname The IPV4 multicast address
   /// \param port The IPV4 multicast port
   ///
-  RtpSapReceive(std::string hostname, uint16_t port) {
+  RtpSapRecieve(std::string hostname, uint16_t port, std::string session_name, uint16_t height, uint16_t width,
+                uint16_t framerate, std::string encoding) {
+    stream_info_ = {.session_name = session_name,
+                    .hostname = hostname,
+                    .port = port,
+                    .height = height,
+                    .width = width,
+                    .framerate = framerate,
+                    .encoding = ::mediax::ColourspaceTypeFromString(encoding),
+                    .deleted = true};  // MArk as deleted as its not valid yet
+
     if (!mediax::IsRtpInitialised()) mediax::InitRtp(0, nullptr);
+    sap_listener_.RegisterSapListener(stream_info_.session_name, &Callback, reinterpret_cast<void*>(this));
+    sap_listener_.Start();
   }
 
   ///
   /// \brief Destroy the Rtp Sap Receive object
   ///
   ///
-  ~RtpSapReceive() {
+  ~RtpSapRecieve() {
+    sap_listener_.Stop();
     rtp_depayloader_.Stop();
     rtp_depayloader_.Close();
     ::mediax::RtpCleanup();
+  }
+
+  ///
+  /// \brief The SAP callback
+  ///
+  ///
+  static void Callback(sap::SdpMessage* sdp, void* data) {
+    auto rtp = reinterpret_cast<RtpSapRecieve*>(data);
+    std::cout << "Address this2 " << rtp << std::endl;
+
+    if (rtp->stream_info_.deleted == true) {
+      rtp->stream_info_ = SapToStreamInformation(*sdp);
+      rtp->stream_info_.deleted = false;
+      rtp->rtp_depayloader_.SetStreamInfo(rtp->stream_info_);
+      rtp->rtp_depayloader_.Open();
+      rtp->rtp_depayloader_.Start();
+    }
+  }
+
+  ///
+  /// \brief Get the frame buffer, resized and ready to use
+  ///
+  /// \return vector<uint8_t>&
+  ///
+  std::vector<uint8_t>& GetBuffer() {
+    data_buffer_.resize(stream_info_.height * stream_info_.width * (BitsPerPixel(stream_info_.encoding) / 8));
+    return data_buffer_;
   }
 
   ///
@@ -211,20 +251,30 @@ class RtpSapReceive {
   /// \param data The RGB frame data
   /// \param size The size of the RGB frame data
   ///
-  void Receive(uint8_t* data, size_t size) {
+  bool Receive(uint8_t* data, size_t size) {
+    uint8_t* cpu_buffer = nullptr;
     if (CheckSapOk()) {
-      rtp_depayloader_.Receive(data, size);
+      rtp_depayloader_.Receive(&cpu_buffer, 80);
+      memcpy(data, cpu_buffer, size);
+      return true;
+    } else {
+      // Sleep for one second and try again
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+      return false;
     }
   }
 
  private:
-  bool CheckSapOk() { return true; }
+  bool CheckSapOk() { return !stream_info_.deleted; }
+
   /// The RTP depayloader
   T rtp_depayloader_;
   /// The SAP listener
-  sap::SapListener sap_listener_ = ::mediax::sap::SapListener::GetInstance();
+  sap::SapListener& sap_listener_ = ::mediax::sap::SapListener::GetInstance();
   /// The stream information
   ::mediax::rtp::StreamInformation stream_info_;
+  /// The vectored data buffer
+  std::vector<uint8_t> data_buffer_;
 };
 
 }  // namespace mediax

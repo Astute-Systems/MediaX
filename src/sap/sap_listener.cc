@@ -117,7 +117,7 @@ void SapListener::SapListenerThread(SapListener *sap) {
   }
 }
 
-void SapListener::RegisterSapListener(std::string_view session_name, const SapCallback &callback, uint8_t *data) {
+void SapListener::RegisterSapListener(std::string_view session_name, const SapCallback &callback, void *data) {
   data_ = data;
   DLOG(INFO) << "Register SAP listener with session-name=" << session_name;
 
@@ -384,6 +384,14 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
 
 const std::map<std::string, SdpMessage, std::less<>> &SapListener::GetSapAnnouncements() const {
   return announcements_;
+}
+
+bool SapListener::GetSapAnnouncement(std::string_view session_name, SdpMessage **sdp_message) {
+  if (auto it = announcements_.find(std::string(session_name)); it != announcements_.end()) {
+    *sdp_message = &it->second;
+    return true;
+  }
+  return false;
 }
 
 }  // namespace mediax::sap
