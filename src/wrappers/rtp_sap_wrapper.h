@@ -19,6 +19,7 @@
 
 #include "rtp/rtp.h"
 #include "sap/sap.h"
+#include "utils/colourspace_cpu.h"
 
 namespace mediax {
 
@@ -52,6 +53,86 @@ class RtpSapTransmit {
     rtp_payloader_.Open();
     rtp_payloader_.Start();
     last_transmit_timestamp_ = std::chrono::system_clock::now();
+  }
+
+  ///
+  /// \brief Get the frame buffer, resized and ready to use
+  ///
+  /// \return vector<uint8_t>&
+  ///
+  std::vector<uint8_t>& GetBuffer() {
+    data_buffer_.resize(stream_info_.height * stream_info_.width * (BitsPerPixel(stream_info_.encoding) / 8));
+    return data_buffer_;
+  }
+
+  ///
+  /// \brief Get the frame buffer containing a pre-defined test pattern
+  ///
+  /// List of test patterns supported
+  /// + 0=EBU Colour Bars
+  /// + 1=Colour Bars
+  /// + 2=Grey Scale Bars
+  /// + 3=Checkered
+  /// + 4=Red
+  /// + 5=Green
+  /// + 6=Blue
+  /// + 7=Black
+  /// + 8=White
+  /// + 9=White Noise
+  ///
+  /// \param pattern The test pattern generate from the list above, see rtp_utils.h
+  /// \return std::vector<uint8_t>&
+  ///
+  std::vector<uint8_t>& GetBufferTestPattern(uint32_t pattern = 0) {
+    std::vector<uint8_t>& buffer = GetBuffer();
+    switch (pattern) {
+      case 0:
+        CreateColourBarEbuTestCard(buffer.data(), stream_info_.width, stream_info_.height, stream_info_.encoding);
+        break;
+      case 1:
+        CreateColourBarTestCard(buffer.data(), stream_info_.width, stream_info_.height, stream_info_.encoding);
+        break;
+      case 2:
+        CreateGreyScaleBarTestCard(buffer.data(), stream_info_.width, stream_info_.height, stream_info_.encoding);
+        break;
+      case 3:
+        CreateCheckeredTestCard(buffer.data(), stream_info_.width, stream_info_.height, stream_info_.encoding);
+        break;
+      case 4:
+        // red
+        CreateSolidTestCard(buffer.data(), stream_info_.width, stream_info_.height, 0xff, 0xff, 0xff,
+                            stream_info_.encoding);
+        break;
+      case 5:
+        // green
+        CreateSolidTestCard(buffer.data(), stream_info_.width, stream_info_.height, 0x00, 0xff, 0x00,
+                            stream_info_.encoding);
+        break;
+      case 6:
+        // blue
+        CreateSolidTestCard(buffer.data(), stream_info_.width, stream_info_.height, 0x00, 0x00, 0xff,
+                            stream_info_.encoding);
+        break;
+      case 7:
+        // black
+        CreateSolidTestCard(buffer.data(), stream_info_.width, stream_info_.height, 0x00, 0x00, 0x00,
+                            stream_info_.encoding);
+        break;
+      case 8:
+        // white
+        CreateSolidTestCard(buffer.data(), stream_info_.width, stream_info_.height, 0xff, 0xff, 0xff,
+                            stream_info_.encoding);
+        break;
+      case 9:
+        CreateWhiteNoiseTestCard(buffer.data(), stream_info_.width, stream_info_.height, stream_info_.encoding);
+        break;
+      default:
+        // black
+        CreateSolidTestCard(buffer.data(), stream_info_.width, stream_info_.height, 0x00, 0x00, 0x00,
+                            stream_info_.encoding);
+        break;
+    }
+    return GetBuffer();
   }
 
   ///
@@ -91,7 +172,10 @@ class RtpSapTransmit {
   T rtp_payloader_;
   /// The SAP announcer
   sap::SapAnnouncer& sap_announcer_ = ::mediax::sap::SapAnnouncer::GetInstance();
+  /// The stream information
   ::mediax::rtp::StreamInformation stream_info_;
+  /// The vectored data buffer
+  std::vector<uint8_t> data_buffer_;
   /// Last transmit timestamp
   std::chrono::system_clock::time_point last_transmit_timestamp_;
 };

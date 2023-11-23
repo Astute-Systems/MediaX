@@ -113,12 +113,7 @@ class RtpUncompressedDepayloader : public ::mediax::rtp::RtpDepayloader {
   ///
   /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement
   ///
-  /// \param hostname IP address i.e. 239.192.1.1 for multicast
-  /// \param port defaults to 5004
-  /// \param name The name of the stream
-  /// \param encoding The encoding of the stream
-  /// \param height The height of the stream in pixels
-  /// \param width The width of the stream in pixels
+  /// \param stream_information The stream information
   ///
   void SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) final;
 

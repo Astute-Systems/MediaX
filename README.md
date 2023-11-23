@@ -15,7 +15,17 @@
 
 This library (compliant to ISO/IEC 14882 C++17) implements [RFC 4421](https://datatracker.ietf.org/doc/html/rfc4421) RTP (Real Time Protocol) Payload Format for Uncompressed Video and [RFC 3984](https://datatracker.ietf.org/doc/html/rfc3984) for H.264 video as mandated by the UK MoD as part of DEF STAN 00-082 (VIVOE) uncompressed RTP video streaming protocol for real time video. If you are not familiar with the Generic Vehicle Architecture (DEF STAN 00-23) and VIVOE then you can read more [here](https://en.wikipedia.org/wiki/Generic_Vehicle_Architecture).
 
-Transmit streams emit a SAP/SDP announcement every second as per RFC 2974 and RFC 4566. Also referenced as in DEF STAN 00-082.
+Transmit streams emit a SAP/SDP announcement every second as per RFC 2974 and RFC 4566. Also referenced as in DEF STAN 00-082. Below is an example of how to stream video using the C++17 template class.
+
+``` .cpp
+# include "rtp/rtp.h"
+int main(int argc, char *argv[]) {
+  mediax::RtpSapTransmit<mediax::rtp::uncompressed::RtpUncompressedPayloader> rtp(
+      "238.192.1.1", 5004, "test-session-name", 640, 480, 30, "RGB");
+  std::vector<uint8_t> &data = rtp.GetBufferTestPattern();
+  while (true) rtp.Transmit(data.data(), false);
+}
+```
 
 ## Python bindings
 

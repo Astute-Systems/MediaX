@@ -203,6 +203,13 @@ class SapListener {
   /// \return std::map<std::string, std::string>
   ///
   std::map<std::string, std::string, std::less<>> ParseAttributes1(const std::string_view &line) const;
+
+  ///
+  /// \brief Parse any attributes
+  ///
+  /// \param line
+  /// \return std::map<std::string, std::string, std::less<>>
+  ///
   std::map<std::string, std::string, std::less<>> ParseAttributes(const std::string_view &line) const;
 
   ///

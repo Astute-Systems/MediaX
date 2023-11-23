@@ -7,6 +7,7 @@
 - \ref gst
   - @ref examples
   - @ref code
+  - @ref wrappers
   - @ref qtcode
 - \ref v4l2
 - \ref uncompressed
@@ -196,6 +197,11 @@ For NVIDIA NVENC using Gstreamer use:
 
 For Intel's Video Accelleration API (VAAPI)
 \snippet simple/receive.cc Receive example vaapi
+
+\section wrappers Helper Wrappers
+For this most simple use cases you can use the RTP and SAP/SDP wrappers to simplify the process of transmitting and receiving data. The example below is the simplest working example for sending a test video stream containing the default test card. More test patterns can be specified see  mediax::RtpSapTransmit::GetBufferTestPattern() and rtp_utils.h
+
+\snippet rtp_sap_transmit/rtp_sap_transmit.cc Transmit example wrapper
 
 \section qtcode Qt6 Code Examples
 

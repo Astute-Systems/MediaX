@@ -11,13 +11,12 @@
 /// \file rtp_sap_transmit.cc
 ///
 
+// [Transmit example wrapper]
 #include "rtp/rtp.h"
 int main(int argc, char *argv[]) {
-  mediax::RtpSapTransmit<mediax::rtp::uncompressed::RtpUncompressedPayloader> rtp("238.192.1.1", 5004, "test", 640, 480,
-                                                                                  30, "RGB");
-  std::vector<uint8_t> data(640 * 480 * 3);
-  std::fill(data.begin(), data.end(), 255);
-  while (true) {
-    rtp.Transmit(data.data(), false);
-  }
+  mediax::RtpSapTransmit<mediax::rtp::uncompressed::RtpUncompressedPayloader> rtp(
+      "238.192.1.1", 5004, "test-session-name", 640, 480, 30, "RGB");
+  std::vector<uint8_t> &data = rtp.GetBufferTestPattern();
+  while (true) rtp.Transmit(data.data(), false);
 }
+// [Transmit example wrapper]
