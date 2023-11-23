@@ -78,7 +78,7 @@ std::string ColourspaceTypeToString(rtp::ColourspaceType) {
   }
 }
 
-rtp::ColourspaceType ColourspaceTypeFromString(std::string str) {
+rtp::ColourspaceType ColourspaceTypeFromString(std::string_view str) {
   if (str == "RGBA") {
     return rtp::ColourspaceType::kColourspaceRgba;
   } else if (str == "RGB24") {

@@ -89,7 +89,7 @@ class QtRtpH264Payloader : public QtRtpPayloader {
   /// \param blocking Set to true if blocking
   /// \return Q_INVOKABLE
   ///
-  Q_INVOKABLE int transmit(Frame *frame, bool blocking = true);
+  Q_INVOKABLE int transmit(Frame *frame, bool blocking = true) final;
 
  public slots:
 

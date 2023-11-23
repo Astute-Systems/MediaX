@@ -16,6 +16,7 @@
 
 #include <stdint.h>
 
+#include "rtp/rtp_types.h"
 #include "utils/colourspace.h"
 
 extern "C" {
@@ -34,7 +35,7 @@ class ColourSpaceCpu : public ColourSpace {
 
   ~ColourSpaceCpu() final = default;
 
-  int Convert(uint32_t width, uint32_t height, uint8_t *in, AVPixelFormat in_format, uint8_t in_bytes, uint8_t *out,
+  int Convert(mediax::rtp::Resolution res, uint8_t *in, AVPixelFormat in_format, uint8_t in_bytes, uint8_t *out,
               AVPixelFormat out_format, uint8_t out_bytes) const;
 
   ///

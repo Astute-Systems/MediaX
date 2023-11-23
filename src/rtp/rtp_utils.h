@@ -30,6 +30,7 @@
 #include <sys/types.h>
 #endif
 #include <string>
+#include <string_view>
 
 #include "rtp/rtp_types.h"
 
@@ -69,7 +70,7 @@ std::string ColourspaceTypeToString(rtp::ColourspaceType);
 ///
 /// \return rtp::ColourspaceType
 ///
-rtp::ColourspaceType ColourspaceTypeFromString(std::string);
+rtp::ColourspaceType ColourspaceTypeFromString(std::string_view);
 
 ///
 /// \brief Get the number of bits per pixel for a given colour space
