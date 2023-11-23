@@ -45,6 +45,10 @@ SapAnnouncer::SapAnnouncer() {
 SapAnnouncer::~SapAnnouncer() {
   DeleteAllStreams();
   Stop();
+  if (sockfd_ != -1) {
+    close(sockfd_);
+    sockfd_ = -1;
+  }
 }
 
 SapAnnouncer &SapAnnouncer::GetInstance() {
@@ -69,9 +73,9 @@ void SapAnnouncer::Start() {
 
 void SapAnnouncer::Stop() {
   // Only deletes the streams from the SAP/SDP announcement, they are still in the vector ready to be restarted
-  DeleteAllStreams();
   running_ = false;
   if (thread_.joinable()) thread_.join();
+  DeleteAllStreams();
 }
 
 void SapAnnouncer::Restart() {
@@ -278,9 +282,6 @@ void SapAnnouncer::SapAnnouncementThread(SapAnnouncer *sap) {
     }
     std::this_thread::sleep_for(std::chrono::seconds(1));
   }
-
-  if (sap->sockfd_ != -1) close(sap->sockfd_);
-  sap->sockfd_ = -1;
 }
 
 void SapAnnouncer::SetSourceInterface(uint32_t select) {
