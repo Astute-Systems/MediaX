@@ -42,14 +42,6 @@ class RtpH264GstNvidiaDepayloader : public mediax::rtp::RtpDepayloader {
   ~RtpH264GstNvidiaDepayloader() final;
 
   ///
-  /// \brief Copy operator (Deleted)
-  ///
-  /// \param other
-  /// \return RtpH264Depayloader
-  ///
-  RtpH264GstNvidiaDepayloader &operator=(const RtpH264GstNvidiaDepayloader &other);
-
-  ///
   /// \brief Delete the copy constructor and copy assignment operator
   ///
   /// \param other

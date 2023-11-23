@@ -43,16 +43,6 @@ namespace mediax::rtp::uncompressed {
 
 RtpUncompressedDepayloader::RtpUncompressedDepayloader() { pthread_mutex_init(&mutex_, nullptr); }
 
-RtpUncompressedDepayloader::RtpUncompressedDepayloader(const RtpUncompressedDepayloader &other) {
-  *this = other;
-  pthread_mutex_init(&mutex_, nullptr);
-}
-
-RtpUncompressedDepayloader &RtpUncompressedDepayloader::operator=(const RtpUncompressedDepayloader &other
-                                                                  [[maybe_unused]]) {
-  return *this;
-}
-
 // Broadcast the stream to port i.e. 5004
 void RtpUncompressedDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
   GetStream().encoding = stream_information.encoding;

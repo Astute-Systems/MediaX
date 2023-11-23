@@ -41,11 +41,6 @@ RtpH264GstNvidiaDepayloader::RtpH264GstNvidiaDepayloader() {
 
 RtpH264GstNvidiaDepayloader::~RtpH264GstNvidiaDepayloader() = default;
 
-RtpH264GstNvidiaDepayloader &RtpH264GstNvidiaDepayloader::operator=(const RtpH264GstNvidiaDepayloader &other
-                                                                    [[maybe_unused]]) {
-  return *this;
-}
-
 void RtpH264GstNvidiaDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
   ::mediax::rtp::RtpPortType &stream = GetStream();
   stream.encoding = ::mediax::rtp::ColourspaceType::kColourspaceNv12;

@@ -89,21 +89,6 @@ class RtpUncompressedDepayloader : public ::mediax::rtp::RtpDepayloader {
   ~RtpUncompressedDepayloader(void) final = default;
 
   ///
-  /// \brief Construct a new Rtp Uncompressed Depayloader object
-  ///
-  /// \param other
-  ///
-  RtpUncompressedDepayloader(const RtpUncompressedDepayloader &other);
-
-  ///
-  /// \brief Copy operator (Deleted)
-  ///
-  /// \param other
-  /// \return RtpvrawDepayloader&
-  ///
-  RtpUncompressedDepayloader &operator=(const RtpUncompressedDepayloader &other);
-
-  ///
   /// \brief Construct a new Rtpvraw Depayloader object (Deleted)
   ///
   /// \param other

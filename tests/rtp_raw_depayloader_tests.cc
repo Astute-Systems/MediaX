@@ -27,12 +27,6 @@
 #include "util_tests.h"
 #include "utils/colourspace_cpu.h"
 
-TEST(RtpRawDepayloaderTest, Copy) {
-  mediax::rtp::uncompressed::RtpUncompressedDepayloader rtp;
-  mediax::rtp::uncompressed::RtpUncompressedDepayloader rtp2;
-  rtp = rtp2;
-}
-
 TEST(RtpRawDepayloaderTest, Buffer) {
   mediax::rtp::uncompressed::RtpUncompressedDepayloader rtp;
   rtp.SetBufferSize(1000);
