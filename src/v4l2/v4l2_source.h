@@ -19,6 +19,7 @@
 #include <linux/videodev2.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <stdint.h>
 
 #include <iostream>
 #include <string>

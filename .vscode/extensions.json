@@ -2,8 +2,12 @@
     "recommendations": [
         "ms-python.vscode-pylance",
         "ms-python.python",
-        "github.copilot",
         "github.copilot-chat",
-        "github.vscode-github-actions"
+        "github.vscode-github-actions",
+        "ms-vscode.cpptools",
+        "matepek.vscode-catch2-test-adapter",
+        "twxs.cmake",
+        "ms-vscode.cmake-tools",
+        "yzhang.markdown-all-in-one"
     ]
 }
