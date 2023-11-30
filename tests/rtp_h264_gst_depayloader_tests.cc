@@ -29,7 +29,7 @@ TEST(RtpH264DepayloaderTest, Timeout) {
   GTEST_SKIP();
 #endif
 
-  uint8_t* rgb_test;
+  mediax::rtp::RtpFrameData rgb_test;
 
   std::shared_ptr<mediax::rtp::RtpDepayloader> rtp;
   rtp = std::make_shared<mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader>();
@@ -38,7 +38,7 @@ TEST(RtpH264DepayloaderTest, Timeout) {
   rtp->Open();
   EXPECT_FALSE(rtp->Receive(&rgb_test, 80));
   // Expect pointer to be invalid
-  EXPECT_EQ(rgb_test, nullptr);
+  EXPECT_EQ(rgb_test.cpu_buffer, nullptr);
   rtp->Stop();
   rtp->Close();
 }
@@ -93,14 +93,15 @@ TEST(RtpH264DepayloaderTest, UnicastOk) {
   // Start the stream
   EXPECT_TRUE(rtp.Open());
   rtp.Start();
-  uint8_t* data = rgb_test.data();
+  mediax::rtp::RtpFrameData data;
+  data.cpu_buffer = rgb_test.data();
   EXPECT_FALSE(rtp.Receive(&data, 80));
   rtp.Stop();
   rtp.Close();
 
   EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceH264Part10);
   mediax::video::ColourSpaceCpu convert;
-  convert.Nv12ToRgb(rtp.GetHeight(), rtp.GetWidth(), data, rgb_test.data());
+  convert.Nv12ToRgb(rtp.GetHeight(), rtp.GetWidth(), data.cpu_buffer, rgb_test.data());
 
   EXPECT_EQ(rtp.GetHeight(), 720);
   EXPECT_EQ(rtp.GetWidth(), 1280);
@@ -131,14 +132,15 @@ TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfo) {
   // Start the stream
   EXPECT_TRUE(rtp.Open());
   rtp.Start();
-  uint8_t* data = rgb_test.data();
+  mediax::rtp::RtpFrameData data;
+  data.cpu_buffer = rgb_test.data();
   EXPECT_FALSE(rtp.Receive(&data, 80));
   rtp.Stop();
   rtp.Close();
 
   EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceNv12);
   mediax::video::ColourSpaceCpu convert;
-  convert.Nv12ToRgb(rtp.GetHeight(), rtp.GetWidth(), data, rgb_test.data());
+  convert.Nv12ToRgb(rtp.GetHeight(), rtp.GetWidth(), data.cpu_buffer, rgb_test.data());
 
   EXPECT_EQ(rtp.GetHeight(), 720);
   EXPECT_EQ(rtp.GetWidth(), 1280);
@@ -169,14 +171,15 @@ TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfoPtr) {
   // Start the stream
   EXPECT_TRUE(rtp->Open());
   rtp->Start();
-  uint8_t* data = rgb_test.data();
+  mediax::rtp::RtpFrameData data;
+  data.cpu_buffer = rgb_test.data();
   EXPECT_FALSE(rtp->Receive(&data, 80));
   rtp->Stop();
   rtp->Close();
 
   EXPECT_EQ(rtp->GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceNv12);
   mediax::video::ColourSpaceCpu convert;
-  convert.Nv12ToRgb(rtp->GetHeight(), rtp->GetWidth(), data, rgb_test.data());
+  convert.Nv12ToRgb(rtp->GetHeight(), rtp->GetWidth(), data.cpu_buffer, rgb_test.data());
 
   EXPECT_EQ(rtp->GetHeight(), 720);
   EXPECT_EQ(rtp->GetWidth(), 1280);
@@ -276,7 +279,8 @@ TEST(RtpH264DepayloaderTest, TestNoStreamSet) {
   // Start the stream
   EXPECT_FALSE(rtp.Open());
   rtp.Start();
-  uint8_t* data = rgb_test.data();
+  mediax::rtp::RtpFrameData data;
+  data.cpu_buffer = rgb_test.data();
   EXPECT_FALSE(rtp.Receive(&data, 80));
   rtp.Stop();
   rtp.Close();
@@ -324,7 +328,8 @@ TEST(RtpH264DepayloaderTest, StartSwitchManyPayloaders) {
     current_stream = rand() % 5;
     rtp[current_stream].Start();
     // Transmit a frame
-    uint8_t* data = rgb_test.data();
+    mediax::rtp::RtpFrameData data;
+    data.cpu_buffer = rgb_test.data();
     EXPECT_FALSE(rtp[current_stream].Receive(&data, 1));
     last_stream = current_stream;
   }

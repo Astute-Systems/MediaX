@@ -99,14 +99,14 @@ class RtpH265GstVaapiDepayloader : public mediax::rtp::RtpDepayloader {
   /// \return true when frame available
   /// \return false when no frame was received in the timeout and the cpu pointer is invalid
   ///
-  bool Receive(uint8_t **cpu, int32_t timeout = 0) final;
+  bool Receive(mediax::rtp::RtpFrameData *data, int32_t timeout = 0) final;
 
   ///
   /// \brief Call the callback
   ///
   /// \param frame
   ///
-  void Callback(::mediax::rtp::RtpCallbackData frame) const final;
+  void Callback(::mediax::rtp::RtpFrameData frame) const final;
 
   ///
   /// \brief Set new frame available

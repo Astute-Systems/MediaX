@@ -223,10 +223,13 @@ void RtpH264GstVaapiDepayloader::Close() {
   gst_object_unref(pipeline_);
 }
 
-bool RtpH264GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
+bool RtpH264GstVaapiDepayloader::Receive(mediax::rtp::RtpFrameData *data, int32_t timeout) {
   auto start_time = std::chrono::high_resolution_clock::now();
 
-  *cpu = GetBuffer().data();
+  data->resolution.height = GetHeight();
+  data->resolution.width = GetWidth();
+  data->encoding = GetColourSpace();
+  data->cpu_buffer = GetBuffer().data();
   while (!new_rx_frame_) {
     auto elapsed = std::chrono::high_resolution_clock::now() - start_time;
     // Check timeout
@@ -246,7 +249,7 @@ bool RtpH264GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   return true;
 }
 
-void RtpH264GstVaapiDepayloader::Callback(::mediax::rtp::RtpCallbackData frame) const {
+void RtpH264GstVaapiDepayloader::Callback(::mediax::rtp::RtpFrameData frame) const {
   if (GetState() == ::mediax::rtp::StreamState::kStarted) {
     GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
   }
@@ -255,7 +258,7 @@ void RtpH264GstVaapiDepayloader::Callback(::mediax::rtp::RtpCallbackData frame) 
 void RtpH264GstVaapiDepayloader::NewFrame() {
   new_rx_frame_ = true;
   if (CallbackRegistered()) {
-    RtpCallbackData arg_tx = {{GetHeight(), GetWidth()}, GetBuffer().data(), GetColourSpace()};
+    RtpFrameData arg_tx = {{GetHeight(), GetWidth()}, GetBuffer().data(), GetColourSpace()};
     Callback(arg_tx);
   }
 }

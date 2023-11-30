@@ -137,14 +137,14 @@ class RtpUncompressedDepayloader : public ::mediax::rtp::RtpDepayloader {
   /// \param timeout zero will wait forever or a timeout in milliseconds
   /// \return true when frame available and false when no frame was received in the timeout
   ///
-  bool Receive(uint8_t **cpu, int32_t timeout = 0) final;
+  bool Receive(::mediax::rtp::RtpFrameData *data, int32_t timeout = 0) final;
 
   ///
   /// \brief The callback function for the RTP stream
   ///
   /// \param frame
   ///
-  void Callback(::mediax::rtp::RtpCallbackData frame) const final;
+  void Callback(::mediax::rtp::RtpFrameData frame) const final;
 
  private:
   /// The incremental sequence numer for transmitting RTP packets, atomic

@@ -31,6 +31,7 @@
 #include <string>
 #include <thread>
 
+#include "rtp/rtp_types.h"
 #include "rtp/rtp_utils.h"
 
 namespace mediax::rtp::h264::gst::nvidia {
@@ -185,11 +186,14 @@ void RtpH264GstNvidiaDepayloader::Close() {
   gst_object_unref(pipeline_);
 }
 
-bool RtpH264GstNvidiaDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
+bool RtpH264GstNvidiaDepayloader::Receive(::mediax::rtp::RtpFrameData *data, int32_t timeout) {
   auto start_time = std::chrono::high_resolution_clock::now();
 
   // Dont start a new thread if a frame is available just return it
-  *cpu = GetBuffer().data();
+  data->resolution.height = GetHeight();
+  data->resolution.width = GetWidth();
+  data->encoding = GetColourSpace();
+  data->cpu_buffer = GetBuffer().data();
   while (!new_rx_frame_) {
     // Check timeout
     if (auto elapsed = std::chrono::high_resolution_clock::now() - start_time;
@@ -206,7 +210,7 @@ bool RtpH264GstNvidiaDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   return true;
 }
 
-void RtpH264GstNvidiaDepayloader::Callback(::mediax::rtp::RtpCallbackData frame) const {
+void RtpH264GstNvidiaDepayloader::Callback(::mediax::rtp::RtpFrameData frame) const {
   if (GetState() == ::mediax::rtp::StreamState::kStarted) {
     GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
   }

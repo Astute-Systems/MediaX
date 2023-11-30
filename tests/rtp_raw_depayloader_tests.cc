@@ -36,7 +36,7 @@ TEST(RtpRawDepayloaderTest, Buffer) {
 }
 
 TEST(RtpRawDepayloaderTest, Timeout) {
-  uint8_t* yuv_test = nullptr;
+  mediax::rtp::RtpFrameData yuv_test;
   mediax::rtp::uncompressed::RtpUncompressedDepayloader rtp;
 
   mediax::rtp::StreamInformation stream_info = {
@@ -53,7 +53,7 @@ TEST(RtpRawDepayloaderTest, Timeout) {
   rtp.Start();
 
   EXPECT_FALSE(rtp.Receive(&yuv_test, 80));
-  EXPECT_NE(yuv_test, nullptr);
+  EXPECT_NE(yuv_test.cpu_buffer, nullptr);
   rtp.Stop();
   rtp.Close();
 }
@@ -97,7 +97,8 @@ TEST(RtpRawDepayloaderTest, UnicastOk) {
   rtp.Open();
   rtp.Start();
 
-  uint8_t* data = rgb_test.data();
+  mediax::rtp::RtpFrameData data;
+  data.cpu_buffer = rgb_test.data();
   EXPECT_TRUE(rtp.Receive(&data, 80));
   rtp.Stop();
   rtp.Close();
@@ -167,7 +168,8 @@ void OpenStream(std::string ipaddr, uint32_t height, uint32_t width, uint32_t fr
   int frame_count = 0;
   // Recieve video
   while (running) {
-    uint8_t* data = yuv_test.data();
+    mediax::rtp::RtpFrameData data;
+    data.cpu_buffer = yuv_test.data();
     bool ret = rtp.Receive(&data, 0);
     EXPECT_TRUE(ret);
     if (ret == false) break;
@@ -220,7 +222,7 @@ static ::mediax::rtp::RtpCallback callback_;
 void StoreCallback(const ::mediax::rtp::RtpCallback& callback) { callback_ = callback; }
 
 void CallCallback() {
-  ::mediax::rtp::RtpCallbackData frame = {};
+  ::mediax::rtp::RtpFrameData frame = {};
   ::mediax::rtp::uncompressed::RtpUncompressedDepayloader depay;
   callback_(static_cast<const ::mediax::rtp::RtpDepayloader&>(depay), frame);
 }
@@ -243,7 +245,7 @@ TEST(RtpRawDepayloaderTest, Callback) {
   rtp.SetStreamInfo(stream_info);
 
   // Recieve the frame via a callback
-  rtp.RegisterCallback([](const mediax::rtp::RtpDepayloader& rtp, mediax::rtp::RtpCallbackData frame) {
+  rtp.RegisterCallback([](const mediax::rtp::RtpDepayloader& rtp, mediax::rtp::RtpFrameData frame) {
     memcpy(rgb_test.data(), frame.cpu_buffer, rtp.GetWidth() * rtp.GetHeight() * 3);
     std::cout << "Callback called" << std::endl;
     done = true;
@@ -256,7 +258,7 @@ TEST(RtpRawDepayloaderTest, Callback) {
   uint8_t* data = rgb_test.data();
   EXPECT_TRUE(rtp.Receive(&data, 80));
 #else
-  ::mediax::rtp::RtpCallbackData frame = {};
+  ::mediax::rtp::RtpFrameData frame = {};
   rtp.Callback(frame);
   while (!done) {
     std::this_thread::sleep_for(std::chrono::milliseconds(500));

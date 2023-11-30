@@ -251,11 +251,9 @@ class RtpSapRecieve {
   /// \param data The RGB frame data
   /// \param size The size of the RGB frame data
   ///
-  bool Receive(uint8_t* data, size_t size) {
-    uint8_t* cpu_buffer = nullptr;
+  bool Receive(::mediax::rtp::RtpFrameData* data, size_t size) {
     if (CheckSapOk()) {
-      rtp_depayloader_.Receive(&cpu_buffer, 80);
-      memcpy(data, cpu_buffer, size);
+      rtp_depayloader_.Receive(data, 80);
       return true;
     } else {
       // Sleep for one second and try again

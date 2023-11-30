@@ -12,7 +12,7 @@ class MockRtpDepayloader : public mediax::rtp::RtpDepayloader {
   MOCK_METHOD(void, Start, (), (override));
   MOCK_METHOD(void, Stop, (), (override));
   MOCK_METHOD(void, Close, (), (override));
-  MOCK_METHOD(bool, Receive, (uint8_t * *cpu, int32_t timeout), (override));
+  MOCK_METHOD(bool, Receive, (::mediax::rtp::RtpFrameData * data, int32_t timeout), (override));
   MOCK_METHOD(void, SetSessionName, (std::string_view name), ());
   MOCK_METHOD(std::string, GetSessionName, (), (const));
   MOCK_METHOD(::mediax::rtp::ColourspaceType, GetColourSpace, (), (const));
@@ -30,7 +30,7 @@ class MockRtpDepayloader : public mediax::rtp::RtpDepayloader {
   MOCK_METHOD(bool, IsMulticast, (std::string_view ip_address), ());
   MOCK_METHOD(bool, CallbackRegistered, (), (const));
   MOCK_METHOD(void, UnregisterCallback, (), ());
-  MOCK_METHOD(void, Callback, (::mediax::rtp::RtpCallbackData frame), (const, override));
+  MOCK_METHOD(void, Callback, (::mediax::rtp::RtpFrameData frame), (const, override));
   MOCK_METHOD(::mediax::rtp::RtpPortType&, GetStream, (), ());
   MOCK_METHOD(::mediax::rtp::RtpCallback, GetCallback, (), (const));
   MOCK_METHOD(std::vector<uint8_t>&, GetBuffer, (), ());

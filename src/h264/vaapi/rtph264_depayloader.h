@@ -90,7 +90,7 @@ class RtpH264VaapiDepayloader : public RtpDepayloader {
   /// \return true when frame available
   /// \return false when no frame was received in the timeout
   ///
-  bool Receive(uint8_t **cpu, int32_t timeout = 0) final;
+  bool Receive(mediax::rtp::RtpFrameData *data, int32_t timeout = 0) final;
 
   ///
   /// \brief Set new frame available

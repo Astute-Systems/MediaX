@@ -25,7 +25,7 @@ void QtRtpH264Depayloader::setStreamInfo(const mediax::rtp::StreamInformation &s
 
   // Register callback to emit new frame
   m_depayloader.RegisterCallback(
-      [this](const mediax::rtp::RtpDepayloader &depay [[maybe_unused]], mediax::rtp::RtpCallbackData frame) {
+      [this](const mediax::rtp::RtpDepayloader &depay [[maybe_unused]], mediax::rtp::RtpFrameData frame) {
         Frame frame_data;
         frame_data.video.resize(frame.resolution.height * frame.resolution.width * 3);
         memcpy(frame_data.video.data(), frame.cpu_buffer, frame.resolution.height * frame.resolution.width * 3);

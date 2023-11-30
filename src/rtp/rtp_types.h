@@ -184,7 +184,7 @@ struct Resolution {
 };
 
 /// The RTP callback data
-struct RtpCallbackData {
+struct RtpFrameData {
   Resolution resolution;
   uint8_t *cpu_buffer;
   mediax::rtp::ColourspaceType encoding;

@@ -187,10 +187,13 @@ void RtpH265GstVaapiDepayloader::Close() {
   gst_object_unref(pipeline_);
 }
 
-bool RtpH265GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
+bool RtpH265GstVaapiDepayloader::Receive(mediax::rtp::RtpFrameData *data, int32_t timeout) {
   auto start_time = std::chrono::high_resolution_clock::now();
 
-  *cpu = buffer_in_.data();
+  data->resolution.height = GetHeight();
+  data->resolution.width = GetWidth();
+  data->encoding = GetColourSpace();
+  data->cpu_buffer = GetBuffer().data();
   while (!new_rx_frame_) {
     // Check timeout
     if (auto elapsed = std::chrono::high_resolution_clock::now() - start_time;
@@ -207,7 +210,7 @@ bool RtpH265GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   return true;
 }
 
-void RtpH265GstVaapiDepayloader::Callback(::mediax::rtp::RtpCallbackData frame) const {
+void RtpH265GstVaapiDepayloader::Callback(::mediax::rtp::RtpFrameData frame) const {
   GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
 }
 
