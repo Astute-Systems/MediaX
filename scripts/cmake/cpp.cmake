@@ -5,7 +5,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # CMake policy
 cmake_policy(SET CMP0086 NEW)
 cmake_policy(SET CMP0078 NEW)
-cmake_policy(SET CMP0148 NEW)
+# Check cmake version
+
+# cmake_policy(SET CMP0148 NEW)
 # Enable C++17 standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
