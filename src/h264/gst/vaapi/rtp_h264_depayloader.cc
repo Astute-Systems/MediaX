@@ -226,9 +226,6 @@ void RtpH264GstVaapiDepayloader::Close() {
 bool RtpH264GstVaapiDepayloader::Receive(mediax::rtp::RtpFrameData *data, int32_t timeout) {
   auto start_time = std::chrono::high_resolution_clock::now();
 
-  data->resolution.height = GetHeight();
-  data->resolution.width = GetWidth();
-  data->encoding = GetColourSpace();
   data->cpu_buffer = GetBuffer().data();
   while (!new_rx_frame_) {
     auto elapsed = std::chrono::high_resolution_clock::now() - start_time;
@@ -244,6 +241,9 @@ bool RtpH264GstVaapiDepayloader::Receive(mediax::rtp::RtpFrameData *data, int32_
     // Sleep 1ms and wait for a new frame
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
+  data->resolution.height = GetHeight();
+  data->resolution.width = GetWidth();
+  data->encoding = GetColourSpace();
 
   new_rx_frame_ = false;
   return true;
