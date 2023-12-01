@@ -19,6 +19,7 @@
 
 #include "h264/gst/nvidia/rtp_h264_depayloader.h"
 #include "h264/gst/vaapi/rtp_h264_depayloader.h"
+#include "h264/gst/vaapi/rtp_h264_payloader.h"
 #include "rtp/rtp_utils.h"
 #include "uncompressed/rtp_uncompressed_payloader.h"
 #include "util_tests.h"
@@ -331,6 +332,9 @@ TEST(RtpH264DepayloaderTest, StartSwitchManyPayloaders) {
     mediax::rtp::RtpFrameData data;
     data.cpu_buffer = rgb_test.data();
     EXPECT_FALSE(rtp[current_stream].Receive(&data, 1));
+    EXPECT_EQ(data.resolution.height, 0);
+    EXPECT_EQ(data.resolution.width, 0);
+    EXPECT_EQ(data.encoding, ::mediax::rtp::ColourspaceType::kColourspaceNv12);
     last_stream = current_stream;
   }
   rtp[current_stream].Stop();
@@ -339,4 +343,53 @@ TEST(RtpH264DepayloaderTest, StartSwitchManyPayloaders) {
   for (int i = 0; i < 5; i++) {
     rtp[i].Close();
   }
+}
+
+TEST(RtpH264DepayloaderTest, TransmitAFrame) {
+#if !GST_SUPPORTED
+  GTEST_SKIP();
+#endif
+
+  int last_stream = -1;
+  int current_stream = -1;
+
+  std::array<uint8_t, 1280 * 720 * 3> rgb_test;
+  mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
+
+  std::string name = "test_session_name";
+  std::string ip = "127.0.0.1";
+  Stream(&rtp, name, ip, 5004);
+  rtp.Start();
+
+  // Transmit a frame
+  mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader rtp_pay;
+  rtp_pay.SetIpAddress("test_session_name");
+  rtp_pay.SetHeight(720);
+  rtp_pay.SetWidth(1280);
+  rtp_pay.SetIpAddress("127.0.0.1");
+  rtp_pay.SetPort(5004);
+  rtp_pay.SetFrameRate(25);
+  rtp_pay.SetColourSpace(::mediax::rtp::ColourspaceType::kColourspaceH264Part10);
+  rtp_pay.Open();
+  rtp_pay.Start();
+
+  for (int i = 0; i < 3; i++) {
+    rtp_pay.Transmit(rgb_test.data(), 80);
+  }
+  // Sleep 0.5 seconds
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+  // Receive a frame
+  mediax::rtp::RtpFrameData data;
+  data.cpu_buffer = rgb_test.data();
+  EXPECT_TRUE(rtp.Receive(&data, 1000));
+  EXPECT_EQ(data.resolution.height, 720);
+  EXPECT_EQ(data.resolution.width, 1280);
+  EXPECT_EQ(data.encoding, ::mediax::rtp::ColourspaceType::kColourspaceNv12);
+
+  rtp.Stop();
+  rtp.Close();
+
+  rtp_pay.Stop();
+  rtp_pay.Close();
 }

@@ -111,12 +111,26 @@ class RtpPayloader {
   mediax::rtp::ColourspaceType GetColourSpace() const;
 
   ///
+  /// \brief Set the Colour Space object
+  ///
+  /// \param colourspace
+  ///
+  void SetColourSpace(mediax::rtp::ColourspaceType colourspace);
+
+  ///
   /// \brief Get the Height object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
   /// received yet.
   ///
   /// \return uint32_t
   ///
   uint32_t GetHeight() const;
+
+  ///
+  /// \brief Set the Height object
+  ///
+  /// \param height
+  ///
+  void SetHeight(uint32_t height);
 
   ///
   /// \brief Get the Width object of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
@@ -127,12 +141,26 @@ class RtpPayloader {
   uint32_t GetWidth() const;
 
   ///
+  /// \brief Set the Width object
+  ///
+  /// \param width
+  ///
+  void SetWidth(uint32_t width);
+
+  ///
   /// \brief Get the Frame Rate of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
   /// received yet.
   ///
   /// \return uint32_t
   ///
   uint32_t GetFrameRate() const;
+
+  ///
+  /// \brief Set the Frame Rate object
+  ///
+  /// \param framerate
+  ///
+  void SetFrameRate(uint32_t framerate);
 
   ///
   /// \brief Get the Ip Address of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
@@ -143,12 +171,26 @@ class RtpPayloader {
   std::string GetIpAddress() const;
 
   ///
+  /// \brief Set the Ip Address object
+  ///
+  /// \param ip_address
+  ///
+  void SetIpAddress(std::string_view ip_address);
+
+  ///
   /// \brief Get the Port of the incoming stream. \note This may be invalid id no SAP/SDP announcement has been
   /// received yet.
   ///
   /// \return uint32_t
   ///
   uint32_t GetPort() const;
+
+  ///
+  /// \brief Set the Port object
+  ///
+  /// \param port
+  ///
+  void SetPort(uint32_t port);
 
   ///
   /// \brief Get the Buffer object

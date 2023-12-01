@@ -234,6 +234,8 @@ bool RtpH264GstVaapiDepayloader::Receive(mediax::rtp::RtpFrameData *data, int32_
       if (auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count(); ms > timeout) {
         // Blank the buffer, no data
         memset(GetBuffer().data(), 0, GetBuffer().size());
+        data->resolution.height = 0;
+        data->resolution.width = 0;
         return false;
       }
     }

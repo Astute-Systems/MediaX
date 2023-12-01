@@ -5,6 +5,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # CMake policy
 cmake_policy(SET CMP0086 NEW)
 cmake_policy(SET CMP0078 NEW)
+# if CMAKE version > 3.27
+if ( ${CMAKE_VERSION} VERSION_GREATER "3.27.0")
+  cmake_policy(SET CMP0148 NEW)
+endif()
+
 # Check cmake version
 
 # cmake_policy(SET CMP0148 NEW)
