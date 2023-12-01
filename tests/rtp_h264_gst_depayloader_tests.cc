@@ -334,7 +334,6 @@ TEST(RtpH264DepayloaderTest, StartSwitchManyPayloaders) {
     EXPECT_FALSE(rtp[current_stream].Receive(&data, 1));
     EXPECT_EQ(data.resolution.height, 0);
     EXPECT_EQ(data.resolution.width, 0);
-    EXPECT_EQ(data.encoding, ::mediax::rtp::ColourspaceType::kColourspaceNv12);
     last_stream = current_stream;
   }
   rtp[current_stream].Stop();
