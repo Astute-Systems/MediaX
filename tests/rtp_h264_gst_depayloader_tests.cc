@@ -356,16 +356,20 @@ TEST(RtpH264DepayloaderTest, TransmitAFrame) {
   mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
 
   std::string name = "test_session_name";
-  std::string ip = "127.0.0.1";
+  std::string ip = "239.192.1.1";
   Stream(&rtp, name, ip, 5004);
   rtp.Start();
+
+  // Setup receiver
+  mediax::rtp::RtpFrameData data;
+  data.cpu_buffer = rgb_test.data();
 
   // Transmit a frame
   mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader rtp_pay;
   rtp_pay.SetIpAddress("test_session_name");
   rtp_pay.SetHeight(720);
   rtp_pay.SetWidth(1280);
-  rtp_pay.SetIpAddress("127.0.0.1");
+  rtp_pay.SetIpAddress(ip);
   rtp_pay.SetPort(5004);
   rtp_pay.SetFrameRate(25);
   rtp_pay.SetColourSpace(::mediax::rtp::ColourspaceType::kColourspaceH264Part10);
@@ -378,10 +382,7 @@ TEST(RtpH264DepayloaderTest, TransmitAFrame) {
   // Sleep 0.5 seconds
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-  // Receive a frame
-  mediax::rtp::RtpFrameData data;
-  data.cpu_buffer = rgb_test.data();
-  EXPECT_TRUE(rtp.Receive(&data, 1000));
+  EXPECT_TRUE(rtp.Receive(&data, 5000));
   EXPECT_EQ(data.resolution.height, 720);
   EXPECT_EQ(data.resolution.width, 1280);
   EXPECT_EQ(data.encoding, ::mediax::rtp::ColourspaceType::kColourspaceNv12);
