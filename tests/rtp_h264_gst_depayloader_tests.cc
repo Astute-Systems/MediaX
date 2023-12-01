@@ -349,6 +349,14 @@ TEST(RtpH264DepayloaderTest, TransmitAFrame) {
   GTEST_SKIP();
 #endif
 
+  // Read CI environment variable
+  char* ci = getenv("CI");
+
+  // If defined skip test, doesnt run on CI
+  if (ci != NULL) {
+    GTEST_SKIP();
+  }
+
   int last_stream = -1;
   int current_stream = -1;
 
