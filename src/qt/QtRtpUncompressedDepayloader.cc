@@ -49,10 +49,10 @@ Q_INVOKABLE void QtRtpUncompressedDepayloader::stop() { m_depayloader.Stop(); }
 Q_INVOKABLE void QtRtpUncompressedDepayloader::close() { m_depayloader.Close(); }
 
 Q_INVOKABLE bool QtRtpUncompressedDepayloader::receive(QByteArray* frame, int timeout) {
-  uint8_t* cpu = nullptr;
-  bool result = m_depayloader.Receive(&cpu, timeout);
+  mediax::rtp::RtpFrameData frame_data;
+  bool result = m_depayloader.Receive(&frame_data, timeout);
   if (result) {
-    *frame = QByteArray(reinterpret_cast<const char*>(cpu), m_depayloader.GetBuffer().size());
+    *frame = QByteArray(reinterpret_cast<const char*>(frame_data.cpu_buffer), m_depayloader.GetBuffer().size());
   }
   return result;
 }
