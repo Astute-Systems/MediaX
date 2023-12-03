@@ -20,6 +20,7 @@
 
 namespace mediax::rtp::h264::vaapi {
 
+/// A RTP payloader for H.264 DEF-STAN 00-82 video streams
 class RtpH264VaapiPayloader : public RtpPayloader {
   ///
   /// \brief Construct a new Rtp H.264 Payloader object
@@ -40,6 +41,7 @@ class RtpH264VaapiPayloader : public RtpPayloader {
   /// \param encoding colour space
   /// \param height height in pixels
   /// \param width width in pixels
+  /// \param framerate frames per second
   /// \param hostname IP address i.e. 123.192.1.1
   /// \param portno port number i.e. 5004
   ///
@@ -82,6 +84,7 @@ class RtpH264VaapiPayloader : public RtpPayloader {
   void Stop() final;
 
  private:
+  /// The Gstreamer pipeline
   GstElement *pipeline_;
 };
 

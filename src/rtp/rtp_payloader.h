@@ -57,13 +57,7 @@ class RtpPayloader {
   ///
   /// \brief Configure an RTP output stream
   ///
-  /// \param name The name of the stream
-  /// \param encoding The colour space of the stream
-  /// \param height The height of the stream in pixels
-  /// \param width The width of the stream in pixels
-  /// \param framerate The frame rate of the stream in frames per second
-  /// \param hostname IP address i.e. 239.192.1.1 for multicast
-  /// \param port defaults to 5004
+  /// \param stream_information set the stream information
   ///
   virtual void SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) = 0;
 

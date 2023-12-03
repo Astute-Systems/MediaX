@@ -24,6 +24,7 @@
 
 namespace mediax::qt {
 
+/// A RTP depayloader for H.264 DEF-STAN 00-82 video streams
 class QtRtpH264Depayloader : public QtRtpDepayloader {
  public:
   ///
@@ -36,12 +37,7 @@ class QtRtpH264Depayloader : public QtRtpDepayloader {
   ///
   /// \brief Set the Stream Info object
   ///
-  /// \param hostname
-  /// \param port
-  /// \param session_name
-  /// \param height
-  /// \param width
-  /// \return Q_INVOKABLE
+  /// \param  stream_information set the stream information
   ///
   Q_INVOKABLE void setStreamInfo(const mediax::rtp::StreamInformation &stream_information) final;
 
@@ -55,21 +51,18 @@ class QtRtpH264Depayloader : public QtRtpDepayloader {
   ///
   /// \brief Start the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void start() final;
 
   ///
   /// \brief Stop the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void stop() final;
 
   ///
   /// \brief Close the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void close() final;
 
@@ -78,21 +71,18 @@ class QtRtpH264Depayloader : public QtRtpDepayloader {
   ///
   /// \param frame buffer to hold the recieved image
   /// \param timeout timeout in milliseconds, if zero wait for ever (blocking)
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE bool receive(QByteArray *frame, int timeout = 0) final;
 
   ///
   /// \brief Get the Buffer object
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE QVector<quint8> getBuffer() final;
 
   ///
   /// \brief Get the State object
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE mediax::rtp::StreamState getState() const final;
 

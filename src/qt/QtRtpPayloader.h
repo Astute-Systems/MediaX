@@ -23,6 +23,7 @@
 
 namespace mediax::qt {
 
+/// A RTP payloader base class
 class QtRtpPayloader : public QObject {
   Q_OBJECT
 
@@ -51,21 +52,18 @@ class QtRtpPayloader : public QObject {
   ///
   /// \brief Start the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE virtual void start() = 0;
 
   ///
   /// \brief Stop the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE virtual void stop() = 0;
 
   ///
   /// \brief Close the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE virtual void close() = 0;
 
@@ -74,7 +72,6 @@ class QtRtpPayloader : public QObject {
   ///
   /// \param frame The frame to transmit
   /// \param blocking Set to true if blocking
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE virtual int transmit(Frame* frame, bool blocking = true) = 0;
 

@@ -23,6 +23,7 @@
 
 namespace mediax::qt {
 
+/// A RTP depayloader base class
 class QtRtpDepayloader : public QObject {
   Q_OBJECT
 
@@ -37,12 +38,7 @@ class QtRtpDepayloader : public QObject {
   ///
   /// \brief Set the Stream Info object
   ///
-  /// \param hostname
-  /// \param port
-  /// \param session_name
-  /// \param height
-  /// \param width
-  /// \return Q_INVOKABLE
+  /// \param stream_information set the stream information
   ///
   Q_INVOKABLE virtual void setStreamInfo(const mediax::rtp::StreamInformation &stream_information) = 0;
 
@@ -56,21 +52,18 @@ class QtRtpDepayloader : public QObject {
   ///
   /// \brief Start the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE virtual void start() = 0;
 
   ///
   /// \brief Stop the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE virtual void stop() = 0;
 
   ///
   /// \brief Close the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE virtual void close() = 0;
 
@@ -79,26 +72,28 @@ class QtRtpDepayloader : public QObject {
   ///
   /// \param frame buffer to hold the recieved image
   /// \param timeout timeout in milliseconds, if zero wait for ever (blocking)
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE virtual bool receive(QByteArray *frame, int timeout = 0) = 0;
 
   ///
   /// \brief Get the Buffer object
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE virtual QVector<quint8> getBuffer() = 0;
 
   ///
   /// \brief Get the State object
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE virtual mediax::rtp::StreamState getState() const = 0;
 
  signals:
-  virtual void newFrame(Frame frame);
+  ///
+  /// \brief Signal to process a new incoming frame
+  ///
+  /// \param frame
+  ///
+  void newFrame(Frame frame);
 };
 
 }  // namespace mediax::qt

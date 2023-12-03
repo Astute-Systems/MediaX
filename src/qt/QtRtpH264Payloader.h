@@ -45,40 +45,31 @@ class QtRtpH264Payloader : public QtRtpPayloader {
   ///
   /// \brief Set the Stream Info object
   ///
-  /// \param hostname the IPV4 address
-  /// \param port the port number
-  /// \param name the name of the stream
-  /// \param height the height of the stream
-  /// \param width the width of the stream
-  /// \return Q_INVOKABLE
+  /// \param stream_information set the stream information
   ///
   Q_INVOKABLE void setStreamInfo(const mediax::rtp::StreamInformation &stream_information) final;
 
   ///
   /// \brief Open the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE bool open() final;
 
   ///
   /// \brief Start the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void start() final;
 
   ///
   /// \brief Stop the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void stop() final;
 
   ///
   /// \brief Close the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void close() final;
 
@@ -87,7 +78,6 @@ class QtRtpH264Payloader : public QtRtpPayloader {
   ///
   /// \param frame The frame to transmit
   /// \param blocking Set to true if blocking
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE int transmit(Frame *frame, bool blocking = true) final;
 
@@ -101,6 +91,7 @@ class QtRtpH264Payloader : public QtRtpPayloader {
   void sendFrame(Frame frame) final;
 
  private:
+  /// The GStreamer payloader
   ::mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader payloader_;
 };
 

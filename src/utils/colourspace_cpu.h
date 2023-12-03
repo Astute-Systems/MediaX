@@ -33,8 +33,24 @@ class ColourSpaceCpu : public ColourSpace {
   ///
   ColourSpaceCpu() = default;
 
+  ///
+  /// \brief Destroy the Colour Space Cpu object
+  ///
+  ///
   ~ColourSpaceCpu() final = default;
 
+  ///
+  /// \brief Convert the image from one format to another
+  ///
+  /// \param res The resolution of the image
+  /// \param in The input image buffer
+  /// \param in_format The input image format
+  /// \param in_bytes The input image bytes per pixel
+  /// \param out The output image buffer
+  /// \param out_format The output image format
+  /// \param out_bytes The output image bytes per pixel
+  /// \return int The number of bytes converted
+  ///
   int Convert(mediax::rtp::Resolution res, uint8_t *in, AVPixelFormat in_format, uint8_t in_bytes, uint8_t *out,
               AVPixelFormat out_format, uint8_t out_bytes) const;
 

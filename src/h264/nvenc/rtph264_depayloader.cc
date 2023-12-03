@@ -24,6 +24,16 @@
 
 namespace mediax::rtp::h264::nvenc {
 
+///
+/// \brief Decode a frame
+///
+/// \param va_display
+/// \param va_context
+/// \param va_surface
+/// \param frame_data
+/// \param frame_size
+/// \return StatusCode
+///
 StatusCode DecodeFrame(VADisplay va_display, VAContextID va_context, VASurfaceID va_surface, const uint8_t *frame_data,
                        int frame_size) {
   VAConfigID va_config;

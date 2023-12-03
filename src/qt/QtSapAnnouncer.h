@@ -23,6 +23,7 @@
 
 namespace mediax::qt {
 
+/// A SAP/SDP announcer class
 class QtSapAnnouncer : public QObject {
   Q_OBJECT
 
@@ -51,7 +52,6 @@ class QtSapAnnouncer : public QObject {
   /// \brief Add a SAP announcement
   ///
   /// \param stream_information
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void addSapAnnouncement(const ::mediax::rtp::StreamInformation& stream_information);
 
@@ -59,14 +59,11 @@ class QtSapAnnouncer : public QObject {
   /// \brief Get the Sap Announcement object
   ///
   /// \param session_name
-  /// \return Q_INVOKABLE&
   ///
   Q_INVOKABLE ::mediax::rtp::StreamInformation& getSapAnnouncement(QString session_name);
 
   ///
   /// \brief Delete a SAP announcement
-  ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void deleteSapAnnouncement(QString stream_name);
 
@@ -74,35 +71,30 @@ class QtSapAnnouncer : public QObject {
   /// \brief Undelete a SAP announcement
   ///
   /// \param stream_name
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void undeleteSapAnnouncement(QString stream_name);
 
   ///
   /// \brief Delete all SAP announcements
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void deleteAllSapAnnouncements();
 
   ///
   /// \brief Start the SAP server
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void start();
 
   ///
   /// \brief Stop the SAP server
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void stop();
 
   ///
   /// \brief Restart all deleted SAP announcements
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void restart();
 
@@ -110,21 +102,18 @@ class QtSapAnnouncer : public QObject {
   /// \brief Set the Source Interface object
   ///
   /// \param select
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void setSourceInterface(uint16_t select = 0);
 
   ///
   /// \brief Get the interfaces as nic names
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE std::map<uint32_t, QString> getInterfaces() const;
 
   ///
   /// \brief Get the Active Stream Count object
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE uint32_t getActiveStreamCount() const;
 

@@ -23,6 +23,7 @@
 
 namespace mediax::qt {
 
+/// A RTP depayloader base class for uncompressed video streams
 class QtRtpUncompressedDepayloader : public QtRtpDepayloader {
   Q_OBJECT
 
@@ -37,12 +38,7 @@ class QtRtpUncompressedDepayloader : public QtRtpDepayloader {
   ///
   /// \brief Set the Stream Info object
   ///
-  /// \param hostname
-  /// \param port
-  /// \param session_name
-  /// \param height
-  /// \param width
-  /// \return Q_INVOKABLE
+  /// \param stream_information the stream information
   ///
   Q_INVOKABLE void setStreamInfo(const mediax::rtp::StreamInformation& stream_information) final;
 
@@ -56,21 +52,18 @@ class QtRtpUncompressedDepayloader : public QtRtpDepayloader {
   ///
   /// \brief Start the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void start() final;
 
   ///
   /// \brief Stop the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void stop() final;
 
   ///
   /// \brief Close the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void close() final;
 

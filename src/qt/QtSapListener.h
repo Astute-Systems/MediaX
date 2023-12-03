@@ -25,6 +25,7 @@
 /// The Qt wrappers namespace
 namespace mediax::qt {
 
+/// A SAP/SDP listener class
 class QtSapListener : public QObject {
   Q_OBJECT
 
@@ -39,14 +40,12 @@ class QtSapListener : public QObject {
   ///
   /// \brief Start the SAP server
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void start();
 
   ///
   /// \brief Stop the SAP server
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void stop();
 
@@ -71,10 +70,12 @@ class QtSapListener : public QObject {
   ///
   /// \brief Process incoming SAP announcments
   ///
-  /// \param sdp
+  /// \param sdp the SAP message
+  /// \param data the SAP text data
   ///
   static void SapCallback(const sap::SdpMessage *sdp, void *data);
 
+  /// The SAP listener
   ::mediax::sap::SapListener sap_listener_;
 };
 

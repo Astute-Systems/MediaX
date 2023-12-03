@@ -19,6 +19,7 @@
 /// The H.264 video compression (software only) namespace
 namespace mediax::rtp::h264::nvenc {
 
+/// A RTP payloader for H.264 DEF-STAN 00-82 video streams
 class RtpH264Payloader : public RtpPayloader {
   ///
   /// \brief Construct a new Rtp H.264 Payloader object
@@ -39,6 +40,7 @@ class RtpH264Payloader : public RtpPayloader {
   /// \param encoding colour space
   /// \param height height in pixels
   /// \param width width in pixels
+  /// \param framerate frames per second
   /// \param hostname IP address i.e. 123.192.1.1
   /// \param portno port number i.e. 5004
   ///

@@ -17,7 +17,7 @@
 /// videoconvert ! appsink
 /// \endcode
 ///
-/// \file rtph265_depayloader.cc
+/// \file rtp_h265_depayloader.cc
 ///
 
 #include "h265/gst/vaapi/rtp_h265_depayloader.h"
@@ -59,7 +59,7 @@ void RtpH265GstVaapiDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInform
   stream.settings_valid = true;
 }
 
-GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
+GstFlowReturn RtpH265GstVaapiDepayloader::NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
   gint width = 0;
   gint height = 0;
   auto depayloader = static_cast<RtpH265GstVaapiDepayloader *>(user_data);
@@ -154,7 +154,7 @@ bool RtpH265GstVaapiDepayloader::Open() {
   // Create a custom appsrc element to receive the H.264 stream
   GstElement *appsink = gst_element_factory_make("appsink", "rtp-h265-appsrc");
   // Set the callback function for the appsink
-  GstAppSinkCallbacks callbacks = {.new_sample = NewFrameCallback};
+  GstAppSinkCallbacks callbacks = {.new_sample = RtpH265GstVaapiDepayloader::NewFrameCallback};
   gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &callbacks, this, nullptr);
 
   // Add all elements to the pipeline

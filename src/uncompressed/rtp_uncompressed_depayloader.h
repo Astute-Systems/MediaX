@@ -133,7 +133,7 @@ class RtpUncompressedDepayloader : public ::mediax::rtp::RtpDepayloader {
   ///
   /// \brief Recieve a frame or timeout
   ///
-  /// \param cpu the fame buffer in CPU memory.
+  /// \param data the fame buffer in CPU memory.
   /// \param timeout zero will wait forever or a timeout in milliseconds
   /// \return true when frame available and false when no frame was received in the timeout
   ///
@@ -159,7 +159,7 @@ class RtpUncompressedDepayloader : public ::mediax::rtp::RtpDepayloader {
   std::array<uint8_t, ::mediax::rtp::kMaxUdpData> udpdata;
   /// Arguments sent to thread
   std::thread rx_thread_;
-  // The current sequence number
+  /// The current sequence number
   uint32_t sequence_number_ = 0;
 
   ///
@@ -175,8 +175,8 @@ class RtpUncompressedDepayloader : public ::mediax::rtp::RtpDepayloader {
 
   ///
   /// \brief Transmit RTP data to the network using a separate thread
+  ///
   /// \param stream this object
-  /// \return void
   ///
   static void TransmitThread(RtpUncompressedDepayloader *stream);
 

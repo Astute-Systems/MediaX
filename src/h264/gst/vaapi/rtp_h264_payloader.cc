@@ -9,7 +9,7 @@
 ///
 /// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
 ///
-/// \file rtph_264_payloader.cc
+/// \file rtp_h264_payloader.cc
 ///
 
 #include "h264/gst/vaapi/rtp_h264_payloader.h"

@@ -24,10 +24,16 @@
 
 namespace mediax::qt {
 
+/// A RTP payloader base class for uncompressed video streams
 class QtRtpUncompressedPayloader : public QtRtpPayloader {
   Q_OBJECT
 
  public:
+  ///
+  /// \brief Construct a new Qt Rtp Uncompressed Payloader object
+  ///
+  /// \param parent
+  ///
   explicit QtRtpUncompressedPayloader(QObject* parent = nullptr);
 
   ///
@@ -40,28 +46,24 @@ class QtRtpUncompressedPayloader : public QtRtpPayloader {
   ///
   /// \brief Open the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE bool open() final;
 
   ///
   /// \brief Start the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void start() final;
 
   ///
   /// \brief Stop the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void stop() final;
 
   ///
   /// \brief Close the RTP stream
   ///
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE void close() final;
 
@@ -70,7 +72,6 @@ class QtRtpUncompressedPayloader : public QtRtpPayloader {
   ///
   /// \param frame The frame to transmit
   /// \param blocking Set to true if blocking
-  /// \return Q_INVOKABLE
   ///
   Q_INVOKABLE int transmit(Frame* frame, bool blocking = true) final;
 

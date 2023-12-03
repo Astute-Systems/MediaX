@@ -18,6 +18,7 @@
 
 namespace mediax::rtp::h264 {
 
+/// A RTP payloader base class for H264 compressed video streams
 class RtpH264Payloader : public RtpPayloader {
   ///
   /// \brief Construct a new Rtp H.264 Payloader object
@@ -37,7 +38,8 @@ class RtpH264Payloader : public RtpPayloader {
   /// \param name session name
   /// \param encoding colour space
   /// \param height height in pixels
-  /// \param width width in pixels
+  /// \param width width in
+  /// \param framerate frames per second
   /// \param hostname IP address i.e. 123.192.1.1
   /// \param portno port number i.e. 5004
   ///

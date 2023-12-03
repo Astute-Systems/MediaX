@@ -17,10 +17,15 @@
 
 #include "rtp/rtp.h"
 
+/// A structure to store frames of video
 struct Frame {
+  /// The frame data
   QByteArray video;
+  /// The frame width
   int width;
+  /// The frame height
   int height;
+  /// The frame encoding
   mediax::rtp::ColourspaceType encoding;
 };
 

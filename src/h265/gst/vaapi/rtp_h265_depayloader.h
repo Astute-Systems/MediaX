@@ -9,7 +9,7 @@
 //
 /// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
 ///
-/// \file rtph265_depayloader.h
+/// \file rtp_h265_depayloader.h
 ///
 
 #ifndef H265_GST_VAAPI_RTP_H265_DEPAYLOADER_H_
@@ -27,8 +27,7 @@ namespace mediax::rtp::h265::gst {}
 /// The Gstreamer implementation of the Nvidia (NVENC) namespace
 namespace mediax::rtp::h265::gst::vaapi {
 
-GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data);
-
+/// A RTP payloader for H.264 DEF-STAN 00-82 video streams
 class RtpH265GstVaapiDepayloader : public mediax::rtp::RtpDepayloader {
  public:
   ///
@@ -94,7 +93,7 @@ class RtpH265GstVaapiDepayloader : public mediax::rtp::RtpDepayloader {
   ///
   /// \brief Recieve a frame or timeout
   ///
-  /// \param cpu the fame buffer in CPU memory. I
+  /// \param data the fame buffer in CPU memory. I
   /// \param timeout zero will wait forever or a timeout in milliseconds
   /// \return true when frame available
   /// \return false when no frame was received in the timeout and the cpu pointer is invalid
@@ -115,6 +114,15 @@ class RtpH265GstVaapiDepayloader : public mediax::rtp::RtpDepayloader {
   void NewFrame();
 
  private:
+  ///
+  /// \brief GStreamer callback for new frames
+  ///
+  /// \param appsink The GStreamer appsink
+  /// \param user_data The user data
+  /// \return GstFlowReturn
+  ///
+  static GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data);
+
   /// The GStreamer pipeline
   GstElement *pipeline_;
   /// The video buffer

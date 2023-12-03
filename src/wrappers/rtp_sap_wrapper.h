@@ -24,6 +24,7 @@
 
 namespace mediax {
 
+/// A RTP SAP transmitter helper class
 template <typename T>
 class RtpSapTransmit {
  public:
@@ -32,7 +33,7 @@ class RtpSapTransmit {
   ///
   /// \param hostname The IPV4 multicast address
   /// \param port The IPV4 multicast port
-  /// \param name The name of the stream
+  /// \param session_name The name of the stream
   /// \param height The height of the stream
   /// \param width The width of the stream
   /// \param framerate The framerate of the stream
@@ -182,14 +183,20 @@ class RtpSapTransmit {
   std::chrono::system_clock::time_point last_transmit_timestamp_;
 };
 
+/// A RTP SAP receiver helper class
 template <typename T>
 class RtpSapRecieve {
  public:
   ///
-  /// \brief Construct a new Rtp Sap Receive object
+  /// \brief Construct a new Rtp Sap Recieve object
   ///
   /// \param hostname The IPV4 multicast address
   /// \param port The IPV4 multicast port
+  /// \param session_name The name of the stream
+  /// \param height Stream height
+  /// \param width Stream width
+  /// \param framerate Stream framerate
+  /// \param encoding Stream encoding
   ///
   RtpSapRecieve(std::string_view hostname, uint16_t port, std::string_view session_name, uint16_t height,
                 uint16_t width, uint16_t framerate, std::string_view encoding) {
@@ -263,6 +270,12 @@ class RtpSapRecieve {
   }
 
  private:
+  ///
+  /// \brief Check that the SAP announcement has been received and is OK
+  ///
+  /// \return true
+  /// \return false
+  ///
   bool CheckSapOk() const { return !stream_info_.deleted; }
 
   /// The RTP depayloader

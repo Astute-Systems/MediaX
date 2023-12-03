@@ -163,6 +163,7 @@ class SapListener {
   ///
   /// \param session_name Advertised session name
   /// \param callback The callback to notify when SAP/SDP message received
+  /// \param data The data to pass to the callback
   ///
   void RegisterSapListener(std::string_view session_name, const ::mediax::sap::SapCallback &callback, void *data);
 
