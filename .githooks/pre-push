@@ -22,11 +22,11 @@
 remote="$1"
 url="$2"
 
-# $WORKSPACE_ROOT/.githooks/pre-push-check-doxygen
-$WORKSPACE_ROOT/.githooks/pre-push-check-linter
-$WORKSPACE_ROOT/.githooks/pre-push-check-todo
-$WORKSPACE_ROOT/.githooks/pre-push-conflict-check
-$WORKSPACE_ROOT/.githooks/pre-push-check-untracked
+.git/hooks/pre-push-check-doxygen
+.gith/ooks/pre-push-check-linter
+.git/hooks/pre-push-check-todo
+.git/hooks/pre-push-conflict-check
+.git/hooks/pre-push-check-untracked
 
 # --- Safety check
 if [ -z "$WORKSPACE_ROOT" ]; then
