@@ -6,6 +6,10 @@ NC='\033[0m' # No Color
 max_todo_count=50
 todo_count=$(grep -sinr todo $WORKSPACE_ROOT/src/ | wc -l)
 
+if [ $((todo_count)) -eq 0 ]; then
+    echo "${GREEN}No TODOS detected${NC}"
+    exit 0
+fi
 echo "Number of TODOs: ${RED}$todo_count${NC}"
 grep -sinr todo $WORKSPACE_ROOT/src/
 
