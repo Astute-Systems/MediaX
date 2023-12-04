@@ -13,8 +13,8 @@
 /// \file QtSapListener.h
 ///
 
-#ifndef QT_QTSAPLISTENER_H_
-#define QT_QTSAPLISTENER_H_
+#ifndef QT6_QTSAPLISTENER_H_
+#define QT6_QTSAPLISTENER_H_
 
 #include <QObject>
 #include <memory>
@@ -81,4 +81,4 @@ class QtSapListener : public QObject {
 
 }  // namespace mediax::qt6
 
-#endif  // QT_QTSAPLISTENER_H_
+#endif  // QT6_QTSAPLISTENER_H_

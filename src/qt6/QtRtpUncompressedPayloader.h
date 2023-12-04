@@ -12,8 +12,8 @@
 /// \file QtRtpUncompressedPayloader.h
 ///
 
-#ifndef QT_QTRTPUNCOMPRESSEDPAYLOADER_H_
-#define QT_QTRTPUNCOMPRESSEDPAYLOADER_H_
+#ifndef QT6_QTRTPUNCOMPRESSEDPAYLOADER_H_
+#define QT6_QTRTPUNCOMPRESSEDPAYLOADER_H_
 
 #include <QObject>
 #include <memory>
@@ -91,4 +91,4 @@ class QtRtpUncompressedPayloader : public QtRtpPayloader {
 
 }  // namespace mediax::qt6
 
-#endif  // QT_QTRTPUNCOMPRESSEDPAYLOADER_H_
+#endif  // QT6_QTRTPUNCOMPRESSEDPAYLOADER_H_

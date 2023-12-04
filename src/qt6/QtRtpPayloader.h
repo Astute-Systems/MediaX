@@ -12,8 +12,8 @@
 /// \file QtRtpPayloader.h
 ///
 
-#ifndef QT_QTRTPPAYLOADER_H_
-#define QT_QTRTPPAYLOADER_H_
+#ifndef QT6_QTRTPPAYLOADER_H_
+#define QT6_QTRTPPAYLOADER_H_
 
 #include <QByteArray>
 #include <QObject>
@@ -87,4 +87,4 @@ class QtRtpPayloader : public QObject {
 
 }  // namespace mediax::qt6
 
-#endif  // QT_QTRTPPAYLOADER_H_
+#endif  // QT6_QTRTPPAYLOADER_H_

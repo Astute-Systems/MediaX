@@ -10,8 +10,8 @@
 /// \file QtCommon.h
 ///
 
-#ifndef QT_QTCOMMON_H_
-#define QT_QTCOMMON_H_
+#ifndef QT6_QTCOMMON_H_
+#define QT6_QTCOMMON_H_
 
 #include <QByteArray>
 
@@ -29,4 +29,4 @@ struct Frame {
   mediax::rtp::ColourspaceType encoding;
 };
 
-#endif  // QT_QTCOMMON_H_
+#endif  // QT6_QTCOMMON_H_
