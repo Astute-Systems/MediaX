@@ -6,7 +6,7 @@ LIMIT=129
 WARNINGS=$(doxygen |&  grep "warning" | wc -l)
 # If no warnings, exit with 0
 if [ "$WARNINGS" -eq 0 ]; then
-    echo -e "${GREEN}No DOXYGEN detected${NC}"
+    echo -e "${GREEN}No DOXYGEN warnings detected${NC}"
     exit 0
 fi
 echo -e "Doxygen warnings: ${GREEN}$WARNINGS${NC}"
