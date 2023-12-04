@@ -12,11 +12,11 @@
 /// \file QtRtpH264Depayloader.cc
 ///
 
-#include "qt/QtRtpH264Depayloader.h"
+#include "qt6/QtRtpH264Depayloader.h"
 
 #include <algorithm>
 
-namespace mediax::qt {
+namespace mediax::qt6 {
 
 QtRtpH264Depayloader::QtRtpH264Depayloader(QObject *parent) : QtRtpDepayloader(parent) {}
 
@@ -64,4 +64,4 @@ Q_INVOKABLE QVector<quint8> QtRtpH264Depayloader::getBuffer() {
 
 Q_INVOKABLE mediax::rtp::StreamState QtRtpH264Depayloader::getState() const { return m_depayloader.GetState(); }
 
-}  // namespace mediax::qt
+}  // namespace mediax::qt6

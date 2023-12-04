@@ -23,7 +23,7 @@
 #include "sap/sap_listener.h"
 
 /// The Qt wrappers namespace
-namespace mediax::qt {
+namespace mediax::qt6 {
 
 /// A SAP/SDP listener class
 class QtSapListener : public QObject {
@@ -79,6 +79,6 @@ class QtSapListener : public QObject {
   ::mediax::sap::SapListener sap_listener_;
 };
 
-}  // namespace mediax::qt
+}  // namespace mediax::qt6
 
 #endif  // QT_QTSAPLISTENER_H_

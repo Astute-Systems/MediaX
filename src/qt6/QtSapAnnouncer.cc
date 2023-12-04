@@ -12,12 +12,12 @@
 /// \file QtSapAnnouncer.cc
 ///
 
-#include "qt/QtSapAnnouncer.h"
+#include "qt6/QtSapAnnouncer.h"
 
 #include <iostream>
 #include <memory>
 
-namespace mediax::qt {
+namespace mediax::qt6 {
 
 QtSapAnnouncer::QtSapAnnouncer(QObject *parent) : QObject(parent) {}
 
@@ -64,4 +64,4 @@ Q_INVOKABLE std::map<uint32_t, QString> QtSapAnnouncer::getInterfaces() const {
 
 Q_INVOKABLE uint32_t QtSapAnnouncer::getActiveStreamCount() const { return sap_announcer_.GetActiveStreamCount(); }
 
-}  // namespace mediax::qt
+}  // namespace mediax::qt6

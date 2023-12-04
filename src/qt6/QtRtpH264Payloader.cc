@@ -13,9 +13,9 @@
 /// \file QtRtpH264Payloader.cc
 ///
 
-#include "qt/QtRtpH264Payloader.h"
+#include "qt6/QtRtpH264Payloader.h"
 
-namespace mediax::qt {
+namespace mediax::qt6 {
 
 QtRtpH264Payloader::QtRtpH264Payloader(QObject *parent) : QtRtpPayloader(parent) {}
 
@@ -41,4 +41,4 @@ void QtRtpH264Payloader::sendFrame(Frame frame) {
   payloader_.Transmit(reinterpret_cast<uint8_t *>(frame.video.data()), true);
 }
 
-}  // namespace mediax::qt
+}  // namespace mediax::qt6

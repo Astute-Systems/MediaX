@@ -9,7 +9,7 @@ add_subdirectory(rtp_sap_receive)
 add_subdirectory(sap_announcer)
 add_subdirectory(sap_listener)
 if (BUILD_QT6)
-add_subdirectory(qt/rtp-transmit)
+add_subdirectory(qt6)
 endif()
 
 # Copy testcard.png to the build directory so that it can be found when running example

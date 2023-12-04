@@ -9,45 +9,39 @@
 ///
 /// \brief RTP streaming video class for uncompressed DEF-STAN 00-82 video streams
 ///
-/// \file QtRtpH264Payloader.h
+/// \file QtRtpUncompressedPayloader.h
 ///
 
-#ifndef QT_QTRTPH264PAYLOADER_H_
-#define QT_QTRTPH264PAYLOADER_H_
+#ifndef QT_QTRTPUNCOMPRESSEDPAYLOADER_H_
+#define QT_QTRTPUNCOMPRESSEDPAYLOADER_H_
 
-#include <QByteArray>
 #include <QObject>
+#include <memory>
 
-#include "h264/gst/vaapi/rtp_h264_payloader.h"
-#include "qt/QtCommon.h"
-#include "qt/QtRtpPayloader.h"
+#include "qt6/QtCommon.h"
+#include "qt6/QtRtpH264Payloader.h"
+#include "uncompressed/rtp_uncompressed_payloader.h"
 
-namespace mediax::qt {
+namespace mediax::qt6 {
 
-/// The H.264 Qt Payloaader wrapper
-class QtRtpH264Payloader : public QtRtpPayloader {
+/// A RTP payloader base class for uncompressed video streams
+class QtRtpUncompressedPayloader : public QtRtpPayloader {
   Q_OBJECT
 
  public:
   ///
-  /// \brief Construct a new Qt Rtp H 2 6 4 Payloader object
+  /// \brief Construct a new Qt Rtp Uncompressed Payloader object
   ///
   /// \param parent
   ///
-  explicit QtRtpH264Payloader(QObject *parent = nullptr);
-
-  ///
-  /// \brief Destroy the Qt Rtp H 2 6 4 Payloader object
-  ///
-  ///
-  ~QtRtpH264Payloader() final;
+  explicit QtRtpUncompressedPayloader(QObject* parent = nullptr);
 
   ///
   /// \brief Set the Stream Info object
   ///
-  /// \param stream_information set the stream information
+  /// \param stream_information
   ///
-  Q_INVOKABLE void setStreamInfo(const mediax::rtp::StreamInformation &stream_information) final;
+  void setStreamInfo(const mediax::rtp::StreamInformation& stream_information) final;
 
   ///
   /// \brief Open the RTP stream
@@ -79,7 +73,7 @@ class QtRtpH264Payloader : public QtRtpPayloader {
   /// \param frame The frame to transmit
   /// \param blocking Set to true if blocking
   ///
-  Q_INVOKABLE int transmit(Frame *frame, bool blocking = true) final;
+  Q_INVOKABLE int transmit(Frame* frame, bool blocking = true) final;
 
  public slots:
 
@@ -91,10 +85,10 @@ class QtRtpH264Payloader : public QtRtpPayloader {
   void sendFrame(Frame frame) final;
 
  private:
-  /// The GStreamer payloader
-  ::mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader payloader_;
+  /// The underlying RTP payloader
+  mediax::rtp::uncompressed::RtpUncompressedPayloader m_rtpPayloader;
 };
 
-}  // namespace mediax::qt
+}  // namespace mediax::qt6
 
-#endif  // QT_QTRTPH264PAYLOADER_H_
+#endif  // QT_QTRTPUNCOMPRESSEDPAYLOADER_H_

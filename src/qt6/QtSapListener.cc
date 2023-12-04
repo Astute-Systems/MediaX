@@ -12,11 +12,11 @@
 /// \file QtSapListener.cc
 ///
 
-#include "qt/QtSapListener.h"
+#include "qt6/QtSapListener.h"
 
 #include <iostream>
 
-namespace mediax::qt {
+namespace mediax::qt6 {
 
 void QtSapListener::SapCallback(const sap::SdpMessage *sdp, void *data) {
   auto *listener = reinterpret_cast<QtSapListener *>(data);
@@ -37,4 +37,4 @@ Q_INVOKABLE void QtSapListener::start() { sap_listener_.Start(); }
 
 Q_INVOKABLE void QtSapListener::stop() { sap_listener_.Stop(); }
 
-}  // namespace mediax::qt
+}  // namespace mediax::qt6

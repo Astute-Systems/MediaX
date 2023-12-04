@@ -21,7 +21,7 @@
 
 #include "sap/sap_announcer.h"
 
-namespace mediax::qt {
+namespace mediax::qt6 {
 
 /// A SAP/SDP announcer class
 class QtSapAnnouncer : public QObject {
@@ -130,6 +130,6 @@ class QtSapAnnouncer : public QObject {
   ::mediax::sap::SapAnnouncer& sap_announcer_ = ::mediax::sap::SapAnnouncer::GetInstance();
 };
 
-}  // namespace mediax::qt
+}  // namespace mediax::qt6
 
 #endif  // QT_QTSAPANNOUNCER_H_

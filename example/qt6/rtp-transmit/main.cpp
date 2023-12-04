@@ -7,7 +7,7 @@
 #include <QTimer>
 
 #include "rtp/rtp_utils.h"
-#include "rtp_transmit.h"
+#include "rtp_receive.h"
 #include "version.h"
 
 /// [Create a Qt application]
@@ -15,10 +15,10 @@ int main(int argc, char *argv[]) {
   QCoreApplication a(argc, argv);
   // Initalise the RTP library
   mediax::InitRtp(argc, argv);
-  // Create a QtTransmit object
-  QtTransmit rtp;
-  // Create a timer 40 ms to start the first frame
-  QTimer::singleShot(40, &rtp, SLOT(sendFrame()));
+  // Create a QtReceive object
+  QtReceive rtp;
   return a.exec();
+  // Cleanuo the RTP library
+  mediax::RtpCleanup();
 }
 /// [Create a Qt application]

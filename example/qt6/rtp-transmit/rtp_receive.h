@@ -11,12 +11,12 @@
 
 #ifndef QT_RECEIVE_H
 #define QT_RECEIVE_H
-/// [QtTransmit example header]
+/// [QtReceive example header]
 #include <QObject>
 #include <QRtp>
 #include <QTimer>
 
-class QtTransmit : public QObject {
+class QtReceive : public QObject {
   Q_OBJECT
 
  public:
@@ -24,35 +24,27 @@ class QtTransmit : public QObject {
   /// \brief Construct a new Qt Receive object
   ///
   ///
-  QtTransmit();
+  QtReceive();
 
   ///
   /// \brief Destroy the Qt Receive object
   ///
   ///
-  ~QtTransmit();
-
- signals:
-  ///
-  /// \brief New frame signal
-  ///
-  /// \param frame
-  ///
-  void newFrame(Frame frame);
+  ~QtReceive();
 
  public slots:
   ///
   /// \brief Send a single frame to the payloader
   ///
   ///
-  void sendFrame(Frame frame);
+  void newFrame(Frame frame);
 
  private:
   /// The Qt RTP payloader
-  mediax::qt::QtRtpUncompressedPayloader rtp;
+  mediax::qt6::QtRtpUncompressedDepayloader rtp;
   /// Frame counter
   int frame_count = 0;
 };
-/// [QtTransmit example header]
+/// [QtReceive example header]
 
 #endif  // QT_RECEIVE_H

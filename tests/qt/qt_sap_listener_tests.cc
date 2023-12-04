@@ -1,10 +1,10 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "qt/QtSapAnnouncer.h"
-#include "qt/QtSapListener.h"
+#include "qt6/QtSapAnnouncer.h"
+#include "qt6/QtSapListener.h"
 
-using namespace mediax::qt;
+using namespace mediax::qt6;
 using namespace ::testing;
 
 class SapReceiver : public QObject {
@@ -20,14 +20,14 @@ class SapReceiver : public QObject {
 };
 
 TEST(QtSapListenerTest, DISABLED_Start) {
-  mediax::qt::QtSapListener listener;
+  mediax::qt6::QtSapListener listener;
   SapReceiver receiver;
-  QObject::connect(&listener, &mediax::qt::QtSapListener::sapData, &receiver, &SapReceiver::sapDataReceived);
+  QObject::connect(&listener, &mediax::qt6::QtSapListener::sapData, &receiver, &SapReceiver::sapDataReceived);
 
   // Transmit something
   ::mediax::rtp::StreamInformation stream_information = {
       "test_session", "127.0.0.1", 5004, 480, 640, 25, ::mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
-  mediax::qt::QtSapAnnouncer &announcer = mediax::qt::QtSapAnnouncer::getInstance();
+  mediax::qt6::QtSapAnnouncer &announcer = mediax::qt6::QtSapAnnouncer::getInstance();
   for (int i = 0; i < 10; i++) {
     stream_information.session_name = "test_session_" + std::to_string(i);
     announcer.addSapAnnouncement(stream_information);
@@ -48,7 +48,7 @@ TEST(QtSapListenerTest, DISABLED_Start) {
 }
 
 TEST(QtSapListenerTest, DISABLED_Stop) {
-  mediax::qt::QtSapListener listener;
+  mediax::qt6::QtSapListener listener;
   listener.start();
   listener.start();
   listener.start();

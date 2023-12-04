@@ -12,9 +12,9 @@
 /// \file QtRtpUncompressedPayloader.cc
 ///
 
-#include "qt/QtRtpUncompressedPayloader.h"
+#include "qt6/QtRtpUncompressedPayloader.h"
 
-namespace mediax::qt {
+namespace mediax::qt6 {
 QtRtpUncompressedPayloader::QtRtpUncompressedPayloader(QObject *parent) : QtRtpPayloader(parent) {}
 
 void QtRtpUncompressedPayloader::setStreamInfo(const mediax::rtp::StreamInformation &stream_information) {
@@ -37,4 +37,4 @@ void QtRtpUncompressedPayloader::sendFrame(Frame frame) {
   m_rtpPayloader.Transmit(reinterpret_cast<uint8_t *>(frame.video.data()), true);
 }
 
-}  // namespace mediax::qt
+}  // namespace mediax::qt6

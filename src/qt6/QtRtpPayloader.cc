@@ -12,10 +12,10 @@
 /// \file QtRtpPayloader.h
 ///
 
-#include "qt/QtRtpPayloader.h"
+#include "qt6/QtRtpPayloader.h"
 
-namespace mediax::qt {
+namespace mediax::qt6 {
 
 QtRtpPayloader::QtRtpPayloader(QObject* parent) : QObject(parent) {}
 
-}  // namespace mediax::qt
+}  // namespace mediax::qt6

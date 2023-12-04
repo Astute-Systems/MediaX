@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
   mediax::InitRtp(argc, argv);
   // Create a QtTransmit object
 
-  mediax::qt::QtSapListener listener;
+  mediax::qt6::QtSapListener listener;
   listener.start();
 
   // Sleep for 2 seconds
@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
   QtSapReceiver receiver;
 
   // Recieve the announcments
-  QObject::connect(&listener, &mediax::qt::QtSapListener::sapData, &receiver, &QtSapReceiver::newSap);
+  QObject::connect(&listener, &mediax::qt6::QtSapListener::sapData, &receiver, &QtSapReceiver::newSap);
 
   int ret = a.exec();
   listener.stop();

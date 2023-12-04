@@ -12,10 +12,10 @@
 /// \file QtRtpH264Depayloader.cc
 ///
 
-#include "qt/QtRtpDepayloader.h"
+#include "qt6/QtRtpDepayloader.h"
 
-namespace mediax::qt {
+namespace mediax::qt6 {
 
 QtRtpDepayloader::QtRtpDepayloader(QObject *parent) : QObject(parent) {}
 
-}  // namespace mediax::qt
+}  // namespace mediax::qt6

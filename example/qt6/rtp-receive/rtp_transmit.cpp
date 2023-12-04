@@ -23,7 +23,7 @@ QtTransmit::QtTransmit() {
   rtp.start();
 
   // Connect the frame signal to the slot
-  connect(this, &QtTransmit::newFrame, &rtp, &mediax::qt::QtRtpUncompressedPayloader::sendFrame);
+  connect(this, &QtTransmit::newFrame, &rtp, &mediax::qt6::QtRtpUncompressedPayloader::sendFrame);
 }
 
 QtTransmit::~QtTransmit() {

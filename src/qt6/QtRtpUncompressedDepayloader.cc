@@ -12,13 +12,13 @@
 /// \file QtRtpUncompressedDepayloader.cc
 ///
 
-#include "qt/QtRtpUncompressedDepayloader.h"
+#include "qt6/QtRtpUncompressedDepayloader.h"
 
 #include <algorithm>
 
 #include "rtp/rtp.h"
 
-namespace mediax::qt {
+namespace mediax::qt6 {
 
 QtRtpUncompressedDepayloader::QtRtpUncompressedDepayloader(QObject* parent) : QtRtpDepayloader(parent) {}
 
@@ -66,4 +66,4 @@ Q_INVOKABLE QVector<quint8> QtRtpUncompressedDepayloader::getBuffer() {
   return buffer;
 }
 
-}  // namespace mediax::qt
+}  // namespace mediax::qt6

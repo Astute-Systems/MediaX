@@ -18,10 +18,10 @@
 #include <QByteArray>
 #include <QObject>
 
-#include "qt/QtCommon.h"
+#include "qt6/QtCommon.h"
 #include "rtp/rtp.h"
 
-namespace mediax::qt {
+namespace mediax::qt6 {
 
 /// A RTP depayloader base class
 class QtRtpDepayloader : public QObject {
@@ -96,6 +96,6 @@ class QtRtpDepayloader : public QObject {
   void newFrame(Frame frame);
 };
 
-}  // namespace mediax::qt
+}  // namespace mediax::qt6
 
 #endif  // QT_QTRTPDEPAYLOADER_H_

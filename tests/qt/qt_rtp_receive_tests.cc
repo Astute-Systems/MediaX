@@ -1,8 +1,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <qt/QtRtpH264Depayloader.h>
-#include <qt/QtRtpUncompressedDepayloader.h>
-#include <qt/QtRtpUncompressedPayloader.h>
+#include <qt6/QtRtpH264Depayloader.h>
+#include <qt6/QtRtpUncompressedDepayloader.h>
+#include <qt6/QtRtpUncompressedPayloader.h>
 
 #include "QObject"
 #include "QTest"
@@ -33,7 +33,7 @@ void CreateTransmitter() {
   Frame frame;
   frame.video.resize(640 * 480 * 3);
   frame.video.fill(0xff);
-  mediax::qt::QtRtpUncompressedPayloader rtp;
+  mediax::qt6::QtRtpUncompressedPayloader rtp;
   rtp.setStreamInfo(stream_info_rgb24);
   rtp.open();
   rtp.start();
@@ -53,7 +53,7 @@ void CreateTransmitter2() {
   frame.height = 480;
   frame.width = 640;
   frame.encoding = ::mediax::rtp::ColourspaceType::kColourspaceH264Part10;
-  mediax::qt::QtRtpH264Payloader rtp;
+  mediax::qt6::QtRtpH264Payloader rtp;
   rtp.setStreamInfo(stream_info_h264);
   rtp.open();
   rtp.start();
@@ -67,8 +67,8 @@ void CreateTransmitter2() {
 }
 TEST_F(QtRtpReceive, Constructors) {
   running = true;
-  mediax::qt::QtRtpUncompressedDepayloader uncompressed_depayloader;
-  mediax::qt::QtRtpH264Depayloader h264_depayloader;
+  mediax::qt6::QtRtpUncompressedDepayloader uncompressed_depayloader;
+  mediax::qt6::QtRtpH264Depayloader h264_depayloader;
   EXPECT_EQ(uncompressed_depayloader.getState(), ::mediax::rtp::StreamState::kClosed);
   EXPECT_EQ(h264_depayloader.getState(), ::mediax::rtp::StreamState::kClosed);
 }
@@ -81,7 +81,7 @@ class UncompressedRecieve : public QObject {
     uncompressed_depayloader.setStreamInfo(stream_info_rgb24);
 
     // Connect signal to slot for newFrame
-    connect(&uncompressed_depayloader, &mediax::qt::QtRtpUncompressedDepayloader::newFrame, this,
+    connect(&uncompressed_depayloader, &mediax::qt6::QtRtpUncompressedDepayloader::newFrame, this,
             &UncompressedRecieve::newFrame);
     uncompressed_depayloader.open();
     uncompressed_depayloader.start();
@@ -110,7 +110,7 @@ class UncompressedRecieve : public QObject {
  private:
   QByteArray frame;
   std::thread m_thread;
-  mediax::qt::QtRtpUncompressedDepayloader uncompressed_depayloader;
+  mediax::qt6::QtRtpUncompressedDepayloader uncompressed_depayloader;
   int m_count = 0;
 };
 
@@ -144,7 +144,7 @@ class H264Recieve : public QObject {
     compressed_depayloader.setStreamInfo(stream_info_h264);
 
     // Connect signal to slot for newFrame
-    connect(&compressed_depayloader, &mediax::qt::QtRtpH264Depayloader::newFrame, this, &H264Recieve::newFrame);
+    connect(&compressed_depayloader, &mediax::qt6::QtRtpH264Depayloader::newFrame, this, &H264Recieve::newFrame);
     compressed_depayloader.open();
     compressed_depayloader.start();
     // resize data
@@ -172,7 +172,7 @@ class H264Recieve : public QObject {
  private:
   QByteArray frame;
   std::thread m_thread;
-  mediax::qt::QtRtpH264Depayloader compressed_depayloader;
+  mediax::qt6::QtRtpH264Depayloader compressed_depayloader;
   int m_count = 0;
 };
 
