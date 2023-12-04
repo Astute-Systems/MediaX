@@ -22,8 +22,8 @@
 remote="$1"
 url="$2"
 
-.git/hooks/pre-push-check-doxygen
 .git/hooks/pre-push-check-linter
+.git/hooks/pre-push-check-doxygen
 .git/hooks/pre-push-check-todo
 .git/hooks/pre-push-conflict-check
 .git/hooks/pre-push-check-untracked
