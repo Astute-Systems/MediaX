@@ -1,4 +1,4 @@
-project(qt-rtp-receive)
+project(qt-rtp-transmit)
 
 # Qt6 Auto mock
 set(CMAKE_AUTOMOC ON)
@@ -6,7 +6,7 @@ set(CMAKE_AUTOMOC ON)
 # Add your source files here
 set(SOURCES
     main.cpp
-    rtp_receive.cpp
+    rtp_transmit.cpp
 )
 
 # Add your header files here
