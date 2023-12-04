@@ -1,13 +1,9 @@
 project(qt-sap-announcer)
 
+include_directories(${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/qt6 ${CMAKE_BINARY_DIR}/include)
 
-# Create an executable target
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+# Qt6 Auto mock
+set(CMAKE_AUTOMOC ON)
 
-# Link any libraries here
-target_link_libraries(${PROJECT_NAME} 
-    mediaxqt
-)
-
-add_executable(${PROJECT_NAME} cer sap_announcer.cpp)
+add_executable(${PROJECT_NAME} sap_announcer.cpp)
 target_link_libraries(${PROJECT_NAME}  mediaxqt)

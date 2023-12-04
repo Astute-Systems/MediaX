@@ -15,27 +15,27 @@
 #include <QSap>
 
 #include "rtp/rtp.h"
-#include "sap_receive.h"
 
 int main(int argc, char* argv[]) {
   QCoreApplication a(argc, argv);
   // Initalise the RTP library
   google::InitGoogleLogging(argv[0]);
   mediax::InitRtp(argc, argv);
-  // Create a QtTransmit object
-
-  mediax::qt6::QtSapListener listener;
-  listener.start();
-
-  // Sleep for 2 seconds
-  std::cout << "Waiting SAP/SDP announcements\n";
-
-  QtSapReceiver receiver;
-
-  // Recieve the announcments
-  QObject::connect(&listener, &mediax::qt6::QtSapListener::sapData, &receiver, &QtSapReceiver::newSap);
-
+  // Create a QtSapAnnouncer object
+  mediax::qt6::QtSapAnnouncer announcer;
+  // Add a single sap announcments
+  ::mediax::rtp::StreamInformation stream_information = {
+      .session_name = "Test SAP announcment",
+      .hostname = "127.0.0.1",
+      .port = 5004,
+      .height = 1080,
+      .width = 1920,
+      .framerate = 25,
+      .encoding = mediax::rtp::ColourspaceType::kColourspaceH264Part10};
+  announcer.addSapAnnouncement(stream_information);
+  announcer.start();
+  std::cout << "Sending SAP/SDP announcements\n";
   int ret = a.exec();
-  listener.stop();
+  announcer.stop();
   return ret;
 }
