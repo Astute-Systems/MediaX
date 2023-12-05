@@ -1,5 +1,8 @@
 #!/bin/bash -e
 
+# Stor arg as linux version
+LINUX_VERSION=$1
+
 # check is sudo 
 if [ "$EUID" -ne 0 ]
   then echo "Please run as root"
@@ -13,6 +16,10 @@ apt-get --no-install-recommends -y install libunwind-dev libgstreamer1.0-dev lib
 if [[ $(uname -m) == aarch* ]]; then
   pip install cpplint
 else
-  apt-get --no-install-recommends -y install cpplint qt6-base-dev
+  if [ "$LINUX_VERSION" == "20.04" ]; then
+    pip install cpplint 
+  else
+    apt-get --no-install-recommends -y install cpplint qt6-base-dev
+  if
   apt-get --no-install-recommends -y install gstreamer1.0-vaapi i965-va-driver 
 fi

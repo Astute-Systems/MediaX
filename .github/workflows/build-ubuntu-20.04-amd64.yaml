@@ -24,7 +24,7 @@ jobs:
 
       - name: Apt Install
         run: |
-          sudo ./scripts/init_build_machine.sh
+          sudo ./scripts/init_build_machine.sh 20.04
 
       - name: CMake and Build
         run: mkdir build && cd build && cmake -DEXAMPLES=ON -DBUILD_QT6=OFF -DGST_SUPPORTED=ON .. && make
