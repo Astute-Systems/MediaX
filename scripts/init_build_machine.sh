@@ -1,7 +1,12 @@
 #!/bin/bash -e
 
-# Stor arg as linux version
-LINUX_VERSION=$1
+# Store arg as linux version or default
+if [ -z "$1" ]; then
+  # Default if not specified
+  LINUX_VERSION="22.04"
+else
+  LINUX_VERSION=$1
+fi
 
 # check is sudo 
 if [ "$EUID" -ne 0 ]
@@ -18,8 +23,11 @@ if [[ $(uname -m) == aarch* ]]; then
 else
   if [ "$LINUX_VERSION" == "20.04" ]; then
     pip install cpplint 
-  else
+  fi
+
+  if [ "$LINUX_VERSION" == "22.04" ]; then
     apt-get --no-install-recommends -y install cpplint qt6-base-dev
   if
+  
   apt-get --no-install-recommends -y install gstreamer1.0-vaapi i965-va-driver 
 fi
