@@ -27,7 +27,7 @@ else
 
   if [ "$LINUX_VERSION" == "22.04" ]; then
     apt-get --no-install-recommends -y install cpplint qt6-base-dev
-  if
-  
+  fi
+
   apt-get --no-install-recommends -y install gstreamer1.0-vaapi i965-va-driver 
 fi
