@@ -11,7 +11,7 @@ apt-get --no-install-recommends -y install libunwind-dev libgstreamer1.0-dev lib
 # apt-get --no-install-recommends -y install libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
 # Install vaapi gstreamer plugins and device driver for intel
 if [[ $(uname -m) == aarch* ]]; then
-  apt-get --no-install-recommends -y install tree
+  pip install cpplint
 else
   apt-get --no-install-recommends -y install cpplint qt6-base-dev
   apt-get --no-install-recommends -y install gstreamer1.0-vaapi i965-va-driver 
