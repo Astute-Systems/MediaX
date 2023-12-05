@@ -28,13 +28,6 @@ url="$2"
 .git/hooks/pre-push-conflict-check
 .git/hooks/pre-push-check-untracked
 
-# --- Safety check
-if [ -z "$WORKSPACE_ROOT" ]; then
-	echo "Don't run this script from the command line." >&2
-	echo " (if you want, you could supply WORKSPACE_ROOT then run" >&2
-	echo " WORKSPACE_ROOT=/home/me/repo $0)" >&2
-	exit 1
-fi
 
-cd $WORKSPACE_ROOT/build
+cd ./build
 ctest -E "NOPIPELINE$" --output-on-failure --progress
