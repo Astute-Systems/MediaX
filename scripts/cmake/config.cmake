@@ -12,18 +12,16 @@ set(LIBRARIES_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}
     CACHE PATH "Location of libraries" )
 message(STATUS "Libraries install dir: ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 
-set(LIBRARIES ${LIBRARIES_INSTALL_DIR}/libmediax.so
-              ${LIBRARIES_INSTALL_DIR}/libmediax.a
-              ${LIBRARIES_INSTALL_DIR}/libmediax.so.1
-              ${LIBRARIES_INSTALL_DIR}/libmediax.so.1.0.0
-              ${LIBRARIES_INSTALL_DIR}/libmediax.so.1.0.0)
+set(LIBRARIES_STATIC ${LIBRARIES_INSTALL_DIR}/libmediax.a)
+
+set(LIBRARIES ${LIBRARIES_INSTALL_DIR}/libmediax.so)
 
 include(CMakePackageConfigHelpers)
 
 configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/MediaXConfig.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/MediaXConfig.cmake
   INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/MediaX
-  PATH_VARS INCLUDE_INSTALL_DIR INCLUDE_QT6_INSTALL_DIR LIBRARIES_INSTALL_DIR) 
+  PATH_VARS INCLUDE_INSTALL_DIR INCLUDE_QT6_INSTALL_DIR LIBRARIES_INSTALL_DIR LIBRARIES_STATIC LIBRARIES) 
 
 write_basic_package_version_file(
   ${CMAKE_CURRENT_BINARY_DIR}/MediaXConfigVersion.cmake

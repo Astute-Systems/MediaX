@@ -2,7 +2,7 @@
 include_directories(${CMAKE_SOURCE_DIR}/src)
 # GStreamer
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(GST REQUIRED gstreamer-1.0 gstreamer-app-1.0)
+pkg_check_modules(GST REQUIRED gstreamer-1.0 gstreamer-app-1.0 gstreamer-video-1.0)
 
 add_executable(simple-receive receive.cc)
 target_link_libraries(simple-receive mediax ${GST_LIBRARIES})

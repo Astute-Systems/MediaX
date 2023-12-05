@@ -14,7 +14,6 @@ include(scripts/cmake/githooks.cmake)
 include(scripts/cmake/code_coverage.cmake)
 include(scripts/cmake/config.cmake)
 
-
 add_subdirectory(src)
 option(EXAMPLES "Build examples" OFF)
 if (EXAMPLES) 
@@ -58,7 +57,7 @@ install_headers_from_dir(src/wrappers mediax/wrappers)
 
 
 #install package config file
-install(FILES ${CMAKE_BINARY_DIR}/mediax.pc DESTINATION  ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+install(FILES ${CMAKE_BINARY_DIR}/mediax.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 # cpplint setup
 cpplint_add_subdirectory(src)

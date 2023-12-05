@@ -9,7 +9,7 @@ include(${SWIG_USE_FILE})
 
 # Gstreamer
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(GST REQUIRED gstreamer-1.0)
+pkg_check_modules(GST REQUIRED gstreamer-1.0 gstreamer-app-1.0 gstreamer-video-1.0)
 
 # if CMAKE > 3.27
 if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.27.0")
