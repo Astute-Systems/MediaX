@@ -39,7 +39,7 @@ jobs:
           export GIT_HASH=$(git rev-parse --short HEAD) && \
           echo "Current version ${SEM_VERSION} with #${GIT_HASH} and path ${IMAGE_DIR}" && \
           mkdir -p build/docs && \
-          wget https://img.shields.io/badge/version-${SEM_VERSION}-blue.svg -O build/docs/version.svg
+          wget https://img.shields.io/badge/version-${SEM_VERSION}-blue.svg -O build/docs/html/version.svg
           doxygen
       - name: Setup Pages
         uses: actions/configure-pages@v4
