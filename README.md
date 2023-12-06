@@ -1,10 +1,7 @@
 
-<<<<<<< HEAD
-[![Action MediaX](https://github.com/DefenceX/MediaX/actions/workflows/build-ubuntu-22.04-amd64.yaml/badge.svg)](https://github.com/DefenceX/MediaX/actions/workflows/build-ubuntu-22.04-amd64.yaml)
-=======
+
 [![Action mediax](https://github.com/DefenceX/MediaX/actions/workflows/build-ubuntu-20.04-amd64.yaml/badge.svg)](https://github.com/DefenceX/MediaX/actions/workflows/build-ubuntu-20.04-amd64.yaml)
 [![Action mediax](https://github.com/DefenceX/MediaX/actions/workflows/build-ubuntu-22.04-amd64.yaml/badge.svg)](https://github.com/DefenceX/MediaX/actions/workflows/build-ubuntu-22.04-amd64.yaml)
->>>>>>> f400993b1bc760e3304eb29703a45b66ed61cd62
 [![Action sonarscan](https://github.com/DefenceX/MediaX/actions/workflows/sonarcloud.yaml/badge.svg)](https://sonarcloud.io/project/overview?id=DefenceX_MediaX)
 ![Version](https://defencex.github.io/MediaX/version.svg)
 
