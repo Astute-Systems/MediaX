@@ -212,13 +212,13 @@ Transmit example:
 \section qtcode Qt6 Code Examples
 
 rtp_transmit.h is an example transmitter with a single stream that will get emitted every time the sendFrame() slot is called:
-\snippet qt/rtp-transmit/rtp_transmit.h QtTransmit example header
+\snippet qt6/rtp-transmit/rtp_transmit.h QtTransmit example header
 
 The implementation in rtp_transmit.cpp, just sends a test card and resets the timer
-\snippet qt/rtp-transmit/rtp_transmit.cpp QtTransmit example code
+\snippet qt6/rtp-transmit/rtp_transmit.cpp QtTransmit example code
 
 A simple transmit example will have the following main. A timer starts the sending of the video frames
-\snippet qt/rtp-transmit/main.cpp Create a Qt application
+\snippet qt6/rtp-transmit/main.cpp Create a Qt application
 
 \section gst Gstreamer examples
 The test scripts ./example/rtp-gst-raw-rx-\<colourspace>.sh, ./example/rtp-gst-raw-tx-\<colourspace>.sh runs the example program against gstreamer to ensure interoperability.

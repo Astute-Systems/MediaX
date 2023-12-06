@@ -34,7 +34,8 @@ namespace mediax::sap {
 ///
 /// \brief Convert a string to a ColourspaceType
 ///
-/// \param sampling
+/// \param sampling The sampling string
+/// \param bits_per_pixel The number of bits per pixel
 /// \return ColourspaceType
 ///
 mediax::rtp::ColourspaceType SamplingToColourspaceType(std::string_view sampling, uint32_t bits_per_pixel);

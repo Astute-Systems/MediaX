@@ -17,7 +17,7 @@
 /// videoconvert ! appsink
 /// \endcode
 ///
-/// \file rtph265_depayloader.cc
+/// \file rtp_h265_depayloader.cc
 ///
 
 #include "h265/gst/vaapi/rtp_h265_depayloader.h"
@@ -59,7 +59,7 @@ void RtpH265GstVaapiDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInform
   stream.settings_valid = true;
 }
 
-GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
+GstFlowReturn RtpH265GstVaapiDepayloader::NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
   gint width = 0;
   gint height = 0;
   auto depayloader = static_cast<RtpH265GstVaapiDepayloader *>(user_data);
@@ -154,7 +154,7 @@ bool RtpH265GstVaapiDepayloader::Open() {
   // Create a custom appsrc element to receive the H.264 stream
   GstElement *appsink = gst_element_factory_make("appsink", "rtp-h265-appsrc");
   // Set the callback function for the appsink
-  GstAppSinkCallbacks callbacks = {.new_sample = NewFrameCallback};
+  GstAppSinkCallbacks callbacks = {.new_sample = RtpH265GstVaapiDepayloader::NewFrameCallback};
   gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &callbacks, this, nullptr);
 
   // Add all elements to the pipeline
@@ -187,10 +187,13 @@ void RtpH265GstVaapiDepayloader::Close() {
   gst_object_unref(pipeline_);
 }
 
-bool RtpH265GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
+bool RtpH265GstVaapiDepayloader::Receive(mediax::rtp::RtpFrameData *data, int32_t timeout) {
   auto start_time = std::chrono::high_resolution_clock::now();
 
-  *cpu = buffer_in_.data();
+  data->resolution.height = GetHeight();
+  data->resolution.width = GetWidth();
+  data->encoding = GetColourSpace();
+  data->cpu_buffer = GetBuffer().data();
   while (!new_rx_frame_) {
     // Check timeout
     if (auto elapsed = std::chrono::high_resolution_clock::now() - start_time;
@@ -207,7 +210,7 @@ bool RtpH265GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   return true;
 }
 
-void RtpH265GstVaapiDepayloader::Callback(::mediax::rtp::RtpCallbackData frame) const {
+void RtpH265GstVaapiDepayloader::Callback(::mediax::rtp::RtpFrameData frame) const {
   GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
 }
 

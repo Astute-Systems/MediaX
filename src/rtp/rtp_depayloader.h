@@ -28,7 +28,7 @@ namespace mediax::rtp {
 class RtpDepayloader;
 
 /// \brief The RTP frame callback
-using RtpCallback = std::function<void(const RtpDepayloader& depay, RtpCallbackData frame)>;
+using RtpCallback = std::function<void(const RtpDepayloader& depay, RtpFrameData frame)>;
 
 /// \brief The stream state
 enum class StreamState {
@@ -88,19 +88,13 @@ class RtpDepayloader {
   ///
   /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement
   ///
-  /// \param hostname IP address i.e. 239.192.1.1 for multicast
-  /// \param port defaults to 5004
-  /// \param name The name of the stream
-  /// \param encoding The encoding of the stream
-  /// \param height The height of the stream in pixels
-  /// \param width The width of the stream in pixels
+  /// \param stream_information set the stream information
   ///
   virtual void SetStreamInfo(const ::mediax::rtp::StreamInformation& stream_information) = 0;
 
   ///
   /// \brief Register a callback for our session_name
   ///
-  /// \param session_name Advertised session name
   /// \param callback The callback to notify when a frame is received
   ///
   void RegisterCallback(const ::mediax::rtp::RtpCallback& callback);
@@ -137,12 +131,12 @@ class RtpDepayloader {
   ///
   /// \brief Recieve a frame or timeout
   ///
-  /// \param cpu the fame buffer in CPU memory.
+  /// \param data the fame buffer in CPU memory.
   /// \param timeout zero will wait forever or a timeout in milliseconds
   /// \return true when frame available
   /// \return false when no frame was received in the timeout
   ///
-  virtual bool Receive(uint8_t** cpu, int32_t timeout = 0) = 0;
+  virtual bool Receive(mediax::rtp::RtpFrameData* data, int32_t timeout = 0) = 0;
 
   ///
   /// \brief Set the Session Name attribute
@@ -287,7 +281,7 @@ class RtpDepayloader {
   ///
   /// \param frame the callback frame data
   ///
-  virtual void Callback(::mediax::rtp::RtpCallbackData frame) const = 0;
+  virtual void Callback(::mediax::rtp::RtpFrameData frame) const = 0;
 
   ///
   /// \brief Get the Port Type object

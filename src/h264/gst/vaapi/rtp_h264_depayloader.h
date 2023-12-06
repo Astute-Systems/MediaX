@@ -9,7 +9,7 @@
 //
 /// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
 ///
-/// \file rtph264_depayloader.h
+/// \file rtp_h264_depayloader.h
 ///
 
 #ifndef H264_GST_VAAPI_RTP_H264_DEPAYLOADER_H_
@@ -27,8 +27,7 @@ namespace mediax::rtp::h264::gst {}
 /// The Gstreamer implementation of the Nvidia (NVENC) namespace
 namespace mediax::rtp::h264::gst::vaapi {
 
-GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data);
-
+/// A RTP payloader for H.264 DEF-STAN 00-82 video streams
 class RtpH264GstVaapiDepayloader : public mediax::rtp::RtpDepayloader {
  public:
   ///
@@ -94,19 +93,19 @@ class RtpH264GstVaapiDepayloader : public mediax::rtp::RtpDepayloader {
   ///
   /// \brief Recieve a frame or timeout
   ///
-  /// \param cpu the fame buffer in CPU memory. I
+  /// \param data the fame buffer in CPU memory. I
   /// \param timeout zero will wait forever or a timeout in milliseconds
   /// \return true when frame available
   /// \return false when no frame was received in the timeout and the cpu pointer is invalid
   ///
-  bool Receive(uint8_t **cpu, int32_t timeout = 0) final;
+  bool Receive(::mediax::rtp::RtpFrameData *data, int32_t timeout = 0) final;
 
   ///
   /// \brief The callback function for the RTP stream
   ///
   /// \param frame
   ///
-  void Callback(::mediax::rtp::RtpCallbackData frame) const final;
+  void Callback(::mediax::rtp::RtpFrameData frame) const final;
 
   ///
   /// \brief Set new frame available
@@ -115,6 +114,14 @@ class RtpH264GstVaapiDepayloader : public mediax::rtp::RtpDepayloader {
   void NewFrame();
 
  private:
+  ///
+  /// \brief A GStreamer callback function for a new frame
+  ///
+  /// \param appsink The GStreamer appsink
+  /// \param user_data The user data
+  /// \return GstFlowReturn
+  ///
+  static GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data);
   /// The GStreamer pipeline
   GstElement *pipeline_;
   /// A flag indication a new frame is available

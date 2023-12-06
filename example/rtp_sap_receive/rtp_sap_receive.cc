@@ -16,7 +16,7 @@
 int main(int argc, char *argv[]) {
   mediax::RtpSapRecieve<mediax::rtp::uncompressed::RtpUncompressedDepayloader> rtp(
       "238.192.1.1", 5004, "test-session-name", 640, 480, 25, "RGB24");
-  std::vector<uint8_t> &data = rtp.GetBuffer();
-  for (int count = 0; count < 100; count++) rtp.Receive(data.data(), false);
+  ::mediax::rtp::RtpFrameData data;
+  for (int count = 0; count < 100; count++) rtp.Receive(&data, false);
 }
 // [Receive example wrapper]

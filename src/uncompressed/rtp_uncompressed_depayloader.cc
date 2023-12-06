@@ -265,7 +265,7 @@ void RtpUncompressedDepayloader::ReceiveThread(RtpUncompressedDepayloader *strea
     stream->new_rx_frame_ = last_scan_line;
 
     if ((stream->CallbackRegistered()) && stream->new_rx_frame_) {
-      RtpCallbackData arg_tx = {
+      ::mediax::rtp::RtpFrameData arg_tx = {
           {stream->GetHeight(), stream->GetWidth()}, stream->GetBuffer().data(), stream->GetColourSpace()};
       stream->Callback(arg_tx);
     }
@@ -319,8 +319,7 @@ bool RtpUncompressedDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
   }
 }
 
-bool RtpUncompressedDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
-  *cpu = nullptr;
+bool RtpUncompressedDepayloader::Receive(::mediax::rtp::RtpFrameData *data, int32_t timeout) {
   if (GetStream().port_no == 0) {
     LOG(ERROR) << "Port number has not been set";
     return false;
@@ -336,14 +335,18 @@ bool RtpUncompressedDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
     Open();
   }
 
+  data->resolution.height = GetHeight();
+  data->resolution.width = GetWidth();
+  data->encoding = GetColourSpace();
+
   // Check if we have a frame ready
   if (new_rx_frame_) {
     // Dont start a new thread if a frame is available just return it
-    *cpu = GetBuffer().data();
+    data->cpu_buffer = GetBuffer().data();
     new_rx_frame_ = false;
     return true;
   } else {
-    bool ret = WaitForFrame(cpu, timeout);
+    bool ret = WaitForFrame(&data->cpu_buffer, timeout);
     return ret;
   }
 
@@ -352,7 +355,7 @@ bool RtpUncompressedDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   return false;
 }
 
-void RtpUncompressedDepayloader::Callback(::mediax::rtp::RtpCallbackData frame) const {
+void RtpUncompressedDepayloader::Callback(::mediax::rtp::RtpFrameData frame) const {
   if (GetState() == ::mediax::rtp::StreamState::kStarted) {
     GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
   }

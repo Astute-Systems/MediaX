@@ -17,9 +17,9 @@
 
 #include <fcntl.h>
 #include <linux/videodev2.h>
+#include <stdint.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
-#include <stdint.h>
 
 #include <iostream>
 #include <string>
@@ -49,6 +49,11 @@ class V4L2Capture {
   ///
   ~V4L2Capture();
 
+  ///
+  /// \brief Initalise the V4L2 device
+  ///
+  /// \return int
+  ///
   int Initalise();
 
   ///

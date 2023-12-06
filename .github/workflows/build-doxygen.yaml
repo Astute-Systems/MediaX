@@ -34,7 +34,8 @@ jobs:
           export MAJOR=$(sed -n '1p' < version) && \
           export MINOR=$(sed -n '2p' < version) && \
           export PATCH=$(sed -n '3p' < version) && \
-          export SEM_VERSION=${MAJOR}.${MINOR}.${PATCH} && \
+          export SUFFIX=$(sed -n '4p' < version) && \
+          export SEM_VERSION=${MAJOR}.${MINOR}.${PATCH}${SUFFIX} && \
           export GIT_HASH=$(git rev-parse --short HEAD) && \
           echo "Current version ${SEM_VERSION} with #${GIT_HASH} and path ${IMAGE_DIR}" && \
           mkdir -p build/docs && \

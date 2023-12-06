@@ -50,11 +50,12 @@ struct SapHeader {
   /// Originating Source, IPV4
   uint32_t originating_source;
   ///
-  /// \brief Construct a new SapHeader object
+  /// \brief Create a new Sap Header object
   ///
-  /// \param version Protocol version
-  /// \param hash This must be unique for this announcement
-  /// \param originating_source The originating source identity
+  /// \param version The SAP/SDP version
+  /// \param auth_len The authentication length
+  /// \param hash The hash, must be unique for this announcement
+  /// \param originating_source The originating source, IPV4
   ///
   SapHeader(uint8_t version, uint8_t auth_len, uint16_t hash, uint32_t originating_source)
       : version(version), auth_len(auth_len), hash(hash), originating_source(originating_source) {}

@@ -186,9 +186,6 @@ void CreateSolidTestCard(uint8_t *data, uint32_t width, uint32_t height, uint8_t
 /// \param data the buffer to write the test card to
 /// \param width the image width in pixels
 /// \param height the image height in pixels
-/// \param red RGB value
-/// \param green RGB value
-/// \param blue RGB value
 /// \param colourspace The colourspace to use
 ///
 void CreateWhiteNoiseTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::rtp::ColourspaceType colourspace);

@@ -3,10 +3,10 @@
 
 #include <map>
 
-#include "qt/QtSapAnnouncer.h"
-#include "qt/QtSapListener.h"
+#include "qt6/QtSapAnnouncer.h"
+#include "qt6/QtSapListener.h"
 
-using namespace mediax::qt;
+using namespace mediax::qt6;
 using namespace ::testing;
 
 class QtSapAnnouncerTest : public Test {

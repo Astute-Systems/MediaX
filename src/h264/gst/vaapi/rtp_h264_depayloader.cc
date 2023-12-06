@@ -17,7 +17,7 @@
 /// videoconvert ! appsink
 /// \endcode
 ///
-/// \file rtph264_depayloader.cc
+/// \file rtp_h264_depayloader.cc
 ///
 
 #include "h264/gst/vaapi/rtp_h264_depayloader.h"
@@ -59,7 +59,7 @@ void RtpH264GstVaapiDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInform
   GetBuffer().resize(stream.width * stream.height * mediax::BitsPerPixel(stream.encoding) / 8);
 }
 
-GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
+GstFlowReturn RtpH264GstVaapiDepayloader::NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
   gint width = 0;
   gint height = 0;
   auto depayloader = static_cast<RtpH264GstVaapiDepayloader *>(user_data);
@@ -160,7 +160,7 @@ bool RtpH264GstVaapiDepayloader::Open() {
   // Create a custom appsrc element to receive the H.264 stream
   GstElement *appsink = gst_element_factory_make("appsink", "rtp-h264-appsrc");
   // Set the callback function for the appsink
-  GstAppSinkCallbacks callbacks = {.new_sample = NewFrameCallback};
+  GstAppSinkCallbacks callbacks = {.new_sample = RtpH264GstVaapiDepayloader::NewFrameCallback};
   gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &callbacks, this, nullptr);
 
   // Add all elements to the pipeline
@@ -223,10 +223,10 @@ void RtpH264GstVaapiDepayloader::Close() {
   gst_object_unref(pipeline_);
 }
 
-bool RtpH264GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
+bool RtpH264GstVaapiDepayloader::Receive(mediax::rtp::RtpFrameData *data, int32_t timeout) {
   auto start_time = std::chrono::high_resolution_clock::now();
 
-  *cpu = GetBuffer().data();
+  data->cpu_buffer = GetBuffer().data();
   while (!new_rx_frame_) {
     auto elapsed = std::chrono::high_resolution_clock::now() - start_time;
     // Check timeout
@@ -234,6 +234,8 @@ bool RtpH264GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
       if (auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count(); ms > timeout) {
         // Blank the buffer, no data
         memset(GetBuffer().data(), 0, GetBuffer().size());
+        data->resolution.height = 0;
+        data->resolution.width = 0;
         return false;
       }
     }
@@ -241,12 +243,15 @@ bool RtpH264GstVaapiDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
     // Sleep 1ms and wait for a new frame
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
+  data->resolution.height = GetHeight();
+  data->resolution.width = GetWidth();
+  data->encoding = GetColourSpace();
 
   new_rx_frame_ = false;
   return true;
 }
 
-void RtpH264GstVaapiDepayloader::Callback(::mediax::rtp::RtpCallbackData frame) const {
+void RtpH264GstVaapiDepayloader::Callback(::mediax::rtp::RtpFrameData frame) const {
   if (GetState() == ::mediax::rtp::StreamState::kStarted) {
     GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
   }
@@ -255,7 +260,7 @@ void RtpH264GstVaapiDepayloader::Callback(::mediax::rtp::RtpCallbackData frame) 
 void RtpH264GstVaapiDepayloader::NewFrame() {
   new_rx_frame_ = true;
   if (CallbackRegistered()) {
-    RtpCallbackData arg_tx = {{GetHeight(), GetWidth()}, GetBuffer().data(), GetColourSpace()};
+    RtpFrameData arg_tx = {{GetHeight(), GetWidth()}, GetBuffer().data(), GetColourSpace()};
     Callback(arg_tx);
   }
 }

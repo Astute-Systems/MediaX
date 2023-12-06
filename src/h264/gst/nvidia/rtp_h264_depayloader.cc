@@ -17,7 +17,7 @@
 /// videoconvert ! appsink
 /// \endcode
 ///
-/// \file rtph264_depayloader.cc
+/// \file rtp_h264_depayloader.cc
 ///
 
 #include "h264/gst/nvidia/rtp_h264_depayloader.h"
@@ -31,6 +31,7 @@
 #include <string>
 #include <thread>
 
+#include "rtp/rtp_types.h"
 #include "rtp/rtp_utils.h"
 
 namespace mediax::rtp::h264::gst::nvidia {
@@ -53,7 +54,7 @@ void RtpH264GstNvidiaDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInfor
   stream.settings_valid = true;
 }
 
-GstFlowReturn NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
+GstFlowReturn RtpH264GstNvidiaDepayloader::NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
   gint width = 0;
   gint height = 0;
   auto depayloader = static_cast<RtpH264GstNvidiaDepayloader *>(user_data);
@@ -146,7 +147,7 @@ bool RtpH264GstNvidiaDepayloader::Open() {
   GstElement *appsink = gst_element_factory_make("appsink", "rtp-h264-appsrc");
 
   // Set the callback function for the appsink
-  GstAppSinkCallbacks callbacks = {.new_sample = NewFrameCallback};
+  GstAppSinkCallbacks callbacks = {.new_sample = RtpH264GstNvidiaDepayloader::NewFrameCallback};
   gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &callbacks, this, nullptr);
 
   // Add all elements to the pipeline
@@ -185,11 +186,14 @@ void RtpH264GstNvidiaDepayloader::Close() {
   gst_object_unref(pipeline_);
 }
 
-bool RtpH264GstNvidiaDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
+bool RtpH264GstNvidiaDepayloader::Receive(::mediax::rtp::RtpFrameData *data, int32_t timeout) {
   auto start_time = std::chrono::high_resolution_clock::now();
 
   // Dont start a new thread if a frame is available just return it
-  *cpu = GetBuffer().data();
+  data->resolution.height = GetHeight();
+  data->resolution.width = GetWidth();
+  data->encoding = GetColourSpace();
+  data->cpu_buffer = GetBuffer().data();
   while (!new_rx_frame_) {
     // Check timeout
     if (auto elapsed = std::chrono::high_resolution_clock::now() - start_time;
@@ -206,7 +210,7 @@ bool RtpH264GstNvidiaDepayloader::Receive(uint8_t **cpu, int32_t timeout) {
   return true;
 }
 
-void RtpH264GstNvidiaDepayloader::Callback(::mediax::rtp::RtpCallbackData frame) const {
+void RtpH264GstNvidiaDepayloader::Callback(::mediax::rtp::RtpFrameData frame) const {
   if (GetState() == ::mediax::rtp::StreamState::kStarted) {
     GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
   }

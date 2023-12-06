@@ -196,6 +196,15 @@ void DumpHex(const void *data, size_t size) {
   std::cout << std::dec << std::endl;
 }
 
+///
+/// \brief Pack Red/Green/Blue values into a buffer
+///
+/// \param data the buffer to pack into
+/// \param r red value
+/// \param g green value
+/// \param b blue value
+/// \param colourspace the colourspace to use
+///
 void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::rtp::ColourspaceType colourspace) {
   static bool odd = true;
   switch (colourspace) {

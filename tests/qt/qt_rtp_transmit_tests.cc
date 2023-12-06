@@ -1,7 +1,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <qt/QtRtpH264Payloader.h>
-#include <qt/QtRtpUncompressedPayloader.h>
+#include <qt6/QtRtpH264Payloader.h>
+#include <qt6/QtRtpUncompressedPayloader.h>
 // QTest
 #include <QTest>
 
@@ -34,7 +34,7 @@ class QtTest : public QObject {
   }
 
  private:
-  mediax::qt::QtRtpH264Payloader rtp;
+  mediax::qt6::QtRtpH264Payloader rtp;
 };
 
 QtTest::QtTest() {
@@ -45,12 +45,12 @@ QtTest::QtTest() {
   rtp.start();
 
   // Connect the frame signal to the slot
-  connect(this, &QtTest::newFrame, &rtp, &mediax::qt::QtRtpH264Payloader::sendFrame);
+  connect(this, &QtTest::newFrame, &rtp, &mediax::qt6::QtRtpH264Payloader::sendFrame);
 }
 
 TEST(QtRtpTransmit, Constructors) {
-  mediax::qt::QtRtpUncompressedPayloader uncompressed_payloader;
-  mediax::qt::QtRtpH264Payloader h264_payloader;
+  mediax::qt6::QtRtpUncompressedPayloader uncompressed_payloader;
+  mediax::qt6::QtRtpH264Payloader h264_payloader;
 }
 
 TEST(QtRtpTransmit, QtTransmit) {

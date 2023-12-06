@@ -22,6 +22,7 @@
 
 namespace mediax::rtp {
 
+/// The status code
 enum class StatusCode { kStatusOk = 0, kStatusError };
 
 /// SAP/SDP port
@@ -184,9 +185,12 @@ struct Resolution {
 };
 
 /// The RTP callback data
-struct RtpCallbackData {
+struct RtpFrameData {
+  /// The frame resolution
   Resolution resolution;
+  /// The frame data in a CPU buffer
   uint8_t *cpu_buffer;
+  /// The video encoding type
   mediax::rtp::ColourspaceType encoding;
 };
 

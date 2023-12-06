@@ -12,6 +12,7 @@ include(scripts/cmake/cpplint.cmake)
 include(scripts/cmake/cpack.cmake)
 include(scripts/cmake/githooks.cmake)
 include(scripts/cmake/code_coverage.cmake)
+include(scripts/cmake/config.cmake)
 
 add_subdirectory(src)
 option(EXAMPLES "Build examples" OFF)
@@ -50,13 +51,13 @@ install_headers_from_dir(src/h264/gst/nvidia mediax/h264/gst/nvidia)
 install_headers_from_dir(src/sap mediax/sap)
 install_headers_from_dir(src/utils mediax/utils)
 install_headers_from_dir(src/v4l2 mediax/v4l2)
-install_headers_from_dir(src/qt mediax/qt)
+install_headers_from_dir(src/qt6 mediax/qt6)
+install(FILES ${CMAKE_SOURCE_DIR}/src/qt6/QSap ${CMAKE_SOURCE_DIR}/src/qt6/QRtp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mediax/qt6)
 install_headers_from_dir(src/wrappers mediax/wrappers)
-install(FILES ${CMAKE_SOURCE_DIR}/src/qt/QSap ${CMAKE_SOURCE_DIR}/src/qt/QRtp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mediax/qt)
 
 
 #install package config file
-install(FILES ${CMAKE_BINARY_DIR}/mediax.pc DESTINATION  ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+install(FILES ${CMAKE_BINARY_DIR}/mediax.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 # cpplint setup
 cpplint_add_subdirectory(src)

@@ -78,12 +78,12 @@ class Receive {
     // Time the start of the draw
     auto start = std::chrono::high_resolution_clock::now();
 
-    uint8_t *cpu_buffer;
+    mediax::rtp::RtpFrameData frame_data;
     auto data = static_cast<OnDrawData *>(user_data);
     mediax::video::ColourSpaceCpu convert;
 
     // Fill the surface with video data if available
-    if (rtp_->Receive(&cpu_buffer, timeout_) == true) {
+    if (rtp_->Receive(&frame_data, timeout_) == true) {
       unsigned char *surface_data = cairo_image_surface_get_data(data->surface);
 
       // Get the width and height of the surface
@@ -98,19 +98,19 @@ class Receive {
 
       switch (FLAGS_mode) {
         case 0:
-          convert.RgbToBgra(height, width, cpu_buffer, surface_data);
+          convert.RgbToBgra(height, width, frame_data.cpu_buffer, surface_data);
           break;
         case 1:
-          convert.YuvToBgra(height, width, cpu_buffer, surface_data);
+          convert.YuvToBgra(height, width, frame_data.cpu_buffer, surface_data);
           break;
         case 2:
-          convert.Mono16ToBgra(height, width, cpu_buffer, surface_data);
+          convert.Mono16ToBgra(height, width, frame_data.cpu_buffer, surface_data);
           break;
         case 3:
-          convert.Mono8ToBgra(height, width, cpu_buffer, surface_data);
+          convert.Mono8ToBgra(height, width, frame_data.cpu_buffer, surface_data);
           break;
         case 4:
-          convert.Nv12ToBgra(height, width, cpu_buffer, surface_data);
+          convert.Nv12ToBgra(height, width, frame_data.cpu_buffer, surface_data);
           break;
         default:
           LOG(ERROR) << "Unsupported mode=" << FLAGS_mode << "\n";
@@ -186,7 +186,7 @@ class Receive {
   /// \param data the recieved video frame data
   ///
   static void RtpCallback(const mediax::rtp::RtpDepayloader &rtp [[maybe_unused]],
-                          mediax::rtp::RtpCallbackData frame [[maybe_unused]]) {
+                          mediax::rtp::RtpFrameData frame [[maybe_unused]]) {
     // We dont need to render now its safe to call the Recieve function via the GTK callback
     gtk_widget_queue_draw(GTK_WIDGET(Receive::window));
     return;

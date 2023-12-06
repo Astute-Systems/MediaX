@@ -119,8 +119,7 @@ class RtpUncompressedPayloader : public ::mediax::rtp::RtpPayloader {
   ///
   /// \brief Send a frame
   ///
-  /// \param stream
-  /// \return int
+  /// \param stream The RtpUncompressedPayloader object
   ///
   static void SendFrame(RtpUncompressedPayloader *stream);
 
@@ -154,6 +153,7 @@ class RtpUncompressedPayloader : public ::mediax::rtp::RtpPayloader {
   ///
   /// \param packet the RTP header
   /// \param line the line number
+  /// \param bytes_per_pixel the bytes per pixel
   /// \param last true if last line
   /// \param timestamp the timestamp
   /// \param source the source id
@@ -162,8 +162,8 @@ class RtpUncompressedPayloader : public ::mediax::rtp::RtpPayloader {
 
   ///
   /// \brief Transmit RTP data to the network using a separate thread
-  /// \param stream this object
-  /// \return void
+  ///
+  /// \param stream The RtpUncompressedPayloader object
   ///
   static void TransmitThread(RtpUncompressedPayloader *stream);
 

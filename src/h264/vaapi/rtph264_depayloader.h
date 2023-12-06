@@ -20,6 +20,7 @@
 /// The MediaX Intel Video Accelleration API (VAAPI) namespace
 namespace mediax::rtp::h264::vaapi {
 
+/// A RTP payloader for H.264 DEF-STAN 00-82 video streams
 class RtpH264VaapiDepayloader : public RtpDepayloader {
  public:
   ///
@@ -85,12 +86,12 @@ class RtpH264VaapiDepayloader : public RtpDepayloader {
   ///
   /// \brief Recieve a frame or timeout
   ///
-  /// \param cpu the fame buffer in CPU memory.
+  /// \param data the fame buffer in CPU memory.
   /// \param timeout zero will wait forever or a timeout in milliseconds
   /// \return true when frame available
   /// \return false when no frame was received in the timeout
   ///
-  bool Receive(uint8_t **cpu, int32_t timeout = 0) final;
+  bool Receive(mediax::rtp::RtpFrameData *data, int32_t timeout = 0) final;
 
   ///
   /// \brief Set new frame available
@@ -106,7 +107,5 @@ class RtpH264VaapiDepayloader : public RtpDepayloader {
 };
 
 }  // namespace mediax::rtp::h264::vaapi
-
-#endif  // H264_GST_RTP_H264_DEPAYLOADER_H_
 
 #endif  // H264_VAAPI_RTPH264_DEPAYLOADER_H_

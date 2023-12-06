@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
   // [Receive example receive]
   // Register a callback to handle the received video
   rtp.RegisterCallback(
-      [](const mediax::rtp::RtpDepayloader &depay [[maybe_unused]], mediax::rtp::RtpCallbackData frame) {
+      [](const mediax::rtp::RtpDepayloader &depay [[maybe_unused]], mediax::rtp::RtpFrameData frame) {
         // Do something with the frame
         const uint8_t *data = frame.cpu_buffer;
         if (data != nullptr) {

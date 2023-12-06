@@ -8,7 +8,7 @@
 //
 /// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
 ///
-/// \file rtph264_payloader.h
+/// \file rtp_h264_payloader.h
 ///
 
 #ifndef H264_GST_NVIDIA_RTP_H264_PAYLOADER_H_
@@ -20,6 +20,7 @@
 
 namespace mediax::rtp::h264::gst::nvidia {
 
+/// A RTP payloader for H.264 DEF-STAN 00-82 video streams
 class RtpH264GstNvidiaPayloader : public mediax::rtp::RtpPayloader {
  public:
   ///
@@ -92,6 +93,7 @@ class RtpH264GstNvidiaPayloader : public mediax::rtp::RtpPayloader {
   void Stop() final;
 
  private:
+  /// The Gstreamer pipeline
   GstElement *pipeline_;
 };
 

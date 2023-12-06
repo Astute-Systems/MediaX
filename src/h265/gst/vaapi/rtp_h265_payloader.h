@@ -18,6 +18,7 @@
 
 namespace mediax::rtp::h265::gst::vaapi {
 
+/// A RTP payloader for H.264 DEF-STAN 00-82 video streams
 class RtpH265GstVaapiPayloader : public mediax::rtp::RtpPayloader {
  public:
   ///

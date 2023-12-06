@@ -10,9 +10,17 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSWIG")
 
 # Gstreamer
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(GST REQUIRED gstreamer-1.0)
+pkg_check_modules(GST REQUIRED gstreamer-1.0 gstreamer-app-1.0 gstreamer-video-1.0)
 
-find_package(PythonLibs REQUIRED)
+# if CMAKE > 3.27
+if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.27.0")
+    find_package(Python COMPONENTS Interpreter Development)
+    include_directories(${Python_INCLUDE_DIRS})
+else()
+    find_package(PythonInterp REQUIRED)
+    find_package(PythonLibs REQUIRED)
+endif()
+
 include_directories(${PYTHON_INCLUDE_PATH} ${GST_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/src)
 
 # build swig interface for payloader
