@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Apt Update
         run: sudo apt-get update
       - name: Apt Install
@@ -38,14 +38,15 @@ jobs:
           export GIT_HASH=$(git rev-parse --short HEAD) && \
           echo "Current version ${SEM_VERSION} with #${GIT_HASH} and path ${IMAGE_DIR}" && \
           mkdir -p build/docs && \
+          wget https://img.shields.io/badge/version-${SEM_VERSION}-blue.svg -O build/html/version.svg
           doxygen
       - name: Setup Pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v4
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with:
           # Upload the docs
           path: "build/docs/html"
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v3
