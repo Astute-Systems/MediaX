@@ -356,6 +356,7 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
     sdp.height = std::stoi(attributes_map["height"]);
     sdp.width = std::stoi(attributes_map["width"]);
     sdp.bits_per_pixel = std::stoi(attributes_map["depth"]);
+    sdp.sampling = attributes_map["sampling"];
   } catch (const std::invalid_argument &e [[maybe_unused]]) {
     DLOG(ERROR) << "Invalid argument in SAP message. SDP text = " << sdp.sdp_text;
   }
