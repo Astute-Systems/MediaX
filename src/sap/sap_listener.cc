@@ -317,7 +317,6 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
           secondWord = secondWord.substr(0, secondWord.find(" "));
           // Format is before the slash in the second word
           sdp.sampling = secondWord.substr(0, secondWord.find("/"));
-          std::cout << "sampling = " << sdp.sampling << "\n";
         }
       } break;
       case SdpTypeEnum::kTimeSessionActive:
