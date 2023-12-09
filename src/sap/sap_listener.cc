@@ -317,6 +317,14 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
         std::string secondWord = line.substr(firstSpace + 1);
         secondWord = secondWord.substr(0, secondWord.find(" "));
         sdp.port = std::stoi(secondWord);
+
+        // Find third word
+        size_t thirdSpace = line.find(" ", firstSpace + 1);
+        // Extract third word using substr
+        std::string thirdWord = line.substr(thirdSpace + 1);
+        thirdWord = thirdWord.substr(0, thirdWord.find(" "));
+        // Format is before the slash on third word
+        sdp.sampling = thirdWord.substr(0, thirdWord.find("/"));
       } break;
       case SdpTypeEnum::kMediaTitle:
         break;
@@ -348,13 +356,8 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
     sdp.height = std::stoi(attributes_map["height"]);
     sdp.width = std::stoi(attributes_map["width"]);
     sdp.bits_per_pixel = std::stoi(attributes_map["depth"]);
-    sdp.sampling = attributes_map["sampling"];
   } catch (const std::invalid_argument &e [[maybe_unused]]) {
     DLOG(ERROR) << "Invalid argument in SAP message. SDP text = " << sdp.sdp_text;
-    sdp.sampling = attributes_map["profile-level-id"];
-    if (sdp.sampling == "42A01E") {
-      sdp.sampling = "H264";
-    }
   }
 
   try {
@@ -364,7 +367,7 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
     sdp.framerate = 0;
   }
 
-  if (sdp.sampling.empty()) sdp.sampling = "jpeg2000";
+  if (sdp.sampling.empty()) sdp.sampling = "Unknown";
 
   DLOG(INFO) << "Store " << sdp.session_name << " " << sdp.ip_address << ":" << sdp.port << " " << sdp.height << "x"
              << sdp.width << " " << sdp.framerate << "fps " << sdp.sampling;
