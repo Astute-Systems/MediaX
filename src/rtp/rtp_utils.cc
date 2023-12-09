@@ -120,6 +120,10 @@ uint8_t BitsPerPixel(rtp::ColourspaceType mode) {
     case rtp::ColourspaceType::kColourspaceH264Part10:
     case rtp::ColourspaceType::kColourspaceH265:
       return 24;  // Not known but not an error.
+    case rtp::ColourspaceType::kColourspaceJpeg2000:
+      return 24;  // Not known but not an error.
+    case rtp::ColourspaceType::kColourspaceAv1:
+      return 24;  // Not known but not an error.
     default:
       LOG(ERROR) << "Unknown colourspace type " << ColourspaceTypeToString(mode);
       return 0;
