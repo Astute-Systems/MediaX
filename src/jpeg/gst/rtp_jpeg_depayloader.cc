@@ -35,10 +35,7 @@
 
 namespace mediax::rtp::jpeg::gst {
 
-RtpJpegGstDepayloader::RtpJpegGstDepayloader() {
-  // Set this for empty video buffers
-  SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceNv12);
-}
+RtpJpegGstDepayloader::RtpJpegGstDepayloader() = default;
 
 RtpJpegGstDepayloader::~RtpJpegGstDepayloader() = default;
 
@@ -56,6 +53,14 @@ void RtpJpegGstDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation
   stream.hostname = stream_information.hostname;
   stream.port_no = stream_information.port;
   stream.settings_valid = true;
+  SetSessionName(stream_information.session_name);
+  SetHeight(stream_information.height);
+  SetWidth(stream_information.width);
+  SetBufferSize(stream_information.height * stream_information.width * 3);
+  SetFramerate(stream_information.framerate);
+  SetIpAddress(stream_information.hostname);
+  SetPort(stream_information.port);
+  SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgb24);
 }
 
 GstFlowReturn RtpJpegGstDepayloader::NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
@@ -80,9 +85,6 @@ GstFlowReturn RtpJpegGstDepayloader::NewFrameCallback(GstAppSink *appsink, gpoin
 
   const GstStructure *structure = gst_caps_get_structure(caps, 0);
 
-  gst_structure_get_int(structure, "height", &height);
-  gst_structure_get_int(structure, "width", &width);
-
   // Set the ColourspaceType
   if (const gchar *colorspace = gst_structure_get_string(structure, "format"); strncmp(colorspace, "UYVY", 4) == 0) {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceYuv);
@@ -95,10 +97,9 @@ GstFlowReturn RtpJpegGstDepayloader::NewFrameCallback(GstAppSink *appsink, gpoin
   } else {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceUndefined);
     DLOG(WARNING) << "Unknown colourspace " << colorspace;
+    std::cerr << "Unknown format " << colorspace << " height " << height << " width " << width << " size " << size
+              << "\n";  // NOLINT
   }
-
-  depayloader->SetHeight(height);
-  depayloader->SetWidth(width);
 
   // Get a pointer to the video frame
   GstMapInfo map;
@@ -156,6 +157,7 @@ bool RtpJpegGstDepayloader::Open() {
   // To RGB
   GstElement *capsfilter2 = gst_element_factory_make("capsfilter", "rtp-jpeg-capsfilter2");
   GstCaps *caps2 = gst_caps_from_string("video/x-raw, format=RGB");
+  g_object_set(G_OBJECT(capsfilter2), "caps", caps2, nullptr);
 
   // Create a custom appsrc element to receive the H.264 stream
   GstElement *appsink = gst_element_factory_make("appsink", "rtp-jpeg-appsrc");
