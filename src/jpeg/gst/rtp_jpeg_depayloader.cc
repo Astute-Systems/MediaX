@@ -104,6 +104,9 @@ GstFlowReturn RtpJpegGstDepayloader::NewFrameCallback(GstAppSink *appsink, gpoin
               << "\n";  // NOLINT
   }
 
+  depayloader->SetHeight(height);
+  depayloader->SetWidth(width);
+
   // Get a pointer to the video frame
   GstMapInfo map;
   gst_buffer_map(buffer, &map, GST_MAP_READ);
