@@ -11,8 +11,14 @@
 #ifndef QT_QTRTP_H_
 #define QT_QTRTP_H_
 
+#include "QtRtpAv1Depayloader.h"
+#include "QtRtpAv1Payloader.h"
 #include "QtRtpH264Depayloader.h"
 #include "QtRtpH264Payloader.h"
+#include "QtRtpH265Depayloader.h"
+#include "QtRtpH265Payloader.h"
+#include "QtRtpJpegDepayloader.h"
+#include "QtRtpJpegPayloader.h"
 #include "QtRtpUncompressedDepayloader.h"
 #include "QtRtpUncompressedPayloader.h"
 
