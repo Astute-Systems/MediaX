@@ -15,12 +15,16 @@
 #define RTP_RTP_H_
 
 #if GST_SUPPORTED
+#include "av1/gst/rtp_av1_depayloader.h"
+#include "av1/gst/rtp_av1_payloader.h"
 #include "h264/gst/nvidia/rtp_h264_depayloader.h"
 #include "h264/gst/nvidia/rtp_h264_payloader.h"
 #include "h264/gst/vaapi/rtp_h264_depayloader.h"
 #include "h264/gst/vaapi/rtp_h264_payloader.h"
 #include "h265/gst/vaapi/rtp_h265_depayloader.h"
 #include "h265/gst/vaapi/rtp_h265_payloader.h"
+#include "jpeg/gst/rtp_jpeg_depayloader.h"
+#include "jpeg/gst/rtp_jpeg_payloader.h"
 #endif
 #include "rtp/rtp_depayloader.h"
 #include "rtp/rtp_payloader.h"

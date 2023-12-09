@@ -23,22 +23,22 @@
 #include "rtp/rtp_depayloader.h"
 
 /// The JPEG video compression GStreamer namespace
-namespace mediax::rtp::jpeg::gst {
+namespace mediax::rtp::jpeg::gst::vaapi {
 
-/// A RTP payloader for JPEG DEF-STAN 00-82 video streams
-class RtpJpegGstDepayloader : public mediax::rtp::RtpDepayloader {
+/// A RTP payloader for H.264 DEF-STAN 00-82 video streams
+class RtpJpegGstVaapiDepayloader : public mediax::rtp::RtpDepayloader {
  public:
   ///
   /// \brief Construct a new Rtpvraw Depayloader object
   ///
   ///
-  RtpJpegGstDepayloader();
+  RtpJpegGstVaapiDepayloader();
 
   ///
   /// \brief Destroy the Rtpvraw Depayloader object
   ///
   ///
-  ~RtpJpegGstDepayloader() final;
+  ~RtpJpegGstVaapiDepayloader() final;
 
   ///
   /// \brief Copy operator (Deleted)
@@ -46,14 +46,14 @@ class RtpJpegGstDepayloader : public mediax::rtp::RtpDepayloader {
   /// \param other
   /// \return Rtph265Depayloader
   ///
-  RtpJpegGstDepayloader &operator=(const RtpJpegGstDepayloader &other);
+  RtpJpegGstVaapiDepayloader &operator=(const RtpJpegGstVaapiDepayloader &other);
 
   ///
   /// \brief Construct a new Rtph265Depayloader object (Deleted)
   ///
   /// \param other
   ///
-  RtpJpegGstDepayloader(RtpJpegGstDepayloader &&other) = delete;
+  RtpJpegGstVaapiDepayloader(RtpJpegGstVaapiDepayloader &&other) = delete;
 
   ///
   /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement
@@ -129,6 +129,6 @@ class RtpJpegGstDepayloader : public mediax::rtp::RtpDepayloader {
   bool new_rx_frame_ = false;
 };
 
-}  // namespace mediax::rtp::jpeg::gst
+}  // namespace mediax::rtp::jpeg::gst::vaapi
 
 #endif  // JPEG_GST_RTP_JPEG_DEPAYLOADER_H_
