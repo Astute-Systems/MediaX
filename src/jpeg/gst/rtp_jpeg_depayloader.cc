@@ -59,6 +59,7 @@ void RtpJpegGstDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation
   SetSessionName(stream_information.session_name);
   SetHeight(stream_information.height);
   SetWidth(stream_information.width);
+  std::cout << "Height " << stream_information.height << " Width " << stream_information.width << "\n";  // NOLINT
   SetBufferSize(stream_information.height * stream_information.width * 3);
   SetFramerate(stream_information.framerate);
   SetIpAddress(stream_information.hostname);
@@ -230,8 +231,7 @@ void RtpJpegGstDepayloader::NewFrame() {
   new_rx_frame_ = true;
   if (CallbackRegistered()) {
     RtpFrameData arg_tx = {{GetHeight(), GetWidth()}, GetBuffer().data(), GetColourSpace()};
-    std::cout << "Height " << arg_tx.resolution.height << " Width " << arg_tx.resolution.width << " Encoding "
-              << arg_tx.encoding << "\n";  // NOLINT
+    std::cout << "Height " << arg_tx.resolution.height << " Width " << arg_tx.resolution.width << "\n";  // NOLINT
     Callback(arg_tx);
   }
 }
