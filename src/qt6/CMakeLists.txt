@@ -21,6 +21,12 @@ set(SOURCES
   QtRtpUncompressedPayloader.cc
   QtRtpH264Payloader.cc
   QtRtpH264Depayloader.cc
+  QtRtpH265Payloader.cc
+  QtRtpH265Depayloader.cc
+  QtRtpJpegPayloader.cc
+  QtRtpJpegDepayloader.cc
+  QtRtpAv1Payloader.cc
+  QtRtpAv1Depayloader.cc
 )
 
 add_library(mediaxqt STATIC ${SOURCES})
