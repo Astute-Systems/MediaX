@@ -59,7 +59,6 @@ void RtpJpegGstDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation
   SetSessionName(stream_information.session_name);
   SetHeight(stream_information.height);
   SetWidth(stream_information.width);
-  std::cout << "Height " << stream_information.height << " Width " << stream_information.width << "\n";  // NOLINT
   SetBufferSize(stream_information.height * stream_information.width * 3);
   SetFramerate(stream_information.framerate);
   SetIpAddress(stream_information.hostname);
@@ -89,6 +88,9 @@ GstFlowReturn RtpJpegGstDepayloader::NewFrameCallback(GstAppSink *appsink, gpoin
 
   const GstStructure *structure = gst_caps_get_structure(caps, 0);
 
+  gst_structure_get_int(structure, "height", &height);
+  gst_structure_get_int(structure, "width", &width);
+  std::cerr << "Gstreamer height " << height << " width " << width << "\n";  // NOLINT
   // Set the ColourspaceType
   if (const gchar *colorspace = gst_structure_get_string(structure, "format"); strncmp(colorspace, "UYVY", 4) == 0) {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceYuv);
@@ -104,6 +106,9 @@ GstFlowReturn RtpJpegGstDepayloader::NewFrameCallback(GstAppSink *appsink, gpoin
     std::cerr << "Unknown format " << colorspace << " height " << height << " width " << width << " size " << size
               << "\n";  // NOLINT
   }
+
+  depayloader->SetHeight(height);
+  depayloader->SetWidth(width);
 
   // Get a pointer to the video frame
   GstMapInfo map;
