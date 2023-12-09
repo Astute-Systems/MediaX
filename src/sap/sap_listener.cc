@@ -332,6 +332,8 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
   attributes_map.insert(attributes_map_fmtp.begin(), attributes_map_fmtp.end());
   attributes_map_fmtp = ParseAttributes(attributes_map["fmtp:96"]);
   attributes_map.insert(attributes_map_fmtp.begin(), attributes_map_fmtp.end());
+  attributes_map_fmtp = ParseAttributes(attributes_map["fmtp:98"]);
+  attributes_map.insert(attributes_map_fmtp.begin(), attributes_map_fmtp.end());
 
   // Iterate over the attributes_map and split key on :
   for (const auto &[key, value] : attributes_map) {

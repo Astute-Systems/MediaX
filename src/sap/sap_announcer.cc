@@ -196,8 +196,8 @@ int SapAnnouncer::SendSapPacket(const ::mediax::rtp::StreamInformation &stream_i
     sampling = " profile-level-id=42A01E; packetisation-mode=0";
     mode = "H265";
   } else if (stream_information.encoding == mediax::rtp::ColourspaceType::kColourspaceAv1) {
-    id = 105;
-    sampling = " profile-level-id=42A01E; packetisation-mode=0";
+    id = 98;
+    sampling = " profile=2; level-idx=8; tier=1";
     mode = "AV1";
   } else {
     id = 96;
