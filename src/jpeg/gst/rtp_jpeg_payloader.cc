@@ -94,7 +94,7 @@ bool RtpJpegGstPayloader::Open() {
   GstElement *capsfilter2 = gst_element_factory_make("capsfilter", "rtp-jpeg-capsfilter2");
   // Raw RGB caps
   GstCaps *caps2 = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420", nullptr);
-  g_object_set(G_OBJECT(capsfilter2), "caps2", caps, nullptr);
+  g_object_set(G_OBJECT(capsfilter2), "caps2", caps2, nullptr);
 
   // Create a h265enc element to decode the H.264 stream
   GstElement *h265enc = gst_element_factory_make("jpegenc", "rtp-jpeg-enc");
