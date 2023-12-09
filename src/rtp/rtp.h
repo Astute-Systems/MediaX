@@ -25,6 +25,8 @@
 #include "h265/gst/vaapi/rtp_h265_payloader.h"
 #include "jpeg/gst/rtp_jpeg_depayloader.h"
 #include "jpeg/gst/rtp_jpeg_payloader.h"
+#include "jpeg/gst/vaapi/rtp_jpeg_depayloader.h"
+#include "jpeg/gst/vaapi/rtp_jpeg_payloader.h"
 #endif
 #include "rtp/rtp_depayloader.h"
 #include "rtp/rtp_payloader.h"
