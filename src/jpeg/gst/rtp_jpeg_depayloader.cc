@@ -129,6 +129,9 @@ GstFlowReturn RtpJpegGstDepayloader::NewFrameCallback(GstAppSink *appsink, gpoin
 }
 
 bool RtpJpegGstDepayloader::Open() {
+  // Call the base class
+  RtpDepayloader::Open();
+
   // Create a pipeline
   pipeline_ = gst_pipeline_new("rtp-jpeg-pipeline");
 

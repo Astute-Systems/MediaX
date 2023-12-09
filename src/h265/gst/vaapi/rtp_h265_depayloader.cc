@@ -130,6 +130,9 @@ GstFlowReturn RtpH265GstVaapiDepayloader::NewFrameCallback(GstAppSink *appsink, 
 }
 
 bool RtpH265GstVaapiDepayloader::Open() {
+  // Call the base class
+  RtpDepayloader::Open();
+
   // Create a pipeline
   pipeline_ = gst_pipeline_new("rtp-h265-pipeline");
 

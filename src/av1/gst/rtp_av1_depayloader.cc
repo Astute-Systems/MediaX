@@ -129,6 +129,9 @@ GstFlowReturn RtpAv1GstDepayloader::NewFrameCallback(GstAppSink *appsink, gpoint
 }
 
 bool RtpAv1GstDepayloader::Open() {
+  // Call the base class
+  RtpDepayloader::Open();
+
   // Create a pipeline
   pipeline_ = gst_pipeline_new("rtp-av1-pipeline");
 

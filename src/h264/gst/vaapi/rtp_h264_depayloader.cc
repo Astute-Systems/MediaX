@@ -121,6 +121,9 @@ GstFlowReturn RtpH264GstVaapiDepayloader::NewFrameCallback(GstAppSink *appsink, 
 }
 
 bool RtpH264GstVaapiDepayloader::Open() {
+  // Call the base class
+  RtpDepayloader::Open();
+
   // Check that the stream info has been set
   if (!GetStream().settings_valid) {
     return false;
