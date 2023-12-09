@@ -90,6 +90,12 @@ bool RtpJpegGstPayloader::Open() {
   // Convert the video colourspace
   GstElement *videoconvert = gst_element_factory_make("videoconvert", "rtp-h265-videoconvert");
 
+  //
+  GstElement *capsfilter2 = gst_element_factory_make("capsfilter", "rtp-jpeg-capsfilter2");
+  // Raw RGB caps
+  GstCaps *caps2 = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420", nullptr);
+  g_object_set(G_OBJECT(capsfilter2), "caps2", caps, nullptr);
+
   // Create a h265enc element to decode the H.264 stream
   GstElement *h265enc = gst_element_factory_make("jpegenc", "rtp-jpeg-enc");
 
@@ -101,10 +107,11 @@ bool RtpJpegGstPayloader::Open() {
   g_object_set(G_OBJECT(udpsink), "host", GetEgressPort().hostname.c_str(), "port", GetEgressPort().port_no, nullptr);
 
   // Add all elements to the pipeline
-  gst_bin_add_many(GST_BIN(pipeline_), appsrc, capsfilter, videoconvert, h265enc, rtp264pay, udpsink, nullptr);
+  gst_bin_add_many(GST_BIN(pipeline_), appsrc, capsfilter, videoconvert, capsfilter2, h265enc, rtp264pay, udpsink,
+                   nullptr);
 
   // Link the elements
-  gst_element_link_many(appsrc, capsfilter, videoconvert, h265enc, rtp264pay, udpsink, nullptr);
+  gst_element_link_many(appsrc, capsfilter, videoconvert, capsfilter2, h265enc, rtp264pay, udpsink, nullptr);
 
   return true;
 }

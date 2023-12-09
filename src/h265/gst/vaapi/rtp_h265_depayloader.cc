@@ -135,7 +135,7 @@ bool RtpH265GstVaapiDepayloader::Open() {
   // Create a capsfilter element to set the caps for the RTP stream
   GstElement *capsfilter = gst_element_factory_make("capsfilter", "rtp-h265-capsfilter");
   GstCaps *caps =
-      gst_caps_from_string("application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)h265");
+      gst_caps_from_string("application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H265");
   g_object_set(G_OBJECT(capsfilter), "caps", caps, nullptr);
   gst_caps_unref(caps);
 
