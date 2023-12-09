@@ -8,27 +8,25 @@
 //
 ///
 /// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
-/// gst-launch-1.0 videotestsrc ! "video/x-raw, format=RGB" ! videoconvert ! vaapih265enc ! rtph265pay ! udpsink
+/// gst-launch-1.0 videotestsrc ! "video/x-raw, format=RGB" ! videoconvert ! x265enc ! rtph265pay ! udpsink
 /// host=239.192.1.1 port=5004
 ///
 /// \file rtp_h265_payloader.cc
 ///
 
-#include "h265/gst/vaapi/rtp_h265_payloader.h"
+#include "h265/gst/rtp_h265_payloader.h"
 
 #include <glog/logging.h>
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
 
-#include "h265/gst/vaapi/rtp_h265_depayloader.h"
+namespace mediax::rtp::h265::gst {
 
-namespace mediax::rtp::h265::gst::vaapi {
+RtpH265GstPayloader::RtpH265GstPayloader() = default;
 
-RtpH265GstVaapiPayloader::RtpH265GstVaapiPayloader() = default;
+RtpH265GstPayloader::~RtpH265GstPayloader() = default;
 
-RtpH265GstVaapiPayloader::~RtpH265GstVaapiPayloader() = default;
-
-void RtpH265GstVaapiPayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
+void RtpH265GstPayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
   GetEgressPort().encoding = stream_information.encoding;
   GetEgressPort().height = stream_information.height;
   GetEgressPort().width = stream_information.width;
@@ -39,7 +37,7 @@ void RtpH265GstVaapiPayloader::SetStreamInfo(const ::mediax::rtp::StreamInformat
   GetEgressPort().settings_valid = true;
 }
 
-int RtpH265GstVaapiPayloader::Transmit(unsigned char *new_buffer, bool timeout) {
+int RtpH265GstPayloader::Transmit(unsigned char *new_buffer, bool timeout) {
   if (!started_) {
     DLOG(ERROR) << "RTP H.265 payloader not started";
     return -1;
@@ -72,7 +70,7 @@ int RtpH265GstVaapiPayloader::Transmit(unsigned char *new_buffer, bool timeout) 
   return 0;
 }
 
-bool RtpH265GstVaapiPayloader::Open() {
+bool RtpH265GstPayloader::Open() {
   // Setup a gstreamer pipeline to decode H.264 with Intel VAAPI
 
   // Create a pipeline
@@ -93,7 +91,7 @@ bool RtpH265GstVaapiPayloader::Open() {
   GstElement *videoconvert = gst_element_factory_make("videoconvert", "rtp-h265-videoconvert");
 
   // Create a vaapih265enc element to decode the H.264 stream
-  GstElement *vaapih265enc = gst_element_factory_make("vaapih265enc", "rtp-h265-vaapih265enc");
+  GstElement *vaapih265enc = gst_element_factory_make("x265enc", "rtp-h265-vaapih265enc");
 
   // RTP payloader
   GstElement *rtp264pay = gst_element_factory_make("rtph265pay", "rtp-h265-payloader");
@@ -111,7 +109,7 @@ bool RtpH265GstVaapiPayloader::Open() {
   return true;
 }
 
-void RtpH265GstVaapiPayloader::Close() {
+void RtpH265GstPayloader::Close() {
   // Stop the pipeline
   Stop();
 
@@ -119,16 +117,16 @@ void RtpH265GstVaapiPayloader::Close() {
   gst_object_unref(pipeline_);
 }
 
-void RtpH265GstVaapiPayloader::Start() {
+void RtpH265GstPayloader::Start() {
   started_ = true;
   // Start the pipeline
   gst_element_set_state(pipeline_, GST_STATE_PLAYING);
 }
 
-void RtpH265GstVaapiPayloader::Stop() {
+void RtpH265GstPayloader::Stop() {
   started_ = false;
   // Stop the pipeline
   gst_element_set_state(pipeline_, GST_STATE_NULL);
 }
 
-}  // namespace mediax::rtp::h265::gst::vaapi
+}  // namespace mediax::rtp::h265::gst

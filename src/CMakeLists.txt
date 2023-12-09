@@ -61,6 +61,8 @@ if (GST_SUPPORTED)
     jpeg/gst/vaapi/rtp_jpeg_depayloader.cc
     h264/gst/nvidia/rtp_h264_payloader.cc 
     h264/gst/nvidia/rtp_h264_depayloader.cc
+    h265/gst/rtp_h265_payloader.cc 
+    # h265/gst/rtp_h265_depayloader.cc
     jpeg/gst/rtp_jpeg_payloader.cc 
     jpeg/gst/rtp_jpeg_depayloader.cc
     av1/gst/rtp_av1_payloader.cc 
