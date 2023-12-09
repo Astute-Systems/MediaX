@@ -101,6 +101,7 @@ enum class ColourspaceType {
   kColourspaceH264Part4,
   kColourspaceH264Part10,
   kColourspaceH265,
+  kColourspaceAv1,
   kColourspaceUndefined
 };
 

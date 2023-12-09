@@ -191,6 +191,14 @@ int SapAnnouncer::SendSapPacket(const ::mediax::rtp::StreamInformation &stream_i
     sampling = " sampling=YCbCr-4:2:2; width=" + std::to_string(stream_information.width) +
                "; height=" + std::to_string(stream_information.height);
     mode = "jpeg2000";
+  } else if (stream_information.encoding == mediax::rtp::ColourspaceType::kColourspaceH265) {
+    id = 104;
+    sampling = " profile-level-id=42A01E; packetisation-mode=0";
+    mode = "H265";
+  } else if (stream_information.encoding == mediax::rtp::ColourspaceType::kColourspaceAv1) {
+    id = 105;
+    sampling = " profile-level-id=42A01E; packetisation-mode=0";
+    mode = "AV1";
   } else {
     id = 96;
     sampling = " sampling=" + ::mediax::sap::GetSdpColourspace(stream_information.encoding) +
