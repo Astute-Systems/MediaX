@@ -17,7 +17,8 @@
 #include "sap/sap_listener.h"
 
 mediax::sap::SdpMessage callback_data = {};
-TEST(SAPListenerTest, RegisterSapListenerTest) {
+
+void SapTest(mediax::rtp::ColourspaceType colouspace, std::string sampling) {
   mediax::sap::SapListener& listener = mediax::sap::SapListener::GetInstance();
   std::string session_name = "test_session_name";
   static bool callback_called = false;
@@ -31,8 +32,7 @@ TEST(SAPListenerTest, RegisterSapListenerTest) {
   /// Now make an announcement
   mediax::sap::SapAnnouncer& announcer = mediax::sap::SapAnnouncer::GetInstance();
   announcer.DeleteAllSapAnnouncements();
-  mediax::rtp::StreamInformation message = {
-      "test_session_name", "127.0.0.1", 5004, 1080, 1920, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+  mediax::rtp::StreamInformation message = {"test_session_name", "127.0.0.1", 5004, 1080, 1920, 30, colouspace, false};
   announcer.AddSapAnnouncement(message);
   announcer.Start();
   ASSERT_EQ(announcer.GetActiveStreamCount(), 1);
@@ -47,12 +47,27 @@ TEST(SAPListenerTest, RegisterSapListenerTest) {
   ASSERT_EQ(callback_data.width, 1920);
   ASSERT_EQ(callback_data.height, 1080);
   ASSERT_EQ(callback_data.framerate, 30);
-  ASSERT_EQ(callback_data.sampling, "YCbCr-4:2:2");
+  ASSERT_EQ(callback_data.sampling, sampling);
   ASSERT_EQ(callback_data.deleted, false);
 
   listener.Stop();
+  announcer.DeleteAllSapAnnouncements();
   announcer.Stop();
 }
+
+TEST(SAPListenerTest, CheckYuv) { SapTest(mediax::rtp::ColourspaceType::kColourspaceYuv, "YCbCr-4:2:2"); }
+
+TEST(SAPListenerTest, CheckRgb24) { SapTest(mediax::rtp::ColourspaceType::kColourspaceRgb24, "RGB"); }
+
+TEST(SAPListenerTest, CheckMono8) { SapTest(mediax::rtp::ColourspaceType::kColourspaceMono8, "Mono"); }
+
+TEST(SAPListenerTest, CheckMono16) { SapTest(mediax::rtp::ColourspaceType::kColourspaceMono16, "Mono"); }
+
+TEST(SAPListenerTest, CheckH264) { SapTest(mediax::rtp::ColourspaceType::kColourspaceH264Part10, "H264"); }
+
+TEST(SAPListenerTest, CheckH265) { SapTest(mediax::rtp::ColourspaceType::kColourspaceH265, "H265"); }
+
+TEST(SAPListenerTest, CheckAv1) { SapTest(mediax::rtp::ColourspaceType::kColourspaceAv1, "AV1"); }
 
 TEST(SAPListenerTest, Deleted) {
   mediax::sap::SapListener& listener = mediax::sap::SapListener::GetInstance();

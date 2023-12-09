@@ -218,6 +218,7 @@ std::map<std::string, std::string, std::less<>> SapListener::ParseAttributes(con
 }
 
 bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdata, uint32_t size) {
+  std::string rtptype;
   if (size < 8) {
     DLOG(ERROR) << "SAP packet too small";
     return false;
@@ -307,6 +308,16 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
       case SdpTypeEnum::kSessionAttribute: {
         std::map<std::string, std::string, std::less<>> attributes_map_more = ParseAttributes1(line);
         attributes_map.insert(attributes_map_more.begin(), attributes_map_more.end());
+        // If string contains 'rtpmat' then we have a match
+        if (line.find("rtpmap:") != std::string::npos) {
+          // Get index of first space character
+          size_t firstSpace = line.find(" ");
+          // Extract second word using substr
+          std::string secondWord = line.substr(firstSpace + 1);
+          secondWord = secondWord.substr(0, secondWord.find(" "));
+          // Format is before the slash in the second word
+          sdp.sampling = secondWord.substr(0, secondWord.find("/"));
+        }
       } break;
       case SdpTypeEnum::kTimeSessionActive:
         break;
@@ -323,8 +334,8 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
         // Extract third word using substr
         std::string thirdWord = line.substr(thirdSpace + 1);
         thirdWord = thirdWord.substr(0, thirdWord.find(" "));
-        // Format is before the slash on third word
-        sdp.sampling = thirdWord.substr(0, thirdWord.find("/"));
+        // Format is after the slash in the third word
+        rtptype = thirdWord.substr(thirdWord.find("/") + 1);
       } break;
       case SdpTypeEnum::kMediaTitle:
         break;

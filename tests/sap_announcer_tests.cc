@@ -71,6 +71,7 @@ TEST(SapAnnouncerTest, AddMultipleSAPAnnouncements) {
 
 TEST(SapAnnouncerTest, DeleteAllSAPAnnouncements) {
   mediax::sap::SapAnnouncer &announcer = mediax::sap::SapAnnouncer::GetInstance();
+  announcer.DeleteAllSapAnnouncements();
   announcer.Start();
 
   announcer.DeleteAllSapAnnouncements();
