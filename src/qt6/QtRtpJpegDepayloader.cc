@@ -33,7 +33,6 @@ void QtRtpJpegDepayloader::setStreamInfo(const mediax::rtp::StreamInformation &s
         frame_data.height = m_depayloader.GetHeight();
         frame_data.width = m_depayloader.GetWidth();
         frame_data.encoding = frame.encoding;
-        std::cout << "Frame data: " << frame_data.video.size() << std::endl;
         emit newFrame(frame_data);
       });
 }
