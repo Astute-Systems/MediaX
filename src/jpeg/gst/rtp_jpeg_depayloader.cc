@@ -90,7 +90,6 @@ GstFlowReturn RtpJpegGstDepayloader::NewFrameCallback(GstAppSink *appsink, gpoin
 
   gst_structure_get_int(structure, "height", &height);
   gst_structure_get_int(structure, "width", &width);
-  std::cerr << "Gstreamer height " << height << " width " << width << "\n";  // NOLINT
   // Set the ColourspaceType
   if (const gchar *colorspace = gst_structure_get_string(structure, "format"); strncmp(colorspace, "UYVY", 4) == 0) {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceYuv);
@@ -186,11 +185,28 @@ bool RtpJpegGstDepayloader::Open() {
 }
 
 void RtpJpegGstDepayloader::Start() {
+  // Return if not open
+  if (GetState() == ::mediax::rtp::StreamState::kClosed) {
+    std::cerr << "Stream not open so cant be started"
+              << "\n";
+    return;
+  }
+
+  if (GetState() == ::mediax::rtp::StreamState::kStarted) {
+    return;
+  }
+  // Call the base class
+  RtpDepayloader::Start();
   // Start the pipeline
   gst_element_set_state(pipeline_, GST_STATE_PLAYING);
 }
 
 void RtpJpegGstDepayloader::Stop() {
+  if (GetState() != ::mediax::rtp::StreamState::kStarted) {
+    return;
+  }
+  // Call the base class
+  RtpDepayloader::Stop();
   // Stop the pipeline
   gst_element_set_state(pipeline_, GST_STATE_NULL);
   // Wait for the pipeline to finish
@@ -201,6 +217,24 @@ void RtpJpegGstDepayloader::Stop() {
 }
 
 void RtpJpegGstDepayloader::Close() {
+  if (GetState() != ::mediax::rtp::StreamState::kStopped) {
+    Stop();
+  }
+
+  if (GetState() == ::mediax::rtp::StreamState::kClosed) {
+    return;
+  }
+  Stop();
+
+  // Call the base class
+  RtpDepayloader::Close();
+
+  // Wait for the pipeline to finish
+  GstBus *bus = gst_element_get_bus(pipeline_);
+
+  // Free resources
+  gst_object_unref(bus);
+
   // Destroy the pipeline
   gst_object_unref(pipeline_);
 }
@@ -236,7 +270,6 @@ void RtpJpegGstDepayloader::NewFrame() {
   new_rx_frame_ = true;
   if (CallbackRegistered()) {
     RtpFrameData arg_tx = {{GetHeight(), GetWidth()}, GetBuffer().data(), GetColourSpace()};
-    std::cout << "Height " << arg_tx.resolution.height << " Width " << arg_tx.resolution.width << "\n";  // NOLINT
     Callback(arg_tx);
   }
 }

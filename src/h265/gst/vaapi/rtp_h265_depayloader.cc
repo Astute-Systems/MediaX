@@ -177,11 +177,28 @@ bool RtpH265GstVaapiDepayloader::Open() {
 }
 
 void RtpH265GstVaapiDepayloader::Start() {
+  // Return if not open
+  if (GetState() == ::mediax::rtp::StreamState::kClosed) {
+    std::cerr << "Stream not open so cant be started"
+              << "\n";
+    return;
+  }
+
+  if (GetState() == ::mediax::rtp::StreamState::kStarted) {
+    return;
+  }
+  // Call the base class
+  RtpDepayloader::Start();
   // Start the pipeline
   gst_element_set_state(pipeline_, GST_STATE_PLAYING);
 }
 
 void RtpH265GstVaapiDepayloader::Stop() {
+  if (GetState() != ::mediax::rtp::StreamState::kStarted) {
+    return;
+  }
+  // Call the base class
+  RtpDepayloader::Stop();
   // Stop the pipeline
   gst_element_set_state(pipeline_, GST_STATE_NULL);
   // Wait for the pipeline to finish
@@ -192,6 +209,24 @@ void RtpH265GstVaapiDepayloader::Stop() {
 }
 
 void RtpH265GstVaapiDepayloader::Close() {
+  if (GetState() != ::mediax::rtp::StreamState::kStopped) {
+    Stop();
+  }
+
+  if (GetState() == ::mediax::rtp::StreamState::kClosed) {
+    return;
+  }
+  Stop();
+
+  // Call the base class
+  RtpDepayloader::Close();
+
+  // Wait for the pipeline to finish
+  GstBus *bus = gst_element_get_bus(pipeline_);
+
+  // Free resources
+  gst_object_unref(bus);
+
   // Destroy the pipeline
   gst_object_unref(pipeline_);
 }
