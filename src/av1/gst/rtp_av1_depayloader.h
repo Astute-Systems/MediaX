@@ -12,8 +12,8 @@
 /// \file rtp_h265_depayloader.h
 ///
 
-#ifndef H265_GST_VAAPI_RTP_av1_DEPAYLOADER_H_
-#define H265_GST_VAAPI_RTP_av1_DEPAYLOADER_H_
+#ifndef AV1_GST_RTP_AV1_DEPAYLOADER_H_
+#define AV1_GST_RTP_AV1_DEPAYLOADER_H_
 
 #include <gst/app/gstappsink.h>
 #include <gst/gst.h>
@@ -131,4 +131,4 @@ class RtpAv1GstDepayloader : public mediax::rtp::RtpDepayloader {
 
 }  // namespace mediax::rtp::av1::gst
 
-#endif  // H265_GST_VAAPI_RTP_av1_DEPAYLOADER_H_
+#endif  // AV1_GST_RTP_AV1_DEPAYLOADER_H_

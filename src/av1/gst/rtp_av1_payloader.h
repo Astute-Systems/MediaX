@@ -9,8 +9,8 @@
 ///
 /// \file rtp_av1_payloader.h
 
-#ifndef JPEG_GST_RTP_H265_PAYLOADER_H_
-#define JPEG_GST_RTP_H265_PAYLOADER_H_
+#ifndef AV1_GST_RTP_AV1_PAYLOADER_H_
+#define AV1_GST_RTP_AV1_PAYLOADER_H_
 
 #include <gst/gst.h>
 
@@ -84,4 +84,4 @@ class RtpAv1GstPayloader : public mediax::rtp::RtpPayloader {
 
 }  // namespace mediax::rtp::av1::gst
 
-#endif  // H265_GST__RTP_H265_PAYLOADER_H_
+#endif  // AV1_GST_RTP_AV1_PAYLOADER_H_
