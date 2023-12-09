@@ -214,6 +214,12 @@ void RtpH265GstVaapiDepayloader::Callback(::mediax::rtp::RtpFrameData frame) con
   GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
 }
 
-void RtpH265GstVaapiDepayloader::NewFrame() { new_rx_frame_ = true; }
+void RtpH265GstVaapiDepayloader::NewFrame() {
+  new_rx_frame_ = true;
+  if (CallbackRegistered()) {
+    RtpFrameData arg_tx = {{GetHeight(), GetWidth()}, GetBuffer().data(), GetColourSpace()};
+    Callback(arg_tx);
+  }
+}
 
 }  // namespace mediax::rtp::h265::gst::vaapi

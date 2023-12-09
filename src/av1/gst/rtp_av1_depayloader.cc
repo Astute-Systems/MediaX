@@ -212,6 +212,12 @@ void RtpAv1GstDepayloader::Callback(::mediax::rtp::RtpFrameData frame) const {
   GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
 }
 
-void RtpAv1GstDepayloader::NewFrame() { new_rx_frame_ = true; }
+void RtpAv1GstDepayloader::NewFrame() {
+  new_rx_frame_ = true;
+  if (CallbackRegistered()) {
+    RtpFrameData arg_tx = {{GetHeight(), GetWidth()}, GetBuffer().data(), GetColourSpace()};
+    Callback(arg_tx);
+  }
+}
 
 }  // namespace mediax::rtp::av1::gst
