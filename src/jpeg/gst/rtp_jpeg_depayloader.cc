@@ -35,7 +35,10 @@
 
 namespace mediax::rtp::jpeg::gst {
 
-RtpJpegGstDepayloader::RtpJpegGstDepayloader() = default;
+RtpJpegGstDepayloader::RtpJpegGstDepayloader() : mediax::rtp::RtpDepayloader() {
+  // Set this for empty video buffers
+  SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgb24);
+}
 
 RtpJpegGstDepayloader::~RtpJpegGstDepayloader() = default;
 

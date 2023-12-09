@@ -35,7 +35,7 @@
 
 namespace mediax::rtp::h265::gst::vaapi {
 
-RtpH265GstVaapiDepayloader::RtpH265GstVaapiDepayloader() {
+RtpH265GstVaapiDepayloader::RtpH265GstVaapiDepayloader() : mediax::rtp::RtpDepayloader() {
   // Set this for empty video buffers
   SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceNv12);
 }
@@ -57,6 +57,15 @@ void RtpH265GstVaapiDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInform
   stream.hostname = stream_information.hostname;
   stream.port_no = stream_information.port;
   stream.settings_valid = true;
+  SetSessionName(stream_information.session_name);
+  SetHeight(stream_information.height);
+  SetWidth(stream_information.width);
+  SetBufferSize(stream_information.height * stream_information.width * 3);
+  SetFramerate(stream_information.framerate);
+  SetIpAddress(stream_information.hostname);
+  SetPort(stream_information.port);
+  // Set this for empty video buffers
+  SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceNv12);
 }
 
 GstFlowReturn RtpH265GstVaapiDepayloader::NewFrameCallback(GstAppSink *appsink, gpointer user_data) {

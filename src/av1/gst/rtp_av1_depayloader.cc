@@ -35,7 +35,7 @@
 
 namespace mediax::rtp::av1::gst {
 
-RtpAv1GstDepayloader::RtpAv1GstDepayloader() {
+RtpAv1GstDepayloader::RtpAv1GstDepayloader() : mediax::rtp::RtpDepayloader() {
   // Set this for empty video buffers
   SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceNv12);
 }
@@ -56,6 +56,15 @@ void RtpAv1GstDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation 
   stream.hostname = stream_information.hostname;
   stream.port_no = stream_information.port;
   stream.settings_valid = true;
+  SetSessionName(stream_information.session_name);
+  SetHeight(stream_information.height);
+  SetWidth(stream_information.width);
+  SetBufferSize(stream_information.height * stream_information.width * 3);
+  SetFramerate(stream_information.framerate);
+  SetIpAddress(stream_information.hostname);
+  SetPort(stream_information.port);
+  // Set this for empty video buffers
+  SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceNv12);
 }
 
 GstFlowReturn RtpAv1GstDepayloader::NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
