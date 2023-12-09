@@ -12,9 +12,9 @@
 ///
 /// Below is a sample pipeline to create video streams using GStreamer:
 /// \code
-/// gst-launch-1.0 -v udpsrc caps="application/x-rtp, media=(string)video, clock-rate=(int)90000,
-/// encoding-name=(string)jpeg" ! rtpjpegdepay ! jpegparse ! queue ! jpegdec ! caps="video/x-raw, format=RGB" !
-/// videoconvert ! appsink
+/// gst-launch-1.0 udpsrc port=5004 address=239.192.2.254 caps="application/x-rtp, media=(string)video,
+/// clock-rate=(int)90000, encoding-name=(string)JPEG" ! rtpjpegdepay ! jpegparse ! queue ! jpegdec  ! videoconvert !
+/// xvimagesink
 /// \endcode
 ///
 /// \file rtp_jpeg_depayloader.cc
@@ -150,6 +150,13 @@ bool RtpJpegGstDepayloader::Open() {
   // Decode frame using
   GstElement *jpegdec = gst_element_factory_make("jpegdec", "rtp-jpeg-jpegdec");
 
+  // Video Convert
+  GstElement *videoconvert = gst_element_factory_make("videoconvert", "rtp-jpeg-videoconvert");
+
+  // To RGB
+  GstElement *capsfilter2 = gst_element_factory_make("capsfilter", "rtp-jpeg-capsfilter2");
+  GstCaps *caps2 = gst_caps_from_string("video/x-raw, format=RGB");
+
   // Create a custom appsrc element to receive the H.264 stream
   GstElement *appsink = gst_element_factory_make("appsink", "rtp-jpeg-appsrc");
   // Set the callback function for the appsink
@@ -157,10 +164,12 @@ bool RtpJpegGstDepayloader::Open() {
   gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &callbacks, this, nullptr);
 
   // Add all elements to the pipeline
-  gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, rtpjpegdepay, jpegparse, queue, jpegdec, appsink, nullptr);
+  gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, rtpjpegdepay, jpegparse, queue, jpegdec, videoconvert,
+                   capsfilter2, appsink, nullptr);
 
   // Link the elements
-  gst_element_link_many(udpsrc, capsfilter, rtpjpegdepay, jpegparse, queue, jpegdec, appsink, nullptr);
+  gst_element_link_many(udpsrc, capsfilter, rtpjpegdepay, jpegparse, queue, jpegdec, videoconvert, capsfilter2, appsink,
+                        nullptr);
 
   return true;
 }
