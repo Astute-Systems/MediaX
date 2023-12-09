@@ -12,8 +12,8 @@
 /// \file rtp_h265_depayloader.h
 ///
 
-#ifndef JPEG_GST_RTP_JPEG_DEPAYLOADER_H_
-#define JPEG_GST_RTP_JPEG_DEPAYLOADER_H_
+#ifndef JPEG_GST_VAAPI_RTP_JPEG_DEPAYLOADER_H_
+#define JPEG_GST_VAAPI_RTP_JPEG_DEPAYLOADER_H_
 
 #include <gst/app/gstappsink.h>
 #include <gst/gst.h>
@@ -131,4 +131,4 @@ class RtpJpegGstVaapiDepayloader : public mediax::rtp::RtpDepayloader {
 
 }  // namespace mediax::rtp::jpeg::gst::vaapi
 
-#endif  // JPEG_GST_RTP_JPEG_DEPAYLOADER_H_
+#endif  // JPEG_GST_VAAPI_RTP_JPEG_DEPAYLOADER_H_
