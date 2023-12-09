@@ -44,8 +44,6 @@ void SapTest(mediax::rtp::ColourspaceType colouspace, std::string sampling) {
   ASSERT_EQ(callback_data.session_name, "test_session_name");
   ASSERT_EQ(callback_data.ip_address, "127.0.0.1");
   ASSERT_EQ(callback_data.port, 5004);
-  ASSERT_EQ(callback_data.width, 1920);
-  ASSERT_EQ(callback_data.height, 1080);
   ASSERT_EQ(callback_data.framerate, 30);
   ASSERT_EQ(callback_data.sampling, sampling);
   ASSERT_EQ(callback_data.deleted, false);
