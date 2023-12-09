@@ -104,9 +104,6 @@ GstFlowReturn RtpJpegGstDepayloader::NewFrameCallback(GstAppSink *appsink, gpoin
               << "\n";  // NOLINT
   }
 
-  depayloader->SetHeight(height);
-  depayloader->SetWidth(width);
-
   // Get a pointer to the video frame
   GstMapInfo map;
   gst_buffer_map(buffer, &map, GST_MAP_READ);
@@ -233,6 +230,8 @@ void RtpJpegGstDepayloader::NewFrame() {
   new_rx_frame_ = true;
   if (CallbackRegistered()) {
     RtpFrameData arg_tx = {{GetHeight(), GetWidth()}, GetBuffer().data(), GetColourSpace()};
+    std::cout << "Height " << arg_tx.resolution.height << " Width " << arg_tx.resolution.width << " Encoding "
+              << arg_tx.encoding << "\n";  // NOLINT
     Callback(arg_tx);
   }
 }
