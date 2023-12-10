@@ -208,7 +208,7 @@ void RtpH264GstVaapiDepayloader::Close() {
     Stop();
   }
 
-  if (GetState() == ::mediax::rtp::StreamState::kClosed) {
+  if ((GetState() == ::mediax::rtp::StreamState::kClosed) | (GetState() == ::mediax::rtp::StreamState::kOpen)) {
     return;
   }
 
