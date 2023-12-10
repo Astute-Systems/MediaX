@@ -8,7 +8,9 @@
 //
 ///
 /// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
-///
+/// \code
+/// gst-launch-1.0 -v videotestsrc ! videoconvert ! "video/x-raw, format=I420" ! av1enc ! av1parse ! rtpav1pay ! udpsink
+/// \endcode
 /// \file rtp_av1_payloader.cc
 ///
 
@@ -91,20 +93,24 @@ bool RtpAv1GstPayloader::Open() {
   GstElement *videoconvert = gst_element_factory_make("videoconvert", "rtp-h265-videoconvert");
 
   // Create a h265enc element to decode the H.264 stream
-  GstElement *h265enc = gst_element_factory_make("av1enc", "rtp-av1-enc");
+  GstElement *av1enc = gst_element_factory_make("av1enc", "rtp-av1-enc");
+
+  // RTP Parser
+  GstElement *rtpav1arse = gst_element_factory_make("av1parse", "rtp-av1-parser");
 
   // RTP payloader
-  GstElement *rtp264pay = gst_element_factory_make("rtpav1pay", "rtp-av1-payloader");
+  GstElement *rtpav1ay = gst_element_factory_make("rtpav1pay", "rtp-av1-payloader");
 
   // Create a udpsink element to stream over ethernet
   GstElement *udpsink = gst_element_factory_make("udpsink", "rtp-av1-udpsink");
   g_object_set(G_OBJECT(udpsink), "host", GetEgressPort().hostname.c_str(), "port", GetEgressPort().port_no, nullptr);
 
   // Add all elements to the pipeline
-  gst_bin_add_many(GST_BIN(pipeline_), appsrc, capsfilter, videoconvert, h265enc, rtp264pay, udpsink, nullptr);
+  gst_bin_add_many(GST_BIN(pipeline_), appsrc, capsfilter, videoconvert, av1enc, rtpav1arse, rtpav1ay, udpsink,
+                   nullptr);
 
   // Link the elements
-  gst_element_link_many(appsrc, capsfilter, videoconvert, h265enc, rtp264pay, udpsink, nullptr);
+  gst_element_link_many(appsrc, capsfilter, videoconvert, av1enc, rtpav1arse, rtpav1ay, udpsink, nullptr);
 
   return true;
 }
