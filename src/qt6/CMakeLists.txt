@@ -23,15 +23,25 @@ set(SOURCES
   QtRtpH264Depayloader.cc
   QtRtpH265Payloader.cc
   QtRtpH265Depayloader.cc
+  QtRtpJpegVaapiPayloader.cc
+  QtRtpJpegVaapiDepayloader.cc
   QtRtpJpegPayloader.cc
   QtRtpJpegDepayloader.cc
-  QtRtpAv1Payloader.cc
-  QtRtpAv1Depayloader.cc
 )
+
+if (BUILD_RUST)
+  list(APPEND SOURCES
+    QtRtpAv1Payloader.cc
+    QtRtpAv1Depayloader.cc
+  )
+endif()
 
 add_library(mediaxqt STATIC ${SOURCES})
 target_include_directories(mediaxqt PUBLIC ${CMAKE_SOURCE_DIR}/src t Qt6::Core ${GST_INCLUDE_DIRS})
 target_link_libraries(mediaxqt mediax_static Qt6::Core Qt::Widgets ${GST_LIBRARIES})
 
+if (BUILD_RUST)
+  add_dependencies(mediaxqt plugins-rs)
+endif()
 # Install qtwrapper
 install(TARGETS mediaxqt DESTINATION lib)
