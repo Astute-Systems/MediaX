@@ -12,9 +12,8 @@
 ///
 /// Below is a sample pipeline to create video streams using GStreamer:
 /// \code
-/// gst-launch-1.0 -v udpsrc caps="application/x-rtp, media=(string)video, clock-rate=(int)90000,
-/// encoding-name=(string)av1" ! RtpAv1depay ! av1parse ! queue ! av1dec ! caps="video/x-raw, format=RGB" !
-/// videoconvert ! appsink
+/// gst-launch-1.0 -v udpsrc address=239.192.4.254 port=5004 caps="application/x-rtp, media=(string)video,
+/// clock-rate=(int)90000, encoding-name=(string)AV1" ! rtpav1depay ! av1parse ! av1dec ! videoconvert ! ximagesink
 /// \endcode
 ///
 /// \file rtp_av1_depayloader.cc
@@ -146,12 +145,12 @@ bool RtpAv1GstDepayloader::Open() {
   // Create a capsfilter element to set the caps for the RTP stream
   GstElement *capsfilter = gst_element_factory_make("capsfilter", "rtp-av1-capsfilter");
   GstCaps *caps =
-      gst_caps_from_string("application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)av1");
+      gst_caps_from_string("application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)AV1");
   g_object_set(G_OBJECT(capsfilter), "caps", caps, nullptr);
   gst_caps_unref(caps);
 
   // Create a RtpAv1depay element to depayload the RTP stream
-  GstElement *RtpAv1depay = gst_element_factory_make("RtpAv1depay", "rtp-av1-depay");
+  GstElement *rtpav1depay = gst_element_factory_make("rtpav1depay", "rtp-av1-depay");
 
   // H.264 parse
   GstElement *av1parse = gst_element_factory_make("av1parse", "rtp-av1-av1parse");
@@ -162,6 +161,14 @@ bool RtpAv1GstDepayloader::Open() {
   // Decode frame using
   GstElement *av1dec = gst_element_factory_make("av1dec", "rtp-av1-av1dec");
 
+  // Video convert to RGB
+  GstElement *videoconvert = gst_element_factory_make("videoconvert", "rtp-av1-videoconvert");
+
+  // Caps filter
+  GstElement *capsfilter2 = gst_element_factory_make("capsfilter", "rtp-av1-capsfilter2");
+  GstCaps *caps2 = gst_caps_from_string("video/x-raw, format=RGB");
+  g_object_set(G_OBJECT(capsfilter2), "caps", caps2, nullptr);
+
   // Create a custom appsrc element to receive the H.264 stream
   GstElement *appsink = gst_element_factory_make("appsink", "rtp-av1-appsrc");
   // Set the callback function for the appsink
@@ -169,10 +176,11 @@ bool RtpAv1GstDepayloader::Open() {
   gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &callbacks, this, nullptr);
 
   // Add all elements to the pipeline
-  gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, RtpAv1depay, av1parse, queue, av1dec, appsink, nullptr);
+  gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, rtpav1depay, av1parse, av1dec, videoconvert, capsfilter2,
+                   appsink, nullptr);
 
   // Link the elements
-  gst_element_link_many(udpsrc, capsfilter, RtpAv1depay, av1parse, queue, av1dec, appsink, nullptr);
+  gst_element_link_many(udpsrc, capsfilter, rtpav1depay, av1parse, av1dec, videoconvert, capsfilter2, appsink, nullptr);
 
   return true;
 }

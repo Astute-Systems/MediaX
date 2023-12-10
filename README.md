@@ -64,15 +64,11 @@ To build from source add with Qt6 add:
 cmake -DBUILD_QT6=ON ..
 ```
 
-# Generic Vehicle Architecture
+# GxA support
 
-All modes supported as defined in DEF-STAN 00-082 (uncompressed, MJPEG and H.264)
+All modes supported as defined in DEF-STAN 00-082 (uncompressed, MJPEG and H.264), these apply to Generic Vehicle Architectures (GVA). More recently the Generic Soldier Architecture (GSA) draft was published. MediaX supports for H.265 and AV1 (requires rust gstreamer plugins) encoders.
 
-# Generic Soldier Architecture
-
-Currently in draft, MediaX supports for H.265 and AV1 (requires rust gstreamer plugins) encoders.
-
- > NOTE: You must install the code to enable the Rust gstreamer AV1 RTP element after building
+ > NOTE: You must install the code to enable the Rust gstreamer AV1 RTP element after building. Specify the build option **$ cmake -DBUILD_RUST=ON ..**
 ## Documentation
 
 Doxygen documentation is available on [Github Page](https://defencex.github.io/MediaX).

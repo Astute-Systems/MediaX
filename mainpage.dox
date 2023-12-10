@@ -97,10 +97,14 @@ libswscale is required for RGB/RGBA to UYVY colour space conversion.
 Build the example
 ```
 mkdir build
-cmake -DBUILD_CUDA=OFF -DEXAMPLES=ON -DBUILD_TESTING=ON -DBUILD_QT6=ON -DGST_SUPPORTED=ON ..
+cmake -DBUILD_CUDA=OFF -DEXAMPLES=ON -DBUILD_TESTING=ON -DBUILD_QT6=ON -DGST_SUPPORTED=ON -DBUILD_RUST=ON ..
 ```
+
+The option **BUILD_RUST** is required for the gstreamer plugins build using the Rust compiler for now this is just for AV1 RTP (As specified in GSA).
+
  > NOTE: To enable Intel H.264 acceleration optionally set -DGST_SUPPORTED=ON for Gstreamer support, this requires the Intel Media SDK to be installed.
-To enable CUDA acceleration set -DBUILD_CUDA to ON, examples can als be enabled
+To enable CUDA acceleration set -DBUILD_CUDA to ON, examples can als be enabled.
+
 ```
 ./rtp-transmit
 ```
