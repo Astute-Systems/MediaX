@@ -27,6 +27,7 @@ set(SOURCES
   rtp_tests.cc
   rtp_utils_tests.cc
   rtp_raw_payloader_tests.cc
+  rtp_av1_gst_depayloader_tests.cc
   rtp_raw_depayloader_tests.cc
   rtp_jpeg_gst_depayloader_tests.cc
   rtp_h264_gst_depayloader_tests.cc

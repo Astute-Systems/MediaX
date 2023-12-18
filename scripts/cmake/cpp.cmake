@@ -54,6 +54,12 @@ if (BUILD_QT6)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_QT6")
 endif()
 
+# BUILD_RUST
+option(BUILD_RUST "Build Rust" OFF)
+if (BUILD_RUST)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBUILD_RUST")
+endif()
+
 
 if(CMAKE_BUILD_TYPE)
     message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")

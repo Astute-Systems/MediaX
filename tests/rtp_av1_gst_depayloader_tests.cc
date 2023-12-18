@@ -17,20 +17,20 @@
 #include <chrono>
 #include <thread>
 
-#include "jpeg/gst/rtp_jpeg_depayloader.h"
-#include "jpeg/gst/rtp_jpeg_payloader.h"
+#include "av1/gst/rtp_av1_depayloader.h"
+#include "av1/gst/rtp_av1_payloader.h"
 #include "rtp/rtp_utils.h"
 #include "util_tests.h"
 #include "utils/colourspace_cpu.h"
 
-TEST(RtpJpegDepayloaderTest, UnicastOkSetStreamInfo) {
+TEST(RtpAv1DepayloaderTest, UnicastOkSetStreamInfo) {
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
 
   std::array<uint8_t, 1280 * 720 * 3> rgb_test;
   mediax::video::ColourSpaceCpu colourspace;
-  mediax::rtp::jpeg::gst::RtpJpegGstDepayloader rtp;
+  mediax::rtp::av1::gst::RtpAv1GstDepayloader rtp;
 
   // Set the stream details using set stream info
   ::mediax::rtp::StreamInformation stream_info = {.session_name = "test_session_jpeg_name",
@@ -39,7 +39,7 @@ TEST(RtpJpegDepayloaderTest, UnicastOkSetStreamInfo) {
                                                   .height = 720,
                                                   .width = 1280,
                                                   .framerate = 25,
-                                                  .encoding = ::mediax::rtp::ColourspaceType::kColourspaceJpeg2000,
+                                                  .encoding = ::mediax::rtp::ColourspaceType::kColourspaceAv1,
                                                   .deleted = false};
   rtp.SetStreamInfo(stream_info);
   EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceRgb24);
@@ -58,5 +58,5 @@ TEST(RtpJpegDepayloaderTest, UnicastOkSetStreamInfo) {
   EXPECT_EQ(rtp.GetWidth(), 1280);
 
   memcpy(rgb_test.data(), data.cpu_buffer, 1280 * 720 * 3);
-  WritePngFile(rgb_test.data(), rtp.GetWidth(), rtp.GetHeight(), "JPEG_Image1.png");
+  WritePngFile(rgb_test.data(), rtp.GetWidth(), rtp.GetHeight(), "AV1_Image1.png");
 }

@@ -36,7 +36,7 @@ namespace mediax::rtp::av1::gst {
 
 RtpAv1GstDepayloader::RtpAv1GstDepayloader() : mediax::rtp::RtpDepayloader() {
   // Set this for empty video buffers
-  SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceNv12);
+  SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgb24);
 }
 
 RtpAv1GstDepayloader::~RtpAv1GstDepayloader() = default;
@@ -63,7 +63,7 @@ void RtpAv1GstDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation 
   SetIpAddress(stream_information.hostname);
   SetPort(stream_information.port);
   // Set this for empty video buffers
-  SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceNv12);
+  SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgb24);
 }
 
 GstFlowReturn RtpAv1GstDepayloader::NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
@@ -90,7 +90,7 @@ GstFlowReturn RtpAv1GstDepayloader::NewFrameCallback(GstAppSink *appsink, gpoint
 
   gst_structure_get_int(structure, "height", &height);
   gst_structure_get_int(structure, "width", &width);
-
+  std::cout << "Callback height: " << height << " width: " << width << "\n";
   // Set the ColourspaceType
   if (const gchar *colorspace = gst_structure_get_string(structure, "format"); strncmp(colorspace, "UYVY", 4) == 0) {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceYuv);
@@ -155,9 +155,6 @@ bool RtpAv1GstDepayloader::Open() {
   // H.264 parse
   GstElement *av1parse = gst_element_factory_make("av1parse", "rtp-av1-av1parse");
 
-  // Queue
-  GstElement *queue = gst_element_factory_make("queue", "rtp-av1-queue");
-
   // Decode frame using
   GstElement *av1dec = gst_element_factory_make("av1dec", "rtp-av1-av1dec");
 
@@ -200,6 +197,9 @@ void RtpAv1GstDepayloader::Start() {
   RtpDepayloader::Start();
   // Start the pipeline
   gst_element_set_state(pipeline_, GST_STATE_PLAYING);
+
+  std::cout << "RTP AV1 Depayloader started"
+            << "\n";
 }
 
 void RtpAv1GstDepayloader::Stop() {
@@ -210,6 +210,11 @@ void RtpAv1GstDepayloader::Stop() {
   RtpDepayloader::Stop();
   // Stop the pipeline
   gst_element_set_state(pipeline_, GST_STATE_NULL);
+  // Wait for the pipeline to finish
+  GstBus *bus = gst_element_get_bus(pipeline_);
+
+  // Free resources
+  gst_object_unref(bus);
 }
 
 void RtpAv1GstDepayloader::Close() {
@@ -220,7 +225,6 @@ void RtpAv1GstDepayloader::Close() {
   if (GetState() == ::mediax::rtp::StreamState::kClosed) {
     return;
   }
-  Stop();
 
   // Call the base class
   RtpDepayloader::Close();
