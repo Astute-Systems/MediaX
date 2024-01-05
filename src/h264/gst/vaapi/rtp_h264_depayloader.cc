@@ -36,7 +36,7 @@ namespace mediax::rtp::h264::gst::vaapi {
 
 RtpH264GstVaapiDepayloader::RtpH264GstVaapiDepayloader() {
   // Set this for empty video buffers
-  SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceNv12);
+  SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgb24);
 }
 
 RtpH264GstVaapiDepayloader::~RtpH264GstVaapiDepayloader() = default;
@@ -84,7 +84,6 @@ GstFlowReturn RtpH264GstVaapiDepayloader::NewFrameCallback(GstAppSink *appsink, 
   gst_structure_get_int(structure, "height", &height);
   gst_structure_get_int(structure, "width", &width);
 
-  // Set the ColourspaceType
   if (const gchar *colorspace = gst_structure_get_string(structure, "format"); strncmp(colorspace, "UYVY", 4) == 0) {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceYuv);
   } else if (strncmp(colorspace, "RGB", 3) == 0) {
@@ -157,6 +156,14 @@ bool RtpH264GstVaapiDepayloader::Open() {
   // Decode frame using vaapi
   GstElement *vaapih264dec = gst_element_factory_make("vaapih264dec", "rtp-h264-vaapih264dec");
 
+  // Convert to RGB
+  GstElement *videoconvert = gst_element_factory_make("videoconvert", "rtp-h264-videoconvert");
+
+  // Set the caps-filter
+  GstElement *capsfilter2 = gst_element_factory_make("capsfilter", "rtp-av1-capsfilter2");
+  GstCaps *caps2 = gst_caps_from_string("video/x-raw, format=RGB");
+  g_object_set(G_OBJECT(capsfilter2), "caps", caps2, nullptr);
+
   // Create a custom appsrc element to receive the H.264 stream
   GstElement *appsink = gst_element_factory_make("appsink", "rtp-h264-appsrc");
   // Set the callback function for the appsink
@@ -164,11 +171,12 @@ bool RtpH264GstVaapiDepayloader::Open() {
   gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &callbacks, this, nullptr);
 
   // Add all elements to the pipeline
-  gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, rtph264depay, h264parse, queue, vaapih264dec, appsink,
-                   nullptr);
+  gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, rtph264depay, h264parse, queue, vaapih264dec, videoconvert,
+                   capsfilter2, appsink, nullptr);
 
   // Link the elements
-  gst_element_link_many(udpsrc, capsfilter, rtph264depay, h264parse, queue, vaapih264dec, appsink, nullptr);
+  gst_element_link_many(udpsrc, capsfilter, rtph264depay, h264parse, queue, vaapih264dec, videoconvert, capsfilter2,
+                        appsink, nullptr);
 
   return true;
 }
@@ -240,7 +248,7 @@ bool RtpH264GstVaapiDepayloader::Receive(mediax::rtp::RtpFrameData *data, int32_
     }
 
     // Sleep 1ms and wait for a new frame
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    std::this_thread::sleep_for(std::chrono::milliseconds(4));
   }
   data->resolution.height = GetHeight();
   data->resolution.width = GetWidth();

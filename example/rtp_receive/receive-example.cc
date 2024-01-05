@@ -45,7 +45,7 @@ DEFINE_uint32(mode, 1,
 #if GST_SUPPORTED
               "3 - Mono8\n\t"
               "4 - H.264\n\t"
-              "5 - H.264\n\t");
+              "5 - H.265\n\t");
 #else
               "3 - Mono8\n\t");
 #endif
@@ -96,20 +96,20 @@ class Receive {
         return FALSE;
       }
 
-      switch (FLAGS_mode) {
-        case 0:
+      switch (frame_data.encoding) {
+        case mediax::rtp::ColourspaceType::kColourspaceRgb24:
           convert.RgbToBgra(height, width, frame_data.cpu_buffer, surface_data);
           break;
-        case 1:
+        case mediax::rtp::ColourspaceType::kColourspaceYuv:
           convert.YuvToBgra(height, width, frame_data.cpu_buffer, surface_data);
           break;
-        case 2:
+        case mediax::rtp::ColourspaceType::kColourspaceMono16:
           convert.Mono16ToBgra(height, width, frame_data.cpu_buffer, surface_data);
           break;
-        case 3:
+        case mediax::rtp::ColourspaceType::kColourspaceMono8:
           convert.Mono8ToBgra(height, width, frame_data.cpu_buffer, surface_data);
           break;
-        case 4:
+        case mediax::rtp::ColourspaceType::kColourspaceNv12:
           convert.Nv12ToBgra(height, width, frame_data.cpu_buffer, surface_data);
           break;
         default:
