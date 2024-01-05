@@ -223,7 +223,7 @@ TEST(RtpH264DepayloaderTest, StateCheckVappi) {
   mediax::rtp::StreamInformation stream_info = {
       "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
 
-  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceNv12);
+  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceRgb24);
   EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kClosed);
   rtp.SetStreamInfo(stream_info);
   EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kClosed);
