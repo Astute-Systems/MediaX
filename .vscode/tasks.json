@@ -1,0 +1,25 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Make",
+			"command": "/usr/bin/make",
+			"linux": {
+				"command": "/usr/bin/make"
+			},
+			"args": [
+				"--no-print-directory",
+				"-C",
+				"${workspaceFolder}/build",
+				"-j",
+				"${nproc}",
+				"all"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		}
+	]
+}
