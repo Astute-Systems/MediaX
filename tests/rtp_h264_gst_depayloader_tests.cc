@@ -393,7 +393,7 @@ TEST(RtpH264DepayloaderTest, TransmitAFrame) {
   EXPECT_TRUE(rtp.Receive(&data, 5000));
   EXPECT_EQ(data.resolution.height, 720);
   EXPECT_EQ(data.resolution.width, 1280);
-  EXPECT_EQ(data.encoding, ::mediax::rtp::ColourspaceType::kColourspaceNv12);
+  EXPECT_EQ(data.encoding, ::mediax::rtp::ColourspaceType::kColourspaceRgb24);
 
   rtp.Stop();
   rtp.Close();
