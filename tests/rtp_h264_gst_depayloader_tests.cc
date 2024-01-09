@@ -388,7 +388,7 @@ TEST(RtpH264DepayloaderTest, TransmitAFrame) {
     rtp_pay.Transmit(rgb_test.data(), 80);
   }
   // Sleep 0.5 seconds
-  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
   EXPECT_TRUE(rtp.Receive(&data, 5000));
   EXPECT_EQ(data.resolution.height, 720);
