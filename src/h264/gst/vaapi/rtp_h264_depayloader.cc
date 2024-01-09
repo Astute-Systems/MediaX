@@ -280,7 +280,7 @@ void RtpH264GstVaapiDepayloader::Callback(::mediax::rtp::RtpFrameData frame) con
 
 void RtpH264GstVaapiDepayloader::NewFrame() {
   new_rx_frame_ = true;
-  if (CallbackRegistered()) {
+  if ((CallbackRegistered()) && (GetState() == ::mediax::rtp::StreamState::kStarted)) {
     RtpFrameData arg_tx = {{GetHeight(), GetWidth()}, GetBuffer().data(), GetColourSpace()};
     Callback(arg_tx);
   }
