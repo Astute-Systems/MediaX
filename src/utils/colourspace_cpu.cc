@@ -248,7 +248,7 @@ int ColourSpaceCpu::ScaleToSizeBgra(uint32_t source_height, uint32_t source_widt
   std::array<uint8_t *, 1> outData = {target_bgra_buffer};
 
   // Use static_cast instead of C-style cast
-  const std::array<int32_t, 1> inLinesize = {(int32_t)(source_width * 4)};
+  const std::array<int32_t, 1> inLinesize = {(int32_t)(source_width * 3)};
   std::array<int32_t, 1> outLinesize = {(int32_t)(target_width * 4)};
   sws_scale(ctx.get(), inData.data(), inLinesize.data(), 0, source_height, outData.data(), outLinesize.data());
 
