@@ -219,6 +219,7 @@ void RtpH264GstVaapiDepayloader::Stop() {
   RtpDepayloader::Stop();
   // Stop the pipeline
   gst_element_set_state(pipeline_, GST_STATE_NULL);
+  new_rx_frame_ = false;
 }
 
 void RtpH264GstVaapiDepayloader::Close() {
