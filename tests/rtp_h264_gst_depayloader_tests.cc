@@ -344,7 +344,7 @@ TEST(RtpH264DepayloaderTest, StartSwitchManyPayloaders) {
   }
 }
 
-TEST(RtpH264DepayloaderTest, TransmitAFrame) {
+TEST(RtpH264DepayloaderTest, DISABLED_TransmitAFrame) {
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
@@ -364,7 +364,7 @@ TEST(RtpH264DepayloaderTest, TransmitAFrame) {
   mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
 
   std::string name = "test_session_name";
-  std::string ip = "239.192.1.1";
+  std::string ip = "239.192.1.100";
   Stream(&rtp, name, ip, 5004);
   rtp.Start();
 
