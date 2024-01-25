@@ -465,18 +465,18 @@ void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
                                 mediax::rtp::ColourspaceType colourspace) {
   int ball_size = 50;
   int half = ball_size / 2;
-  static Ball ball = {static_cast<float>(width) / 2, static_cast<float>(height) / 2, 2,
-                      3};  // start in the middle of the screen, moving diagonally
+  static Ball ball = {static_cast<float>(width) / 2, static_cast<float>(height) / 2, 5,
+                      5};  // start in the middle of the screen, moving diagonally
 
   // Update ball position
   ball.x += ball.vx;
   ball.y += ball.vy;
 
   // Bounce off edges, ball is the width defined by size
-  if (ball.x < 0 || ball.x > width - ball_size) {
+  if (ball.x < static_cast<float>(ball_size + 1) || ball.x > static_cast<float>(width) - ball_size) {
     ball.vx *= -1;
   }
-  if (ball.y < 0 || ball.y > height - ball_size) {
+  if (ball.y < static_cast<float>(ball_size + 1) || ball.y > static_cast<float>(height) - ball_size) {
     ball.vy *= -1;
   }
 
