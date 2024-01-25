@@ -463,11 +463,8 @@ struct Ball {
 
 void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
                                 mediax::rtp::ColourspaceType colourspace) {
-  int size = 50;
-  int half = size / 2;
-
-  width -= size;
-  height -= size;
+  int ball_size = 50;
+  int half = ball_size / 2;
   static Ball ball = {static_cast<float>(width) / 2, static_cast<float>(height) / 2, 2,
                       3};  // start in the middle of the screen, moving diagonally
 
@@ -475,25 +472,29 @@ void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
   ball.x += ball.vx;
   ball.y += ball.vy;
 
-  // Bounce off edges
-  if (ball.x < 0 || ball.x >= static_cast<float>(width)) ball.vx = -ball.vx;
-  if (ball.y < 0 || ball.y >= static_cast<float>(height)) ball.vy = -ball.vy;
+  // Bounce off edges, ball is the width defined by size
+  if (ball.x < 0 || ball.x > width - ball_size) {
+    ball.vx *= -1;
+  }
+  if (ball.y < 0 || ball.y > height - ball_size) {
+    ball.vy *= -1;
+  }
 
   // Ensure ball stays within screen bounds (it might have gone past due to the velocity)
-  ball.x = std::clamp(ball.x, 0.0f, static_cast<float>(width - 1));
-  ball.y = std::clamp(ball.y, 0.0f, static_cast<float>(height - 1));
+  ball.x = std::clamp(ball.x, 0.0f, static_cast<float>(width - ball_size));
+  ball.y = std::clamp(ball.y, 0.0f, static_cast<float>(height - ball_size));
 
   // Draw ball on test card
   // This depends on how your test card is represented in memory
   // For example, if it's a simple RGB image, you might do:
-  int index = (static_cast<int>(ball.y) * width + static_cast<int>(ball.x)) * 3;  // assuming 3 bytes per pixel
+  int index = static_cast<int>(ball.y) * width * 3 + static_cast<int>(ball.x) * 3;
 
   // Set the background to black
   for (uint32_t i = 0; i < width * height * 3; i += 3) {
     PackRgb(&data[i], 0, 0, 0, colourspace);
   }
-  // Draw the circle 50 pixels wide
 
+  // Draw the circle 50 pixels wide
   for (int y = -half; y < half; y++) {
     for (int x = -half; x < half; x++) {
       // Only draw pixels within the circle
