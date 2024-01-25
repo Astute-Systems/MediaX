@@ -21,6 +21,7 @@
 
 #include <glog/logging.h>
 
+#include <algorithm>
 #include <cmath>
 #include <iomanip>
 #include <iostream>
@@ -450,5 +451,50 @@ void CreateWhiteNoiseTestCard(uint8_t *data, uint32_t width, uint32_t height,
     uint8_t g = pixel;
     uint8_t b = pixel;
     PackRgb(&data[i], r, g, b, colourspace);
+  }
+}
+
+struct Ball {
+  float x, y;    // position
+  float vx, vy;  // velocity
+};
+
+void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
+                                mediax::rtp::ColourspaceType colourspace) {
+  static Ball ball = {(float)width / 2, (float)height / 2, 2,
+                      3};  // start in the middle of the screen, moving diagonally
+
+  // Update ball position
+  ball.x += ball.vx;
+  ball.y += ball.vy;
+
+  // Bounce off edges
+  if (ball.x < 0 || ball.x >= width) ball.vx = -ball.vx;
+  if (ball.y < 0 || ball.y >= height) ball.vy = -ball.vy;
+
+  // Ensure ball stays within screen bounds (it might have gone past due to the velocity)
+  ball.x = std::clamp(ball.x, 0.0f, static_cast<float>(width - 1));
+  ball.y = std::clamp(ball.y, 0.0f, static_cast<float>(height - 1));
+
+  // Draw ball on test card
+  // This depends on how your test card is represented in memory
+  // For example, if it's a simple RGB image, you might do:
+  int index = (int(ball.y) * width + int(ball.x)) * 3;  // assuming 3 bytes per pixel
+
+  // Set the background to black
+  for (uint32_t i = 0; i < width * height * 3; i += 3) {
+    PackRgb(&data[i], 0, 0, 0, colourspace);
+  }
+  // Draw the circle 50 pixels wide
+  int size = 50;
+  int half = size / 2;
+  for (int y = -half; y < half; y++) {
+    for (int x = -half; x < half; x++) {
+      // Only draw pixels within the circle
+      if (x * x + y * y < half * half) {
+        // Set the pixel to white
+        PackRgb(&data[index + (y * width + x) * 3], 255, 255, 255, colourspace);
+      }
+    }
   }
 }

@@ -67,4 +67,11 @@ TEST(TestCards, Create) {
   // Create a test card 10
   CreateWhiteNoiseTestCard(buffer.data(), 640, 480, mediax::rtp::ColourspaceType::kColourspaceRgb24);
   WritePngFile(buffer.data(), 640, 480, "CreateWhiteNoiseTestCard.png");
+
+  // Create a test card 11
+  for (int i = 0; i < 10; i++) {
+    CreateBouncingBallTestCard(buffer.data(), 640, 480, mediax::rtp::ColourspaceType::kColourspaceRgb24);
+    std::string filename = "CreateBouncingBallTestCard" + std::to_string(i) + ".png";
+    WritePngFile(buffer.data(), 640, 480, filename.c_str());
+  }
 }
