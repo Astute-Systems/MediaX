@@ -455,8 +455,10 @@ void CreateWhiteNoiseTestCard(uint8_t *data, uint32_t width, uint32_t height,
 }
 
 struct Ball {
-  float x, y;    // position
-  float vx, vy;  // velocity
+  float x;   // position
+  float y;   // position
+  float vx;  // velocity
+  float vy;  // velocity
 };
 
 void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
@@ -469,8 +471,8 @@ void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
   ball.y += ball.vy;
 
   // Bounce off edges
-  if (ball.x < 0 || ball.x >= width) ball.vx = -ball.vx;
-  if (ball.y < 0 || ball.y >= height) ball.vy = -ball.vy;
+  if (ball.x < 0 || ball.x >= static_cast<float>(width)) ball.vx = -ball.vx;
+  if (ball.y < 0 || ball.y >= static_cast<float>(height)) ball.vy = -ball.vy;
 
   // Ensure ball stays within screen bounds (it might have gone past due to the velocity)
   ball.x = std::clamp(ball.x, 0.0f, static_cast<float>(width - 1));
@@ -479,7 +481,7 @@ void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
   // Draw ball on test card
   // This depends on how your test card is represented in memory
   // For example, if it's a simple RGB image, you might do:
-  int index = (int(ball.y) * width + int(ball.x)) * 3;  // assuming 3 bytes per pixel
+  int index = (static_cast<int>(ball.y) * width + static_cast<int>(ball.x)) * 3;  // assuming 3 bytes per pixel
 
   // Set the background to black
   for (uint32_t i = 0; i < width * height * 3; i += 3) {
