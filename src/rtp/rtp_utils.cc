@@ -461,7 +461,7 @@ struct Ball {
 
 void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
                                 mediax::rtp::ColourspaceType colourspace) {
-  static Ball ball = {(float)width / 2, (float)height / 2, 2,
+  static Ball ball = {static_cast<float>(width) / 2, static_cast<float>(height) / 2, 2,
                       3};  // start in the middle of the screen, moving diagonally
 
   // Update ball position
