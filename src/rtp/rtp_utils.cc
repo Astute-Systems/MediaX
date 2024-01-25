@@ -463,6 +463,11 @@ struct Ball {
 
 void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
                                 mediax::rtp::ColourspaceType colourspace) {
+  int size = 50;
+  int half = size / 2;
+
+  width -= size;
+  height -= size;
   static Ball ball = {static_cast<float>(width) / 2, static_cast<float>(height) / 2, 2,
                       3};  // start in the middle of the screen, moving diagonally
 
@@ -488,8 +493,7 @@ void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
     PackRgb(&data[i], 0, 0, 0, colourspace);
   }
   // Draw the circle 50 pixels wide
-  int size = 50;
-  int half = size / 2;
+
   for (int y = -half; y < half; y++) {
     for (int x = -half; x < half; x++) {
       // Only draw pixels within the circle
