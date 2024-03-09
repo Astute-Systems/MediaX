@@ -11,6 +11,7 @@
 ///
 /// \file rtp_h264_payloader.cc
 ///
+// Example
 
 #include "h264/gst/vaapi/rtp_h264_payloader.h"
 
@@ -94,17 +95,34 @@ bool RtpH264GstVaapiPayloader::Open() {
 
   // Convert the video colourspace
   GstElement *videoconvert = gst_element_factory_make("videoconvert", "rtp-h264-videoconvert");
+  if (videoconvert == nullptr) {
+    std::cerr << "No gst element called 'videoconvert'!\n";
+    return false;
+  }
 
   // Create a vaapih264enc element to decode the H.264 stream
   GstElement *vaapih264enc = gst_element_factory_make("vaapih264enc", "rtp-h264-vaapih264enc");
+  if (vaapih264enc == nullptr) {
+    std::cerr << "No gst element called 'vaapih264enc'!\n";
+    return false;
+  }
+
   // Set keyframe-period=1 max-bframes=0
   g_object_set(G_OBJECT(vaapih264enc), "keyframe-period", 1, "max-bframes", 0, nullptr);
 
   // RTP payloader
   GstElement *rtp264pay = gst_element_factory_make("rtph264pay", "rtp-h264-payloader");
+  if (rtp264pay == nullptr) {
+    std::cerr << "No gst element called 'rtph264pay'!\n";
+    return false;
+  }
 
   // Create a udpsink element to stream over ethernet
   GstElement *udpsink = gst_element_factory_make("udpsink", "rtp-h264-udpsink");
+  if (udpsink == nullptr) {
+    std::cerr << "No gst element called 'udpsink'!\n";
+    return false;
+  }
   g_object_set(G_OBJECT(udpsink), "host", GetEgressPort().hostname.c_str(), "port", GetEgressPort().port_no, nullptr);
 
   // Add all elements to the pipeline

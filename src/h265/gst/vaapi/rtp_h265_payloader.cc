@@ -79,10 +79,19 @@ bool RtpH265GstVaapiPayloader::Open() {
   pipeline_ = gst_pipeline_new("rtp-h265-pipeline");
   // Create a custom appsrc element to receive the H.264 stream
   GstElement *appsrc = gst_element_factory_make("appsrc", "rtp-h265-appsrc");
+  if (appsrc == nullptr) {
+    std::cerr << "No gst element called 'appsrc'!\n";
+    return false;
+  }
+
   g_object_set(G_OBJECT(appsrc), "stream-type", 0, "format", GST_FORMAT_TIME, nullptr);
 
   // Create a capsfilter element to set the caps for the H.264 stream
   GstElement *capsfilter = gst_element_factory_make("capsfilter", "rtp-h265-capsfilter");
+  if (capsfilter == nullptr) {
+    std::cerr << "No gst element called 'capsfilter'!\n";
+    return false;
+  }
   // Raw RGB caps
   GstCaps *caps = gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "RGB", "width", G_TYPE_INT,
                                       GetEgressPort().width, "height", G_TYPE_INT, GetEgressPort().height, "framerate",
@@ -91,22 +100,39 @@ bool RtpH265GstVaapiPayloader::Open() {
 
   // Convert the video colourspace
   GstElement *videoconvert = gst_element_factory_make("videoconvert", "rtp-h265-videoconvert");
+  if (videoconvert == nullptr) {
+    std::cerr << "No gst element called 'videoconvert'!\n";
+    return false;
+  }
 
   // Create a vaapih265enc element to decode the H.264 stream
   GstElement *vaapih265enc = gst_element_factory_make("vaapih265enc", "rtp-h265-vaapih265enc");
+  if (vaapih265enc == nullptr) {
+    std::cerr << "No gst element called 'vaapih265enc'!\n";
+    return false;
+  }
 
   // RTP payloader
-  GstElement *rtp264pay = gst_element_factory_make("rtph265pay", "rtp-h265-payloader");
+  GstElement *rtph265pay = gst_element_factory_make("rtph265pay", "rtp-h265-payloader");
+  if (rtph265pay == nullptr) {
+    std::cerr << "No gst element called 'rtph265pay'!\n";
+    return false;
+  }
 
   // Create a udpsink element to stream over ethernet
   GstElement *udpsink = gst_element_factory_make("udpsink", "rtp-h265-udpsink");
+  if (udpsink == nullptr) {
+    std::cerr << "No gst element called 'udpsink'!\n";
+    return false;
+  }
+
   g_object_set(G_OBJECT(udpsink), "host", GetEgressPort().hostname.c_str(), "port", GetEgressPort().port_no, nullptr);
 
   // Add all elements to the pipeline
-  gst_bin_add_many(GST_BIN(pipeline_), appsrc, capsfilter, videoconvert, vaapih265enc, rtp264pay, udpsink, nullptr);
+  gst_bin_add_many(GST_BIN(pipeline_), appsrc, capsfilter, videoconvert, vaapih265enc, rtph265pay, udpsink, nullptr);
 
   // Link the elements
-  gst_element_link_many(appsrc, capsfilter, videoconvert, vaapih265enc, rtp264pay, udpsink, nullptr);
+  gst_element_link_many(appsrc, capsfilter, videoconvert, vaapih265enc, rtph265pay, udpsink, nullptr);
 
   return true;
 }

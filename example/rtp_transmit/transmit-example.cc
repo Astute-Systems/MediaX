@@ -169,7 +169,10 @@ int main(int argc, char** argv) {
   std::unique_ptr<mediax::rtp::RtpPayloader> rtp;
 #if GST_SUPPORTED
   switch (video_mode) {
-    default:  // Assume uncompressed
+    case mediax::rtp::ColourspaceType::kColourspaceRgb24:
+    case mediax::rtp::ColourspaceType::kColourspaceYuv:
+    case mediax::rtp::ColourspaceType::kColourspaceMono8:
+    case mediax::rtp::ColourspaceType::kColourspaceMono16:
       rtp = std::make_unique<mediax::rtp::uncompressed::RtpUncompressedPayloader>();
       break;
     case mediax::rtp::ColourspaceType::kColourspaceH264Part10:
@@ -179,6 +182,9 @@ int main(int argc, char** argv) {
     case mediax::rtp::ColourspaceType::kColourspaceH265:
       rtp = std::make_unique<mediax::rtp::h265::gst::vaapi::RtpH265GstVaapiPayloader>();
       break;
+    default:
+      std::cerr << "Unknown video mode!" << std::endl;
+      return -1;
   }
 #else
   rtp = std::make_unique<mediax::RtpUncompressedPayloader>();
@@ -196,7 +202,9 @@ int main(int argc, char** argv) {
   sap_announcer.Start();
   // Add a SAP announcement for the new stream
   rtp->SetStreamInfo(stream_information);
-  rtp->Open();
+  if (rtp->Open() == false) {
+    return -1;
+  }
 
   // Read the PNG file
   std::vector<uint8_t> video_buffer;

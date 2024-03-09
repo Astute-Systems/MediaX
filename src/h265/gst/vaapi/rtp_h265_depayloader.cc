@@ -138,6 +138,11 @@ bool RtpH265GstVaapiDepayloader::Open() {
 
   // Create a udpsrc element to receive the RTP stream
   GstElement *udpsrc = gst_element_factory_make("udpsrc", "rtp-h265-udpsrc");
+  if (udpsrc == nullptr) {
+    std::cerr << "No gst element called 'udpsrc'!\n";
+    return false;
+  }
+
   g_object_set(G_OBJECT(udpsrc), "port", GetPort(), nullptr);
 
   if (IsMulticast(GetIpAddress())) {
@@ -146,6 +151,10 @@ bool RtpH265GstVaapiDepayloader::Open() {
 
   // Create a capsfilter element to set the caps for the RTP stream
   GstElement *capsfilter = gst_element_factory_make("capsfilter", "rtp-h265-capsfilter");
+  if (capsfilter == nullptr) {
+    std::cerr << "No gst element called 'capsfilter'!\n";
+    return false;
+  }
   GstCaps *caps =
       gst_caps_from_string("application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H265");
   g_object_set(G_OBJECT(capsfilter), "caps", caps, nullptr);
@@ -153,18 +162,39 @@ bool RtpH265GstVaapiDepayloader::Open() {
 
   // Create a rtph265depay element to depayload the RTP stream
   GstElement *rtph265depay = gst_element_factory_make("rtph265depay", "rtp-h265-depay");
+  if (rtph265depay == nullptr) {
+    std::cerr << "No gst element called 'rtph265depay'!\n";
+    return false;
+  }
 
   // H.264 parse
   GstElement *h265parse = gst_element_factory_make("h265parse", "rtp-h265-h265parse");
+  if (h265parse == nullptr) {
+    std::cerr << "No gst element called 'h265parse'!\n";
+    return false;
+  }
 
   // Queue
   GstElement *queue = gst_element_factory_make("queue", "rtp-h265-queue");
+  if (queue == nullptr) {
+    std::cerr << "No gst element called 'queue'!\n";
+    return false;
+  }
 
   // Decode frame using vaapi
   GstElement *vaapih265dec = gst_element_factory_make("vaapih265dec", "rtp-h265-vaapih265dec");
+  if (vaapih265dec == nullptr) {
+    std::cerr << "No gst element called 'vaapih265dec'!\n";
+    return false;
+  }
 
   // Create a custom appsrc element to receive the H.264 stream
   GstElement *appsink = gst_element_factory_make("appsink", "rtp-h265-appsrc");
+  if (appsink == nullptr) {
+    std::cerr << "No gst element called 'appsink'!\n";
+    return false;
+  }
+
   // Set the callback function for the appsink
   GstAppSinkCallbacks callbacks = {.new_sample = RtpH265GstVaapiDepayloader::NewFrameCallback};
   gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &callbacks, this, nullptr);

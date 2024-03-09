@@ -136,6 +136,10 @@ bool RtpH264GstVaapiDepayloader::Open() {
 
   // Create a udpsrc element to receive the RTP stream
   GstElement *udpsrc = gst_element_factory_make("udpsrc", "rtp-h264-udpsrc");
+  if (udpsrc == nullptr) {
+    std::cerr << "No gst element called 'udpsrc'!\n";
+    return false;
+  }
   g_object_set(G_OBJECT(udpsrc), "port", GetPort(), nullptr);
 
   if (IsMulticast(GetIpAddress())) {
@@ -144,24 +148,50 @@ bool RtpH264GstVaapiDepayloader::Open() {
 
   // Create a capsfilter element to set the caps for the RTP stream
   GstElement *capsfilter = gst_element_factory_make("capsfilter", "rtp-h264-capsfilter");
+  if (capsfilter == nullptr) {
+    std::cerr << "No gst element called 'capsfilter'!\n";
+    return false;
+  }
   GstCaps *caps = gst_caps_from_string("application/x-rtp");
+
   g_object_set(G_OBJECT(capsfilter), "caps", caps, nullptr);
   gst_caps_unref(caps);
 
   // Create a rtph264depay element to depayload the RTP stream
   GstElement *rtph264depay = gst_element_factory_make("rtph264depay", "rtp-h264-depay");
+  if (rtph264depay == nullptr) {
+    std::cerr << "No gst element called 'rtph264depay'!\n";
+    return false;
+  }
 
   // H.264 parse
   GstElement *h264parse = gst_element_factory_make("h264parse", "rtp-h264-h264parse");
+  if (rtph264depay == nullptr) {
+    std::cerr << "No gst element called 'rtph264depay'!\n";
+    return false;
+  }
 
   // Queue
   GstElement *queue = gst_element_factory_make("queue", "rtp-h264-queue");
+  if (queue == nullptr) {
+    std::cerr << "No gst element called 'queue'!\n";
+    return false;
+  }
 
   // Decode frame using vaapi
   GstElement *vaapih264dec = gst_element_factory_make("vaapih264dec", "rtp-h264-vaapih264dec");
+  if (vaapih264dec == nullptr) {
+    std::cerr << "No gst element called 'vaapih264dec'!\n";
+    return false;
+  }
 
   // Create a custom appsrc element to receive the H.264 stream
   GstElement *appsink = gst_element_factory_make("appsink", "rtp-h264-appsrc");
+  if (appsink == nullptr) {
+    std::cerr << "No gst element called 'appsink'!\n";
+    return false;
+  }
+
   // Set the callback function for the appsink
   GstAppSinkCallbacks callbacks = {.new_sample = RtpH264GstVaapiDepayloader::NewFrameCallback};
   gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &callbacks, this, nullptr);
