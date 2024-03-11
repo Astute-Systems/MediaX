@@ -84,6 +84,16 @@ class ColourSpace {
   virtual int RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const = 0;
 
   ///
+  /// \brief Convert RGBA to RGB
+  ///
+  /// \param width The height of the image
+  /// \param height The width of the image
+  /// \param rgba The RGBA image buffer
+  /// \param bgra The RGB image buffer
+  ///
+  virtual int RgbaToBgra(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *bgra) const = 0;
+
+  ///
   /// \brief Convert RGB to RGBA
   ///
   /// \param width The height of the image

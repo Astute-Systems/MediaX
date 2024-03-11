@@ -105,6 +105,17 @@ class ColourSpaceCpu : public ColourSpace {
   int RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const final;
 
   ///
+  /// \brief Convert RGBA to BGRA on the CPU
+  ///
+  /// \param width
+  /// \param height
+  /// \param rgba
+  /// \param bgra
+  /// \return int
+  ///
+  int RgbaToBgra(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *bgra) const final;
+
+  ///
   /// \brief Convert RGB to RGBA on the CPU
   ///
   /// \param width The height of the image
