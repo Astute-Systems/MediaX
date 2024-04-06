@@ -489,8 +489,7 @@ void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
 
   // Draw ball on test card
   // This depends on how your test card is represented in memory
-  // For example, if it's a simple RGB image, you might do:
-  int index = static_cast<int>(ball.y) * width * 3 + static_cast<int>(ball.x) * 3;
+  int index = static_cast<int>(ball.y) * width * stride + static_cast<int>(ball.x) * stride;
 
   // Set the background to black
   for (uint32_t i = 0; i < size; i += stride) {
