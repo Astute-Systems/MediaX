@@ -465,6 +465,9 @@ void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
                                 mediax::rtp::ColourspaceType colourspace) {
   int ball_size = 50;
   int half = ball_size / 2;
+  uint32_t stride = mediax::BytesPerPixel(colourspace);
+  uint32_t size = width * height;
+
   static Ball ball = {static_cast<float>(width) / 2, static_cast<float>(height) / 2, 5,
                       5};  // start in the middle of the screen, moving diagonally
 
@@ -490,7 +493,7 @@ void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
   int index = static_cast<int>(ball.y) * width * 3 + static_cast<int>(ball.x) * 3;
 
   // Set the background to black
-  for (uint32_t i = 0; i < width * height * 3; i += 3) {
+  for (uint32_t i = 0; i < size; i += stride) {
     PackRgb(&data[i], 0, 0, 0, colourspace);
   }
 
@@ -500,7 +503,7 @@ void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
       // Only draw pixels within the circle
       if (x * x + y * y < half * half) {
         // Set the pixel to white
-        PackRgb(&data[index + (y * width + x) * 3], 255, 255, 255, colourspace);
+        PackRgb(&data[index + (y * width + x) * stride], 255, 255, 255, colourspace);
       }
     }
   }
