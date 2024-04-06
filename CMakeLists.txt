@@ -62,6 +62,10 @@ install_headers_from_dir(src/qt6 mediax/qt6)
 install(FILES ${CMAKE_SOURCE_DIR}/src/qt6/QSap ${CMAKE_SOURCE_DIR}/src/qt6/QRtp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mediax/qt6)
 install_headers_from_dir(src/wrappers mediax/wrappers)
 
+if (BUILD_RUST)
+  set(GSTREAMER_INSTALL_DIR /usr/lib/x86_64-linux-gnu/gstreamer-1.0)
+  install(FILES ${CMAKE_BINARY_DIR}/_deps/install/lib/x86_64-linux-gnu/gstreamer-1.0/libgstrsrtp.so DESTINATION ${GSTREAMER_INSTALL_DIR})
+endif()
 
 #install package config file
 install(FILES ${CMAKE_BINARY_DIR}/mediax.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)

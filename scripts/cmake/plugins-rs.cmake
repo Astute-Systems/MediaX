@@ -8,7 +8,7 @@ message (STATUS "Added plugins-rs to external submodules")
 ExternalProject_Add(
   plugins-rs
   GIT_REPOSITORY      https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs
-  GIT_TAG             gstreamer-1.22.5
+  GIT_TAG             gstreamer-1.24.1 
   GIT_SHALLOW         1
   CMAKE_ARGS          -DBUILD_TESTING=OFF -DEXAMPLES=OFF -DBUILD_QT6=ON
   PREFIX              ${CMAKE_BINARY_DIR}/_deps/plugins-rs/prefix

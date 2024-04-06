@@ -90,16 +90,28 @@ bool RtpAv1GstPayloader::Open() {
   g_object_set(G_OBJECT(capsfilter), "caps", caps, nullptr);
 
   // Convert the video colourspace
-  GstElement *videoconvert = gst_element_factory_make("videoconvert", "rtp-h265-videoconvert");
+  GstElement *videoconvert = gst_element_factory_make("videoconvert", "videoconvert");
 
   // Create a h265enc element to decode the H.264 stream
   GstElement *av1enc = gst_element_factory_make("av1enc", "rtp-av1-enc");
+  if (!av1enc) {
+    DLOG(ERROR) << "Failed to create av1enc element";
+    return false;
+  }
 
   // RTP Parser
   GstElement *rtpav1arse = gst_element_factory_make("av1parse", "rtp-av1-parser");
+  if (!rtpav1arse) {
+    DLOG(ERROR) << "Failed to create av1parse element";
+    return false;
+  }
 
   // RTP payloader
   GstElement *rtpav1ay = gst_element_factory_make("rtpav1pay", "rtp-av1-payloader");
+  if (!rtpav1ay) {
+    DLOG(ERROR) << "Failed to create rtpav1pay element";
+    return false;
+  }
 
   // Create a udpsink element to stream over ethernet
   GstElement *udpsink = gst_element_factory_make("udpsink", "rtp-av1-udpsink");
