@@ -11,6 +11,7 @@ add_subdirectory(uncompressed)
 add_subdirectory(sap)
 add_subdirectory(rtp)
 add_subdirectory(h264)
+add_subdirectory(av1)
 
 if (BUILD_QT6)
   find_package(Qt6 REQUIRED COMPONENTS Widgets)

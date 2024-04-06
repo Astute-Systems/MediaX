@@ -7,9 +7,9 @@
 // License. See the LICENSE file in the project root for full license details.
 //
 ///
-/// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
+/// \brief RTP streaming video class for AV1 video streams
 /// \code
-/// gst-launch-1.0 -v videotestsrc ! videoconvert ! "video/x-raw, format=I420" ! av1enc ! av1parse ! rtpav1pay ! udpsink
+/// gst-launch-1.0 -v videotestsrc ! videoconvert ! "video/x-raw, format=I420, framerate=1/25" ! av1enc ! av1parse ! rtpav1pay ! udpsink host=127.0.0.1 port=5004
 /// \endcode
 /// \file rtp_av1_payloader.cc
 ///

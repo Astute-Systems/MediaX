@@ -3,7 +3,7 @@
 %import "rtp/rtp_payloader.i"
 
 %{
-#include "h265/gst/vaapi/rtp_av1_payloader.h"
+#include "av1/gst/rtp_av1_payloader.h"
 %}
 
-%include "h265/gst/vaapi/rtp_av1_payloader.h" 
+%include "av1/gst/rtp_av1_payloader.h" 
