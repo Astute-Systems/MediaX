@@ -9,9 +9,8 @@
 ///
 /// \brief RTP streaming video class for AV1 video streams
 /// \code
-/// gst-launch-1.0 -v videotestsrc ! videoconvert ! "video/x-raw, format=I420, framerate=1/25" ! av1enc ! av1parse ! rtpav1pay ! udpsink host=127.0.0.1 port=5004
-/// \endcode
-/// \file rtp_av1_payloader.cc
+/// gst-launch-1.0 -v videotestsrc ! videoconvert ! "video/x-raw, format=I420, framerate=1/25" ! av1enc ! av1parse !
+/// rtpav1pay ! udpsink host=127.0.0.1 port=5004 \endcode \file rtp_av1_payloader.cc
 ///
 
 #include "av1/gst/rtp_av1_payloader.h"
