@@ -26,6 +26,6 @@ swig_add_library(rtp_av1_depayloader TYPE SHARED LANGUAGE python SOURCES rtp_av1
 swig_link_libraries(rtp_av1_depayloader glog swscale)
 
 install(TARGETS rtp_av1_payloader DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/rtp_av1_gst_vaapi_depayloader.py DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/rtp_av1_gst_depayloader.py DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
 install(TARGETS rtp_av1_depayloader DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/rtp_av1_gst_vaapi_payloader.py DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/rtp_av1_gst_payloader.py DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
