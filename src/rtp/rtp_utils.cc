@@ -492,7 +492,7 @@ void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
   int index = static_cast<int>(ball.y) * width * stride + static_cast<int>(ball.x) * stride;
 
   // Set the background to black
-  for (uint32_t i = 0; i < size; i += stride) {
+  for (uint32_t i = 0; i < size * stride; i += stride) {
     PackRgb(&data[i], 0, 0, 0, colourspace);
   }
 

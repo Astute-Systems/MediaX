@@ -29,16 +29,21 @@ TEST(TestCard, Solid) {
 
   std::vector<uint8_t> test_card(width * height * 3);
 
-  CreateSolidTestCard(test_card.data(), width, height, 0xFF, 0xFF, 0xFF, mediax::rtp::ColourspaceType::kColourspaceRgb24);
-  WritePngFile(test_card.data(), width, height, "Testcard_white.png");
-  CreateSolidTestCard(test_card.data(), width, height, 0xFF, 0xFF, 0xFF, mediax::rtp::ColourspaceType::kColourspaceRgb24);
-  WritePngFile(test_card.data(), width, height, "Testcard_black.png");
-  CreateSolidTestCard(test_card.data(), width, height, 0xFF, 0x00, 0x00, mediax::rtp::ColourspaceType::kColourspaceRgb24);
-  WritePngFile(test_card.data(), width, height, "Testcard_red.png");
-  CreateSolidTestCard(test_card.data(), width, height, 0x00, 0xFF, 0x00, mediax::rtp::ColourspaceType::kColourspaceRgb24);
-  WritePngFile(test_card.data(), width, height, "Testcard_green.png");
-  CreateSolidTestCard(test_card.data(), width, height, 0x00, 0x00, 0xFF, mediax::rtp::ColourspaceType::kColourspaceRgb24);
-  WritePngFile(test_card.data(), width, height, "Testcard_blue.png");
+  CreateSolidTestCard(test_card.data(), width, height, 0xFF, 0xFF, 0xFF,
+                      mediax::rtp::ColourspaceType::kColourspaceRgb24);
+  WritePngFile(test_card.data(), width, height, "Testcard_rgb24_white.png");
+  CreateSolidTestCard(test_card.data(), width, height, 0xFF, 0xFF, 0xFF,
+                      mediax::rtp::ColourspaceType::kColourspaceRgb24);
+  WritePngFile(test_card.data(), width, height, "Testcard_rgb24_black.png");
+  CreateSolidTestCard(test_card.data(), width, height, 0xFF, 0x00, 0x00,
+                      mediax::rtp::ColourspaceType::kColourspaceRgb24);
+  WritePngFile(test_card.data(), width, height, "Testcard_rgb24_red.png");
+  CreateSolidTestCard(test_card.data(), width, height, 0x00, 0xFF, 0x00,
+                      mediax::rtp::ColourspaceType::kColourspaceRgb24);
+  WritePngFile(test_card.data(), width, height, "Testcard_rgb24_green.png");
+  CreateSolidTestCard(test_card.data(), width, height, 0x00, 0x00, 0xFF,
+                      mediax::rtp::ColourspaceType::kColourspaceRgb24);
+  WritePngFile(test_card.data(), width, height, "Testcard_rgb24_blue.png");
 }
 
 TEST(TestCard, Checkered) {
@@ -49,7 +54,7 @@ TEST(TestCard, Checkered) {
   std::vector<uint8_t> test_card(width * height * 3);
 
   CreateCheckeredTestCard(test_card.data(), width, height, mediax::rtp::ColourspaceType::kColourspaceRgb24);
-  WritePngFile(test_card.data(), width, height, "Testcard_checkered.png");
+  WritePngFile(test_card.data(), width, height, "Testcard_rgb24_checkered.png");
 }
 
 TEST(TestCard, ColourBars) {
@@ -60,7 +65,7 @@ TEST(TestCard, ColourBars) {
   std::vector<uint8_t> test_card(width * height * 3);
 
   CreateColourBarTestCard(test_card.data(), width, height, mediax::rtp::ColourspaceType::kColourspaceRgb24);
-  WritePngFile(test_card.data(), width, height, "Testcard_colourbars.png");
+  WritePngFile(test_card.data(), width, height, "Testcard_rgb24_colourbars.png");
 }
 
 TEST(TestCard, GreyBars) {
@@ -71,7 +76,7 @@ TEST(TestCard, GreyBars) {
   std::vector<uint8_t> test_card(width * height * 3);
 
   CreateGreyScaleBarTestCard(test_card.data(), width, height, mediax::rtp::ColourspaceType::kColourspaceRgb24);
-  WritePngFile(test_card.data(), width, height, "Testcard_greybars.png");
+  WritePngFile(test_card.data(), width, height, "Testcard_rgb24_greybars.png");
 }
 
 TEST(TestCard, CreateQuadTestCard) {
@@ -82,5 +87,37 @@ TEST(TestCard, CreateQuadTestCard) {
   std::vector<uint8_t> test_card(width * height * 3);
 
   CreateQuadTestCard(test_card.data(), width, height, mediax::rtp::ColourspaceType::kColourspaceRgb24);
-  WritePngFile(test_card.data(), width, height, "Testcard_quad.png");
+  WritePngFile(test_card.data(), width, height, "Testcard_rgb24_quad.png");
+}
+
+TEST(TestCard, CreateBouncingBall) {
+  mediax::video::ColourSpaceCpu colourspace;
+  const uint32_t width = 640;
+  const uint32_t height = 480;
+
+  std::vector<uint8_t> test_card(width * height * 3);
+  // Fill buffer zeros
+  std::fill(test_card.begin(), test_card.end(), 0);
+  std::vector<uint8_t> converted_test_card(width * height * 3);
+
+  CreateBouncingBallTestCard(test_card.data(), width, height, mediax::rtp::ColourspaceType::kColourspaceRgb24);
+  WritePngFile(test_card.data(), width, height, "Testcard_rgb24_ball.png");
+  // Fill buffer zeros
+  std::fill(test_card.begin(), test_card.end(), 0);
+
+  CreateBouncingBallTestCard(test_card.data(), width, height, mediax::rtp::ColourspaceType::kColourspaceMono8);
+  colourspace.Mono8ToRgb(width, height, test_card.data(), converted_test_card.data());
+  WritePngFile(converted_test_card.data(), width, height, "Testcard_mono8_ball.png");
+  // Fill buffer zeros
+  std::fill(test_card.begin(), test_card.end(), 0);
+
+  CreateBouncingBallTestCard(test_card.data(), width, height, mediax::rtp::ColourspaceType::kColourspaceMono16);
+  colourspace.Mono16ToRgb(width, height, test_card.data(), converted_test_card.data());
+  WritePngFile(converted_test_card.data(), width, height, "Testcard_mono16_ball.png");
+  // Fill buffer zeros
+  std::fill(test_card.begin(), test_card.end(), 0);
+
+  CreateBouncingBallTestCard(test_card.data(), width, height, mediax::rtp::ColourspaceType::kColourspaceYuv);
+  colourspace.YuvToRgb(width, height, test_card.data(), converted_test_card.data());
+  WritePngFile(converted_test_card.data(), width, height, "Testcard_Yuv_ball.png");
 }
