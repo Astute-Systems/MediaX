@@ -84,7 +84,6 @@ bool RtpUncompressedDepayloader::Open() {
         LOG(ERROR) << "Can not join multicast group " << GetStream().hostname << ":" << GetStream().port_no;
         exit(-1);
       }
-      LOG(INFO) << "Joining multicast group " << GetStream().hostname << ":" << GetStream().port_no;
     }
 
     // zero out the structure
