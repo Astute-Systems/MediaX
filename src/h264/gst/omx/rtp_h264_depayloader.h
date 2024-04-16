@@ -132,4 +132,4 @@ class RtpH264GstOmxDepayloader : public mediax::rtp::RtpDepayloader {
 
 }  // namespace mediax::rtp::h264::gst::omx
 
-#endif  // H264_GST_VAAPI_RTP_H264_DEPAYLOADER_H_
+#endif  // H264_GST_OMX_RTP_H264_DEPAYLOADER_H_
