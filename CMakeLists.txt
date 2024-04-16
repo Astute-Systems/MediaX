@@ -67,7 +67,8 @@ if (BUILD_RUST)
   install(FILES ${CMAKE_BINARY_DIR}/_deps/install/lib/x86_64-linux-gnu/gstreamer-1.0/libgstrsrtp.so DESTINATION ${GSTREAMER_INSTALL_DIR})
 endif()
 
-#install package config file
+
+# Install package config file
 install(FILES ${CMAKE_BINARY_DIR}/mediax.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 # cpplint setup
