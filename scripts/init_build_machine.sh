@@ -30,13 +30,11 @@ if [[ $(uname -m) == aarch64 ]]; then
   exit 0
 fi
 
-else
-  if [ "$LINUX_VERSION" == "20.04" ]; then
-    pip install cpplint 
-  fi
-
-  if [ "$LINUX_VERSION" == "22.04" ]; then
-    apt-get --no-install-recommends -y install cpplint qt6-base-dev
-  fi
-  apt-get --no-install-recommends -y install gstreamer1.0-vaapi i965-va-driver va-driver-all
+if [ "$LINUX_VERSION" == "20.04" ]; then
+  pip install cpplint 
 fi
+
+if [ "$LINUX_VERSION" == "22.04" ]; then
+  apt-get --no-install-recommends -y install cpplint qt6-base-dev
+fi
+apt-get --no-install-recommends -y install gstreamer1.0-vaapi i965-va-driver va-driver-all
