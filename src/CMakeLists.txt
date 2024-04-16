@@ -54,6 +54,8 @@ set(SOURCES
 if (GST_SUPPORTED)
   message(STATUS "Adding GST support")
     list(APPEND SOURCES
+    h264/gst/omx/rtp_h264_payloader.cc 
+    h264/gst/omx/rtp_h264_depayloader.cc    
     h264/gst/vaapi/rtp_h264_payloader.cc 
     h264/gst/vaapi/rtp_h264_depayloader.cc
     h265/gst/vaapi/rtp_h265_payloader.cc 
