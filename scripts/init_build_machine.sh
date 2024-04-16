@@ -20,8 +20,16 @@ apt-get --no-install-recommends -y install libunwind-dev libgstreamer1.0-dev lib
 apt-get --no-install-recommends -y install cargo libjson-glib-dev
 # apt-get --no-install-recommends -y install libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
 # Install vaapi gstreamer plugins and device driver for intel
-if [[ $(uname -m) == aarch* ]]; then
+if [[ $(uname -m) == aarch ]]; then
   pip install cpplint
+  exit 0
+fi
+
+if [[ $(uname -m) == aarch64 ]]; then
+  apt install cpplint
+  exit 0
+fi
+
 else
   if [ "$LINUX_VERSION" == "20.04" ]; then
     pip install cpplint 
