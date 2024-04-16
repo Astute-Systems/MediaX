@@ -1,10 +1,9 @@
 
-
 [![Action mediax](https://github.com/DefenceX/MediaX/actions/workflows/build-ubuntu-20.04-amd64.yaml/badge.svg)](https://github.com/DefenceX/MediaX/actions/workflows/build-ubuntu-20.04-amd64.yaml)
 [![Action mediax](https://github.com/DefenceX/MediaX/actions/workflows/build-ubuntu-22.04-amd64.yaml/badge.svg)](https://github.com/DefenceX/MediaX/actions/workflows/build-ubuntu-22.04-amd64.yaml)
+[![Action mediax](https://github.com/DefenceX/MediaX/actions/workflows/build-raspbian-12-arm64.yaml/badge.svg)](https://github.com/DefenceX/MediaX/actions/workflows/build-raspian-12-arm64.yaml)
 [![Action sonarscan](https://github.com/DefenceX/MediaX/actions/workflows/sonarcloud.yaml/badge.svg)](https://sonarcloud.io/project/overview?id=DefenceX_MediaX)
 ![Version](https://defencex.github.io/MediaX/version.svg)
-
 
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_MediaX&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=DefenceX_MediaX)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_MediaX&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=DefenceX_MediaX)
@@ -69,6 +68,7 @@ cmake -DBUILD_QT6=ON ..
 All modes supported as defined in DEF-STAN 00-082 (uncompressed, MJPEG and H.264), these apply to Generic Vehicle Architectures (GVA). More recently the Generic Soldier Architecture (GSA) draft was published. MediaX supports for H.265 and AV1 (requires rust gstreamer plugins) encoders.
 
  > NOTE: You must install the code to enable the Rust gstreamer AV1 RTP element after building. Specify the build option **$ cmake -DBUILD_RUST=ON ..**
+ >
 ## Documentation
 
 Doxygen documentation is available on [Github Page](https://defencex.github.io/MediaX).
