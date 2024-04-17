@@ -15,18 +15,18 @@ jobs:
     runs-on: ubuntu-22.04
     container:
       image: ubuntu:24.04
-      
+
     # Map a step output to a job output
     outputs:
       package_name: ${{ steps.package.outputs.DEB_PACKAGE }}
     steps:
       - uses: actions/checkout@v3
       - name: Apt Update
-        run: sudo apt-get update
+        run: apt-get update
 
       - name: Apt Install
         run: |
-          sudo ./scripts/init_build_machine.sh 24.04
+          ./scripts/init_build_machine.sh 24.04
 
       - name: CMake and Build
         run: mkdir build && cd build && cmake -DEXAMPLES=ON -DBUILD_QT6=ON -DGST_SUPPORTED=ON -DBUILD_RUST=ON .. && make
