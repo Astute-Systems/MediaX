@@ -12,8 +12,10 @@ permissions:
 
 jobs:
   build-ubuntu:
-    runs-on: ubuntu-24.04
-
+    runs-on: ubuntu-22.04
+    container:
+      image: ubuntu:24.04
+      
     # Map a step output to a job output
     outputs:
       package_name: ${{ steps.package.outputs.DEB_PACKAGE }}
@@ -24,7 +26,7 @@ jobs:
 
       - name: Apt Install
         run: |
-          sudo ./scripts/init_build_machine.sh 22.04
+          sudo ./scripts/init_build_machine.sh 24.04
 
       - name: CMake and Build
         run: mkdir build && cd build && cmake -DEXAMPLES=ON -DBUILD_QT6=ON -DGST_SUPPORTED=ON -DBUILD_RUST=ON .. && make
