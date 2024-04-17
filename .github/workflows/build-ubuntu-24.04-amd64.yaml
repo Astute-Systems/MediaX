@@ -24,6 +24,10 @@ jobs:
       - name: Apt Update
         run: apt-get update
 
+      - name: Setup CA certificates
+        run: |
+          apt-get install -y ca-certificates
+
       - name: Setup tokens for git
         run: |
           echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
