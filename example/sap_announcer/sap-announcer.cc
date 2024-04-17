@@ -32,7 +32,7 @@ void signal_handler(int signal) {
 int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   std::cout << argv[0] << " starting\n";
 
-  // [Sap example announcer]
+  /// [Sap example announcer]
   // Get the SAP/SDP announcment singleton instance
   mediax::sap::SapAnnouncer &sap = mediax::sap::SapAnnouncer::GetInstance();
   // Set the source IP address
@@ -53,13 +53,16 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
       {"Pi Camera 6", "239.192.6.1", 5004, 720, 1280, 25, mediax::rtp::ColourspaceType::kColourspaceH264Part10, false});
   // Start all the streams
   sap.Start();
+  /// [Sap example announcer]
 
   // Loop till SIGINT
   while (!stop_signal) {
     sleep(1);
   }
 
+  /// [Sap example stop]
   sap.Stop();
+  /// [Sap example stop]
 
   return 0;
 }
