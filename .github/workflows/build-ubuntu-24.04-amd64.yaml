@@ -39,6 +39,6 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: $DEB_PACKAGE
-          path: build/$DEB_PACKAGE
+          name: ${{ env.DEB_PACKAGE }}
+          path: build/${{ env.DEB_PACKAGE }}
 
