@@ -42,5 +42,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ steps.package.outputs.DEB_PACKAGE }}
-          path: ${{ steps.package.outputs.DEB_PACKAGE }}
+          path: ${{ build/steps.package.outputs.DEB_PACKAGE }}
 
