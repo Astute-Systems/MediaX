@@ -68,3 +68,10 @@ else()
     set(CMAKE_BUILD_TYPE "Release")
 endif()
 
+# Make the intel arch amd64
+if (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+  set(CMAKE_SYSTEM_PROCESSOR "amd64")
+endif()
+message(STATUS "Current System Processor: ${CMAKE_SYSTEM_PROCESSOR}" )
+
+

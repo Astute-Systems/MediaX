@@ -33,7 +33,10 @@ jobs:
         run: cd build && cpack
 
       - name: Package
-        run: cd build && cpack && echo "DEB_PACKAGE=$(ls *.deb)" >> $GITHUB_OUTPUT 
+        run: |
+          cd build
+          cpack
+          echo "DEB_PACKAGE=$(ls *.deb)" >> $GITHUB_ENV
 
       - uses: actions/upload-artifact@v4
         with:

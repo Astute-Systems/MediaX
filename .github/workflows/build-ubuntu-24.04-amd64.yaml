@@ -29,11 +29,11 @@ jobs:
       - name: CMake and Build
         run: mkdir build && cd build && cmake -DEXAMPLES=ON -DBUILD_QT6=ON -DGST_SUPPORTED=ON -DBUILD_RUST=ON .. && make
 
-      - name: Install
-        run: cd build && cpack
-
       - name: Package
-        run: cd build && cpack && echo "DEB_PACKAGE=$(ls *.deb)" >> $GITHUB_OUTPUT 
+        run: |
+          cd build
+          cpack
+          echo "DEB_PACKAGE=$(ls *.deb)" >> $GITHUB_ENV
 
       - uses: actions/upload-artifact@v4
         with:
