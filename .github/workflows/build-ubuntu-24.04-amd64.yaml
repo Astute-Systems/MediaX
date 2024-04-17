@@ -24,6 +24,10 @@ jobs:
       - name: Apt Update
         run: apt-get update
 
+      - name: Setup tokens for git
+        run: |
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+
       - name: Apt Install
         run: |
           ./scripts/init_build_machine.sh 24.04
