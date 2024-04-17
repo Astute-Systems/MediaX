@@ -30,5 +30,16 @@ jobs:
         run: mkdir build && cd build && cmake -DEXAMPLES=ON -DBUILD_QT6=ON -DGST_SUPPORTED=ON -DBUILD_RUST=ON .. && make
 
       - name: Install
-        run: cd build && sudo make install
+        run: cd build && cpack
+
+      - name: Package
+        id: package
+        run: |
+          echo "::set-output name=DEB_PACKAGE::$(ls build/*.deb)"
+
+      - name: Upload
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.package.outputs.DEB_PACKAGE }}
+          path: ${{ steps.package.outputs.DEB_PACKAGE }}
 
