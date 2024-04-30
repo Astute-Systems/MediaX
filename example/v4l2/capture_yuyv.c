@@ -93,7 +93,7 @@ typedef struct {
   int height;
 } image_info_t;
 
-static int save_image_uncompressed(const unsigned char *image, const char *szFilename, image_info_t *info, int type);
+static int SaveImageUncompressed(const unsigned char *image, const char *szFilename, image_info_t *info, int type);
 
 /** This YUV422toBGR888() is ported from v4l2grab.c by Tobias Muller under GNU-GPL
   Convert from YUV422 format to RGB888. Formulae are described on http://en.wikipedia.org/wiki/YUV
@@ -164,7 +164,7 @@ static void process_image(const void *p, int frame) {
   info.stride = info.width * BYTESPERPIXEL;
   sprintf(szFilename, "%s%d", szFilebase, frame);
 
-  save_image_uncompressed(p, szFilename, &info, (BYTESPERPIXEL == 3) ? 1 : 2);
+  SaveImageUncompressed(p, szFilename, &info, (BYTESPERPIXEL == 3) ? 1 : 2);
 
   printf("writing into file %s.p%cm\n", szFilename, (BYTESPERPIXEL == 3) ? 'p' : 'g');
 }
@@ -655,7 +655,7 @@ static void open_device(void) {
  *  @param type is the type( 0-- BMP,  1--ppm,  2--pgm)
  *  @return 0 on success, -1 if file invalid
  */
-static int save_image_uncompressed(const unsigned char *image, const char *szFilename, image_info_t *info, int type) {
+static int SaveImageUncompressed(const unsigned char *image, const char *szFilename, image_info_t *info, int type) {
   char ppmheader[256];
   char name[60];
   FILE *fptr;

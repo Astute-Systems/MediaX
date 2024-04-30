@@ -13,26 +13,37 @@
 
 #ifndef CAPTURE_YUYV_H
 #define CAPTURE_YUYV_H
+#include <errno.h>
+#include <fcntl.h>
+#include <getopt.h>
+#include <sys/ioctl.h>
 
-typedef struct {
+#include <string>
+struct image_info_t {
   int stride;
   int width;
   int height;
-} image_info_t;
+};
 
-int save_image_uncompressed(const unsigned char *image, const char *szFilename, image_info_t *info, int type);
+int SaveImageUncompressed(const unsigned char *image, const char *szFilename, image_info_t *info, int type);
 
 class V4l2_Capture_YUYV {
  public:
-  void init_mmap(void);
-  void init_userp(unsigned int buffer_size);
-  void init_device(void);
-  void uninit_device(void);
-  void mainloop(void);
-  void close_device(void);
-  void open_device(void);
-  void start_capturing(void);
-  void stop_capturing(void);
+  V4l2_Capture_YUYV(std::string dev_name, IoMethod io = IoMethod::IO_METHOD_MMAP);
+  void InitaliseMmap(void);
+  void InitaliseUserp(unsigned int buffer_size);
+  void InitaliseDevice(void);
+  void UninitaliseDevice(void);
+  void Run(void);
+  int read_frame(int count);
+  void CloseDevice(void);
+  void OpenDevice(void);
+  void StartDevice(void);
+  void StopDevice(void);
+
+ private:
+  std::string dev_name_;
+  IoMethod io_;
 };
 
 #endif  // CAPTURE_YUYV_H
