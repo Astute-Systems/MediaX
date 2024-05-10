@@ -25,14 +25,14 @@
 namespace mediax::qt6 {
 
 /// A RTP depayloader for H.264 DEF-STAN 00-82 video streams
-class QtRtpH264Depayloader : public QtRtpDepayloader {
+class QtRtpVaapiH264Depayloader : public QtRtpDepayloader {
  public:
   ///
   /// \brief Construct a new Qt Rtp H 2 6 4 Deayloader object
   ///
   /// \param parent
   ///
-  explicit QtRtpH264Depayloader(QObject *parent = nullptr);
+  explicit QtRtpVaapiH264Depayloader(QObject *parent = nullptr);
 
   ///
   /// \brief Set the Stream Info object

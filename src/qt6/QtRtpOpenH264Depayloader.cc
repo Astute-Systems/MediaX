@@ -18,7 +18,7 @@
 
 namespace mediax::qt6 {
 
-QtRtpH264Depayloader::QtRtpH264Depayloader(QObject *parent) : QtRtpDepayloader(parent) {}
+QtRtpOpenH264Depayloader::QtRtpOpenH264Depayloader(QObject *parent) : QtRtpDepayloader(parent) {}
 
 void QtRtpH264Depayloader::setStreamInfo(const mediax::rtp::StreamInformation &stream_information) {
   m_depayloader.SetStreamInfo(stream_information);

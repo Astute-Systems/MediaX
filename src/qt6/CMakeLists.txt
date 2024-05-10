@@ -19,10 +19,14 @@ set(SOURCES
   QtRtpDepayloader.cc
   QtRtpUncompressedDepayloader.cc
   QtRtpUncompressedPayloader.cc
-  QtRtpH264Payloader.cc
-  QtRtpH264Depayloader.cc
-  QtRtpH265Payloader.cc
-  QtRtpH265Depayloader.cc
+  QtRtpOpenH264Payloader.cc
+  QtRtpOpenH264Depayloader.cc
+  QtRtpOpenH265Payloader.cc
+  QtRtpOpenH265Depayloader.cc
+  QtRtpVaapiH264Payloader.cc
+  QtRtpVaapiH264Depayloader.cc
+  QtRtpVaapiH265Payloader.cc
+  QtRtpVaapiH265Depayloader.cc
   QtRtpJpegVaapiPayloader.cc
   QtRtpJpegVaapiDepayloader.cc
   QtRtpJpegPayloader.cc

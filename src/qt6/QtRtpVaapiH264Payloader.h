@@ -25,7 +25,7 @@
 namespace mediax::qt6 {
 
 /// The H.264 Qt Payloaader wrapper
-class QtRtpH264Payloader : public QtRtpPayloader {
+class QtRtpVaapiH264Payloader : public QtRtpPayloader {
   Q_OBJECT
 
  public:
@@ -40,7 +40,7 @@ class QtRtpH264Payloader : public QtRtpPayloader {
   /// \brief Destroy the Qt Rtp H 2 6 4 Payloader object
   ///
   ///
-  ~QtRtpH264Payloader() final;
+  ~QtRtpVaapiH264Payloader() final;
 
   ///
   /// \brief Set the Stream Info object
