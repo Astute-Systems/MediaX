@@ -28,19 +28,19 @@ namespace mediax::rtp::h264::gst {}
 namespace mediax::rtp::h264::gst::vaapi {
 
 /// A RTP payloader for H.264 DEF-STAN 00-82 video streams
-class RtpH264GstOpenDepayloader : public mediax::rtp::RtpDepayloader {
+class RtpH264GstVaapiDepayloader : public mediax::rtp::RtpDepayloader {
  public:
   ///
   /// \brief Construct a new Rtpvraw Depayloader object
   ///
   ///
-  RtpH264GstOpenDepayloader();
+  RtpH264GstVaapiDepayloader();
 
   ///
   /// \brief Destroy the Rtpvraw Depayloader object
   ///
   ///
-  ~RtpH264GstOpenDepayloader() final;
+  ~RtpH264GstVaapiDepayloader() final;
 
   ///
   /// \brief Copy operator (Deleted)
@@ -48,14 +48,14 @@ class RtpH264GstOpenDepayloader : public mediax::rtp::RtpDepayloader {
   /// \param other
   /// \return RtpH264Depayloader
   ///
-  RtpH264GstOpenDepayloader &operator=(const RtpH264GstOpenDepayloader &other);
+  RtpH264GstVaapiDepayloader &operator=(const RtpH264GstVaapiDepayloader &other);
 
   ///
   /// \brief Construct a new RtpH264Depayloader object (Deleted)
   ///
   /// \param other
   ///
-  RtpH264GstOpenDepayloader(RtpH264GstOpenDepayloader &&other) = delete;
+  RtpH264GstVaapiDepayloader(RtpH264GstVaapiDepayloader &&other) = delete;
 
   ///
   /// \brief Configure at RTP input stream and dont wait for the SAP/SDP announcement

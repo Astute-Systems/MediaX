@@ -33,7 +33,7 @@
 
 namespace mediax::rtp::h264::gst::vaapi {
 
-RtpH264GstOpenDepayloader::RtpH264GstOpenDepayloader() {
+RtpH264GstVaapiDepayloader::RtpH264GstVaapiDepayloader() {
   // Set this for empty video buffers
   if (rgb_) {
     SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgb24);
@@ -42,14 +42,14 @@ RtpH264GstOpenDepayloader::RtpH264GstOpenDepayloader() {
   }
 }
 
-RtpH264GstOpenDepayloader::~RtpH264GstOpenDepayloader() = default;
+RtpH264GstVaapiDepayloader::~RtpH264GstVaapiDepayloader() = default;
 
-RtpH264GstOpenDepayloader &RtpH264GstOpenDepayloader::operator=(const RtpH264GstOpenDepayloader &other
+RtpH264GstVaapiDepayloader &RtpH264GstVaapiDepayloader::operator=(const RtpH264GstVaapiDepayloader &other
                                                                 [[maybe_unused]]) {
   return *this;
 }
 
-void RtpH264GstOpenDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
+void RtpH264GstVaapiDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
   ::mediax::rtp::RtpPortType &stream = GetStream();
   stream.encoding = ::mediax::rtp::ColourspaceType::kColourspaceNv12;
   stream.height = stream_information.height;
@@ -62,10 +62,10 @@ void RtpH264GstOpenDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInforma
   GetBuffer().resize(stream.width * stream.height * mediax::BitsPerPixel(stream.encoding) / 8);
 }
 
-GstFlowReturn RtpH264GstOpenDepayloader::NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
+GstFlowReturn RtpH264GstVaapiDepayloader::NewFrameCallback(GstAppSink *appsink, gpointer user_data) {
   gint width = 0;
   gint height = 0;
-  auto depayloader = static_cast<RtpH264GstOpenDepayloader *>(user_data);
+  auto depayloader = static_cast<RtpH264GstVaapiDepayloader *>(user_data);
 
   // Pull the sample from the appsink
   GstSample *sample = gst_app_sink_pull_sample(appsink);
@@ -122,7 +122,7 @@ GstFlowReturn RtpH264GstOpenDepayloader::NewFrameCallback(GstAppSink *appsink, g
   return GST_FLOW_OK;
 }
 
-bool RtpH264GstOpenDepayloader::Open() {
+bool RtpH264GstVaapiDepayloader::Open() {
   // Check that the stream info has been set
   if (!GetStream().settings_valid) {
     return false;
@@ -192,7 +192,7 @@ bool RtpH264GstOpenDepayloader::Open() {
   }
 
   // Set the callback function for the appsink
-  GstAppSinkCallbacks callbacks = {.new_sample = RtpH264GstOpenDepayloader::NewFrameCallback};
+  GstAppSinkCallbacks callbacks = {.new_sample = RtpH264GstVaapiDepayloader::NewFrameCallback};
   gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &callbacks, this, nullptr);
 
   if (rgb_) {
@@ -223,7 +223,7 @@ bool RtpH264GstOpenDepayloader::Open() {
   return true;
 }
 
-void RtpH264GstOpenDepayloader::Start() {
+void RtpH264GstVaapiDepayloader::Start() {
   // Return if not open
   if (GetState() == ::mediax::rtp::StreamState::kClosed) {
     std::cerr << "Stream not open so cant be started"
@@ -240,7 +240,7 @@ void RtpH264GstOpenDepayloader::Start() {
   gst_element_set_state(pipeline_, GST_STATE_PLAYING);
 }
 
-void RtpH264GstOpenDepayloader::Stop() {
+void RtpH264GstVaapiDepayloader::Stop() {
   if (GetState() != ::mediax::rtp::StreamState::kStarted) {
     return;
   }
@@ -251,7 +251,7 @@ void RtpH264GstOpenDepayloader::Stop() {
   new_rx_frame_ = false;
 }
 
-void RtpH264GstOpenDepayloader::Close() {
+void RtpH264GstVaapiDepayloader::Close() {
   if (GetState() != ::mediax::rtp::StreamState::kStopped) {
     Stop();
   }
@@ -273,7 +273,7 @@ void RtpH264GstOpenDepayloader::Close() {
   gst_object_unref(pipeline_);
 }
 
-bool RtpH264GstOpenDepayloader::Receive(mediax::rtp::RtpFrameData *data, int32_t timeout) {
+bool RtpH264GstVaapiDepayloader::Receive(mediax::rtp::RtpFrameData *data, int32_t timeout) {
   auto start_time = std::chrono::high_resolution_clock::now();
 
   data->cpu_buffer = GetBuffer().data();
@@ -301,13 +301,13 @@ bool RtpH264GstOpenDepayloader::Receive(mediax::rtp::RtpFrameData *data, int32_t
   return true;
 }
 
-void RtpH264GstOpenDepayloader::Callback(::mediax::rtp::RtpFrameData frame) const {
+void RtpH264GstVaapiDepayloader::Callback(::mediax::rtp::RtpFrameData frame) const {
   if (GetState() == ::mediax::rtp::StreamState::kStarted) {
     GetCallback()(static_cast<const RtpDepayloader &>(*this), frame);
   }
 }
 
-void RtpH264GstOpenDepayloader::NewFrame() {
+void RtpH264GstVaapiDepayloader::NewFrame() {
   new_rx_frame_ = true;
   if ((CallbackRegistered()) && (GetState() == ::mediax::rtp::StreamState::kStarted)) {
     RtpFrameData arg_tx = {{GetHeight(), GetWidth()}, GetBuffer().data(), GetColourSpace()};

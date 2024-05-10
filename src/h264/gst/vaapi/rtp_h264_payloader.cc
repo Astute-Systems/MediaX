@@ -26,11 +26,11 @@
 
 namespace mediax::rtp::h264::gst::vaapi {
 
-RtpH264GstOpenPayloader::RtpH264GstOpenPayloader() = default;
+RtpH264GstVaapiPayloader::RtpH264GstVaapiPayloader() = default;
 
-RtpH264GstOpenPayloader::~RtpH264GstOpenPayloader() = default;
+RtpH264GstVaapiPayloader::~RtpH264GstVaapiPayloader() = default;
 
-void RtpH264GstOpenPayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
+void RtpH264GstVaapiPayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
   GetEgressPort().encoding = stream_information.encoding;
   GetEgressPort().height = stream_information.height;
   GetEgressPort().width = stream_information.width;
@@ -41,7 +41,7 @@ void RtpH264GstOpenPayloader::SetStreamInfo(const ::mediax::rtp::StreamInformati
   GetEgressPort().settings_valid = true;
 }
 
-int RtpH264GstOpenPayloader::Transmit(unsigned char *new_buffer, bool timeout) {
+int RtpH264GstVaapiPayloader::Transmit(unsigned char *new_buffer, bool timeout) {
   if (!started_) {
     DLOG(ERROR) << "RTP H.264 payloader not started";
     return -1;
@@ -77,7 +77,7 @@ int RtpH264GstOpenPayloader::Transmit(unsigned char *new_buffer, bool timeout) {
   return 0;
 }
 
-bool RtpH264GstOpenPayloader::Open() {
+bool RtpH264GstVaapiPayloader::Open() {
   // Setup a gstreamer pipeline to decode H.264 with Intel VAAPI
 
   // Create a pipeline
@@ -137,7 +137,7 @@ bool RtpH264GstOpenPayloader::Open() {
   return true;
 }
 
-void RtpH264GstOpenPayloader::Close() {
+void RtpH264GstVaapiPayloader::Close() {
   // Stop the pipeline
   Stop();
 
@@ -146,13 +146,13 @@ void RtpH264GstOpenPayloader::Close() {
   gst_object_unref(pipeline_);
 }
 
-void RtpH264GstOpenPayloader::Start() {
+void RtpH264GstVaapiPayloader::Start() {
   started_ = true;
   // Start the pipeline
   gst_element_set_state(pipeline_, GST_STATE_PLAYING);
 }
 
-void RtpH264GstOpenPayloader::Stop() {
+void RtpH264GstVaapiPayloader::Stop() {
   started_ = false;
   // Stop the pipeline
   gst_element_set_state(pipeline_, GST_STATE_NULL);

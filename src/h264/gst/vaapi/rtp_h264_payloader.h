@@ -19,19 +19,19 @@
 namespace mediax::rtp::h264::gst::vaapi {
 
 /// A RTP payloader for H.264 DEF-STAN 00-82 video streams
-class RtpH264GstOpenPayloader : public mediax::rtp::RtpPayloader {
+class RtpH264GstVaapiPayloader : public mediax::rtp::RtpPayloader {
  public:
   ///
   /// \brief Construct a new Rtp H.264 Payloader object
   ///
   ///
-  RtpH264GstOpenPayloader();
+  RtpH264GstVaapiPayloader();
 
   ///
   /// \brief Destroy the Rtp H.264 Payloader object
   ///
   ///
-  ~RtpH264GstOpenPayloader() final;
+  ~RtpH264GstVaapiPayloader() final;
 
   ///
   /// \brief Set the Stream Info object
