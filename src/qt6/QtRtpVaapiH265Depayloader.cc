@@ -12,7 +12,7 @@
 /// \file QtRtpH265Depayloader.cc
 ///
 
-#include "qt6/QtRtpH265Depayloader.h"
+#include "qt6/QtRtpVaapiH265Depayloader.h"
 
 #include <algorithm>
 

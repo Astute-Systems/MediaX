@@ -12,14 +12,14 @@
 /// \file QtRtpH264Depayloader.h
 ///
 
-#ifndef QT6_QTRTPH264DEPAYLOADER_H_
-#define QT6_QTRTPH264DEPAYLOADER_H_
+#ifndef QT6_QTRTPOPENH264DEPAYLOADER_H_
+#define QT6_QTRTPOPENH264DEPAYLOADER_H_
 
 #include <QByteArray>
 #include <QObject>
 #include <QVector>
 
-#include "h264/gst/Open/rtp_h264_depayloader.h"
+#include "h264/gst/open/rtp_h264_depayloader.h"
 #include "qt6/QtRtpDepayloader.h"
 
 namespace mediax::qt6 {
@@ -88,9 +88,9 @@ class QtRtpOpenH264Depayloader : public QtRtpDepayloader {
 
  private:
   /// The underlying RTP H.264 depayloader
-  mediax::rtp::h264::gst::Open::RtpH264GstOpenDepayloader m_depayloader;
+  mediax::rtp::h264::gst::open::RtpH264GstOpenDepayloader m_depayloader;
 };
 
 }  // namespace mediax::qt6
 
-#endif  // QT6_QTRTPH264DEPAYLOADER_H_
+#endif  // QT6_QTRTPOPENH264DEPAYLOADER_H_

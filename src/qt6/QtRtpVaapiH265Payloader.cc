@@ -13,7 +13,7 @@
 /// \file QtRtpH265Payloader.cc
 ///
 
-#include "qt6/QtRtpH265Payloader.h"
+#include "qt6/QtRtpVaapiH265Payloader.h"
 
 namespace mediax::qt6 {
 

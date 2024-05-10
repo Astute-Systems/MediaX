@@ -13,13 +13,15 @@
 
 #include "QtRtpAv1Depayloader.h"
 #include "QtRtpAv1Payloader.h"
-#include "QtRtpH264Depayloader.h"
-#include "QtRtpH264Payloader.h"
-#include "QtRtpH265Depayloader.h"
-#include "QtRtpH265Payloader.h"
 #include "QtRtpJpegDepayloader.h"
 #include "QtRtpJpegPayloader.h"
+#include "QtRtpOpenH264Depayloader.h"
+#include "QtRtpOpenH264Payloader.h"
 #include "QtRtpUncompressedDepayloader.h"
 #include "QtRtpUncompressedPayloader.h"
+#include "QtRtpVaapiH264Depayloader.h"
+#include "QtRtpVaapiH264Payloader.h"
+#include "QtRtpVaapiH265Depayloader.h"
+#include "QtRtpVaapiH265Payloader.h"
 
 #endif  // QT_QTRTP_H_

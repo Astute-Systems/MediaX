@@ -19,7 +19,7 @@
 #include <memory>
 
 #include "qt6/QtCommon.h"
-#include "qt6/QtRtpH264Payloader.h"
+#include "qt6/QtRtpVaapiH264Payloader.h"
 #include "uncompressed/rtp_uncompressed_payloader.h"
 
 namespace mediax::qt6 {

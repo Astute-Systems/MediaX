@@ -12,13 +12,13 @@
 /// \file QtRtpH264Payloader.h
 ///
 
-#ifndef QT6_QTRTPH264PAYLOADER_H_
-#define QT6_QTRTPH264PAYLOADER_H_
+#ifndef QT6_QTRTPOPENH264PAYLOADER_H_
+#define QT6_QTRTPOPENH264PAYLOADER_H_
 
 #include <QByteArray>
 #include <QObject>
 
-#include "h264/gst/Open/rtp_h264_payloader.h"
+#include "h264/gst/open/rtp_h264_payloader.h"
 #include "qt6/QtCommon.h"
 #include "qt6/QtRtpPayloader.h"
 
@@ -34,7 +34,7 @@ class QtRtpOpenH264Payloader : public QtRtpPayloader {
   ///
   /// \param parent
   ///
-  explicit QtRtpH264Payloader(QObject *parent = nullptr);
+  explicit QtRtpOpenH264Payloader(QObject *parent = nullptr);
 
   ///
   /// \brief Destroy the Qt Rtp H 2 6 4 Payloader object
@@ -92,9 +92,9 @@ class QtRtpOpenH264Payloader : public QtRtpPayloader {
 
  private:
   /// The GStreamer payloader
-  ::mediax::rtp::h264::gst::Open::RtpH264GstOpenPayloader payloader_;
+  ::mediax::rtp::h264::gst::open::RtpH264GstOpenPayloader payloader_;
 };
 
 }  // namespace mediax::qt6
 
-#endif  // QT6_QTRTPH264PAYLOADER_H_
+#endif  // QT6_QTRTPOPENH264PAYLOADER_H_

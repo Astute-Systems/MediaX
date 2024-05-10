@@ -12,8 +12,8 @@
 /// \file QtRtpH264Depayloader.h
 ///
 
-#ifndef QT6_QTRTPH264DEPAYLOADER_H_
-#define QT6_QTRTPH264DEPAYLOADER_H_
+#ifndef QT6_QTRTPVAAPIH264DEPAYLOADER_H_
+#define QT6_QTRTPVAAPIH264DEPAYLOADER_H_
 
 #include <QByteArray>
 #include <QObject>
@@ -26,6 +26,8 @@ namespace mediax::qt6 {
 
 /// A RTP depayloader for H.264 DEF-STAN 00-82 video streams
 class QtRtpVaapiH264Depayloader : public QtRtpDepayloader {
+  Q_OBJECT
+
  public:
   ///
   /// \brief Construct a new Qt Rtp H 2 6 4 Deayloader object
@@ -93,4 +95,4 @@ class QtRtpVaapiH264Depayloader : public QtRtpDepayloader {
 
 }  // namespace mediax::qt6
 
-#endif  // QT6_QTRTPH264DEPAYLOADER_H_
+#endif  // QT6_QTRTPVAAPIH264DEPAYLOADER_H_

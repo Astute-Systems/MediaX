@@ -12,19 +12,18 @@
 /// \file QtRtpH264Payloader.h
 ///
 
-#ifndef QT6_QTRTPH264PAYLOADER_H_
-#define QT6_QTRTPH264PAYLOADER_H_
+#ifndef QT6_QTRTPVAAPIH264PAYLOADER_H_
+#define QT6_QTRTPVAAPIH264PAYLOADER_H_
 
 #include <QByteArray>
 #include <QObject>
 
 #include "h264/gst/vaapi/rtp_h264_payloader.h"
-#include "qt6/QtCommon.h"
 #include "qt6/QtRtpPayloader.h"
 
 namespace mediax::qt6 {
 
-/// The H.264 Qt Payloaader wrapper
+/// The H.264 Qt Payloader wrapper
 class QtRtpVaapiH264Payloader : public QtRtpPayloader {
   Q_OBJECT
 
@@ -34,7 +33,7 @@ class QtRtpVaapiH264Payloader : public QtRtpPayloader {
   ///
   /// \param parent
   ///
-  explicit QtRtpH264Payloader(QObject *parent = nullptr);
+  explicit QtRtpVaapiH264Payloader(QObject *parent = nullptr);
 
   ///
   /// \brief Destroy the Qt Rtp H 2 6 4 Payloader object
@@ -97,4 +96,4 @@ class QtRtpVaapiH264Payloader : public QtRtpPayloader {
 
 }  // namespace mediax::qt6
 
-#endif  // QT6_QTRTPH264PAYLOADER_H_
+#endif  // QT6_QTRTPVAAPIH264PAYLOADER_H_

@@ -9,10 +9,10 @@
 ///
 /// \brief RTP streaming video class for uncompressed DEF-STAN 00-82 video streams
 ///
-/// \file QtRtpH264Depayloader.cc
+/// \file QtRtpOpenH264Depayloader.cc
 ///
 
-#include "qt6/QtRtpH264Depayloader.h"
+#include "qt6/QtRtpOpenH264Depayloader.h"
 
 #include <algorithm>
 
@@ -20,7 +20,7 @@ namespace mediax::qt6 {
 
 QtRtpOpenH264Depayloader::QtRtpOpenH264Depayloader(QObject *parent) : QtRtpDepayloader(parent) {}
 
-void QtRtpH264Depayloader::setStreamInfo(const mediax::rtp::StreamInformation &stream_information) {
+void QtRtpOpenH264Depayloader::setStreamInfo(const mediax::rtp::StreamInformation &stream_information) {
   m_depayloader.SetStreamInfo(stream_information);
 
   // Register callback to emit new frame
@@ -38,15 +38,15 @@ void QtRtpH264Depayloader::setStreamInfo(const mediax::rtp::StreamInformation &s
       });
 }
 
-Q_INVOKABLE bool QtRtpH264Depayloader::open() { return m_depayloader.Open(); }
+Q_INVOKABLE bool QtRtpOpenH264Depayloader::open() { return m_depayloader.Open(); }
 
-Q_INVOKABLE void QtRtpH264Depayloader::start() { m_depayloader.Start(); }
+Q_INVOKABLE void QtRtpOpenH264Depayloader::start() { m_depayloader.Start(); }
 
-Q_INVOKABLE void QtRtpH264Depayloader::stop() { m_depayloader.Stop(); }
+Q_INVOKABLE void QtRtpOpenH264Depayloader::stop() { m_depayloader.Stop(); }
 
-Q_INVOKABLE void QtRtpH264Depayloader::close() { m_depayloader.Close(); }
+Q_INVOKABLE void QtRtpOpenH264Depayloader::close() { m_depayloader.Close(); }
 
-Q_INVOKABLE bool QtRtpH264Depayloader::receive(QByteArray *frame, int timeout) {
+Q_INVOKABLE bool QtRtpOpenH264Depayloader::receive(QByteArray *frame, int timeout) {
   mediax::rtp::RtpFrameData frame_data;
   bool result = m_depayloader.Receive(&frame_data, timeout);
   if (result) {
@@ -55,13 +55,13 @@ Q_INVOKABLE bool QtRtpH264Depayloader::receive(QByteArray *frame, int timeout) {
   return result;
 }
 
-Q_INVOKABLE QVector<quint8> QtRtpH264Depayloader::getBuffer() {
+Q_INVOKABLE QVector<quint8> QtRtpOpenH264Depayloader::getBuffer() {
   QVector<quint8> buffer(m_depayloader.GetBuffer().size());
   // Copy buffer
   std::copy(m_depayloader.GetBuffer().begin(), m_depayloader.GetBuffer().end(), buffer.begin());
   return buffer;
 }
 
-Q_INVOKABLE mediax::rtp::StreamState QtRtpH264Depayloader::getState() const { return m_depayloader.GetState(); }
+Q_INVOKABLE mediax::rtp::StreamState QtRtpOpenH264Depayloader::getState() const { return m_depayloader.GetState(); }
 
 }  // namespace mediax::qt6

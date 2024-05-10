@@ -21,8 +21,6 @@ set(SOURCES
   QtRtpUncompressedPayloader.cc
   QtRtpOpenH264Payloader.cc
   QtRtpOpenH264Depayloader.cc
-  QtRtpOpenH265Payloader.cc
-  QtRtpOpenH265Depayloader.cc
   QtRtpVaapiH264Payloader.cc
   QtRtpVaapiH264Depayloader.cc
   QtRtpVaapiH265Payloader.cc

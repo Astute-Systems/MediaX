@@ -12,8 +12,8 @@
 /// \file QtRtpH265Depayloader.h
 ///
 
-#ifndef QT6_QTRTPH265DEPAYLOADER_H_
-#define QT6_QTRTPH265DEPAYLOADER_H_
+#ifndef QT6_QTRTPVAAPIH265DEPAYLOADER_H_
+#define QT6_QTRTPVAAPIH265DEPAYLOADER_H_
 
 #include <QByteArray>
 #include <QObject>
@@ -93,4 +93,4 @@ class QtRtpH265Depayloader : public QtRtpDepayloader {
 
 }  // namespace mediax::qt6
 
-#endif  // QT6_QTRTPH265DEPAYLOADER_H_
+#endif  // QT6_QTRTPVAAPIH265DEPAYLOADER_H_
