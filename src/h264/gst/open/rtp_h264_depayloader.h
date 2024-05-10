@@ -12,8 +12,8 @@
 /// \file rtp_h264_depayloader.h
 ///
 
-#ifndef H264_GST_VAAPI_RTP_H264_DEPAYLOADER_H_
-#define H264_GST_VAAPI_RTP_H264_DEPAYLOADER_H_
+#ifndef H264_GST_OPEN_RTP_H264_DEPAYLOADER_H_
+#define H264_GST_OPEN_RTP_H264_DEPAYLOADER_H_
 
 #include <gst/app/gstappsink.h>
 #include <gst/gst.h>
@@ -132,4 +132,4 @@ class RtpH264GstOpenDepayloader : public mediax::rtp::RtpDepayloader {
 
 }  // namespace mediax::rtp::h264::gst::open
 
-#endif  // H264_GST_VAAPI_RTP_H264_DEPAYLOADER_H_
+#endif  // H264_GST_OPEN_RTP_H264_DEPAYLOADER_H_
