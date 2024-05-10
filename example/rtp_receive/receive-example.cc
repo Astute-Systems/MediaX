@@ -331,7 +331,7 @@ int main(int argc, char *argv[]) {
       break;
     case mediax::rtp::ColourspaceType::kColourspaceH264Part10:
     case mediax::rtp::ColourspaceType::kColourspaceH264Part4:
-      Receive::rtp_ = std::make_shared<mediax::rtp::h264::gst::vaapi::RtpH264GstOpenDepayloader>();
+      Receive::rtp_ = std::make_shared<mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader>();
       break;
     case mediax::rtp::ColourspaceType::kColourspaceH265:
       Receive::rtp_ = std::make_shared<mediax::rtp::h265::gst::vaapi::RtpH265GstVaapiDepayloader>();

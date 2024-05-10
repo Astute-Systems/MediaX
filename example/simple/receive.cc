@@ -34,7 +34,7 @@ void NvidiaH264() {
 void VaapiH264() {
   // [Receive example vaapi]
   // To use another payloader, simply change the namespace i.e. Intel Video Accelleration API (VAAPI)
-  mediax::rtp::h264::gst::vaapi::RtpH264GstOpenPayloader rtp;
+  mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader rtp;
   // [Receive example vaapi]
 }
 
