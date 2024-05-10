@@ -13,13 +13,13 @@
 /// Below is a sample pipeline to create video streams using GStreamer:
 /// \code
 /// gst-launch-1.0 -v udpsrc port=5004 caps="application/x-rtp, media=(string)video, clock-rate=(int)90000,
-/// encoding-name=(string)H264" ! rtph264depay ! h264parse ! queue ! vaapih264dec ! xvimagesink
+/// encoding-name=(string)H264" ! rtph264depay ! h264parse ! queue ! openh264dec ! xvimagesink
 /// \endcode
 ///
 /// \file rtp_h264_depayloader.cc
 ///
 
-#include "h264/gst/vaapi/rtp_h264_depayloader.h"
+#include "h264/gst/open/rtp_h264_depayloader.h"
 
 #include <gst/gst.h>
 
@@ -31,7 +31,7 @@
 
 #include "rtp/rtp_utils.h"
 
-namespace mediax::rtp::h264::gst::vaapi {
+namespace mediax::rtp::h264::gst::open {
 
 RtpH264GstOpenDepayloader::RtpH264GstOpenDepayloader() {
   // Set this for empty video buffers
@@ -177,10 +177,10 @@ bool RtpH264GstOpenDepayloader::Open() {
     return false;
   }
 
-  // Decode frame using vaapi
-  GstElement *vaapih264dec = gst_element_factory_make("vaapih264dec", "rtp-h264-vaapih264dec");
-  if (vaapih264dec == nullptr) {
-    std::cerr << "No gst element called 'vaapih264dec'!\n";
+  // Decode frame using open
+  GstElement *openh264dec = gst_element_factory_make("openh264dec", "rtp-h264-openh264dec");
+  if (openh264dec == nullptr) {
+    std::cerr << "No gst element called 'openh264dec'!\n";
     return false;
   }
 
@@ -205,19 +205,19 @@ bool RtpH264GstOpenDepayloader::Open() {
     g_object_set(G_OBJECT(capsfilter2), "caps", caps2, nullptr);
 
     // Add all elements to the pipeline
-    gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, rtph264depay, h264parse, queue, vaapih264dec, videoconvert,
+    gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, rtph264depay, h264parse, queue, openh264dec, videoconvert,
                      capsfilter2, appsink, nullptr);
 
     // Link the elements
-    gst_element_link_many(udpsrc, capsfilter, rtph264depay, h264parse, queue, vaapih264dec, videoconvert, capsfilter2,
+    gst_element_link_many(udpsrc, capsfilter, rtph264depay, h264parse, queue, openh264dec, videoconvert, capsfilter2,
                           appsink, nullptr);
   } else {
     // Add all elements to the pipeline
-    gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, rtph264depay, h264parse, queue, vaapih264dec, appsink,
+    gst_bin_add_many(GST_BIN(pipeline_), udpsrc, capsfilter, rtph264depay, h264parse, queue, openh264dec, appsink,
                      nullptr);
 
     // Link the elements
-    gst_element_link_many(udpsrc, capsfilter, rtph264depay, h264parse, queue, vaapih264dec, appsink, nullptr);
+    gst_element_link_many(udpsrc, capsfilter, rtph264depay, h264parse, queue, openh264dec, appsink, nullptr);
   }
 
   return true;
@@ -315,4 +315,4 @@ void RtpH264GstOpenDepayloader::NewFrame() {
   }
 }
 
-}  // namespace mediax::rtp::h264::gst::vaapi
+}  // namespace mediax::rtp::h264::gst::open

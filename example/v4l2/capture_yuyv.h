@@ -19,13 +19,6 @@
 #include <sys/ioctl.h>
 
 #include <string>
-struct image_info_t {
-  int stride;
-  int width;
-  int height;
-};
-
-int SaveImageUncompressed(const unsigned char *image, const char *szFilename, image_info_t *info, int type);
 
 class V4l2_Capture_YUYV {
  public:

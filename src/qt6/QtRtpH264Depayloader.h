@@ -88,7 +88,7 @@ class QtRtpH264Depayloader : public QtRtpDepayloader {
 
  private:
   /// The underlying RTP H.264 depayloader
-  mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader m_depayloader;
+  mediax::rtp::h264::gst::vaapi::RtpH264GstOpenDepayloader m_depayloader;
 };
 
 }  // namespace mediax::qt6

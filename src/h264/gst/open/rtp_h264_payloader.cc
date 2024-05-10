@@ -10,21 +10,21 @@
 /// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
 ///
 /// gst-launch-1.0 v4l2src videotestsrc ! video/x-raw, width=1280, height=720, framerate=1/50, format=RGB, media=video,
-/// encoding-name=RAW, payload=96, clock-rate=9600 ! vaapih264enc ! rtph264pay ! udpsink host=127.0.0.1 port=5000
+/// encoding-name=RAW, payload=96, clock-rate=9600 ! openh264enc ! rtph264pay ! udpsink host=127.0.0.1 port=5000
 ///
 /// \file rtp_h264_payloader.cc
 ///
 // Example
 
-#include "h264/gst/vaapi/rtp_h264_payloader.h"
+#include "h264/gst/open/rtp_h264_payloader.h"
 
 #include <glog/logging.h>
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
 
-#include "h264/gst/vaapi/rtp_h264_depayloader.h"
+#include "h264/gst/open/rtp_h264_depayloader.h"
 
-namespace mediax::rtp::h264::gst::vaapi {
+namespace mediax::rtp::h264::gst::open {
 
 RtpH264GstOpenPayloader::RtpH264GstOpenPayloader() = default;
 
@@ -78,7 +78,7 @@ int RtpH264GstOpenPayloader::Transmit(unsigned char *new_buffer, bool timeout) {
 }
 
 bool RtpH264GstOpenPayloader::Open() {
-  // Setup a gstreamer pipeline to decode H.264 with Intel VAAPI
+  // Setup a gstreamer pipeline to decode H.264 with Intel open
 
   // Create a pipeline
   pipeline_ = gst_pipeline_new("rtp-h264-pipeline");
@@ -103,15 +103,15 @@ bool RtpH264GstOpenPayloader::Open() {
     return false;
   }
 
-  // Create a vaapih264enc element to decode the H.264 stream
-  GstElement *vaapih264enc = gst_element_factory_make("vaapih264enc", "rtp-h264-vaapih264enc");
-  if (vaapih264enc == nullptr) {
-    std::cerr << "No gst element called 'vaapih264enc'!\n";
+  // Create a openh264enc element to decode the H.264 stream
+  GstElement *openh264enc = gst_element_factory_make("openh264enc", "rtp-h264-openh264enc");
+  if (openh264enc == nullptr) {
+    std::cerr << "No gst element called 'openh264enc'!\n";
     return false;
   }
 
   // Set keyframe-period=1 max-bframes=0
-  g_object_set(G_OBJECT(vaapih264enc), "keyframe-period", 1, "max-bframes", 0, nullptr);
+  g_object_set(G_OBJECT(openh264enc), "gop-size", 0, nullptr);
 
   // RTP payloader
   GstElement *rtp264pay = gst_element_factory_make("rtph264pay", "rtp-h264-payloader");
@@ -129,10 +129,10 @@ bool RtpH264GstOpenPayloader::Open() {
   g_object_set(G_OBJECT(udpsink), "host", GetEgressPort().hostname.c_str(), "port", GetEgressPort().port_no, nullptr);
 
   // Add all elements to the pipeline
-  gst_bin_add_many(GST_BIN(pipeline_), appsrc, capsfilter, videoconvert, vaapih264enc, rtp264pay, udpsink, nullptr);
+  gst_bin_add_many(GST_BIN(pipeline_), appsrc, capsfilter, videoconvert, openh264enc, rtp264pay, udpsink, nullptr);
 
   // Link the elements
-  gst_element_link_many(appsrc, capsfilter, videoconvert, vaapih264enc, rtp264pay, udpsink, nullptr);
+  gst_element_link_many(appsrc, capsfilter, videoconvert, openh264enc, rtp264pay, udpsink, nullptr);
 
   return true;
 }
@@ -158,4 +158,4 @@ void RtpH264GstOpenPayloader::Stop() {
   gst_element_set_state(pipeline_, GST_STATE_NULL);
 }
 
-}  // namespace mediax::rtp::h264::gst::vaapi
+}  // namespace mediax::rtp::h264::gst::open

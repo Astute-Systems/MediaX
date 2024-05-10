@@ -177,7 +177,7 @@ int main(int argc, char** argv) {
       break;
     case mediax::rtp::ColourspaceType::kColourspaceH264Part10:
     case mediax::rtp::ColourspaceType::kColourspaceH264Part4:
-      rtp = std::make_unique<mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader>();
+      rtp = std::make_unique<mediax::rtp::h264::gst::vaapi::RtpH264GstOpenPayloader>();
       break;
     case mediax::rtp::ColourspaceType::kColourspaceH265:
       rtp = std::make_unique<mediax::rtp::h265::gst::vaapi::RtpH265GstVaapiPayloader>();

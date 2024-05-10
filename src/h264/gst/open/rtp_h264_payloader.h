@@ -16,7 +16,7 @@
 
 #include "rtp/rtp_payloader.h"
 
-namespace mediax::rtp::h264::gst::vaapi {
+namespace mediax::rtp::h264::gst::open {
 
 /// A RTP payloader for H.264 DEF-STAN 00-82 video streams
 class RtpH264GstOpenPayloader : public mediax::rtp::RtpPayloader {
@@ -82,6 +82,6 @@ class RtpH264GstOpenPayloader : public mediax::rtp::RtpPayloader {
   bool started_ = false;
 };
 
-}  // namespace mediax::rtp::h264::gst::vaapi
+}  // namespace mediax::rtp::h264::gst::open
 
 #endif  // H264_GST_VAAPI_RTP_H264_PAYLOADER_H_

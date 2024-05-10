@@ -92,7 +92,7 @@ class QtRtpH264Payloader : public QtRtpPayloader {
 
  private:
   /// The GStreamer payloader
-  ::mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader payloader_;
+  ::mediax::rtp::h264::gst::vaapi::RtpH264GstOpenPayloader payloader_;
 };
 
 }  // namespace mediax::qt6

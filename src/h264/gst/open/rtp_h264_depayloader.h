@@ -25,7 +25,7 @@
 /// The H.264 video compression GStreamer namespace
 namespace mediax::rtp::h264::gst {}
 /// The Gstreamer implementation of the Nvidia (NVENC) namespace
-namespace mediax::rtp::h264::gst::vaapi {
+namespace mediax::rtp::h264::gst::open {
 
 /// A RTP payloader for H.264 DEF-STAN 00-82 video streams
 class RtpH264GstOpenDepayloader : public mediax::rtp::RtpDepayloader {
@@ -130,6 +130,6 @@ class RtpH264GstOpenDepayloader : public mediax::rtp::RtpDepayloader {
   bool rgb_ = false;
 };
 
-}  // namespace mediax::rtp::h264::gst::vaapi
+}  // namespace mediax::rtp::h264::gst::open
 
 #endif  // H264_GST_VAAPI_RTP_H264_DEPAYLOADER_H_

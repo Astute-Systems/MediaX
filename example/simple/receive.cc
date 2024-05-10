@@ -34,7 +34,7 @@ void NvidiaH264() {
 void VaapiH264() {
   // [Receive example vaapi]
   // To use another payloader, simply change the namespace i.e. Intel Video Accelleration API (VAAPI)
-  mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader rtp;
+  mediax::rtp::h264::gst::vaapi::RtpH264GstOpenPayloader rtp;
   // [Receive example vaapi]
 }
 
@@ -92,16 +92,15 @@ int main(int argc, char *argv[]) {
 
   // [Receive example receive]
   // Register a callback to handle the received video
-  rtp.RegisterCallback(
-      [](const mediax::rtp::RtpDepayloader &depay [[maybe_unused]], mediax::rtp::RtpFrameData frame) {
-        // Do something with the frame
-        const uint8_t *data = frame.cpu_buffer;
-        if (data != nullptr) {
-          std::cerr << "Received data, do something with it here\n";
-        } else {
-          std::cerr << "Timedout\n";
-        }
-      });
+  rtp.RegisterCallback([](const mediax::rtp::RtpDepayloader &depay [[maybe_unused]], mediax::rtp::RtpFrameData frame) {
+    // Do something with the frame
+    const uint8_t *data = frame.cpu_buffer;
+    if (data != nullptr) {
+      std::cerr << "Received data, do something with it here\n";
+    } else {
+      std::cerr << "Timedout\n";
+    }
+  });
   rtp.Start();
   // [Receive example receive]
 
