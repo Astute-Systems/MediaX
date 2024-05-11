@@ -110,8 +110,8 @@ bool RtpH264GstOpenPayloader::Open() {
     return false;
   }
 
-  // Set keyframe-period=1 max-bframes=0
-  g_object_set(G_OBJECT(openh264enc), "gop-size", 0, nullptr);
+  // Set gop-size need to be 0 then it will lock up
+  g_object_set(G_OBJECT(openh264enc), "gop-size", 1, nullptr);
 
   // RTP payloader
   GstElement *rtp264pay = gst_element_factory_make("rtph264pay", "rtp-h264-payloader");

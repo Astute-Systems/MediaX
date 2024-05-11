@@ -45,7 +45,7 @@ RtpH264GstVaapiDepayloader::RtpH264GstVaapiDepayloader() {
 RtpH264GstVaapiDepayloader::~RtpH264GstVaapiDepayloader() = default;
 
 RtpH264GstVaapiDepayloader &RtpH264GstVaapiDepayloader::operator=(const RtpH264GstVaapiDepayloader &other
-                                                                [[maybe_unused]]) {
+                                                                  [[maybe_unused]]) {
   return *this;
 }
 
@@ -186,6 +186,8 @@ bool RtpH264GstVaapiDepayloader::Open() {
 
   // Create a custom appsrc element to receive the H.264 stream
   GstElement *appsink = gst_element_factory_make("appsink", "rtp-h264-appsrc");
+  // Sync=false
+  g_object_set(G_OBJECT(appsink), "sync", false, nullptr);
   if (appsink == nullptr) {
     std::cerr << "No gst element called 'appsink'!\n";
     return false;

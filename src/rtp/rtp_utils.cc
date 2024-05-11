@@ -54,8 +54,8 @@ void RtpCleanup() {
 #endif
 }
 
-std::string ColourspaceTypeToString(rtp::ColourspaceType) {
-  switch (rtp::ColourspaceType::kColourspaceRgba) {
+std::string ColourspaceTypeToString(rtp::ColourspaceType colourspace) {
+  switch (colourspace) {
     case rtp::ColourspaceType::kColourspaceRgba:
       return "RGBA";
     case rtp::ColourspaceType::kColourspaceRgb24:
