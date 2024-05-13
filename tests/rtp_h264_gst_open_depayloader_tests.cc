@@ -303,10 +303,13 @@ TEST(RtpH264OpenDepayloaderTest, StartSwitchManyPayloaders) {
     // Transmit a frame
     mediax::rtp::RtpFrameData data;
     data.cpu_buffer = rgb_test.data();
+    // Sleep 100ms
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     EXPECT_FALSE(rtp[current_stream].Receive(&data, 1));
+
     EXPECT_EQ(data.resolution.height, 0);
     EXPECT_EQ(data.resolution.width, 0);
-    EXPECT_EQ(data.encoding, ::mediax::rtp::ColourspaceType::kColourspaceRgba);
+    EXPECT_EQ(data.encoding, ::mediax::rtp::ColourspaceType::kColourspaceUndefined);
     last_stream = current_stream;
   }
   rtp[current_stream].Stop();
@@ -366,7 +369,7 @@ TEST(RtpH264OpenDepayloaderTest, TransmitAFrame) {
   EXPECT_TRUE(rtp.Receive(&data, 5000));
   EXPECT_EQ(data.resolution.height, 720);
   EXPECT_EQ(data.resolution.width, 1280);
-  EXPECT_EQ(data.encoding, ::mediax::rtp::ColourspaceType::kColourspaceRgb24);
+  EXPECT_EQ(data.encoding, ::mediax::rtp::ColourspaceType::kColourspaceRgba);
 
   rtp.Stop();
   rtp.Close();

@@ -85,12 +85,12 @@ GstFlowReturn RtpH264GstOpenDepayloader::NewFrameCallback(GstAppSink *appsink, g
 
   if (const gchar *colorspace = gst_structure_get_string(structure, "format"); strncmp(colorspace, "UYVY", 4) == 0) {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceYuv);
+  } else if (strncmp(colorspace, "RGBA", 4) == 0) {
+    depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgba);
   } else if (strncmp(colorspace, "RGB", 3) == 0) {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgb24);
   } else if (strncmp(colorspace, "NV12", 3) == 0) {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceNv12);
-  } else if (strncmp(colorspace, "RGBA", 4) == 0) {
-    depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgba);
   } else {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceUndefined);
     std::cerr << "Unknown colourspace " << colorspace << "\n";
@@ -282,6 +282,7 @@ bool RtpH264GstOpenDepayloader::Receive(mediax::rtp::RtpFrameData *data, int32_t
         memset(GetBuffer().data(), 0, GetBuffer().size());
         data->resolution.height = 0;
         data->resolution.width = 0;
+        data->encoding = mediax::rtp::ColourspaceType::kColourspaceUndefined;
         return false;
       }
     }
