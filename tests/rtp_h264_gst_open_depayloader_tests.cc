@@ -68,7 +68,7 @@ TEST(RtpH264OpenDepayloaderTest, UnicastOk) {
   GTEST_SKIP();
 #endif
 
-  std::array<uint8_t, 1280 * 720 * 3> rgb_test;
+  std::array<uint8_t, 1280 * 720 * 4> rgb_test;
   mediax::video::ColourSpaceCpu colourspace;
   mediax::rtp::h264::gst::open::RtpH264GstOpenDepayloader rtp;
 
@@ -95,6 +95,7 @@ TEST(RtpH264OpenDepayloaderTest, UnicastOk) {
   rtp.Start();
   mediax::rtp::RtpFrameData data;
   data.cpu_buffer = rgb_test.data();
+  // Expect timeout as no data is being sent
   EXPECT_FALSE(rtp.Receive(&data, 80));
   rtp.Stop();
   rtp.Close();
@@ -134,6 +135,7 @@ TEST(RtpH264OpenDepayloaderTest, UnicastOkSetStreamInfo) {
   rtp.Start();
   mediax::rtp::RtpFrameData data;
   data.cpu_buffer = rgb_test.data();
+  // Expect timeout as no data is being sent
   EXPECT_FALSE(rtp.Receive(&data, 80));
   rtp.Stop();
   rtp.Close();
@@ -173,6 +175,7 @@ TEST(RtpH264OpenDepayloaderTest, UnicastOkSetStreamInfoPtr) {
   rtp->Start();
   mediax::rtp::RtpFrameData data;
   data.cpu_buffer = rgb_test.data();
+  // Expect timeout as no data is being sent
   EXPECT_FALSE(rtp->Receive(&data, 80));
   rtp->Stop();
   rtp->Close();
@@ -303,6 +306,7 @@ TEST(RtpH264OpenDepayloaderTest, StartSwitchManyPayloaders) {
     EXPECT_FALSE(rtp[current_stream].Receive(&data, 1));
     EXPECT_EQ(data.resolution.height, 0);
     EXPECT_EQ(data.resolution.width, 0);
+    EXPECT_EQ(data.encoding, ::mediax::rtp::ColourspaceType::kColourspaceRgba);
     last_stream = current_stream;
   }
   rtp[current_stream].Stop();
