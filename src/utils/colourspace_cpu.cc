@@ -60,8 +60,8 @@ int ColourSpaceCpu::YuvToBgra(uint32_t height, uint32_t width, uint8_t *yuv, uin
   return Convert({width, height}, yuv, AV_PIX_FMT_UYVY422, 2, gbra, AV_PIX_FMT_BGRA, 4);
 }
 
-int ColourSpaceCpu::RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *bgra) const {
-  return Convert({width, height}, rgba, AV_PIX_FMT_RGBA, 4, bgra, AV_PIX_FMT_RGB24, 3);
+int ColourSpaceCpu::RgbaToRgb(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const {
+  return Convert({width, height}, rgba, AV_PIX_FMT_RGBA, 4, rgb, AV_PIX_FMT_RGB24, 3);
 }
 
 int ColourSpaceCpu::RgbaToBgra(uint32_t width, uint32_t height, uint8_t *rgba, uint8_t *rgb) const {
