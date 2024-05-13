@@ -27,8 +27,10 @@ void QtRtpOpenH264Depayloader::setStreamInfo(const mediax::rtp::StreamInformatio
   m_depayloader.RegisterCallback(
       [this](const mediax::rtp::RtpDepayloader &depay [[maybe_unused]], mediax::rtp::RtpFrameData frame) {
         Frame frame_data;
-        frame_data.video.resize(frame.resolution.height * frame.resolution.width * 3);
-        memcpy(frame_data.video.data(), frame.cpu_buffer, frame.resolution.height * frame.resolution.width * 3);
+        int bits_per_pixel = mediax::BitsPerPixel(frame.encoding);
+        frame_data.video.resize(frame.resolution.height * frame.resolution.width * bits_per_pixel);
+        memcpy(frame_data.video.data(), frame.cpu_buffer,
+               frame.resolution.height * frame.resolution.width * bits_per_pixel);
 
         frame_data.height = m_depayloader.GetHeight();
         frame_data.width = m_depayloader.GetWidth();
