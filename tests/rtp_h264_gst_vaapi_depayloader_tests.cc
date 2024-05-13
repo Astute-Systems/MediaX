@@ -17,7 +17,6 @@
 #include <chrono>
 #include <thread>
 
-#include "h264/gst/nvidia/rtp_h264_depayloader.h"
 #include "h264/gst/vaapi/rtp_h264_depayloader.h"
 #include "h264/gst/vaapi/rtp_h264_payloader.h"
 #include "rtp/rtp_utils.h"
@@ -25,7 +24,7 @@
 #include "util_tests.h"
 #include "utils/colourspace_cpu.h"
 
-TEST(RtpH264DepayloaderTest, Timeout) {
+TEST(RtpH264VaapiDepayloaderTest, Timeout) {
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
@@ -44,7 +43,7 @@ TEST(RtpH264DepayloaderTest, Timeout) {
   rtp->Close();
 }
 
-TEST(RtpH264DepayloaderTest, GetSet) {
+TEST(RtpH264VaapiDepayloaderTest, GetSet) {
   mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
   mediax::rtp::StreamInformation stream_info = {"test_session_name",
                                                 "127.0.0.1",
@@ -58,18 +57,18 @@ TEST(RtpH264DepayloaderTest, GetSet) {
 
   ASSERT_EQ(rtp.GetHeight(), 640);
   ASSERT_EQ(rtp.GetWidth(), 480);
-  ASSERT_EQ(rtp.GetColourSpace(), mediax::rtp::ColourspaceType::kColourspaceNv12);
+  ASSERT_EQ(rtp.GetColourSpace(), mediax::rtp::ColourspaceType::kColourspaceRgba);
   ASSERT_EQ(rtp.GetIpAddress(), "127.0.0.1");
   ASSERT_EQ(rtp.GetPort(), 5004);
   ASSERT_EQ(rtp.GetSessionName(), "test_session_name");
 }
 
-TEST(RtpH264DepayloaderTest, UnicastOk) {
+TEST(RtpH264VaapiDepayloaderTest, UnicastOk) {
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
 
-  std::array<uint8_t, 1280 * 720 * 3> rgb_test;
+  std::array<uint8_t, 1280 * 720 * 4> rgb_test;
   mediax::video::ColourSpaceCpu colourspace;
   mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
 
@@ -102,20 +101,20 @@ TEST(RtpH264DepayloaderTest, UnicastOk) {
 
   EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceH264Part10);
   mediax::video::ColourSpaceCpu convert;
-  convert.Nv12ToRgb(rtp.GetHeight(), rtp.GetWidth(), data.cpu_buffer, rgb_test.data());
+  convert.RgbaToRgb(rtp.GetHeight(), rtp.GetWidth(), data.cpu_buffer, rgb_test.data());
 
   EXPECT_EQ(rtp.GetHeight(), 720);
   EXPECT_EQ(rtp.GetWidth(), 1280);
 
-  WritePngFile(rgb_test.data(), rtp.GetWidth(), rtp.GetHeight(), "H264_Image.png");
+  WritePngFile(rgb_test.data(), rtp.GetWidth(), rtp.GetHeight(), "vaapiH264_Image.png");
 }
 
-TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfo) {
+TEST(RtpH264VaapiDepayloaderTest, UnicastOkSetStreamInfo) {
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
 
-  std::array<uint8_t, 1280 * 720 * 3> rgb_test;
+  std::array<uint8_t, 1280 * 720 * 4> rgb_test;
   mediax::video::ColourSpaceCpu colourspace;
   mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
 
@@ -139,22 +138,22 @@ TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfo) {
   rtp.Stop();
   rtp.Close();
 
-  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceNv12);
+  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceRgba);
   mediax::video::ColourSpaceCpu convert;
-  convert.Nv12ToRgb(rtp.GetHeight(), rtp.GetWidth(), data.cpu_buffer, rgb_test.data());
+  convert.RgbaToRgb(rtp.GetHeight(), rtp.GetWidth(), data.cpu_buffer, rgb_test.data());
 
   EXPECT_EQ(rtp.GetHeight(), 720);
   EXPECT_EQ(rtp.GetWidth(), 1280);
 
-  WritePngFile(rgb_test.data(), rtp.GetWidth(), rtp.GetHeight(), "H264_Image1.png");
+  WritePngFile(rgb_test.data(), rtp.GetWidth(), rtp.GetHeight(), "vaapiH264_Image1.png");
 }
 
-TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfoPtr) {
+TEST(RtpH264VaapiDepayloaderTest, UnicastOkSetStreamInfoPtr) {
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
 
-  std::array<uint8_t, 1280 * 720 * 3> rgb_test;
+  std::array<uint8_t, 1280 * 720 * 4> rgb_test;
   mediax::video::ColourSpaceCpu colourspace;
   auto rtp = std::make_shared<mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader>();
 
@@ -178,76 +177,46 @@ TEST(RtpH264DepayloaderTest, UnicastOkSetStreamInfoPtr) {
   rtp->Stop();
   rtp->Close();
 
-  EXPECT_EQ(rtp->GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceNv12);
+  EXPECT_EQ(rtp->GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceRgba);
   mediax::video::ColourSpaceCpu convert;
-  convert.Nv12ToRgb(rtp->GetHeight(), rtp->GetWidth(), data.cpu_buffer, rgb_test.data());
+  convert.RgbaToRgb(rtp->GetHeight(), rtp->GetWidth(), data.cpu_buffer, rgb_test.data());
 
   EXPECT_EQ(rtp->GetHeight(), 720);
   EXPECT_EQ(rtp->GetWidth(), 1280);
 
-  WritePngFile(rgb_test.data(), rtp->GetWidth(), rtp->GetHeight(), "H264_Image2.png");
+  WritePngFile(rgb_test.data(), rtp->GetWidth(), rtp->GetHeight(), "vaapiH264_Image2.png");
 }
 
-TEST(RtpH264DepayloaderTest, StateCheckNvidia) {
-  mediax::rtp::h264::gst::nvidia::RtpH264GstNvidiaDepayloader rtp;
-  mediax::rtp::StreamInformation stream_info = {"test_session_name",
-                                                "127.0.0.1",
-                                                5004,
-                                                640,
-                                                480,
-                                                25,
-                                                mediax::rtp::ColourspaceType::kColourspaceH264Part10,
-                                                false};
-
-  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kClosed);
-  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceNv12);
-  rtp.SetStreamInfo(stream_info);
-  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kClosed);
-  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceNv12);
-  rtp.Open();
-  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kOpen);
-  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceNv12);
-  rtp.Start();
-  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kStarted);
-  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceNv12);
-  rtp.Stop();
-  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kStopped);
-  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceNv12);
-  rtp.Close();
-  EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kClosed);
-  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceNv12);
-}
-
-TEST(RtpH264DepayloaderTest, StateCheckVappi) {
+TEST(RtpH264VaapiDepayloaderTest, kColourspaceRgba) {
   mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
   mediax::rtp::StreamInformation stream_info = {
       "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
 
-  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceNv12);
+  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceRgba);
   EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kClosed);
   rtp.SetStreamInfo(stream_info);
   EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kClosed);
-  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceNv12);
+  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceRgba);
   rtp.Open();
   EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kOpen);
-  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceNv12);
+  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceRgba);
   rtp.Start();
   EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kStarted);
-  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceNv12);
+  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceRgba);
   rtp.Stop();
   EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kStopped);
-  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceNv12);
+  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceRgba);
   rtp.Close();
   EXPECT_EQ(rtp.GetState(), ::mediax::rtp::StreamState::kClosed);
-  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceNv12);
+  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceRgba);
 }
 
-TEST(RtpH264DepayloaderTest, FailToOpen) {
+TEST(RtpH264VaapiDepayloaderTest, FailToVaapi) {
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
 
-  std::array<uint8_t, 1280 * 720 * 3> rgb_test;
+  std::array<uint8_t, 1280 * 720 * 4> rgb_test;
   mediax::video::ColourSpaceCpu colourspace;
   mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
 
@@ -266,12 +235,12 @@ TEST(RtpH264DepayloaderTest, FailToOpen) {
   rtp.Close();
 }
 
-TEST(RtpH264DepayloaderTest, TestNoStreamSet) {
+TEST(RtpH264VaapiDepayloaderTest, TestNoStreamSet) {
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
 
-  std::array<uint8_t, 1280 * 720 * 3> rgb_test;
+  std::array<uint8_t, 1280 * 720 * 4> rgb_test;
   mediax::video::ColourSpaceCpu colourspace;
   mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
 
@@ -303,7 +272,7 @@ void Stream(mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader* rtp, std:
   EXPECT_TRUE(rtp->Open());
 }
 
-TEST(RtpH264DepayloaderTest, StartSwitchManyPayloaders) {
+TEST(RtpH264VaapiDepayloaderTest, StartSwitchManyPayloaders) {
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
@@ -311,10 +280,10 @@ TEST(RtpH264DepayloaderTest, StartSwitchManyPayloaders) {
   int last_stream = -1;
   int current_stream = -1;
 
-  std::array<uint8_t, 1280 * 720 * 3> rgb_test;
+  std::array<uint8_t, 1280 * 720 * 4> rgb_test;
   mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp[5];
 
-  // Open five streams
+  // Vaapi five streams
   for (int i = 0; i < 5; i++) {
     std::string name = "test_session_name_" + std::to_string(i);
     std::string ip = "239.192.1." + std::to_string(i);
@@ -344,7 +313,7 @@ TEST(RtpH264DepayloaderTest, StartSwitchManyPayloaders) {
   }
 }
 
-TEST(RtpH264DepayloaderTest, TransmitAFrame) {
+TEST(RtpH264VaapiDepayloaderTest, TransmitAFrame) {
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
@@ -360,7 +329,7 @@ TEST(RtpH264DepayloaderTest, TransmitAFrame) {
   int last_stream = -1;
   int current_stream = -1;
 
-  std::array<uint8_t, 1280 * 720 * 3> rgb_test;
+  std::array<uint8_t, 1280 * 720 * 4> rgb_test;
   mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
 
   std::string name = "test_session_name";
@@ -393,7 +362,7 @@ TEST(RtpH264DepayloaderTest, TransmitAFrame) {
   EXPECT_TRUE(rtp.Receive(&data, 5000));
   EXPECT_EQ(data.resolution.height, 720);
   EXPECT_EQ(data.resolution.width, 1280);
-  EXPECT_EQ(data.encoding, ::mediax::rtp::ColourspaceType::kColourspaceNv12);
+  EXPECT_EQ(data.encoding, ::mediax::rtp::ColourspaceType::kColourspaceRgb24);
 
   rtp.Stop();
   rtp.Close();

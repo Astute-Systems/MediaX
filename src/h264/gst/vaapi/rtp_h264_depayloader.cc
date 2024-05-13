@@ -35,11 +35,7 @@ namespace mediax::rtp::h264::gst::vaapi {
 
 RtpH264GstVaapiDepayloader::RtpH264GstVaapiDepayloader() {
   // Set this for empty video buffers
-  if (rgb_) {
-    SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgb24);
-  } else {
-    SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceNv12);
-  }
+  SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgba);
 }
 
 RtpH264GstVaapiDepayloader::~RtpH264GstVaapiDepayloader() = default;
@@ -51,7 +47,7 @@ RtpH264GstVaapiDepayloader &RtpH264GstVaapiDepayloader::operator=(const RtpH264G
 
 void RtpH264GstVaapiDepayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
   ::mediax::rtp::RtpPortType &stream = GetStream();
-  stream.encoding = ::mediax::rtp::ColourspaceType::kColourspaceNv12;
+  stream.encoding = ::mediax::rtp::ColourspaceType::kColourspaceRgba;
   stream.height = stream_information.height;
   stream.width = stream_information.width;
   stream.framerate = stream_information.framerate;

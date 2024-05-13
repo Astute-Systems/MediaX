@@ -30,7 +30,9 @@ set(SOURCES
   rtp_av1_gst_depayloader_tests.cc
   rtp_raw_depayloader_tests.cc
   rtp_jpeg_gst_depayloader_tests.cc
-  rtp_h264_gst_depayloader_tests.cc
+  rtp_h264_gst_vaapi_depayloader_tests.cc
+  rtp_h264_gst_open_depayloader_tests.cc
+  rtp_h264_gst_nvidia_depayloader_tests.cc
   sap_announcer_tests.cc
   sap_listener_tests.cc
   sap_utils_tests.cc  
