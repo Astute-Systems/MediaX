@@ -127,7 +127,7 @@ class RtpH264GstVaapiDepayloader : public mediax::rtp::RtpDepayloader {
   /// A flag indication a new frame is available
   bool new_rx_frame_ = false;
   /// Colourspace rgb requested
-  bool rgb_ = false;
+  bool rgb_ = true;
 };
 
 }  // namespace mediax::rtp::h264::gst::vaapi
