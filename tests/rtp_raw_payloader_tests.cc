@@ -41,11 +41,11 @@ TEST(RTPDepayloaderTest, SendOneFrameYuv) {
 
   mediax::rtp::uncompressed::RtpUncompressedPayloader rtp;
   mediax::rtp::StreamInformation stream_information = {
-      "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+      "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceYuv422, false};
   rtp.SetStreamInfo(stream_information);
   ASSERT_EQ(rtp.GetHeight(), 640);
   ASSERT_EQ(rtp.GetWidth(), 480);
-  ASSERT_EQ(rtp.GetColourSpace(), mediax::rtp::ColourspaceType::kColourspaceYuv);
+  ASSERT_EQ(rtp.GetColourSpace(), mediax::rtp::ColourspaceType::kColourspaceYuv422);
   ASSERT_EQ(rtp.GetIpAddress(), "127.0.0.1");
   ASSERT_EQ(rtp.GetPort(), 5004);
   rtp.Open();

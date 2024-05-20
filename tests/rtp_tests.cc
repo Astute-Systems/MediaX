@@ -31,7 +31,7 @@ TEST(Rtp, CleanUp) {
 TEST(Rtp, Bits) {
   EXPECT_EQ(mediax::BitsPerPixel(mediax::rtp::ColourspaceType::kColourspaceRgba), 32);
   EXPECT_EQ(mediax::BitsPerPixel(mediax::rtp::ColourspaceType::kColourspaceRgb24), 24);
-  EXPECT_EQ(mediax::BitsPerPixel(mediax::rtp::ColourspaceType::kColourspaceYuv), 16);
+  EXPECT_EQ(mediax::BitsPerPixel(mediax::rtp::ColourspaceType::kColourspaceYuv422), 16);
   EXPECT_EQ(mediax::BitsPerPixel(mediax::rtp::ColourspaceType::kColourspaceMono16), 16);
   EXPECT_EQ(mediax::BitsPerPixel(mediax::rtp::ColourspaceType::kColourspaceMono8), 8);
 }

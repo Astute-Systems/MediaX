@@ -88,11 +88,11 @@ TEST(Colourspace, YuvToRgbaTest) {
   mediax::video::ColourSpaceCpu convert;
 
   // Fill the YUV buffer with a red color
-  CreateColourBarTestCard(yuv, width, height, mediax::rtp::ColourspaceType::kColourspaceYuv);
+  CreateColourBarTestCard(yuv, width, height, mediax::rtp::ColourspaceType::kColourspaceYuv422);
   DumpHex(yuv, 16);
 
   // Call the function you want to test
-  convert.YuvToRgba(height, width, yuv, rgba_recieve);
+  convert.Yuv422ToRgba(height, width, yuv, rgba_recieve);
   convert.RgbaToRgb(width, height, rgba_recieve, rgb);
 
   WritePngFile(rgb, width, height, "YuvToRgbaTest.png");
@@ -268,9 +268,11 @@ TEST(Colourspace, ScaleToSizeTestRgbScaleDown) {
   uint8_t target_rgb_buffer[target_height * target_width * 3] = {0};  // Initialize with zeros
 
   // Source is checked
-  CreateCheckeredTestCard(source_rgb_buffer, source_width, source_height, mediax::rtp::ColourspaceType::kColourspaceRgb24);
+  CreateCheckeredTestCard(source_rgb_buffer, source_width, source_height,
+                          mediax::rtp::ColourspaceType::kColourspaceRgb24);
   // Colour bars in target
-  CreateColourBarTestCard(target_rgb_buffer, target_width, target_height, mediax::rtp::ColourspaceType::kColourspaceRgb24);
+  CreateColourBarTestCard(target_rgb_buffer, target_width, target_height,
+                          mediax::rtp::ColourspaceType::kColourspaceRgb24);
 
   // Call the function
   mediax::video::ColourSpaceCpu colourspace;
@@ -291,9 +293,11 @@ TEST(Colourspace, ScaleToSizeTestRgbScaleUp) {
   uint8_t target_rgb_buffer[target_height * target_width * 3] = {0};  // Initialize with zeros
 
   // Source is checked
-  CreateCheckeredTestCard(source_rgb_buffer, source_width, source_height, mediax::rtp::ColourspaceType::kColourspaceRgb24);
+  CreateCheckeredTestCard(source_rgb_buffer, source_width, source_height,
+                          mediax::rtp::ColourspaceType::kColourspaceRgb24);
   // Colour bars in target
-  CreateColourBarTestCard(target_rgb_buffer, target_width, target_height, mediax::rtp::ColourspaceType::kColourspaceRgb24);
+  CreateColourBarTestCard(target_rgb_buffer, target_width, target_height,
+                          mediax::rtp::ColourspaceType::kColourspaceRgb24);
 
   // Call the function
   mediax::video::ColourSpaceCpu colourspace;
@@ -317,7 +321,8 @@ TEST(Colourspace, ScaleToSizeTestRgbaScaleUp) {
   target_rgb_buffer.resize(target_height * target_width * 4);
 
   // Source is checked
-  CreateColourBarTestCard(source_rgba_buffer, source_width, source_height, mediax::rtp::ColourspaceType::kColourspaceRgba);
+  CreateColourBarTestCard(source_rgba_buffer, source_width, source_height,
+                          mediax::rtp::ColourspaceType::kColourspaceRgba);
 
   // Call the function
   mediax::video::ColourSpaceCpu colourspace;

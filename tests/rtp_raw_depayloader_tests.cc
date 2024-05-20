@@ -145,7 +145,7 @@ TEST(RtpRawDepayloaderTest, ReOpening) {
   for (int i = 0; i < 10; i++) {
     mediax::rtp::uncompressed::RtpUncompressedDepayloader rtp;
     mediax::rtp::StreamInformation stream_info = {
-        "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+        "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceYuv422, false};
     rtp.SetStreamInfo(stream_info);
     rtp.Open();
     rtp.Start();
@@ -159,7 +159,7 @@ void OpenStream(std::string ipaddr, uint32_t height, uint32_t width, uint32_t fr
   mediax::rtp::uncompressed::RtpUncompressedDepayloader rtp;
   yuv_test.resize(height * width * 2);
   mediax::rtp::StreamInformation stream_info = {
-      "test", ipaddr, 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+      "test", ipaddr, 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceYuv422, false};
   rtp.SetStreamInfo(stream_info);
   rtp.Open();
   rtp.Start();

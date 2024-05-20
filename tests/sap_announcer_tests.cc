@@ -47,7 +47,7 @@ TEST(SapAnnouncerTest, AddSapAnnouncement) {
   announcer.DeleteAllSapAnnouncements();
   ASSERT_EQ(announcer.GetActiveStreamCount(), 0);
   mediax::rtp::StreamInformation message = {
-      "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+      "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::rtp::ColourspaceType::kColourspaceYuv422, false};
   announcer.AddSapAnnouncement(message);
   ASSERT_EQ(announcer.GetActiveStreamCount(), 1);
   announcer.Stop();
@@ -60,9 +60,9 @@ TEST(SapAnnouncerTest, AddMultipleSAPAnnouncements) {
   ASSERT_EQ(announcer.GetActiveStreamCount(), 0);
 
   mediax::rtp::StreamInformation message1 = {
-      "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+      "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::rtp::ColourspaceType::kColourspaceYuv422, false};
   mediax::rtp::StreamInformation message2 = {
-      "SD Stream", "239.192.6.1", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+      "SD Stream", "239.192.6.1", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv422, false};
   announcer.AddSapAnnouncement(message1);
   announcer.AddSapAnnouncement(message2);
   ASSERT_EQ(announcer.GetActiveStreamCount(), 2);
@@ -77,19 +77,19 @@ TEST(SapAnnouncerTest, DeleteAllSAPAnnouncements) {
   announcer.DeleteAllSapAnnouncements();
 
   mediax::rtp::StreamInformation message1 = {
-      "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+      "HD Stream", "239.192.5.2", 5004, 1920, 1080, 30, mediax::rtp::ColourspaceType::kColourspaceYuv422, false};
   mediax::rtp::StreamInformation message2 = {
-      "SD Stream 1", "239.192.6.1", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+      "SD Stream 1", "239.192.6.1", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv422, false};
   mediax::rtp::StreamInformation message3 = {
-      "SD Stream 2", "239.192.6.2", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+      "SD Stream 2", "239.192.6.2", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv422, false};
   mediax::rtp::StreamInformation message4 = {
-      "SD Stream 3", "239.192.6.3", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+      "SD Stream 3", "239.192.6.3", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv422, false};
   mediax::rtp::StreamInformation message5 = {
-      "SD Stream 4", "239.192.6.4", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+      "SD Stream 4", "239.192.6.4", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv422, false};
   mediax::rtp::StreamInformation message6 = {
-      "SD Stream 5", "239.192.6.5", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+      "SD Stream 5", "239.192.6.5", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv422, false};
   mediax::rtp::StreamInformation message7 = {
-      "SD Stream 6", "239.192.6.6", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+      "SD Stream 6", "239.192.6.6", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv422, false};
   announcer.AddSapAnnouncement(message1);
   announcer.AddSapAnnouncement(message2);
   announcer.AddSapAnnouncement(message3);
@@ -107,7 +107,7 @@ TEST(SapAnnouncerTest, DeleteSAPAnnouncement) {
   mediax::sap::SapAnnouncer &announcer = mediax::sap::SapAnnouncer::GetInstance();
   announcer.Start();
   mediax::rtp::StreamInformation message = {
-      "SD Stream 6", "239.192.6.6", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+      "SD Stream 6", "239.192.6.6", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv422, false};
   announcer.AddSapAnnouncement(message);
   EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).deleted, false);
   announcer.DeleteSapAnnouncement(message.session_name);
@@ -138,7 +138,7 @@ TEST(SapAnnouncerTest, ReAddAnnouncment) {
   ASSERT_EQ(announcer.GetActiveStreamCount(), 0);
 
   mediax::rtp::StreamInformation message = {
-      "SD Stream 6", "239.192.6.6", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+      "SD Stream 6", "239.192.6.6", 5004, 1280, 720, 30, mediax::rtp::ColourspaceType::kColourspaceYuv422, false};
   mediax::rtp::StreamInformation message_updated = {
       "SD Stream 6", "255.255.255.255", 5005, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, true};
 

@@ -53,7 +53,7 @@ void SapTest(mediax::rtp::ColourspaceType colouspace, std::string sampling) {
   announcer.Stop();
 }
 
-TEST(SAPListenerTest, CheckYuv) { SapTest(mediax::rtp::ColourspaceType::kColourspaceYuv, "YCbCr-4:2:2"); }
+TEST(SAPListenerTest, CheckYuv) { SapTest(mediax::rtp::ColourspaceType::kColourspaceYuv422, "YCbCr-4:2:2"); }
 
 TEST(SAPListenerTest, CheckRgb24) { SapTest(mediax::rtp::ColourspaceType::kColourspaceRgb24, "RGB"); }
 
@@ -86,7 +86,7 @@ TEST(SAPListenerTest, Deleted) {
   mediax::sap::SapAnnouncer& announcer = mediax::sap::SapAnnouncer::GetInstance();
   announcer.DeleteAllSapAnnouncements();
   mediax::rtp::StreamInformation message = {
-      "test_session_name", "127.0.0.1", 5004, 1920, 1080, 30, mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+      "test_session_name", "127.0.0.1", 5004, 1920, 1080, 30, mediax::rtp::ColourspaceType::kColourspaceYuv422, false};
   announcer.AddSapAnnouncement(message);
   announcer.Start();
   ASSERT_EQ(announcer.GetActiveStreamCount(), 1);

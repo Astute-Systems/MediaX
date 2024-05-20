@@ -117,7 +117,7 @@ TEST(TestCard, CreateBouncingBall) {
   // Fill buffer zeros
   std::fill(test_card.begin(), test_card.end(), 0);
 
-  CreateBouncingBallTestCard(test_card.data(), width, height, mediax::rtp::ColourspaceType::kColourspaceYuv);
+  CreateBouncingBallTestCard(test_card.data(), width, height, mediax::rtp::ColourspaceType::kColourspaceYuv422);
   colourspace.YuvToRgb(width, height, test_card.data(), converted_test_card.data());
   WritePngFile(converted_test_card.data(), width, height, "Testcard_Yuv_ball.png");
 }

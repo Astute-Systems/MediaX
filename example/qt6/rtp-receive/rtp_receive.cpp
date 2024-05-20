@@ -17,7 +17,7 @@
 QtReceive::QtReceive() {
   std::cout << "Qt6 Example RTP (Tx) streaming (640x480 Uncompressed YUV) to 127.0.0.1:5004@25Htz\n";
   mediax::rtp::StreamInformation stream_info = {
-      "qt-test", "127.0.0.1", 5004, 480, 640, 25, ::mediax::rtp::ColourspaceType::kColourspaceYuv, false};
+      "qt-test", "127.0.0.1", 5004, 480, 640, 25, ::mediax::rtp::ColourspaceType::kColourspaceYuv422, false};
   rtp.setStreamInfo(stream_info);
   rtp.open();
   rtp.start();

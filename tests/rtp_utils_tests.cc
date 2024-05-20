@@ -112,7 +112,7 @@ TEST(Utilities, CreateCheckeredTestCardRgba) {
 TEST(Utilities, BitsPerPixel) {
   EXPECT_EQ(mediax::BitsPerPixel(mediax::rtp::ColourspaceType::kColourspaceRgba), 32);
   EXPECT_EQ(mediax::BitsPerPixel(mediax::rtp::ColourspaceType::kColourspaceRgb24), 24);
-  EXPECT_EQ(mediax::BitsPerPixel(mediax::rtp::ColourspaceType::kColourspaceYuv), 16);
+  EXPECT_EQ(mediax::BitsPerPixel(mediax::rtp::ColourspaceType::kColourspaceYuv422), 16);
   EXPECT_EQ(mediax::BitsPerPixel(mediax::rtp::ColourspaceType::kColourspaceMono16), 16);
   EXPECT_EQ(mediax::BitsPerPixel(mediax::rtp::ColourspaceType::kColourspaceMono8), 8);
   EXPECT_EQ(mediax::BitsPerPixel(mediax::rtp::ColourspaceType::kColourspaceNv12), 12);
@@ -124,7 +124,7 @@ TEST(Utilities, BitsPerPixel) {
 TEST(Utilities, BytesPerPixel) {
   EXPECT_EQ(mediax::BytesPerPixel(mediax::rtp::ColourspaceType::kColourspaceRgba), 4);
   EXPECT_EQ(mediax::BytesPerPixel(mediax::rtp::ColourspaceType::kColourspaceRgb24), 3);
-  EXPECT_EQ(mediax::BytesPerPixel(mediax::rtp::ColourspaceType::kColourspaceYuv), 2);
+  EXPECT_EQ(mediax::BytesPerPixel(mediax::rtp::ColourspaceType::kColourspaceYuv422), 2);
   EXPECT_EQ(mediax::BytesPerPixel(mediax::rtp::ColourspaceType::kColourspaceMono16), 2);
   EXPECT_EQ(mediax::BytesPerPixel(mediax::rtp::ColourspaceType::kColourspaceMono8), 1);
   EXPECT_EQ(mediax::BytesPerPixel(mediax::rtp::ColourspaceType::kColourspaceNv12), 2);
