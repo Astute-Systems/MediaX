@@ -213,6 +213,7 @@ class ColourSpace {
   /// \param rgb The RGB image buffer
   ///
   virtual int YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const = 0;
+  virtual int Yuv420pToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const = 0;
 
   ///
   /// \brief Scale the image to the target size for RGB

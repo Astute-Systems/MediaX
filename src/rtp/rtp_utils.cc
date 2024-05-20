@@ -76,6 +76,11 @@ std::string ColourspaceTypeToString(rtp::ColourspaceType colourspace) {
       return "H264Part10";
     case rtp::ColourspaceType::kColourspaceH265:
       return "H265";
+    case rtp::ColourspaceType::kColourspaceJpeg2000:
+      return "JPEG2000";
+    case rtp::ColourspaceType::kColourspaceAv1:
+      return "AV1";
+
     default:
       return "Unknown";
   }
@@ -100,6 +105,8 @@ rtp::ColourspaceType ColourspaceTypeFromString(std::string_view str) {
     return rtp::ColourspaceType::kColourspaceH264Part4;
   } else if (str == "H264Part10") {
     return rtp::ColourspaceType::kColourspaceH264Part10;
+  } else if (str == "H264") {
+    return rtp::ColourspaceType::kColourspaceH264Part10;
   } else if (str == "H265") {
     return rtp::ColourspaceType::kColourspaceH265;
   } else {
@@ -114,8 +121,9 @@ uint8_t BitsPerPixel(rtp::ColourspaceType mode) {
     case rtp::ColourspaceType::kColourspaceRgb24:
       return 24;
     case rtp::ColourspaceType::kColourspaceYuv422:
-    case rtp::ColourspaceType::kColourspaceYuv420p:
       return 16;
+    case rtp::ColourspaceType::kColourspaceYuv420p:
+      return 12;  // Just for the Y plane
     case rtp::ColourspaceType::kColourspaceMono16:
       return 16;
     case rtp::ColourspaceType::kColourspaceMono8:
@@ -217,6 +225,7 @@ void DumpHex(const void *data, size_t size) {
 ///
 void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::rtp::ColourspaceType colourspace) {
   static bool odd = true;
+  static int count = 0;
   switch (colourspace) {
     default:
       data[0] = (uint8_t)r;
@@ -235,6 +244,24 @@ void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::rtp::Col
         odd = true;
       }
       data[1] = (uint8_t)(y);
+    } break;
+    case mediax::rtp::ColourspaceType::kColourspaceYuv420p: {
+      // Calculate Ydata, U, and V planar values
+      uint8_t y = 0.299 * r + 0.587 * g + 0.114 * b;
+      uint8_t u = -0.14713 * r - 0.28886 * g + 0.436 * b + 128;
+      uint8_t v = 0.615 * r - 0.51498 * g - 0.10001 * b + 128;
+
+      // YUV420P is a planar format, so Y, U, and V values are grouped together
+      data[0] = y;
+      // width = 640 if odd line
+      if (count / 640 % 2 == 0) {
+        if (count % 2 == 0) {
+          data[640 * 480] = u;
+        } else {
+          data[640 * 480 + (640 * 480 / 4)] = v;
+        }
+      }
+      count++;
     } break;
     case mediax::rtp::ColourspaceType::kColourspaceRgba:
       data[0] = (uint8_t)r;
@@ -470,7 +497,15 @@ void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
                                 mediax::rtp::ColourspaceType colourspace) {
   int ball_size = 50;
   int half = ball_size / 2;
+
   uint32_t stride = mediax::BytesPerPixel(colourspace);
+
+  if (colourspace == mediax::rtp::ColourspaceType::kColourspaceYuv420p) {
+    // YUV420P is a packed format, so the stride is 1 bytes per pixel for Y
+    stride = 1;
+    memset(data, 0, width * height * 1.5);
+  }
+
   uint32_t size = width * height;
 
   static Ball ball = {static_cast<float>(width) / 2, static_cast<float>(height) / 2, 5,

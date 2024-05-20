@@ -44,7 +44,6 @@ int ColourSpaceCpu::Convert(mediax::rtp::Resolution res, uint8_t *in, AVPixelFor
   const std::array<uint8_t *, 1> inData = {in};
   std::array<uint8_t *, 1> outData = {out};
 
-  // Bits use for AV_PIX_FMT_RGB24
   // Use static_cast instead of C-style cast
   const std::array<int32_t, 1> inLinesize = {(int32_t)(res.width * in_bytes)};
   std::array<int32_t, 1> outLinesize = {(int32_t)(res.width * out_bytes)};
@@ -55,6 +54,52 @@ int ColourSpaceCpu::Convert(mediax::rtp::Resolution res, uint8_t *in, AVPixelFor
 
 int ColourSpaceCpu::YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const {
   return Convert({width, height}, yuv, AV_PIX_FMT_UYVY422, 2, rgb, AV_PIX_FMT_RGB24, 3);
+}
+
+// int ColourSpaceCpu::Yuv420pToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const {
+//   return Convert({width, height}, yuv, AV_PIX_FMT_YUV420P, 3, rgb, AV_PIX_FMT_RGB24, 3);
+// }
+
+int ColourSpaceCpu::Yuv420pToRgb(uint32_t height, uint32_t width, uint8_t *yuv420p, uint8_t *rgb) const {
+  if (!yuv420p || !rgb) {
+    return -1;  // Invalid input pointers
+  }
+
+  uint32_t frameSize = width * height;
+  uint32_t chromaSize = frameSize / 4;
+  uint8_t *yPlane = yuv420p;
+  uint8_t *uPlane = yuv420p + frameSize;
+  uint8_t *vPlane = yuv420p + frameSize + chromaSize;
+
+  for (uint32_t j = 0; j < height; ++j) {
+    for (uint32_t i = 0; i < width; ++i) {
+      uint32_t yIndex = j * width + i;
+      uint32_t uvIndex = (j / 2) * (width / 2) + (i / 2);
+
+      uint8_t Y = yPlane[yIndex];
+      uint8_t U = uPlane[uvIndex];
+      uint8_t V = vPlane[uvIndex];
+
+      int C = Y - 16;
+      int D = U - 128;
+      int E = V - 128;
+
+      int R = (298 * C + 409 * E + 128) >> 8;
+      int G = (298 * C - 100 * D - 208 * E + 128) >> 8;
+      int B = (298 * C + 516 * D + 128) >> 8;
+
+      R = R < 0 ? 0 : (R > 255 ? 255 : R);
+      G = G < 0 ? 0 : (G > 255 ? 255 : G);
+      B = B < 0 ? 0 : (B > 255 ? 255 : B);
+
+      uint32_t rgbIndex = yIndex * 3;
+      rgb[rgbIndex] = static_cast<uint8_t>(R);
+      rgb[rgbIndex + 1] = static_cast<uint8_t>(G);
+      rgb[rgbIndex + 2] = static_cast<uint8_t>(B);
+    }
+  }
+
+  return 0;  // Success
 }
 
 int ColourSpaceCpu::YuvToBgra(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *gbra) const {
@@ -164,7 +209,7 @@ int ColourSpaceCpu::Yuv422ToRgba(uint32_t height, uint32_t width, uint8_t *yuv, 
 }
 
 int ColourSpaceCpu::Yuv420ToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const {
-  return Convert({width, height}, yuv, AV_PIX_FMT_YUV420P, 2, rgba, AV_PIX_FMT_RGBA, 4);
+  return Convert({width, height}, yuv, AV_PIX_FMT_YUV420P, 3, rgba, AV_PIX_FMT_RGBA, 4);
 }
 
 int ColourSpaceCpu::Mono8ToRgba(uint32_t width, uint32_t height, uint8_t *mono8, uint8_t *rgba) const {

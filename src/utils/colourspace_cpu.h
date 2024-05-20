@@ -267,6 +267,7 @@ class ColourSpaceCpu : public ColourSpace {
   /// \param rgb The RGB image buffer
   ///
   int YuvToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const final;
+  int Yuv420pToRgb(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgb) const final;
 
   ///
   /// \brief Scale the image to the target size.

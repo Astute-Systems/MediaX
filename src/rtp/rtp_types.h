@@ -109,7 +109,7 @@ enum class ColourspaceType {
 /// The bits per pixel
 const std::map<ColourspaceType, uint8_t> kColourspaceBytes = {
     {ColourspaceType::kColourspaceUndefined, 0}, {ColourspaceType::kColourspaceRgb24, 3},
-    {ColourspaceType::kColourspaceYuv422, 2},    {ColourspaceType::kColourspaceYuv420p, 2},
+    {ColourspaceType::kColourspaceYuv422, 2},    {ColourspaceType::kColourspaceYuv420p, 3},
     {ColourspaceType::kColourspaceMono8, 1},     {ColourspaceType::kColourspaceMono16, 2},
     {ColourspaceType::kColourspaceJpeg2000, 3},  {ColourspaceType::kColourspaceH264Part4, 3},
     {ColourspaceType::kColourspaceH264Part10, 3}};

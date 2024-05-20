@@ -69,6 +69,16 @@ class RtpSapTransmit {
   }
 
   ///
+  /// \brief Get the frame buffer, resized and ready to use
+  ///
+  /// \return vector<uint8_t>&
+  ///
+  std::vector<uint8_t>& GetBuffer(uint32_t width, uint32_t height, ::mediax::rtp::ColourspaceType encoding) {
+    data_buffer_.resize(width * height * (BitsPerPixel(encoding) / 8));
+    return data_buffer_;
+  }
+
+  ///
   /// \brief Get the frame buffer containing a pre-defined test pattern
   ///
   /// List of test patterns supported
@@ -82,6 +92,7 @@ class RtpSapTransmit {
   /// + 7=Black
   /// + 8=White
   /// + 9=White Noise
+  /// + 10=Bouncing Ball
   ///
   /// \param pattern The test pattern generate from the list above, see rtp_utils.h
   /// \return std::vector<uint8_t>&
@@ -99,55 +110,55 @@ class RtpSapTransmit {
   ///
   std::vector<uint8_t>& GetBufferTestPattern(uint32_t height, uint32_t width, ::mediax::rtp::ColourspaceType encoding,
                                              uint32_t pattern = 0) {
-    std::vector<uint8_t>& buffer = GetBuffer();
+    std::vector<uint8_t>& buffer = GetBuffer(width, height, encoding);
+
     switch (pattern) {
       case 0:
-        CreateColourBarEbuTestCard(buffer.data(), stream_info_.width, stream_info_.height, stream_info_.encoding);
+        CreateColourBarEbuTestCard(buffer.data(), width, height, encoding);
         break;
       case 1:
-        CreateColourBarTestCard(buffer.data(), stream_info_.width, stream_info_.height, stream_info_.encoding);
+        CreateColourBarTestCard(buffer.data(), width, height, encoding);
         break;
       case 2:
-        CreateGreyScaleBarTestCard(buffer.data(), stream_info_.width, stream_info_.height, stream_info_.encoding);
+        CreateGreyScaleBarTestCard(buffer.data(), width, height, encoding);
         break;
       case 3:
-        CreateCheckeredTestCard(buffer.data(), stream_info_.width, stream_info_.height, stream_info_.encoding);
+        CreateCheckeredTestCard(buffer.data(), width, height, encoding);
         break;
       case 4:
         // red
-        CreateSolidTestCard(buffer.data(), stream_info_.width, stream_info_.height, 0xff, 0xff, 0xff,
-                            stream_info_.encoding);
+        CreateSolidTestCard(buffer.data(), width, height, 0xff, 0xff, 0xff, encoding);
         break;
       case 5:
         // green
-        CreateSolidTestCard(buffer.data(), stream_info_.width, stream_info_.height, 0x00, 0xff, 0x00,
-                            stream_info_.encoding);
+        CreateSolidTestCard(buffer.data(), width, height, 0x00, 0xff, 0x00, encoding);
         break;
       case 6:
         // blue
-        CreateSolidTestCard(buffer.data(), stream_info_.width, stream_info_.height, 0x00, 0x00, 0xff,
-                            stream_info_.encoding);
+        CreateSolidTestCard(buffer.data(), width, height, 0x00, 0x00, 0xff, encoding);
         break;
       case 7:
         // black
-        CreateSolidTestCard(buffer.data(), stream_info_.width, stream_info_.height, 0x00, 0x00, 0x00,
-                            stream_info_.encoding);
+        CreateSolidTestCard(buffer.data(), width, height, 0x00, 0x00, 0x00, encoding);
         break;
       case 8:
         // white
-        CreateSolidTestCard(buffer.data(), stream_info_.width, stream_info_.height, 0xff, 0xff, 0xff,
-                            stream_info_.encoding);
+        CreateSolidTestCard(buffer.data(), width, height, 0xff, 0xff, 0xff, encoding);
         break;
       case 9:
-        CreateWhiteNoiseTestCard(buffer.data(), stream_info_.width, stream_info_.height, stream_info_.encoding);
+        // noise
+        CreateWhiteNoiseTestCard(buffer.data(), width, height, encoding);
+        break;
+      case 10:
+        // bouncing ball
+        CreateBouncingBallTestCard(buffer.data(), width, height, encoding);
         break;
       default:
         // black
-        CreateSolidTestCard(buffer.data(), stream_info_.width, stream_info_.height, 0x00, 0x00, 0x00,
-                            stream_info_.encoding);
+        CreateSolidTestCard(buffer.data(), width, height, 0x00, 0x00, 0x00, encoding);
         break;
     }
-    return GetBuffer();
+    return GetBuffer(width, height, encoding);
   }
 
   ///

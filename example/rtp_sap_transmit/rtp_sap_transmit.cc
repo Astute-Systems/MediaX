@@ -14,8 +14,8 @@
 // [Transmit example wrapper]
 #include "rtp/rtp.h"
 int main(int argc, char *argv[]) {
-  mediax::RtpSapTransmit<mediax::rtp::av1::gst::RtpAv1GstPayloader> 
-    rtp("238.192.1.1", 5004, "test-session-name", 640, 480, 25, "AV1");
+  mediax::RtpSapTransmit<mediax::rtp::av1::gst::RtpAv1GstPayloader> rtp("238.192.1.1", 5004, "test-session-name", 640,
+                                                                        480, 25, "AV1");
   std::vector<uint8_t> &data = rtp.GetBufferTestPattern();
   while (true) rtp.Transmit(data.data(), false);
 }
