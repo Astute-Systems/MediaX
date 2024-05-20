@@ -38,7 +38,7 @@ mediax::rtp::ColourspaceType SamplingToColourspaceType(std::string_view sampling
   std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
 
   if (sampling == "rgb") return mediax::rtp::ColourspaceType::kColourspaceRgb24;
-  if (sampling == "YCbCr-4:2:2") return mediax::rtp::ColourspaceType::kColourspaceYuv;
+  if (sampling == "YCbCr-4:2:2") return mediax::rtp::ColourspaceType::kColourspaceYuv422;
   if ((sampling == "Mono") && (bits_per_pixel == 8)) return mediax::rtp::ColourspaceType::kColourspaceMono8;
   if ((sampling == "Mono") && (bits_per_pixel == 16)) return mediax::rtp::ColourspaceType::kColourspaceMono16;
   return mediax::rtp::ColourspaceType::kColourspaceUndefined;
@@ -48,7 +48,7 @@ std::string GetSdpColourspace(mediax::rtp::ColourspaceType colourspace) {
   switch (colourspace) {
     case mediax::rtp::ColourspaceType::kColourspaceRgb24:
       return "RGB";
-    case mediax::rtp::ColourspaceType::kColourspaceYuv:
+    case mediax::rtp::ColourspaceType::kColourspaceYuv422:
       return "YCbCr-4:2:2";
     case mediax::rtp::ColourspaceType::kColourspaceMono16:
       return "Mono";

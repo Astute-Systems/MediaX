@@ -100,7 +100,7 @@ class Receive {
         case mediax::rtp::ColourspaceType::kColourspaceRgb24:
           convert.RgbToBgra(height, width, frame_data.cpu_buffer, surface_data);
           break;
-        case mediax::rtp::ColourspaceType::kColourspaceYuv:
+        case mediax::rtp::ColourspaceType::kColourspaceYuv422:
           convert.YuvToBgra(height, width, frame_data.cpu_buffer, surface_data);
           break;
         case mediax::rtp::ColourspaceType::kColourspaceMono16:

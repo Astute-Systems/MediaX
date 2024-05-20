@@ -133,7 +133,7 @@ int main(int argc, char** argv) {
 #else
   std::shared_ptr<mediax::video::ColourSpace> convert = std::make_shared<mediax::video::ColourSpaceCpu>();
 #endif
-  mediax::rtp::ColourspaceType video_mode = mediax::rtp::ColourspaceType::kColourspaceYuv;
+  mediax::rtp::ColourspaceType video_mode = mediax::rtp::ColourspaceType::kColourspaceYuv422;
 
   std::unique_ptr<V4L2Capture> v4lsource;
 
@@ -170,7 +170,7 @@ int main(int argc, char** argv) {
 #if GST_SUPPORTED
   switch (video_mode) {
     case mediax::rtp::ColourspaceType::kColourspaceRgb24:
-    case mediax::rtp::ColourspaceType::kColourspaceYuv:
+    case mediax::rtp::ColourspaceType::kColourspaceYuv422:
     case mediax::rtp::ColourspaceType::kColourspaceMono8:
     case mediax::rtp::ColourspaceType::kColourspaceMono16:
       rtp = std::make_unique<mediax::rtp::uncompressed::RtpUncompressedPayloader>();

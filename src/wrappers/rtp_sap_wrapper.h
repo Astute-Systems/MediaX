@@ -87,6 +87,18 @@ class RtpSapTransmit {
   /// \return std::vector<uint8_t>&
   ///
   std::vector<uint8_t>& GetBufferTestPattern(uint32_t pattern = 0) {
+    return GetBufferTestPattern(stream_info_.width, stream_info_.height, stream_info_.encoding, pattern);
+  }
+
+  ///
+  /// \brief This function can be called directly with explicit arguments
+  ///
+  /// \param height the pattern width
+  /// \param width the pattern height
+  /// \param encoding thre return buffer encoding
+  ///
+  std::vector<uint8_t>& GetBufferTestPattern(uint32_t height, uint32_t width, ::mediax::rtp::ColourspaceType encoding,
+                                             uint32_t pattern = 0) {
     std::vector<uint8_t>& buffer = GetBuffer();
     switch (pattern) {
       case 0:

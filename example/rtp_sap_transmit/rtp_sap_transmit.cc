@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2023, DefenceX PTY LTD
+// Copyright (c) 2024, DefenceX PTY LTD
 //
 // This file is part of the VivoeX project developed by DefenceX.
 //
@@ -12,10 +12,6 @@
 ///
 
 // [Transmit example wrapper]
-
-
-
-
 #include "rtp/rtp.h"
 int main(int argc, char *argv[]) {
   mediax::RtpSapTransmit<mediax::rtp::av1::gst::RtpAv1GstPayloader> 
@@ -23,7 +19,4 @@ int main(int argc, char *argv[]) {
   std::vector<uint8_t> &data = rtp.GetBufferTestPattern();
   while (true) rtp.Transmit(data.data(), false);
 }
-
-
-
 // [Transmit example wrapper]

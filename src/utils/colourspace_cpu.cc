@@ -22,6 +22,7 @@
 extern "C" {
 #include "libswscale/swscale.h"
 }
+
 namespace mediax::video {
 
 int ColourSpaceCpu::Convert(mediax::rtp::Resolution res, uint8_t *in, AVPixelFormat in_format, uint8_t in_bytes,
@@ -158,8 +159,12 @@ int ColourSpaceCpu::RgbToRgba(uint32_t width, uint32_t height, uint8_t *rgb, uin
   return Convert({width, height}, rgb, AV_PIX_FMT_RGB24, 3, rgba, AV_PIX_FMT_RGBA, 4);
 }
 
-int ColourSpaceCpu::YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const {
+int ColourSpaceCpu::Yuv422ToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const {
   return Convert({width, height}, yuv, AV_PIX_FMT_UYVY422, 2, rgba, AV_PIX_FMT_RGBA, 4);
+}
+
+int ColourSpaceCpu::Yuv420ToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const {
+  return Convert({width, height}, yuv, AV_PIX_FMT_YUV420P, 2, rgba, AV_PIX_FMT_RGBA, 4);
 }
 
 int ColourSpaceCpu::Mono8ToRgba(uint32_t width, uint32_t height, uint8_t *mono8, uint8_t *rgba) const {

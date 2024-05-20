@@ -93,7 +93,7 @@ GstFlowReturn RtpAv1GstDepayloader::NewFrameCallback(GstAppSink *appsink, gpoint
   std::cout << "Callback height: " << height << " width: " << width << "\n";
   // Set the ColourspaceType
   if (const gchar *colorspace = gst_structure_get_string(structure, "format"); strncmp(colorspace, "UYVY", 4) == 0) {
-    depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceYuv);
+    depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceYuv422);
   } else if (strncmp(colorspace, "RGB", 3) == 0) {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgb24);
   } else if (strncmp(colorspace, "NV12", 3) == 0) {

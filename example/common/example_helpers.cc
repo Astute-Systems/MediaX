@@ -10,7 +10,7 @@ mediax::rtp::ColourspaceType GetMode(int mode) {
       return mediax::rtp::ColourspaceType::kColourspaceRgb24;
       break;
     case 1:
-      return mediax::rtp::ColourspaceType::kColourspaceYuv;
+      return mediax::rtp::ColourspaceType::kColourspaceYuv422;
       break;
     case 2:
       return mediax::rtp::ColourspaceType::kColourspaceMono16;
@@ -26,9 +26,9 @@ mediax::rtp::ColourspaceType GetMode(int mode) {
       break;
     default:
       LOG(WARNING) << "Invalid video mode " << mode;
-      return mediax::rtp::ColourspaceType::kColourspaceYuv;
+      return mediax::rtp::ColourspaceType::kColourspaceYuv422;
   }
-  return mediax::rtp::ColourspaceType::kColourspaceYuv;
+  return mediax::rtp::ColourspaceType::kColourspaceYuv422;
 }
 
 std::string ModeToString(int mode) {

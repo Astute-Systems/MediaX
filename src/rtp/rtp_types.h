@@ -91,7 +91,8 @@ struct RtpLineHeader {
 /// Supported colour spaces
 enum class ColourspaceType {
   kColourspaceRgb24 = 0,
-  kColourspaceYuv,
+  kColourspaceYuv422,
+  kColourspaceYuv420p,
   kColourspaceMono8,
   kColourspaceMono16,
   kColourspaceRgba,  // Not a GVA uncompressed video format
@@ -108,21 +109,22 @@ enum class ColourspaceType {
 /// The bits per pixel
 const std::map<ColourspaceType, uint8_t> kColourspaceBytes = {
     {ColourspaceType::kColourspaceUndefined, 0}, {ColourspaceType::kColourspaceRgb24, 3},
-    {ColourspaceType::kColourspaceYuv, 2},       {ColourspaceType::kColourspaceMono8, 1},
-    {ColourspaceType::kColourspaceMono16, 2},    {ColourspaceType::kColourspaceJpeg2000, 3},
-    {ColourspaceType::kColourspaceH264Part4, 3}, {ColourspaceType::kColourspaceH264Part10, 3}};
+    {ColourspaceType::kColourspaceYuv422, 2},    {ColourspaceType::kColourspaceYuv420p, 2},
+    {ColourspaceType::kColourspaceMono8, 1},     {ColourspaceType::kColourspaceMono16, 2},
+    {ColourspaceType::kColourspaceJpeg2000, 3},  {ColourspaceType::kColourspaceH264Part4, 3},
+    {ColourspaceType::kColourspaceH264Part10, 3}};
 
 /// SDP encoding type
 const std::map<ColourspaceType, std::string> kRtpMap = {
     {ColourspaceType::kColourspaceUndefined, "unknown"}, {ColourspaceType::kColourspaceRgb24, "raw"},
-    {ColourspaceType::kColourspaceYuv, "raw"},           {ColourspaceType::kColourspaceMono8, "raw"},
+    {ColourspaceType::kColourspaceYuv422, "raw"},        {ColourspaceType::kColourspaceMono8, "raw"},
     {ColourspaceType::kColourspaceMono16, "raw"},        {ColourspaceType::kColourspaceJpeg2000, "jpeg2000"},
     {ColourspaceType::kColourspaceH264Part4, "nv12"},    {ColourspaceType::kColourspaceH264Part10, "nv12"}};
 /// SDP colourspace if applicable
 const std::map<ColourspaceType, std::string> kColourspace = {
     {ColourspaceType::kColourspaceUndefined, "unknown"},
     {ColourspaceType::kColourspaceRgb24, "RGB"},
-    {ColourspaceType::kColourspaceYuv, "YCbCr-4:2:2"},
+    {ColourspaceType::kColourspaceYuv422, "YCbCr-4:2:2"},
     {ColourspaceType::kColourspaceMono8, "GRAYSCALE"},
     {ColourspaceType::kColourspaceMono16, "GRAYSCALE"},
     {ColourspaceType::kColourspaceJpeg2000, "YCbCr-4:2:2"},

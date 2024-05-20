@@ -194,7 +194,17 @@ class ColourSpaceCpu : public ColourSpace {
   /// \param yuv The YUV:422 image buffer
   /// \param rgba The RGBA image buffer
   ///
-  int YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const final;
+  int Yuv422ToRgba(uint32_t height, uint32_t width, uint8_t *yuv422, uint8_t *rgba) const final;
+
+  ///
+  /// \brief Convert YUV420P to RGBA on the CPU
+  ///
+  /// \param height The height of the image
+  /// \param width The width of the image
+  /// \param yuv422 The YUV:420P image buffer
+  /// \param rgba The RGBA image buffer
+  ///
+  int Yuv420ToRgba(uint32_t height, uint32_t width, uint8_t *yuv420, uint8_t *rgba) const final;
 
   ///
   /// \brief Convert Mono8 to RGBA on the CPU

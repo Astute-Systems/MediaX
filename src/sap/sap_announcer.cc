@@ -172,7 +172,7 @@ int SapAnnouncer::SendSapPacket(const ::mediax::rtp::StreamInformation &stream_i
     case mediax::rtp::ColourspaceType::kColourspaceRgb24:
       depth = "8";
       colorimetry = "colorimetry=BT709-2; ";
-    case mediax::rtp::ColourspaceType::kColourspaceYuv:
+    case mediax::rtp::ColourspaceType::kColourspaceYuv422:
       depth = "8";
       colorimetry = "colorimetry=BT601-5; ";
     default:

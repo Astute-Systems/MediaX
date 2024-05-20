@@ -88,7 +88,7 @@ GstFlowReturn RtpH264GstOmxDepayloader::NewFrameCallback(GstAppSink *appsink, gp
   gst_structure_get_int(structure, "width", &width);
 
   if (const gchar *colorspace = gst_structure_get_string(structure, "format"); strncmp(colorspace, "UYVY", 4) == 0) {
-    depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceYuv);
+    depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceYuv422);
   } else if (strncmp(colorspace, "RGB", 3) == 0) {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgb24);
   } else if (strncmp(colorspace, "NV12", 3) == 0) {

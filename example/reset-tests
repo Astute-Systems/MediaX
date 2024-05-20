@@ -1,5 +1,0 @@
-#!/bin/bash
-
-pkill -f rtp-transmit
-pkill -f rtp-receive
-pkill -f gst-launch-1.0

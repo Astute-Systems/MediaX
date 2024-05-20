@@ -60,8 +60,10 @@ std::string ColourspaceTypeToString(rtp::ColourspaceType colourspace) {
       return "RGBA";
     case rtp::ColourspaceType::kColourspaceRgb24:
       return "RGB24";
-    case rtp::ColourspaceType::kColourspaceYuv:
-      return "YUV";
+    case rtp::ColourspaceType::kColourspaceYuv422:
+      return "YUV422";
+    case rtp::ColourspaceType::kColourspaceYuv420p:
+      return "YUV420P";
     case rtp::ColourspaceType::kColourspaceMono16:
       return "MONO16";
     case rtp::ColourspaceType::kColourspaceMono8:
@@ -84,8 +86,10 @@ rtp::ColourspaceType ColourspaceTypeFromString(std::string_view str) {
     return rtp::ColourspaceType::kColourspaceRgba;
   } else if (str == "RGB24") {
     return rtp::ColourspaceType::kColourspaceRgb24;
-  } else if (str == "YUV") {
-    return rtp::ColourspaceType::kColourspaceYuv;
+  } else if (str == "YUV422") {
+    return rtp::ColourspaceType::kColourspaceYuv422;
+  } else if (str == "YUV420P") {
+    return rtp::ColourspaceType::kColourspaceYuv420p;
   } else if (str == "MONO16") {
     return rtp::ColourspaceType::kColourspaceMono16;
   } else if (str == "MONO8") {
@@ -109,7 +113,8 @@ uint8_t BitsPerPixel(rtp::ColourspaceType mode) {
       return 32;
     case rtp::ColourspaceType::kColourspaceRgb24:
       return 24;
-    case rtp::ColourspaceType::kColourspaceYuv:
+    case rtp::ColourspaceType::kColourspaceYuv422:
+    case rtp::ColourspaceType::kColourspaceYuv420p:
       return 16;
     case rtp::ColourspaceType::kColourspaceMono16:
       return 16;
@@ -218,7 +223,7 @@ void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::rtp::Col
       data[1] = (uint8_t)g;
       data[2] = (uint8_t)b;
       break;
-    case mediax::rtp::ColourspaceType::kColourspaceYuv: {
+    case mediax::rtp::ColourspaceType::kColourspaceYuv422: {
       double y = 0.257 * r + 0.504 * g + 0.098 * b + 16;
       if (odd) {
         double u = -0.148 * r - 0.291 * g + 0.439 * b + 128;

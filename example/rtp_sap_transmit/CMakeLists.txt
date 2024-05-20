@@ -7,3 +7,7 @@ include_directories(${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR}/include)
 #transmit
 add_executable(rtp-sap-transmit rtp_sap_transmit.cc)
 target_link_libraries(rtp-sap-transmit mediax_static ${GFLAGS_LIBRARIES} ${GST_LIBRARIES} )
+
+#transmit ARM64
+add_executable(rtp-sap-transmit-arm rtp_sap_transmit_arm.cc)
+target_link_libraries(rtp-sap-transmit-arm mediax_static ${GFLAGS_LIBRARIES} ${GST_LIBRARIES} )

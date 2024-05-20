@@ -148,10 +148,20 @@ class ColourSpace {
   ///
   /// \param height The height of the image
   /// \param width The width of the image
-  /// \param yuv The YUV:422 image buffer
+  /// \param yuv422 The YUV:422 image buffer
   /// \param rgba The RGBA image buffer
   ///
-  virtual int YuvToRgba(uint32_t height, uint32_t width, uint8_t *yuv, uint8_t *rgba) const = 0;
+  virtual int Yuv422ToRgba(uint32_t height, uint32_t width, uint8_t *yuv422, uint8_t *rgba) const = 0;
+
+  ///
+  /// \brief
+  ///
+  /// \param height The height of the image
+  /// \param width The width of the image
+  /// \param yuv420 The YUV:420 image buffer
+  /// \param rgba The RGBA image buffer
+  ///
+  virtual int Yuv420ToRgba(uint32_t height, uint32_t width, uint8_t *yuv420, uint8_t *rgba) const = 0;
 
   ///
   /// \brief Convert Mono8 to RGBA on the CPU
