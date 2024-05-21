@@ -7,7 +7,7 @@
 // License. See the LICENSE file in the project root for full license details.
 //
 // gst-launch-1.0 -v  videotestsrc ! video/x-raw, width=1280, height=720, framerate=1/50, media=video,
-// encoding-name=RAW, payload=96, clock-rate=9600 ! enc_h264_omx ! h264parse !rtph264pay !udpsink host = 127.0.0.1
+// encoding-name=RAW, payload=96, clock-rate=9600 ! enc_h264_x264 ! h264parse !rtph264pay !udpsink host = 127.0.0.1
 // port = 5000
 ///
 /// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
@@ -16,21 +16,19 @@
 ///
 // Example
 
-#include "h264/gst/omx/rtp_h264_payloader.h"
+#include "h264/gst/x264/rtp_h264_payloader.h"
 
 #include <glog/logging.h>
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
 
-#include "h264/gst/omx/rtp_h264_depayloader.h"
+namespace mediax::rtp::h264::gst::x264 {
 
-namespace mediax::rtp::h264::gst::omx {
+RtpH264Gstx264Payloader::RtpH264Gstx264Payloader() = default;
 
-RtpH264GstOmxPayloader::RtpH264GstOmxPayloader() = default;
+RtpH264Gstx264Payloader::~RtpH264Gstx264Payloader() = default;
 
-RtpH264GstOmxPayloader::~RtpH264GstOmxPayloader() = default;
-
-void RtpH264GstOmxPayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
+void RtpH264Gstx264Payloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &stream_information) {
   GetEgressPort().encoding = stream_information.encoding;
   GetEgressPort().height = stream_information.height;
   GetEgressPort().width = stream_information.width;
@@ -41,7 +39,7 @@ void RtpH264GstOmxPayloader::SetStreamInfo(const ::mediax::rtp::StreamInformatio
   GetEgressPort().settings_valid = true;
 }
 
-int RtpH264GstOmxPayloader::Transmit(unsigned char *new_buffer, bool timeout) {
+int RtpH264Gstx264Payloader::Transmit(unsigned char *new_buffer, bool timeout) {
   if (!started_) {
     DLOG(ERROR) << "RTP H.264 payloader not started";
     return -1;
@@ -77,8 +75,8 @@ int RtpH264GstOmxPayloader::Transmit(unsigned char *new_buffer, bool timeout) {
   return 0;
 }
 
-bool RtpH264GstOmxPayloader::Open() {
-  // Setup a gstreamer pipeline to decode H.264 with Intel OmxI
+bool RtpH264Gstx264Payloader::Open() {
+  // Setup a gstreamer pipeline to decode H.264 with Intel x264I
 
   // Create a pipeline
   pipeline_ = gst_pipeline_new("rtp-h264-pipeline");
@@ -103,16 +101,15 @@ bool RtpH264GstOmxPayloader::Open() {
     return false;
   }
 
-  // Create a omxh264dec element to decode the H.264 stream
-  // GstElement *omxh264dec = gst_element_factory_make("omxh264dec", "rtp-h264-omxh264dec");
-  GstElement *omxh264dec = gst_element_factory_make("avenc_h264_omx", "rtp-h264-avenc264omx");
-  if (omxh264dec == nullptr) {
-    std::cerr << "No gst element called 'avenc_h264_omx'!\n";
+  // Create a x264enc element to decode the H.264 stream
+  GstElement *x264h264dec = gst_element_factory_make("x264enc", "rtp-h264-x264enc");
+  if (x264h264dec == nullptr) {
+    std::cerr << "No gst element called 'x264enc'!\n";
     return false;
   }
 
   // Set keyframe-period=1 max-bframes=0
-  // g_object_set(G_OBJECT(omxh264dec), "keyframe-period", 1, "max-bframes", 0, nullptr);
+  // g_object_set(G_OBJECT(x264h264dec), "keyframe-period", 1, "max-bframes", 0, nullptr);
 
   // RTP payloader
   GstElement *rtp264pay = gst_element_factory_make("rtph264pay", "rtp-h264-payloader");
@@ -130,15 +127,15 @@ bool RtpH264GstOmxPayloader::Open() {
   g_object_set(G_OBJECT(udpsink), "host", GetEgressPort().hostname.c_str(), "port", GetEgressPort().port_no, nullptr);
 
   // Add all elements to the pipeline
-  gst_bin_add_many(GST_BIN(pipeline_), appsrc, capsfilter, videoconvert, omxh264dec, rtp264pay, udpsink, nullptr);
+  gst_bin_add_many(GST_BIN(pipeline_), appsrc, capsfilter, videoconvert, x264h264dec, rtp264pay, udpsink, nullptr);
 
   // Link the elements
-  gst_element_link_many(appsrc, capsfilter, videoconvert, omxh264dec, rtp264pay, udpsink, nullptr);
+  gst_element_link_many(appsrc, capsfilter, videoconvert, x264h264dec, rtp264pay, udpsink, nullptr);
 
   return true;
 }
 
-void RtpH264GstOmxPayloader::Close() {
+void RtpH264Gstx264Payloader::Close() {
   // Stop the pipeline
   Stop();
 
@@ -147,16 +144,16 @@ void RtpH264GstOmxPayloader::Close() {
   gst_object_unref(pipeline_);
 }
 
-void RtpH264GstOmxPayloader::Start() {
+void RtpH264Gstx264Payloader::Start() {
   started_ = true;
   // Start the pipeline
   gst_element_set_state(pipeline_, GST_STATE_PLAYING);
 }
 
-void RtpH264GstOmxPayloader::Stop() {
+void RtpH264Gstx264Payloader::Stop() {
   started_ = false;
   // Stop the pipeline
   gst_element_set_state(pipeline_, GST_STATE_NULL);
 }
 
-}  // namespace mediax::rtp::h264::gst::omx
+}  // namespace mediax::rtp::h264::gst::x264

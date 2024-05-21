@@ -56,6 +56,7 @@ if (GST_SUPPORTED)
     list(APPEND SOURCES
     h264/gst/open/rtp_h264_payloader.cc 
     h264/gst/open/rtp_h264_depayloader.cc    
+    h264/gst/x264/rtp_h264_payloader.cc 
     h264/gst/omx/rtp_h264_payloader.cc 
     h264/gst/omx/rtp_h264_depayloader.cc    
     h264/gst/vaapi/rtp_h264_payloader.cc 

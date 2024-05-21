@@ -254,13 +254,13 @@ void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::rtp::Col
       // YUV420P is a planar format, so Y, U, and V values are grouped together
       data[0] = y;
       // width = 640 if odd line
-      if (count / 640 % 2 == 0) {
-        if (count % 2 == 0) {
-          data[640 * 480] = u;
-        } else {
-          data[640 * 480 + (640 * 480 / 4)] = v;
-        }
-      }
+      // if (count / 640 % 2 == 0) {
+      //   if (count % 2 == 0) {
+      //     data[640 * 480] = u;
+      //   } else {
+      //     data[640 * 480 + (640 * 480 / 4)] = v;
+      //   }
+      // }
       count++;
     } break;
     case mediax::rtp::ColourspaceType::kColourspaceRgba:

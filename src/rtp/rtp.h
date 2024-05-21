@@ -25,6 +25,7 @@
 #include "h264/gst/open/rtp_h264_payloader.h"
 #include "h264/gst/vaapi/rtp_h264_depayloader.h"
 #include "h264/gst/vaapi/rtp_h264_payloader.h"
+#include "h264/gst/x264/rtp_h264_payloader.h"
 #include "h265/gst/rtp_h265_payloader.h"
 #include "h265/gst/vaapi/rtp_h265_depayloader.h"
 #include "h265/gst/vaapi/rtp_h265_payloader.h"

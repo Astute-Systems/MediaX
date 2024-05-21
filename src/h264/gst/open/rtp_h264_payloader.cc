@@ -9,7 +9,7 @@
 ///
 /// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
 ///
-/// gst-launch-1.0 v4l2src videotestsrc ! video/x-raw, width=1280, height=720, framerate=1/50, format=RGB, media=video,
+/// gst-launch-1.0 videotestsrc ! video/x-raw, width=1280, height=720, framerate=1/50, format=RGB, media=video,
 /// encoding-name=RAW, payload=96, clock-rate=9600 ! openh264enc ! rtph264pay ! udpsink host=127.0.0.1 port=5000
 ///
 /// \file rtp_h264_payloader.cc
