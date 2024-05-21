@@ -13,8 +13,8 @@
 
 #include "rtp/rtp.h"
 
-#define LIVE 0
-#define CODEC 2
+#define LIVE 0   // Use a live source
+#define CODEC 2  // Choose your codec
 
 int main(int argc, char *argv[]) {
   uint32_t count = 0;
@@ -36,15 +36,16 @@ int main(int argc, char *argv[]) {
   // Convert functions optimised for CPU
   mediax::video::ColourSpaceCpu convert;
   // Converted RGBA buffer
-  std::vector<uint8_t> rgb_buffer(640 * 480 * 4);
+  std::vector<uint8_t> rgb_buffer(640 * 480 * 3);
 
   while (true) {
 #if LIVE
     // Capture a frame from a live video source in YUC420P format (Block till frame recieved)
 #else
+
     // Create a buffer in YUV420P format
     std::vector<uint8_t> &data =
-        rtp.GetBufferTestPattern(640, 480, ::mediax::rtp::ColourspaceType::kColourspaceYuv420p, 10);
+        rtp.GetBufferTestPattern(480, 640, ::mediax::rtp::ColourspaceType::kColourspaceYuv420p, 2);
     // 40ms delay
     usleep(40000);
 #endif

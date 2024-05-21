@@ -7,8 +7,8 @@
 // License. See the LICENSE file in the project root for full license details.
 //
 // gst-launch-1.0 -v  videotestsrc ! video/x-raw, width=1280, height=720, framerate=1/50, media=video,
-// encoding-name=RAW, payload=96, clock-rate=9600 ! enc_h264_x264 ! h264parse !rtph264pay !udpsink host = 127.0.0.1
-// port = 5000
+// encoding-name=RAW, payload=96, clock-rate=9600 ! x264enc ! h264parse ! rtph264pay ! udpsink host=239.192.1.1
+// port=5004
 ///
 /// \brief RTP streaming video class for H.264 DEF-STAN 00-82 video streams
 ///

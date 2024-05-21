@@ -218,64 +218,63 @@ void DumpHex(const void *data, size_t size) {
 /// \brief Pack Red/Green/Blue values into a buffer
 ///
 /// \param data the buffer to pack into
-/// \param r red value
-/// \param g green value
-/// \param b blue value
+/// \param pixel the pixel number
+/// \param rgb red/green/blue values
 /// \param colourspace the colourspace to use
 ///
-void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::rtp::ColourspaceType colourspace) {
+void PackRgb(uint8_t *data, uint64_t pixel, mediax::rtp::Rgb rgb, mediax::rtp::ColourspaceType colourspace) {
   static bool odd = true;
-  static int count = 0;
   switch (colourspace) {
-    default:
-      data[0] = (uint8_t)r;
-      data[1] = (uint8_t)g;
-      data[2] = (uint8_t)b;
-      break;
+    default: {
+      data[pixel] = rgb.red;
+      data[pixel + 1] = rgb.green;
+      data[pixel + 2] = rgb.blue;
+    } break;
     case mediax::rtp::ColourspaceType::kColourspaceYuv422: {
-      double y = 0.257 * r + 0.504 * g + 0.098 * b + 16;
+      double y = 0.257 * rgb.red + 0.504 * rgb.green + 0.098 * rgb.blue + 16;
       if (odd) {
-        double u = -0.148 * r - 0.291 * g + 0.439 * b + 128;
-        data[0] = (uint8_t)(u);
+        double u = -0.148 * rgb.red - 0.291 * rgb.green + 0.439 * rgb.blue + 128;
+        data[pixel] = (uint8_t)(u);
         odd = false;
       } else {
-        double v = 0.439 * r - 0.368 * g - 0.071 * b + 128;
-        data[0] = (uint8_t)(v);
+        double v = 0.439 * rgb.red - 0.368 * rgb.green - 0.071 * rgb.blue + 128;
+        data[pixel] = (uint8_t)(v);
         odd = true;
       }
-      data[1] = (uint8_t)(y);
+      data[pixel + 1] = (uint8_t)(y);
     } break;
     case mediax::rtp::ColourspaceType::kColourspaceYuv420p: {
-      // Calculate Ydata, U, and V planar values
-      uint8_t y = 0.299 * r + 0.587 * g + 0.114 * b;
-      uint8_t u = -0.14713 * r - 0.28886 * g + 0.436 * b + 128;
-      uint8_t v = 0.615 * r - 0.51498 * g - 0.10001 * b + 128;
+      uint8_t *U = &data[640 * 480];
+      uint8_t *V = &data[640 * 480 + (640 * 480 / 4)];
+      // Calculate Y, U, and V planar values
+      auto y = (uint8_t)(0.299 * rgb.red + 0.587 * rgb.green + 0.114 * rgb.blue);
+      auto u = (uint8_t)(-0.14713 * rgb.red - 0.28886 * rgb.green + 0.436 * rgb.blue + 128);
+      auto v = (uint8_t)(0.615 * rgb.red - 0.51498 * rgb.green - 0.10001 * rgb.blue + 128);
 
       // YUV420P is a planar format, so Y, U, and V values are grouped together
-      data[0] = y;
-      // width = 640 if odd line
-      // if (count / 640 % 2 == 0) {
-      //   if (count % 2 == 0) {
-      //     data[640 * 480] = u;
-      //   } else {
-      //     data[640 * 480 + (640 * 480 / 4)] = v;
-      //   }
-      // }
-      count++;
+      data[pixel] = y;
+
+      // U and V values are stored in separate planes
+      int offset = pixel % 640;
+      int offset2 = (pixel - offset) / 4;
+      if ((pixel / 640) % 2 == 0) {
+        U[offset2 + offset] = u;
+        V[offset2 + offset] = v;
+      }
     } break;
-    case mediax::rtp::ColourspaceType::kColourspaceRgba:
-      data[0] = (uint8_t)r;
-      data[1] = (uint8_t)g;
-      data[2] = (uint8_t)b;
-      data[3] = 0;  // Alpha
-      break;
+    case mediax::rtp::ColourspaceType::kColourspaceRgba: {
+      data[pixel] = rgb.red;
+      data[pixel + 1] = rgb.green;
+      data[pixel + 2] = rgb.blue;
+      data[pixel + 3] = 0;  // Alpha
+    } break;
     case mediax::rtp::ColourspaceType::kColourspaceMono8:
-      data[0] = (uint8_t)(0.299 * r + 0.587 * g + 0.114 * b);
+      data[pixel] = (uint8_t)(0.299 * rgb.red + 0.587 * rgb.green + 0.114 * rgb.blue);
       break;
     case mediax::rtp::ColourspaceType::kColourspaceMono16: {
-      auto mono16_pixel = (uint16_t)(0.299 * r + 0.587 * g + 0.114 * b);
-      data[0] = mono16_pixel >> 8 & 0xFF;
-      data[1] = mono16_pixel & 0xFF;
+      auto mono16_pixel = (uint8_t)(0.299 * rgb.red + 0.587 * rgb.green + 0.114 * rgb.blue);
+      data[pixel] = (uint8_t)(mono16_pixel >> 8 & 0xFF);
+      data[pixel + 1] = (uint8_t)(mono16_pixel & 0xFF);
     } break;
   }
 }
@@ -284,6 +283,7 @@ void PackRgb(uint8_t *data, uint32_t r, uint32_t g, uint32_t b, mediax::rtp::Col
 void CreateColourBarEbuTestCard(uint8_t *data, uint32_t width, uint32_t height,
                                 mediax::rtp::ColourspaceType colourspace) {
   uint32_t stride = mediax::BytesPerPixel(colourspace);
+
   for (uint32_t y = 0; y < height; y++) {
     for (uint32_t x = 0; x < width; x++) {
       uint8_t r;
@@ -333,7 +333,7 @@ void CreateColourBarEbuTestCard(uint8_t *data, uint32_t width, uint32_t height,
       }
       // Set the color of the current pixel in the image data buffer.
       uint32_t index = (y * width + x) * stride;
-      PackRgb(&data[index], r, g, b, colourspace);
+      PackRgb(data, index, {r, g, b}, colourspace);
     }
   }
 }
@@ -341,6 +341,7 @@ void CreateColourBarEbuTestCard(uint8_t *data, uint32_t width, uint32_t height,
 // Implementation of the CreateColourBarTestCard function
 void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::rtp::ColourspaceType colourspace) {
   uint32_t stride = mediax::BytesPerPixel(colourspace);
+
   for (uint32_t y = 0; y < height; y++) {
     for (uint32_t x = 0; x < width; x++) {
       uint8_t r;
@@ -382,7 +383,7 @@ void CreateColourBarTestCard(uint8_t *data, uint32_t width, uint32_t height, med
       }
       // Set the color of the current pixel in the image data buffer.
       uint32_t index = (y * width + x) * stride;
-      PackRgb(&data[index], r, g, b, colourspace);
+      PackRgb(data, index, {r, g, b}, colourspace);
     }
   }
 }
@@ -398,7 +399,7 @@ void CreateGreyScaleBarTestCard(uint8_t *data, uint32_t width, uint32_t height,
   for (uint32_t i = 0; i < 8; i++) {
     for (uint32_t y = 0; y < bar_height; y++) {
       for (uint32_t x = i * bar_width; x < (i + 1) * bar_width; x++) {
-        PackRgb(&data[(y * width + x) * stride], color, color, color, colourspace);  // Blue channel
+        PackRgb(data, (y * width + x) * stride, {color, color, color}, colourspace);  // Blue channel
       }
     }
     color += 32;
@@ -433,7 +434,7 @@ void CreateQuadTestCard(uint8_t *data, uint32_t width, uint32_t height, mediax::
       b = 255;
     }
 
-    PackRgb(&data[i], static_cast<uint32_t>(r), static_cast<uint32_t>(g), static_cast<uint32_t>(b), colourspace);
+    PackRgb(data, i, {static_cast<uint8_t>(r), static_cast<uint8_t>(g), static_cast<uint8_t>(b)}, colourspace);
   }
 }
 
@@ -455,7 +456,7 @@ void CreateCheckeredTestCard(uint8_t *data, uint32_t width, uint32_t height, med
         b = 0;
       }
       uint32_t index = (y * width + x) * stride;
-      PackRgb(&data[index], r, g, b, colourspace);
+      PackRgb(data, index, {r, g, b}, colourspace);
     }
   }
 }
@@ -466,7 +467,7 @@ void CreateSolidTestCard(uint8_t *data, uint32_t width, uint32_t height, uint8_t
 
   uint32_t size = width * height * stride;
   for (uint32_t i = 0; i < size; i += stride) {
-    PackRgb(&data[i], red, green, blue, colourspace);
+    PackRgb(data, i, {red, green, blue}, colourspace);
   }
 }
 
@@ -482,7 +483,7 @@ void CreateWhiteNoiseTestCard(uint8_t *data, uint32_t width, uint32_t height,
     uint8_t r = pixel;
     uint8_t g = pixel;
     uint8_t b = pixel;
-    PackRgb(&data[i], r, g, b, colourspace);
+    PackRgb(data, i, {r, g, b}, colourspace);
   }
 }
 
@@ -503,7 +504,6 @@ void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
   if (colourspace == mediax::rtp::ColourspaceType::kColourspaceYuv420p) {
     // YUV420P is a packed format, so the stride is 1 bytes per pixel for Y
     stride = 1;
-    memset(data, 0, width * height * 1.5);
   }
 
   uint32_t size = width * height;
@@ -533,7 +533,7 @@ void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
 
   // Set the background to black
   for (uint32_t i = 0; i < size * stride; i += stride) {
-    PackRgb(&data[i], 0, 0, 0, colourspace);
+    PackRgb(data, i, {0, 0, 0}, colourspace);
   }
 
   // Draw the circle 50 pixels wide
@@ -542,7 +542,7 @@ void CreateBouncingBallTestCard(uint8_t *data, uint32_t width, uint32_t height,
       // Only draw pixels within the circle
       if (x * x + y * y < half * half) {
         // Set the pixel to white
-        PackRgb(&data[index + (y * width + x) * stride], 255, 255, 255, colourspace);
+        PackRgb(data, index + (y * width + x) * stride, {255, 255, 255}, colourspace);
       }
     }
   }
