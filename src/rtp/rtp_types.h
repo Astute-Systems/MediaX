@@ -68,6 +68,13 @@ struct float4 {
   float w;
 };
 
+/// RGB
+struct Rgb {
+  uint8_t red;
+  uint8_t green;
+  uint8_t blue;
+};
+
 /// 12 byte RTP Raw video header
 struct RtpHeaderData {
   /// RTP version
