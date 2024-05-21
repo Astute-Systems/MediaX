@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 
     // Create a buffer in YUV420P format
     std::vector<uint8_t> &data =
-        rtp.GetBufferTestPattern(480, 640, ::mediax::rtp::ColourspaceType::kColourspaceYuv420p, 2);
+        rtp.GetBufferTestPattern(480, 640, ::mediax::rtp::ColourspaceType::kColourspaceYuv420p, 10);
     // 40ms delay
     usleep(40000);
 #endif

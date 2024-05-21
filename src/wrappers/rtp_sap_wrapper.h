@@ -64,7 +64,8 @@ class RtpSapTransmit {
   /// \return vector<uint8_t>&
   ///
   std::vector<uint8_t>& GetBuffer() {
-    data_buffer_.resize(stream_info_.height * stream_info_.width * (BitsPerPixel(stream_info_.encoding) / 8.0));
+    data_buffer_.resize(stream_info_.height * stream_info_.width *
+                        (BitsPerPixel(stream_info_.encoding) / static_cast<double>(8)));
     return data_buffer_;
   }
 
@@ -74,7 +75,7 @@ class RtpSapTransmit {
   /// \return vector<uint8_t>&
   ///
   std::vector<uint8_t>& GetBuffer(uint32_t width, uint32_t height, ::mediax::rtp::ColourspaceType encoding) {
-    uint32_t size = width * height * (BitsPerPixel(encoding) / 8.0);
+    uint32_t size = width * height * (BitsPerPixel(encoding) / static_cast<double>(8));
     data_buffer_.resize(size);
     return data_buffer_;
   }
