@@ -9,8 +9,8 @@
 ///
 /// \file rtp_h264_payloader.h
 
-#ifndef H264_GST_x264_RTP_H264_PAYLOADER_H_
-#define H264_GST_x264_RTP_H264_PAYLOADER_H_
+#ifndef H264_GST_X264_RTP_H264_PAYLOADER_H_
+#define H264_GST_X264_RTP_H264_PAYLOADER_H_
 
 #include <gst/gst.h>
 
@@ -84,4 +84,4 @@ class RtpH264Gstx264Payloader : public mediax::rtp::RtpPayloader {
 
 }  // namespace mediax::rtp::h264::gst::x264
 
-#endif  // H264_GST_x264_RTP_H264_PAYLOADER_H_
+#endif  // H264_GST_X264_RTP_H264_PAYLOADER_H_
