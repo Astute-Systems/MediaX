@@ -29,4 +29,3 @@ swig_add_library(rtp_h264_gst_x264_payloader TYPE SHARED LANGUAGE python SOURCES
 swig_link_libraries(rtp_h264_gst_x264_payloader glog swscale)
 
 install(TARGETS rtp_h264_gst_x264_payloader DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/rtp_h264_gst_x264_depayloader.py DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
