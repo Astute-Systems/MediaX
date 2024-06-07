@@ -100,9 +100,10 @@ Command line arguments use **--help** and are listed below:
         8 - Solid red
         9 - Solid green
         10 - Solid blue
+        11 - White noise
+        12 - Bouncing ball 
         ) type: uint32 default: 2
     -width (the width of the image) type: uint32 default: 640
-
 ```
 
 The receive example will display the stream (user **--help** for options):
@@ -135,9 +136,9 @@ Colour bars EBU (European Broadcast Union) created using CreateColourBarEbuTestC
 
 Colour bars created using CreateColourBarTestCard()
 
-![Checked test card](testcards/CreateCheckeredTestCard.png)
+![Checked test card](images/testcards/CreateCheckeredTestCard.png)
 
-Checkered test cards created using CreateCheckeredTestCard()
+Checked test cards created using CreateCheckeredTestCard()
 
 ![Grey Bars](images/testcards/CreateGreyScaleBarTestCard.png)
 
@@ -147,9 +148,33 @@ Colour bars created using CreateGreyScaleBarTestCard()
 
 Colour bars created using CreateQuadTestCard()
 
+![Red](images/testcards/CreateSolidTestCardRed.png)
+
+Colour bars created using CreateSolidTestCardRed()
+
+![Green](images/testcards/CreateSolidTestCardGreen.png)
+
+Colour bars created using CreateSolidTestCardGreen()
+
+![Blue](images/testcards/CreateSolidTestCardBlue.png)
+
+Colour bars created using CreateSolidTestCardBlue()
+
+![Black](images/testcards/CreateSolidTestCardBlack.png)
+
+Colour bars created using CreateSolidTestCardBlack()
+
+![White](images/testcards/CreateSolidTestCardWhite.png)
+
+Colour bars created using CreateSolidTestCardWhite()
+
 ![Noise](images/testcards/CreateWhiteNoiseTestCard.png)
 
 White noise created using CreateQuadTestCard()
+
+![Noise](images/testcards/CreateBouncingBallTestCard.png)
+
+Animated bouncing ball CreateBouncingBallTestCard()
 
 \section code Code Examples
 \subsection code_sap SAP/SDP Announcer
