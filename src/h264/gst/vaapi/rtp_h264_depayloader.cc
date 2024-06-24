@@ -284,6 +284,7 @@ bool RtpH264GstVaapiDepayloader::Receive(mediax::rtp::RtpFrameData *data, int32_
         memset(GetBuffer().data(), 0, GetBuffer().size());
         data->resolution.height = 0;
         data->resolution.width = 0;
+        data->encoding = mediax::rtp::ColourspaceType::kColourspaceUndefined;
         return false;
       }
     }

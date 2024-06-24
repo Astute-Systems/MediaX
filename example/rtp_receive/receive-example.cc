@@ -112,8 +112,11 @@ class Receive {
         case mediax::rtp::ColourspaceType::kColourspaceNv12:
           convert.Nv12ToBgra(height, width, frame_data.cpu_buffer, surface_data);
           break;
+        case mediax::rtp::ColourspaceType::kColourspaceRgba:
+          convert.RgbaToBgra(height, width, frame_data.cpu_buffer, surface_data);
+          break;
         default:
-          LOG(ERROR) << "Unsupported mode=" << FLAGS_mode << "\n";
+          LOG(ERROR) << "Unsupported mode=" << static_cast<int>(frame_data.encoding) << "\n";
           break;
       }
 

@@ -8,7 +8,7 @@
 //
 /// \brief A SAP/SDP listener example
 ///
-/// \file rtp_sap_reciever.cc
+/// \file rtp_sap_receiver.cc
 ///
 
 // [Receive example wrapper]

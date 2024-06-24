@@ -144,8 +144,9 @@ TEST(RtpH264VaapiDepayloaderTest, UnicastOkSetStreamInfo) {
 
   EXPECT_EQ(rtp.GetHeight(), 720);
   EXPECT_EQ(rtp.GetWidth(), 1280);
-
-  WritePngFile(rgb_test.data(), rtp.GetWidth(), rtp.GetHeight(), "vaapiH264_Image1.png");
+  EXPECT_EQ(rtp.GetSessionName(), "test_session_name");
+  EXPECT_EQ(rtp.GetIpAddress(), "127.0.0.1");
+  EXPECT_EQ(rtp.GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceRgba);
 }
 
 TEST(RtpH264VaapiDepayloaderTest, UnicastOkSetStreamInfoPtr) {
@@ -183,8 +184,9 @@ TEST(RtpH264VaapiDepayloaderTest, UnicastOkSetStreamInfoPtr) {
 
   EXPECT_EQ(rtp->GetHeight(), 720);
   EXPECT_EQ(rtp->GetWidth(), 1280);
-
-  WritePngFile(rgb_test.data(), rtp->GetWidth(), rtp->GetHeight(), "vaapiH264_Image2.png");
+  EXPECT_EQ(rtp->GetSessionName(), "test_session_name");
+  EXPECT_EQ(rtp->GetIpAddress(), "127.0.0.1");
+  EXPECT_EQ(rtp->GetColourSpace(), ::mediax::rtp::ColourspaceType::kColourspaceRgba);
 }
 
 TEST(RtpH264VaapiDepayloaderTest, kColourspaceRgba) {
