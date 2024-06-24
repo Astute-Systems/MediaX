@@ -196,7 +196,7 @@ bool RtpH264GstOpenDepayloader::Open() {
     GstElement *videoconvert = gst_element_factory_make("videoconvert", "rtp-h264-videoconvert");
 
     // Set the caps-filter
-    GstElement *capsfilter2 = gst_element_factory_make("capsfilter", "rtp-av1-capsfilter2");
+    GstElement *capsfilter2 = gst_element_factory_make("capsfilter", "rtp-h264-capsfilter2");
     GstCaps *caps2 = gst_caps_from_string("video/x-raw, format=RGBA");
     g_object_set(G_OBJECT(capsfilter2), "caps", caps2, nullptr);
 

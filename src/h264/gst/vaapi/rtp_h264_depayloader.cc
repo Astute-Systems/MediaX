@@ -85,12 +85,12 @@ GstFlowReturn RtpH264GstVaapiDepayloader::NewFrameCallback(GstAppSink *appsink, 
 
   if (const gchar *colorspace = gst_structure_get_string(structure, "format"); strncmp(colorspace, "UYVY", 4) == 0) {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceYuv422);
+  } else if (strncmp(colorspace, "RGBA", 4) == 0) {
+    depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgba);
   } else if (strncmp(colorspace, "RGB", 3) == 0) {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgb24);
   } else if (strncmp(colorspace, "NV12", 3) == 0) {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceNv12);
-  } else if (strncmp(colorspace, "RGBA", 4) == 0) {
-    depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgba);
   } else {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceUndefined);
     std::cerr << "Unknown colourspace " << colorspace << "\n";
@@ -198,7 +198,7 @@ bool RtpH264GstVaapiDepayloader::Open() {
     GstElement *videoconvert = gst_element_factory_make("videoconvert", "rtp-h264-videoconvert");
 
     // Set the caps-filter
-    GstElement *capsfilter2 = gst_element_factory_make("capsfilter", "rtp-av1-capsfilter2");
+    GstElement *capsfilter2 = gst_element_factory_make("capsfilter", "rtp-h264-capsfilter2");
     GstCaps *caps2 = gst_caps_from_string("video/x-raw, format=RGBA");
     g_object_set(G_OBJECT(capsfilter2), "caps", caps2, nullptr);
 
