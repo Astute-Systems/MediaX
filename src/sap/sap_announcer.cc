@@ -131,19 +131,23 @@ void SapAnnouncer::AddSapAnnouncement(const ::mediax::rtp::StreamInformation &st
 }
 
 void SapAnnouncer::DeleteSapAnnouncement(std::string_view session_name, std::string_view multicast_address) {
-  for (auto &stream_ : streams_) {
-    // Delete all matching sessions if not multicast IP is provided
-    if (multicast_address.empty()) {
+  if (!multicast_address.empty()) {
+    // Match the session name and multicast address
+    for (auto &stream_ : streams_) {
+      if ((stream_.session_name == session_name) && (stream_.hostname == multicast_address)) {
+        SendSapDeletion(stream_);
+        stream_.deleted = true;
+        return;
+      }
+    }
+  } else {
+    // Delete all matching sessions if  multicast IP is not provided
+    for (auto &stream_ : streams_) {
       if (stream_.session_name == session_name) {
         SendSapDeletion(stream_);
         stream_.deleted = true;
-        continue;
+        return;
       }
-    }
-
-    if ((stream_.session_name == session_name) && (stream_.hostname == multicast_address)) {
-      SendSapDeletion(stream_);
-      stream_.deleted = true;
     }
   }
 }
