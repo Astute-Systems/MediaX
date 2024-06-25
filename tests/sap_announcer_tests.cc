@@ -145,9 +145,9 @@ TEST(SapAnnouncerTest, ReAddAnnouncment) {
   announcer.AddSapAnnouncement(message);
   ASSERT_EQ(announcer.GetActiveStreamCount(), 1);
   EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).hostname, "239.192.6.6");
-  // Re-add announcment
+  // Re-add announcment with different address
   announcer.AddSapAnnouncement(message_updated);
-  ASSERT_EQ(announcer.GetActiveStreamCount(), 1);
+  ASSERT_EQ(announcer.GetActiveStreamCount(), 2);
   EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).hostname, message_updated.hostname);
   EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).port, message_updated.port);
   EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).width, message_updated.width);
