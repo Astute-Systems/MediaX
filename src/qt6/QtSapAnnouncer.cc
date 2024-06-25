@@ -35,8 +35,8 @@ Q_INVOKABLE ::mediax::rtp::StreamInformation &QtSapAnnouncer::getSapAnnouncement
   return sap_announcer_.GetSapAnnouncment(session_name.toStdString());
 }
 
-Q_INVOKABLE void QtSapAnnouncer::deleteSapAnnouncement(QString stream_name) {
-  sap_announcer_.DeleteSapAnnouncement(stream_name.toStdString());
+Q_INVOKABLE void QtSapAnnouncer::deleteSapAnnouncement(QString stream_name, QString multicast_address) {
+  sap_announcer_.DeleteSapAnnouncement(stream_name.toStdString(), multicast_address.toStdString());
 }
 
 Q_INVOKABLE void QtSapAnnouncer::undeleteSapAnnouncement(QString stream_name) {
