@@ -102,13 +102,25 @@ void SapAnnouncer::AddSapAnnouncement(const ::mediax::rtp::StreamInformation &st
   for (auto &stream : streams_) {
     if ((stream.session_name == stream_information.session_name) && (stream.hostname == stream_information.hostname)) {
       stream = stream_information;
+      stream.deleted = false;
       return;
     }
   }
+
+  // Did not find so adding a new one
   streams_.push_back(stream_information);
 }
 
-::mediax::rtp::StreamInformation &SapAnnouncer::GetSapAnnouncment(std::string_view session_name) {
+::mediax::rtp::StreamInformation &SapAnnouncer::GetSapAnnouncment(std::string_view session_name,
+                                                                  std::string_view multicast_address) {
+  if (!multicast_address.empty()) {
+    for (auto &stream_ : streams_) {
+      if ((stream_.session_name == session_name) && (stream_.hostname == multicast_address)) {
+        return stream_;
+      }
+    }
+  }
+
   for (auto &stream_ : streams_) {
     if (stream_.session_name == session_name) {
       return stream_;
@@ -118,9 +130,18 @@ void SapAnnouncer::AddSapAnnouncement(const ::mediax::rtp::StreamInformation &st
   return streams_[0];
 }
 
-void SapAnnouncer::DeleteSapAnnouncement(std::string_view session_name) {
+void SapAnnouncer::DeleteSapAnnouncement(std::string_view session_name, std::string_view multicast_address) {
   for (auto &stream_ : streams_) {
-    if (stream_.session_name == session_name) {
+    // Delete all matching sessions if not multicast IP is provided
+    if (multicast_address.empty()) {
+      if (stream_.session_name == session_name) {
+        SendSapDeletion(stream_);
+        stream_.deleted = true;
+        continue;
+      }
+    }
+
+    if ((stream_.session_name == session_name) && (stream_.hostname == multicast_address)) {
       SendSapDeletion(stream_);
       stream_.deleted = true;
     }
@@ -374,7 +395,16 @@ std::map<uint32_t, std::string> SapAnnouncer::GetInterfaces() const {
   return interfaces;
 }
 
-uint32_t SapAnnouncer::GetActiveStreamCount() const { return (uint32_t)streams_.size(); }
+uint32_t SapAnnouncer::GetActiveStreamCount() const {
+  // COunt deleted streams
+  uint32_t count = 0;
+  for (const auto &stream : streams_) {
+    if (!stream.deleted) {
+      count++;
+    }
+  }
+  return count;
+}
 
 std::vector<::mediax::rtp::StreamInformation> &SapAnnouncer::GetStreams() { return streams_; }
 

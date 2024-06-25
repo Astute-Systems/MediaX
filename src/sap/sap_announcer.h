@@ -84,18 +84,21 @@ class SapAnnouncer {
   void AddSapAnnouncement(const ::mediax::rtp::StreamInformation &stream_information);
 
   ///
-  /// \brief Get the Sap announcment stream information
+  /// \brief Get the Sap Announcment object
   ///
+  /// \param session_name The session name (will get first if no multicast is defined)
+  /// \param multicast_address The (optional) multicast address, used to differentiate between streams
   /// \return ::mediax::rtp::StreamInformation&
   ///
-  ::mediax::rtp::StreamInformation &GetSapAnnouncment(std::string_view session_name);
+  ::mediax::rtp::StreamInformation &GetSapAnnouncment(std::string_view session_name,
+                                                      std::string_view multicast_address = "");
 
   ///
   /// \brief Delete a specific session announcement
   ///
   /// \param session_name
   ///
-  void DeleteSapAnnouncement(std::string_view session_name);
+  void DeleteSapAnnouncement(std::string_view session_name, std::string_view multicast_address = "");
 
   ///
   /// \brief Undelete a specific session announcement

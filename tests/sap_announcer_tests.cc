@@ -145,13 +145,43 @@ TEST(SapAnnouncerTest, ReAddAnnouncment) {
   announcer.AddSapAnnouncement(message);
   ASSERT_EQ(announcer.GetActiveStreamCount(), 1);
   EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).hostname, "239.192.6.6");
+
   // Re-add announcment with different address
+  message_updated.deleted = false;
   announcer.AddSapAnnouncement(message_updated);
   ASSERT_EQ(announcer.GetActiveStreamCount(), 2);
-  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).hostname, message_updated.hostname);
-  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).port, message_updated.port);
-  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).width, message_updated.width);
-  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).height, message_updated.height);
-  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).framerate, message_updated.framerate);
-  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).encoding, message_updated.encoding);
+  // Delete the second announcment
+  announcer.DeleteSapAnnouncement(message_updated.session_name, "255.255.255.255");
+  ASSERT_EQ(announcer.GetActiveStreamCount(), 1);
+  // Re-add the second announcment (Will undelete)
+  announcer.AddSapAnnouncement(message_updated);
+  ASSERT_EQ(announcer.GetActiveStreamCount(), 2);
+
+  // Will get first match
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).hostname, message.hostname);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).port, message.port);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).width, message.width);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).height, message.height);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).framerate, message.framerate);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name).encoding, message.encoding);
+
+  // Get first but more explicit
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name, "239.192.6.6").hostname, message.hostname);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name, "239.192.6.6").port, message.port);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name, "239.192.6.6").width, message.width);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name, "239.192.6.6").height, message.height);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name, "239.192.6.6").framerate, message.framerate);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message.session_name, "239.192.6.6").encoding, message.encoding);
+
+  // To get the second message we need to use the multicast address
+  EXPECT_EQ(announcer.GetSapAnnouncment(message_updated.session_name, "255.255.255.255").hostname,
+            message_updated.hostname);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message_updated.session_name, "255.255.255.255").port, message_updated.port);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message_updated.session_name, "255.255.255.255").width, message_updated.width);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message_updated.session_name, "255.255.255.255").height,
+            message_updated.height);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message_updated.session_name, "255.255.255.255").framerate,
+            message_updated.framerate);
+  EXPECT_EQ(announcer.GetSapAnnouncment(message_updated.session_name, "255.255.255.255").encoding,
+            message_updated.encoding);
 }
