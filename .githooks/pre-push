@@ -22,6 +22,11 @@
 remote="$1"
 url="$2"
 
+# if nohooks defined then skip
+if [ -z "$NOHOOKS" ]; then
+    exit 0
+fi
+
 .git/hooks/pre-push-check-linter
 .git/hooks/pre-push-check-doxygen
 .git/hooks/pre-push-check-todo
