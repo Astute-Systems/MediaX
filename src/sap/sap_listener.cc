@@ -37,55 +37,62 @@ namespace mediax::sap {
 bool SapListener::running_ = false;
 
 SapListener::SapListener() {
-  if ((sockfd_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
-    perror("socket creation failed");
-    exit(EXIT_FAILURE);
-  }
+    if ((sockfd_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
+        perror("socket creation failed");
+        exit(EXIT_FAILURE);
+    }
 
-  // Set the socket to non-blocking mode
+    // Set the socket to non-blocking mode
 #ifdef _WIN32
-  u_long mode = 1;
-  if (ioctlsocket(sockfd_, FIONBIO, &mode) != NO_ERROR) {
-    perror("ioctlsocket FIONBIO failed");
-    exit(EXIT_FAILURE);
-  }
+    u_long mode = 1;
+    if (ioctlsocket(sockfd_, FIONBIO, &mode) != NO_ERROR) {
+        perror("ioctlsocket FIONBIO failed");
+        exit(EXIT_FAILURE);
+    }
 #else
-  int flags = fcntl(sockfd_, F_GETFL, 0);
-  if (flags == -1) {
-    perror("fcntl F_GETFL failed");
-    exit(EXIT_FAILURE);
-  }
+    int flags = fcntl(sockfd_, F_GETFL, 0);
+    if (flags == -1) {
+        perror("fcntl F_GETFL failed");
+        exit(EXIT_FAILURE);
+    }
 
-  if (fcntl(sockfd_, F_SETFL, flags | O_NONBLOCK) == -1) {
-    perror("fcntl F_SETFL O_NONBLOCK failed");
-    exit(EXIT_FAILURE);
-  }
+    if (fcntl(sockfd_, F_SETFL, flags | O_NONBLOCK) == -1) {
+        perror("fcntl F_SETFL O_NONBLOCK failed");
+        exit(EXIT_FAILURE);
+    }
 #endif
 
-  memset(&multicast_addr_, 0, sizeof(multicast_addr_));
-  multicast_addr_.sin_family = AF_INET;
-  multicast_addr_.sin_port = htons(mediax::rtp::kSapPort);
-  multicast_addr_.sin_addr.s_addr = htonl(INADDR_ANY);
+    // Set SO_REUSEADDR to allow multiple instances to receive multicast packets
+    int opt = 1;
+    if (setsockopt(sockfd_, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char *>(&opt), sizeof(opt)) < 0) {
+        perror("setsockopt SO_REUSEADDR failed");
+        exit(EXIT_FAILURE);
+    }
 
-  // join the multicast group
-  struct ip_mreq mreq;
-  mreq.imr_multiaddr.s_addr = inet_addr(mediax::rtp::kIpaddr);
-  mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-  if (const auto *byte = reinterpret_cast<std::byte *>(&mreq);
-      setsockopt(sockfd_, IPPROTO_IP, IP_ADD_MEMBERSHIP, byte, sizeof(mreq)) < 0) {
-    perror("setsockopt IP_ADD_MEMBERSHIP");
-  }
+    // Bind the socket to the desired interface and port
+    memset(&multicast_addr_, 0, sizeof(multicast_addr_));
+    multicast_addr_.sin_family = AF_INET;
+    multicast_addr_.sin_port = htons(mediax::rtp::kSapPort);
+    multicast_addr_.sin_addr.s_addr = htonl(INADDR_ANY); // Or use a specific interface's IP address
 
-  // bind socket to port allow multiple bindings
+    if (bind(sockfd_, (struct sockaddr *)&multicast_addr_, sizeof(multicast_addr_)) < 0) {
+        perror("bind failed");
+        exit(EXIT_FAILURE);
+    }
 
-  if (int opt = 1; setsockopt(sockfd_, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char *>(&opt), sizeof(opt)) < 0) {
-    perror("setsockopt SO_REUSEADDR");
-  }
-  if (bind(sockfd_, (struct sockaddr *)&multicast_addr_, sizeof(multicast_addr_)) == -1) {
-    std::cout << "SAPListener() " << std::string(strerror(errno)) << " " << mediax::rtp::kIpaddr << ":"
-              << mediax::rtp::kSapPort << "\n";
-    exit(-1);
-  }
+    // Join the multicast group
+    struct ip_mreq mreq;
+    mreq.imr_multiaddr.s_addr = inet_addr(mediax::rtp::kIpaddr);
+    if (mreq.imr_multiaddr.s_addr == INADDR_NONE) {
+        fprintf(stderr, "Invalid multicast address\n");
+        exit(EXIT_FAILURE);
+    }
+    mreq.imr_interface.s_addr = htonl(INADDR_ANY); // Or use a specific interface's IP address
+
+    if (setsockopt(sockfd_, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&mreq, sizeof(mreq)) < 0) {
+        perror("setsockopt IP_ADD_MEMBERSHIP failed");
+        exit(EXIT_FAILURE);
+    }
 }
 
 SapListener::~SapListener() { close(sockfd_); }

@@ -1,16 +1,16 @@
 
-[![Action mediax](https://github.com/DefenceX/MediaX/actions/workflows/build-ubuntu-22.04-amd64.yaml/badge.svg)](https://github.com/DefenceX/MediaX/actions/workflows/build-ubuntu-22.04-amd64.yaml)
-[![Action mediax](https://github.com/DefenceX/MediaX/actions/workflows/build-ubuntu-24.04-amd64.yaml/badge.svg)](https://github.com/DefenceX/MediaX/actions/workflows/build-ubuntu-24.04-amd64.yaml)
-[![Action mediax](https://github.com/DefenceX/MediaX/actions/workflows/build-raspbian-12-arm64.yaml/badge.svg)](https://github.com/DefenceX/MediaX/actions/workflows/build-raspbian-12-arm64.yaml)
-[![Action sonarscan](https://github.com/DefenceX/MediaX/actions/workflows/sonarcloud.yaml/badge.svg)](https://sonarcloud.io/project/overview?id=DefenceX_MediaX)
-![Version](https://defencex.github.io/MediaX/version.svg)
+[![Action mediax](https://github.com/Astute-Systems/MediaX/actions/workflows/build-ubuntu-22.04-amd64.yaml/badge.svg)](https://github.com/Astute-Systems/MediaX/actions/workflows/build-ubuntu-22.04-amd64.yaml)
+[![Action mediax](https://github.com/Astute-Systems/MediaX/actions/workflows/build-ubuntu-24.04-amd64.yaml/badge.svg)](https://github.com/Astute-Systems/MediaX/actions/workflows/build-ubuntu-24.04-amd64.yaml)
+[![Action mediax](https://github.com/Astute-Systems/MediaX/actions/workflows/build-raspbian-12-arm64.yaml/badge.svg)](https://github.com/Astute-Systems/MediaX/actions/workflows/build-raspbian-12-arm64.yaml)
+[![Action sonarscan](https://github.com/Astute-Systems/MediaX/actions/workflows/sonarcloud.yaml/badge.svg)](https://sonarcloud.io/project/overview?id=Astute-Systems_MediaX)
+![Version](https://Astute-Systems.github.io/MediaX/version.svg)
 
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_MediaX&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=DefenceX_MediaX)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_MediaX&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=DefenceX_MediaX)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_MediaX&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=DefenceX_MediaX)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_MediaX&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=DefenceX_MediaX)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_MediaX&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=DefenceX_MediaX)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=DefenceX_MediaX&metric=coverage)](https://sonarcloud.io/summary/new_code?id=DefenceX_MediaX)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Astute-Systems_MediaX&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Astute-Systems_MediaX)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Astute-Systems_MediaX&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Astute-Systems_MediaX)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Astute-Systems_MediaX&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=Astute-Systems_MediaX)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Astute-Systems_MediaX&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=Astute-Systems_MediaX)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=Astute-Systems_MediaX&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Astute-Systems_MediaX)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Astute-Systems_MediaX&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Astute-Systems_MediaX)
 
 # Real Time Protocol in C++
 
@@ -55,7 +55,7 @@ import rtpvraw_depayloader
 
 # Qt6 bindings
 
-These bindings are production ready and underpin our GUI toolchain. Please find documentation [here](https://defencex.github.io/MediaX/namespacemediax_1_1qt6.html) and code examples [here](https://defencex.github.io/MediaX/index.html#qtcode)
+These bindings are production ready and underpin our GUI toolchain. Please find documentation [here](https://astute-systems.github.io/MediaX/namespacemediax_1_1qt6.html) and code examples [here](https://astute-systems.github.io/MediaX/index.html#qtcode)
 
 To build from source add with Qt6 add:
 
@@ -71,13 +71,13 @@ All modes supported as defined in DEF-STAN 00-082 (uncompressed, MJPEG and H.264
  >
 ## Documentation
 
-Doxygen documentation is available on [Github Page](https://defencex.github.io/MediaX).
+Doxygen documentation is available on [Github Page](https://astute-systems.github.io/MediaX).
 
 ## Licensing and Commercial support
 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
 
-This library is also available as part of VivoeX Pro under a commercial license. This version of the library supports all colour spaces listed in DEF STAN 00-082 and RTP H.264 hardware acceleration when run on Intel and Nvidia hardware. Please visit <http://defencex.ai> for more information and support.
+This library is also available as part of VivoeX Pro under a commercial license. This version of the library supports all colour spaces listed in DEF STAN 00-082 and RTP H.264 hardware acceleration when run on Intel and Nvidia hardware. Please visit <http://Astute-Systems.ai> for more information and support.
 
 Commercial version also comes with GUI tools for debugging of video streams
 
