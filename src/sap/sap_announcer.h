@@ -235,6 +235,8 @@ class SapAnnouncer {
   ///
   std::string GetIpv4AddressString(std::string_view interface_name) const;
 
+  /// The singleton
+  static SapAnnouncer singleton_;
   /// A list of active SAP streams
   std::vector<::mediax::rtp::StreamInformation> streams_;
   /// The SAP/SDP transmission thread

@@ -35,6 +35,8 @@
 
 namespace mediax::sap {
 
+SapAnnouncer SapAnnouncer::singleton_;
+
 SapAnnouncer::SapAnnouncer() {
   memset(&multicast_addr_, 0, sizeof(multicast_addr_));
   multicast_addr_.sin_family = AF_INET;
@@ -43,18 +45,13 @@ SapAnnouncer::SapAnnouncer() {
 }
 
 SapAnnouncer::~SapAnnouncer() {
-  DeleteAllStreams();
-  Stop();
   if (sockfd_ != -1) {
     close(sockfd_);
     sockfd_ = -1;
   }
 }
 
-SapAnnouncer &SapAnnouncer::GetInstance() {
-  static SapAnnouncer singleton_;
-  return singleton_;
-}
+SapAnnouncer &SapAnnouncer::GetInstance() { return singleton_; }
 
 void SapAnnouncer::Start() {
   if (running_) {
