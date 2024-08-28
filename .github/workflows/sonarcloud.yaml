@@ -39,6 +39,11 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON -DBUILD_QT6=ON -DGST_SUPPORTED=ON -DBUILD_RUST=ON -S . -B build
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Debug
 
+      - name: Checking setup (Vaapi and Gstreamer)
+        run: |
+          gst-inspect-1.0
+          vainfo
+
       - name: Run tests to generate coverage statistics
         run: |
           cd build
@@ -46,7 +51,6 @@ jobs:
 
       - name: Collect coverage into one XML report
         run: |
-          gst-inspect-1.0 vaapi
           gcovr --sonarqube > coverage.xml
 
       - name: Run sonar-scanner
