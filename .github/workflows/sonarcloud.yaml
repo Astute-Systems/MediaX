@@ -42,7 +42,6 @@ jobs:
       - name: Checking setup (Vaapi and Gstreamer)
         run: |
           gst-inspect-1.0
-          vainfo
 
       - name: Run tests to generate coverage statistics
         run: |

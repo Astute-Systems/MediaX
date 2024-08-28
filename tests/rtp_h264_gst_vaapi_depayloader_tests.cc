@@ -24,10 +24,24 @@
 #include "util_tests.h"
 #include "utils/colourspace_cpu.h"
 
+bool Runner() {
+  // return true if CI env is set
+  char* ci = getenv("CI");
+  if (ci != NULL) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 TEST(RtpH264VaapiDepayloaderTest, Timeout) {
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
+
+  if (Runner()) {
+    GTEST_SKIP();
+  }
 
   mediax::rtp::RtpFrameData rgb_test;
 
@@ -44,6 +58,10 @@ TEST(RtpH264VaapiDepayloaderTest, Timeout) {
 }
 
 TEST(RtpH264VaapiDepayloaderTest, GetSet) {
+  if (Runner()) {
+    GTEST_SKIP();
+  }
+
   mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
   mediax::rtp::StreamInformation stream_info = {"test_session_name",
                                                 "127.0.0.1",
@@ -64,6 +82,9 @@ TEST(RtpH264VaapiDepayloaderTest, GetSet) {
 }
 
 TEST(RtpH264VaapiDepayloaderTest, UnicastOk) {
+  if (Runner()) {
+    GTEST_SKIP();
+  }
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
@@ -110,6 +131,9 @@ TEST(RtpH264VaapiDepayloaderTest, UnicastOk) {
 }
 
 TEST(RtpH264VaapiDepayloaderTest, UnicastOkSetStreamInfo) {
+  if (Runner()) {
+    GTEST_SKIP();
+  }
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
@@ -150,6 +174,9 @@ TEST(RtpH264VaapiDepayloaderTest, UnicastOkSetStreamInfo) {
 }
 
 TEST(RtpH264VaapiDepayloaderTest, UnicastOkSetStreamInfoPtr) {
+  if (Runner()) {
+    GTEST_SKIP();
+  }
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
@@ -190,6 +217,9 @@ TEST(RtpH264VaapiDepayloaderTest, UnicastOkSetStreamInfoPtr) {
 }
 
 TEST(RtpH264VaapiDepayloaderTest, kColourspaceRgba) {
+  if (Runner()) {
+    GTEST_SKIP();
+  }
   mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader rtp;
   mediax::rtp::StreamInformation stream_info = {
       "test_session_name", "127.0.0.1", 5004, 640, 480, 25, mediax::rtp::ColourspaceType::kColourspaceRgb24, false};
@@ -214,6 +244,9 @@ TEST(RtpH264VaapiDepayloaderTest, kColourspaceRgba) {
 }
 
 TEST(RtpH264VaapiDepayloaderTest, FailToVaapi) {
+  if (Runner()) {
+    GTEST_SKIP();
+  }
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
@@ -238,6 +271,9 @@ TEST(RtpH264VaapiDepayloaderTest, FailToVaapi) {
 }
 
 TEST(RtpH264VaapiDepayloaderTest, TestNoStreamSet) {
+  if (Runner()) {
+    GTEST_SKIP();
+  }
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
@@ -260,6 +296,9 @@ TEST(RtpH264VaapiDepayloaderTest, TestNoStreamSet) {
 
 void Stream(mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader* rtp, std::string name, std::string ip,
             uint16_t port) {
+  if (Runner()) {
+    GTEST_SKIP();
+  }
   // Set the stream details using set stream info
   ::mediax::rtp::StreamInformation stream_info = {.session_name = name,
                                                   .hostname = ip,
@@ -275,6 +314,9 @@ void Stream(mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiDepayloader* rtp, std:
 }
 
 TEST(RtpH264VaapiDepayloaderTest, StartSwitchManyPayloaders) {
+  if (Runner()) {
+    GTEST_SKIP();
+  }
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
@@ -316,6 +358,9 @@ TEST(RtpH264VaapiDepayloaderTest, StartSwitchManyPayloaders) {
 }
 
 TEST(RtpH264VaapiDepayloaderTest, TransmitAFrame) {
+  if (Runner()) {
+    GTEST_SKIP();
+  }
 #if !GST_SUPPORTED
   GTEST_SKIP();
 #endif
