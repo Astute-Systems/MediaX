@@ -45,4 +45,4 @@ if [ "$LINUX_VERSION" == "24.04" ]; then
   apt-get --no-install-recommends -y install cpplint qt6-base-dev
 fi
 
-apt-get --no-install-recommends -y install gstreamer1.0-vaapi i965-va-driver # va-driver-all
+apt-get --no-install-recommends -y install gstreamer1.0-vaapi i965-va-driver va-driver-all
