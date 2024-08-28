@@ -31,7 +31,7 @@ jobs:
 
       - name: Apt Install
         run: |
-            sudo ./scripts/init_build_machine.sh
+          sudo ./scripts/init_build_machine.sh
 
       - name: Run build-wrapper
         run: |
