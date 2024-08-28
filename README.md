@@ -35,6 +35,9 @@ To use another RTP payloader just change the template class i.e. To switch to H.
   mediax::RtpSapTransmit<mediax::rtp::h264::gst::vaapi::RtpH264GstVaapiPayloader> rtp(
       "238.192.1.2", 5004, "test-session-name-compressed", 640, 480, 30, "H264");
 ```
+## Documentation
+
+Doxygen documentation is available to view on [Github Page](https://astute-systems.github.io/MediaX).
 
 ## Python bindings
 
@@ -68,9 +71,6 @@ All modes supported as defined in DEF-STAN 00-082 (uncompressed, MJPEG and H.264
 
  > NOTE: You must install the code to enable the Rust gstreamer AV1 RTP element after building. Specify the build option **$ cmake -DBUILD_RUST=ON ..**
  >
-## Documentation
-
-Doxygen documentation is available on [Github Page](https://astute-systems.github.io/MediaX).
 
 ## Licensing and Commercial support
 
