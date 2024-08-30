@@ -26,6 +26,6 @@ include_directories(${PYTHON_INCLUDE_PATH} ${GST_INCLUDE_DIRS} ${CMAKE_SOURCE_DI
 # build swig interface for payloader
 set_source_files_properties(rtp_h264_payloader.i PROPERTIES CPLUSPLUS ON)
 swig_add_library(rtp_h264_gst_x264_payloader TYPE SHARED LANGUAGE python SOURCES rtp_h264_payloader.i ../../../rtp/rtp_payloader.cc ../../../rtp/rtp_payloader.cc ../../../rtp/rtp_utils.cc ../../../utils/colourspace_cpu.cc)
-swig_link_libraries(rtp_h264_gst_x264_payloader glog swscale)
+swig_link_libraries(rtp_h264_gst_x264_payloader swscale)
 
 install(TARGETS rtp_h264_gst_x264_payloader DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)

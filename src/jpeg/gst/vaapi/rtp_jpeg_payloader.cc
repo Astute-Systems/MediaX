@@ -14,7 +14,6 @@
 
 #include "jpeg/gst/vaapi/rtp_jpeg_payloader.h"
 
-#include <glog/logging.h>
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
 
@@ -39,7 +38,7 @@ void RtpJpegGstVaapiPayloader::SetStreamInfo(const ::mediax::rtp::StreamInformat
 
 int RtpJpegGstVaapiPayloader::Transmit(unsigned char *new_buffer, bool timeout) {
   if (!started_) {
-    DLOG(ERROR) << "RTP JPEG payloader not started";
+    std::cerr << "RTP JPEG payloader not started\n";
     return -1;
   }
 

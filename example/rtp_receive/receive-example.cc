@@ -92,7 +92,7 @@ class Receive {
 
       // Check the colourspace
       if (auto format = cairo_image_surface_get_format(data->surface); format != CAIRO_FORMAT_RGB24) {
-        LOG(ERROR) << "Unsupported format=" << format << "\n";
+        std::cerr << "Unsupported format=" << format << "\n";
         return FALSE;
       }
 
@@ -116,7 +116,7 @@ class Receive {
           convert.RgbaToBgra(height, width, frame_data.cpu_buffer, surface_data);
           break;
         default:
-          LOG(ERROR) << "Unsupported mode=" << static_cast<int>(frame_data.encoding) << "\n";
+          std::cerr << "Unsupported mode=" << static_cast<int>(frame_data.encoding) << "\n";
           break;
       }
 
@@ -208,20 +208,18 @@ class Receive {
                                                          video_mode,         false};
     if (FLAGS_wait_sap) {
       // Just give the stream name and wait for SAP/SDP announcement
-      LOG(INFO) << "Example RTP streaming to " << FLAGS_session_name;
       sap_listener_ = std::make_shared<mediax::sap::SapListener>();
       sap_listener_->Start();
       // Sleep for one second to allow the SAP listener to start
       std::this_thread::sleep_for(std::chrono::seconds(1));
 
       if (sap_listener_->GetStreamInformation(FLAGS_session_name, &stream_information) == false) {
-        LOG(ERROR) << "Could not get stream information, quitting";
+        std::cerr << "Could not get stream information, quitting\n";
         exit(1);
       }
       // Add SAP callback here
       rtp_->SetStreamInfo(stream_information);
     } else {
-      LOG(INFO) << "Example RTP streaming to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port;
       rtp_->SetStreamInfo(stream_information);
     }
   }
@@ -359,7 +357,7 @@ int main(int argc, char *argv[]) {
 
   // We have all the information so we can request the ports open now. No need to wait for SAP/SDP
   if (!Receive::rtp_->Open()) {
-    LOG(ERROR) << "Could not open stream, quitting";
+    std::cerr << "Could not open stream, quitting\n";
     exit(1);
   }
   Receive::rtp_->Start();

@@ -26,7 +26,6 @@
 #include <thread>
 #include <vector>
 
-#include "glog/logging.h"
 #include "rtp/rtp_internal_types.h"
 #include "rtp/rtp_utils.h"
 #include "sap/sap_utils.h"
@@ -37,62 +36,62 @@ namespace mediax::sap {
 bool SapListener::running_ = false;
 
 SapListener::SapListener() {
-    if ((sockfd_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
-        perror("socket creation failed");
-        exit(EXIT_FAILURE);
-    }
+  if ((sockfd_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
+    perror("socket creation failed");
+    exit(EXIT_FAILURE);
+  }
 
-    // Set the socket to non-blocking mode
+  // Set the socket to non-blocking mode
 #ifdef _WIN32
-    u_long mode = 1;
-    if (ioctlsocket(sockfd_, FIONBIO, &mode) != NO_ERROR) {
-        perror("ioctlsocket FIONBIO failed");
-        exit(EXIT_FAILURE);
-    }
+  u_long mode = 1;
+  if (ioctlsocket(sockfd_, FIONBIO, &mode) != NO_ERROR) {
+    perror("ioctlsocket FIONBIO failed");
+    exit(EXIT_FAILURE);
+  }
 #else
-    int flags = fcntl(sockfd_, F_GETFL, 0);
-    if (flags == -1) {
-        perror("fcntl F_GETFL failed");
-        exit(EXIT_FAILURE);
-    }
+  int flags = fcntl(sockfd_, F_GETFL, 0);
+  if (flags == -1) {
+    perror("fcntl F_GETFL failed");
+    exit(EXIT_FAILURE);
+  }
 
-    if (fcntl(sockfd_, F_SETFL, flags | O_NONBLOCK) == -1) {
-        perror("fcntl F_SETFL O_NONBLOCK failed");
-        exit(EXIT_FAILURE);
-    }
+  if (fcntl(sockfd_, F_SETFL, flags | O_NONBLOCK) == -1) {
+    perror("fcntl F_SETFL O_NONBLOCK failed");
+    exit(EXIT_FAILURE);
+  }
 #endif
 
-    // Set SO_REUSEADDR to allow multiple instances to receive multicast packets
-    int opt = 1;
-    if (setsockopt(sockfd_, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char *>(&opt), sizeof(opt)) < 0) {
-        perror("setsockopt SO_REUSEADDR failed");
-        exit(EXIT_FAILURE);
-    }
+  // Set SO_REUSEADDR to allow multiple instances to receive multicast packets
+  int opt = 1;
+  if (setsockopt(sockfd_, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char *>(&opt), sizeof(opt)) < 0) {
+    perror("setsockopt SO_REUSEADDR failed");
+    exit(EXIT_FAILURE);
+  }
 
-    // Bind the socket to the desired interface and port
-    memset(&multicast_addr_, 0, sizeof(multicast_addr_));
-    multicast_addr_.sin_family = AF_INET;
-    multicast_addr_.sin_port = htons(mediax::rtp::kSapPort);
-    multicast_addr_.sin_addr.s_addr = htonl(INADDR_ANY); // Or use a specific interface's IP address
+  // Bind the socket to the desired interface and port
+  memset(&multicast_addr_, 0, sizeof(multicast_addr_));
+  multicast_addr_.sin_family = AF_INET;
+  multicast_addr_.sin_port = htons(mediax::rtp::kSapPort);
+  multicast_addr_.sin_addr.s_addr = htonl(INADDR_ANY);  // Or use a specific interface's IP address
 
-    if (bind(sockfd_, (struct sockaddr *)&multicast_addr_, sizeof(multicast_addr_)) < 0) {
-        perror("bind failed");
-        exit(EXIT_FAILURE);
-    }
+  if (bind(sockfd_, (struct sockaddr *)&multicast_addr_, sizeof(multicast_addr_)) < 0) {
+    perror("bind failed");
+    exit(EXIT_FAILURE);
+  }
 
-    // Join the multicast group
-    struct ip_mreq mreq;
-    mreq.imr_multiaddr.s_addr = inet_addr(mediax::rtp::kIpaddr);
-    if (mreq.imr_multiaddr.s_addr == INADDR_NONE) {
-        fprintf(stderr, "Invalid multicast address\n");
-        exit(EXIT_FAILURE);
-    }
-    mreq.imr_interface.s_addr = htonl(INADDR_ANY); // Or use a specific interface's IP address
+  // Join the multicast group
+  struct ip_mreq mreq;
+  mreq.imr_multiaddr.s_addr = inet_addr(mediax::rtp::kIpaddr);
+  if (mreq.imr_multiaddr.s_addr == INADDR_NONE) {
+    fprintf(stderr, "Invalid multicast address\n");
+    exit(EXIT_FAILURE);
+  }
+  mreq.imr_interface.s_addr = htonl(INADDR_ANY);  // Or use a specific interface's IP address
 
-    if (setsockopt(sockfd_, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&mreq, sizeof(mreq)) < 0) {
-        perror("setsockopt IP_ADD_MEMBERSHIP failed");
-        exit(EXIT_FAILURE);
-    }
+  if (setsockopt(sockfd_, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&mreq, sizeof(mreq)) < 0) {
+    perror("setsockopt IP_ADD_MEMBERSHIP failed");
+    exit(EXIT_FAILURE);
+  }
 }
 
 SapListener::~SapListener() { close(sockfd_); }
@@ -109,8 +108,6 @@ void SapListener::SapListenerThread(SapListener *sap) {
   read_timeout.tv_usec = 10;
   setsockopt(sap->sockfd_, SOL_SOCKET, SO_RCVTIMEO, &read_timeout, sizeof read_timeout);
 
-  DLOG(INFO) << "SAP packet received " << mediax::rtp::kIpaddr << ":" << mediax::rtp::kSapPort;
-
   while (running_) {
     ssize_t bytes = 0;
     if (bytes = recvfrom(sap->sockfd_, sap->udpdata_.data(), mediax::rtp::kMaxUdpData, 0, nullptr, nullptr);
@@ -126,8 +123,6 @@ void SapListener::SapListenerThread(SapListener *sap) {
 
 void SapListener::RegisterSapListener(std::string_view session_name, const SapCallback &callback, void *data) {
   data_ = data;
-  DLOG(INFO) << "Register SAP listener with session-name=" << session_name;
-
   callbacks_[std::string(session_name)] = callback;
 }
 
@@ -227,7 +222,7 @@ std::map<std::string, std::string, std::less<>> SapListener::ParseAttributes(con
 bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdata, uint32_t size) {
   std::string rtptype;
   if (size < 8) {
-    DLOG(ERROR) << "SAP packet too small";
+    std::cerr << "SAP packet too small\n";
     return false;
   }
   std::map<std::string, std::string, std::less<>> attributes_map;
@@ -376,20 +371,18 @@ bool SapListener::SapStore(std::array<uint8_t, mediax::rtp::kMaxUdpData> *rawdat
     sdp.bits_per_pixel = std::stoi(attributes_map["depth"]);
     sdp.sampling = attributes_map["sampling"];
   } catch (const std::invalid_argument &e [[maybe_unused]]) {
-    DLOG(ERROR) << "Invalid argument in SAP message. SDP text = " << sdp.sdp_text;
+    std::cerr << "Invalid argument in SAP message. SDP text = " << sdp.sdp_text << "\n";
   }
 
   try {
     sdp.framerate = std::stoi(attributes_map["framerate"]);
   } catch (const std::invalid_argument &e [[maybe_unused]]) {
-    LOG(ERROR) << "Invalid framerate = " << sdp.sdp_text;
+    std::cerr << "Invalid framerate = " << sdp.sdp_text << "\n";
     sdp.framerate = 0;
   }
 
   if (sdp.sampling.empty()) sdp.sampling = "Unknown";
 
-  DLOG(INFO) << "Store " << sdp.session_name << " " << sdp.ip_address << ":" << sdp.port << " " << sdp.height << "x"
-             << sdp.width << " " << sdp.framerate << "fps " << sdp.sampling;
   announcements_[sdp.session_name] = sdp;
 
   // Check the callbacks

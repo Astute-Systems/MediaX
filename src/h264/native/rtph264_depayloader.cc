@@ -15,13 +15,10 @@
 
 #include "h264/native/rtph264_depayloader.h"
 
-#include <glog/logging.h>
 #include <va/va.h>
 #include <va/va_drm.h>
 #include <va/va_x11.h>
 
 #include "rtp/rtp_types.h"
 
-namespace mediax::rtp::h264 {
-
-}  // namespace mediax::rtp::h264
+namespace mediax::rtp::h264 {}  // namespace mediax::rtp::h264

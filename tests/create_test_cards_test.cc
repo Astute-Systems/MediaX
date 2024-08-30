@@ -10,7 +10,6 @@
 /// \file create_test_cards_tests.cc
 ///
 
-#include <glog/logging.h>
 #include <gtest/gtest.h>
 
 #include "rtp/rtp_utils.h"

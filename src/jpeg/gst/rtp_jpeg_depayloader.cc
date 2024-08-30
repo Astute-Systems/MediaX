@@ -22,7 +22,6 @@
 
 #include "jpeg/gst/rtp_jpeg_depayloader.h"
 
-#include <glog/logging.h>
 #include <gst/gst.h>
 
 #include <algorithm>
@@ -101,7 +100,7 @@ GstFlowReturn RtpJpegGstDepayloader::NewFrameCallback(GstAppSink *appsink, gpoin
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgba);
   } else {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceUndefined);
-    DLOG(WARNING) << "Unknown colourspace " << colorspace;
+    std::cerr << "Unknown colourspace " << colorspace << "\n";
     std::cerr << "Unknown format " << colorspace << " height " << height << " width " << width << " size " << size
               << "\n";  // NOLINT
   }

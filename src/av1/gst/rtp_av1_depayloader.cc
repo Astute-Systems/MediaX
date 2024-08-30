@@ -21,7 +21,6 @@
 
 #include "av1/gst/rtp_av1_depayloader.h"
 
-#include <glog/logging.h>
 #include <gst/gst.h>
 
 #include <algorithm>
@@ -102,7 +101,7 @@ GstFlowReturn RtpAv1GstDepayloader::NewFrameCallback(GstAppSink *appsink, gpoint
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgba);
   } else {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceUndefined);
-    DLOG(WARNING) << "Unknown colourspace " << colorspace;
+    std::cerr << "Unknown colourspace " << colorspace << "\n";
   }
 
   depayloader->SetHeight(height);

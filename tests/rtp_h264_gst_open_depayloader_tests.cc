@@ -10,7 +10,6 @@
 /// \file rtp_h264_depayloader_tests.cc
 ///
 
-#include <glog/logging.h>
 #include <gtest/gtest.h>
 #include <unistd.h>
 

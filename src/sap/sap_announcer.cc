@@ -14,7 +14,6 @@
 
 #include "sap/sap_announcer.h"
 
-#include <glog/logging.h>
 #include <ifaddrs.h>
 #include <net/if.h>
 
@@ -55,7 +54,7 @@ SapAnnouncer &SapAnnouncer::GetInstance() { return singleton_; }
 
 void SapAnnouncer::Start() {
   if (running_) {
-    DLOG(WARNING) << "SapAnnouncer already running, called twice?\n";
+    std::cerr << "SapAnnouncer already running, called twice?\n";
     return;
   }
 
@@ -318,11 +317,11 @@ void SapAnnouncer::SetSourceInterface(uint32_t select) {
   std::map<uint32_t, std::string> interfaces;
   interfaces = GetInterfaces();
   if (interfaces.empty()) {
-    DLOG(ERROR) << "No interfaces found";
+    std::cerr << "No interfaces found";
     return;
   }
   if (select >= interfaces.size()) {
-    DLOG(ERROR) << "Interface select out of range";
+    std::cerr << "Interface select out of range";
     return;
   }
   std::string interface_name = interfaces[select];

@@ -30,12 +30,12 @@ swig_add_library(rtp_types TYPE SHARED LANGUAGE python SOURCES rtp_types.i)
 # build swig interface for payloader
 set_source_files_properties(rtp_payloader.i PROPERTIES CPLUSPLUS ON)
 swig_add_library(rtp_payloader TYPE SHARED LANGUAGE python SOURCES rtp_payloader.i rtp_payloader.cc ../rtp/rtp_payloader.cc ../rtp/rtp_utils.cc ../utils/colourspace_cpu.cc)
-swig_link_libraries(rtp_payloader glog swscale ${GST_LIBRARIES})
+swig_link_libraries(rtp_payloader swscale ${GST_LIBRARIES})
 
 # build swig interface for depayloader
 set_source_files_properties(rtp_depayloader.i PROPERTIES CPLUSPLUS ON)
 swig_add_library(rtp_depayloader TYPE SHARED LANGUAGE python SOURCES rtp_depayloader.i rtp_depayloader.cc ../rtp/rtp_depayloader.cc ../rtp/rtp_utils.cc ../utils/colourspace_cpu.cc)
-swig_link_libraries(rtp_depayloader glog swscale ${GST_LIBRARIES})
+swig_link_libraries(rtp_depayloader swscale ${GST_LIBRARIES})
 
 install(TARGETS rtp_types DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/rtp_types.py DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)

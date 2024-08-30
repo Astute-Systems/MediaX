@@ -15,7 +15,6 @@
 
 #include "av1/gst/rtp_av1_payloader.h"
 
-#include <glog/logging.h>
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
 
@@ -40,7 +39,7 @@ void RtpAv1GstPayloader::SetStreamInfo(const ::mediax::rtp::StreamInformation &s
 
 int RtpAv1GstPayloader::Transmit(unsigned char *new_buffer, bool timeout) {
   if (!started_) {
-    DLOG(ERROR) << "RTP JPEG payloader not started";
+    std::cerr << "RTP JPEG payloader not started\n";
     return -1;
   }
 
@@ -94,21 +93,21 @@ bool RtpAv1GstPayloader::Open() {
   // Create a h265enc element to decode the H.264 stream
   GstElement *av1enc = gst_element_factory_make("av1enc", "rtp-av1-enc");
   if (!av1enc) {
-    DLOG(ERROR) << "Failed to create av1enc element";
+    std::cerr << "Failed to create av1enc element";
     return false;
   }
 
   // RTP Parser
   GstElement *rtpav1arse = gst_element_factory_make("av1parse", "rtp-av1-parser");
   if (!rtpav1arse) {
-    DLOG(ERROR) << "Failed to create av1parse element";
+    std::cerr << "Failed to create av1parse element";
     return false;
   }
 
   // RTP payloader
   GstElement *rtpav1ay = gst_element_factory_make("rtpav1pay", "rtp-av1-payloader");
   if (!rtpav1ay) {
-    DLOG(ERROR) << "Failed to create rtpav1pay element";
+    std::cerr << "Failed to create rtpav1pay element";
     return false;
   }
 

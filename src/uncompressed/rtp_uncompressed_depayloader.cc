@@ -30,8 +30,6 @@
 #include <sys/socket.h>
 #endif
 
-#include <glog/logging.h>
-
 #include <stdexcept>
 #include <vector>
 
@@ -62,7 +60,7 @@ bool RtpUncompressedDepayloader::Open() {
   RtpDepayloader::Open();
 
   if (!GetStream().port_no) {
-    LOG(ERROR) << "RtpUncompressedDepayloader::Open() No ports set, nothing to open";
+    std::cerr << "RtpUncompressedDepayloader::Open() No ports set, nothing to open\n";
     exit(-1);
   }
   if (GetStream().port_no) {
@@ -70,8 +68,8 @@ bool RtpUncompressedDepayloader::Open() {
 
     // create a UDP socket
     if ((GetStream().sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
-      LOG(ERROR) << "RtpUncompressedDepayloader::Open() ERROR opening socket " << GetStream().hostname << ":"
-                 << GetStream().port_no;
+      std::cerr << "RtpUncompressedDepayloader::Open() ERROR opening socket " << GetStream().hostname << ":"
+                << GetStream().port_no << "\n";
       exit(-1);
     }
 
@@ -81,7 +79,7 @@ bool RtpUncompressedDepayloader::Open() {
       mreq.imr_multiaddr.s_addr = inet_addr(GetStream().hostname.c_str());
       mreq.imr_interface.s_addr = htonl(INADDR_ANY);
       if (setsockopt(GetStream().sockfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
-        LOG(ERROR) << "Can not join multicast group " << GetStream().hostname << ":" << GetStream().port_no;
+        std::cerr << "Can not join multicast group " << GetStream().hostname << ":" << GetStream().port_no << "\n";
         exit(-1);
       }
     }
@@ -96,13 +94,13 @@ bool RtpUncompressedDepayloader::Open() {
 
     if (int opt = 1;
         setsockopt(GetStream().sockfd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char *>(&opt), sizeof(opt)) < 0) {
-      LOG(ERROR) << "RtpUncompressedDepayloader::Open() ERROR setting socket options " << GetStream().hostname << ":"
-                 << GetStream().port_no;
+      std::cerr << "RtpUncompressedDepayloader::Open() ERROR setting socket options " << GetStream().hostname << ":"
+                << GetStream().port_no;
       exit(-1);
     }
     if (bind(GetStream().sockfd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
-      LOG(ERROR) << "RtpUncompressedDepayloader::Open() ERROR binding socket " << GetStream().hostname << ":"
-                 << GetStream().port_no;
+      std::cerr << "RtpUncompressedDepayloader::Open() ERROR binding socket " << GetStream().hostname << ":"
+                << GetStream().port_no;
       exit(-1);
     }
     GetStream().socket_open = true;
@@ -320,12 +318,12 @@ bool RtpUncompressedDepayloader::WaitForFrame(uint8_t **cpu, int32_t timeout) {
 
 bool RtpUncompressedDepayloader::Receive(::mediax::rtp::RtpFrameData *data, int32_t timeout) {
   if (GetStream().port_no == 0) {
-    LOG(ERROR) << "Port number has not been set";
+    std::cerr << "Port number has not been set";
     return false;
   }
 
   if (GetStream().settings_valid == false) {
-    LOG(ERROR) << "IP settings are invalid";
+    std::cerr << "IP settings are invalid";
     return false;
   }
 
@@ -349,8 +347,6 @@ bool RtpUncompressedDepayloader::Receive(::mediax::rtp::RtpFrameData *data, int3
     return ret;
   }
 
-  // should not ever get here
-  LOG(ERROR) << "Something went wrong should not be here";
   return false;
 }
 

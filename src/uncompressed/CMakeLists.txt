@@ -28,12 +28,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSWIG")
 set_source_files_properties(rtp_uncompressed_payloader.i PROPERTIES CPLUSPLUS ON)
 swig_add_library(rtp_uncompressed_payloader TYPE SHARED LANGUAGE python SOURCES rtp_uncompressed_payloader.i rtp_uncompressed_payloader.cc ../rtp/rtp_payloader.cc ../rtp/rtp_utils.cc ../utils/colourspace_cpu.cc)
 set_target_properties(rtp_uncompressed_payloader PROPERTIES VERSION ${MEDIAX_VERSION} SOVERSION ${MEDIAX_MAJOR_VERSION})
-swig_link_libraries(rtp_uncompressed_payloader glog swscale)
+swig_link_libraries(rtp_uncompressed_payloader swscale)
 
 # build swig interface for depayloader
 set_source_files_properties(rtp_uncompressed_depayloader.i PROPERTIES CPLUSPLUS ON)
 swig_add_library(rtp_uncompressed_depayloader TYPE SHARED LANGUAGE python SOURCES rtp_uncompressed_depayloader.i rtp_uncompressed_depayloader.cc ../rtp/rtp_depayloader.cc ../rtp/rtp_utils.cc ../utils/colourspace_cpu.cc)
-swig_link_libraries(rtp_uncompressed_depayloader glog swscale)
+swig_link_libraries(rtp_uncompressed_depayloader swscale)
 set_target_properties(rtp_uncompressed_depayloader PROPERTIES VERSION 1.0.0)
 
 install(TARGETS rtp_uncompressed_payloader DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)

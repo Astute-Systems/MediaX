@@ -9,8 +9,6 @@
 /// \file sap_announcer.cpp
 ///
 
-#include <glog/logging.h>
-
 #include <QCoreApplication>
 #include <QSap>
 
@@ -19,7 +17,6 @@
 int main(int argc, char* argv[]) {
   QCoreApplication a(argc, argv);
   // Initalise the RTP library
-  google::InitGoogleLogging(argv[0]);
   mediax::InitRtp(argc, argv);
   // Create a QtSapAnnouncer object
   mediax::qt6::QtSapAnnouncer announcer;

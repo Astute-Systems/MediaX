@@ -10,7 +10,6 @@
 /// \file rtp_raw_depayloader_tests.cc
 ///
 
-#include <glog/logging.h>
 #include <gtest/gtest.h>
 #include <unistd.h>
 
@@ -105,11 +104,9 @@ TEST(RtpRawDepayloaderTest, UnicastOk) {
 }
 
 void SendFrameThread(std::string ip, uint32_t port) {
-  LOG(INFO) << "Sending video to " << ip << ":" << port;  // Sleep thread for 100ms
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
   SendVideoCheckered(ip, 640, 480, 25, port);
-  LOG(INFO) << "Sent " << ip << ":" << port;  // Sleep thread for 100ms
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
@@ -118,7 +115,6 @@ TEST(RtpRawDepayloaderTest, Many) {
                                          "239.192.1.6", "239.192.1.7", "239.192.1.8", "239.192.1.9", "239.192.1.10"};
   std::array<mediax::rtp::uncompressed::RtpUncompressedDepayloader, 10> rtp;
   for (int i = 0; i < 10; i++) {
-    LOG(INFO) << "Creating stream number " << i << " with IP:" << ip_pool[i];
     mediax::rtp::StreamInformation stream_info = {
         "test_session_name_" + std::to_string(i),         ip_pool[i], 5004, 640, 480, 25,
         mediax ::rtp::ColourspaceType::kColourspaceRgb24, false};
@@ -127,14 +123,12 @@ TEST(RtpRawDepayloaderTest, Many) {
 
   // Open and Start
   for (int i = 0; i < 10; i++) {
-    LOG(INFO) << "Opening stream number " << rtp[i].GetIpAddress() << "\n";
     rtp[i].Open();
     rtp[i].Start();
   }
 
   // Stop and Close
   for (int i = 0; i < 10; i++) {
-    LOG(INFO) << "Opening stream number " << rtp[i].GetIpAddress() << "\n";
     rtp[i].Stop();
     rtp[i].Close();
   }

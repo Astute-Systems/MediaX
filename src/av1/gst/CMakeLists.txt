@@ -18,12 +18,12 @@ include_directories(${PYTHON_INCLUDE_PATH} ${GST_INCLUDE_DIRS} ${CMAKE_SOURCE_DI
 # build swig interface for payloader
 set_source_files_properties(rtp_av1_payloader.i PROPERTIES CPLUSPLUS ON)
 swig_add_library(rtp_av1_payloader TYPE SHARED LANGUAGE python SOURCES rtp_av1_payloader.i ../../rtp/rtp_payloader.cc ../../rtp/rtp_payloader.cc ../../rtp/rtp_utils.cc ../../utils/colourspace_cpu.cc)
-swig_link_libraries(rtp_av1_payloader glog swscale)
+swig_link_libraries(rtp_av1_payloader swscale)
 
 # build swig interface for depayloader
 set_source_files_properties(rtp_av1_depayloader.i PROPERTIES CPLUSPLUS ON)
 swig_add_library(rtp_av1_depayloader TYPE SHARED LANGUAGE python SOURCES rtp_av1_depayloader.i ${CMAKE_SOURCE_DIR}/src/rtp/rtp_depayloader.cc ${CMAKE_SOURCE_DIR}/src/rtp/rtp_depayloader.cc ${CMAKE_SOURCE_DIR}/src/rtp/rtp_utils.cc ../../utils/colourspace_cpu.cc)
-swig_link_libraries(rtp_av1_depayloader glog swscale)
+swig_link_libraries(rtp_av1_depayloader swscale)
 
 install(TARGETS rtp_av1_payloader DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/rtp_av1_gst_depayloader.py DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/mediax)

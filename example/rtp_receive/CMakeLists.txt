@@ -4,7 +4,6 @@ pkg_check_modules(GST REQUIRED gstreamer-1.0 gstreamer-app-1.0 gstreamer-video-1
 pkg_check_modules(GTKMM gtkmm-3.0 REQUIRED)
 pkg_check_modules(CAIRO cairo REQUIRED)
 pkg_check_modules(SWSCALE REQUIRED libswscale)
-pkg_check_modules(GLOG REQUIRED libglog)
 
 include_directories(${GTKMM_INCLUDE_DIRS} ${CAIRO_INCLUDE_DIRS} ${CMAKE_BINARY_DIR}/include ${GST_INCLUDE_DIRS})
 

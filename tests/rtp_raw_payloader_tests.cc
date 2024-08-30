@@ -10,7 +10,6 @@
 /// \file rtp_depayloader_tests.cc
 ///
 
-#include <glog/logging.h>
 #include <gtest/gtest.h>
 #include <unistd.h>
 
@@ -96,7 +95,6 @@ TEST(RTPDepayloaderTest, Many) {
                                          "239.192.1.6", "239.192.1.7", "239.192.1.8", "239.192.1.9", "239.192.1.10"};
   std::array<mediax::rtp::uncompressed::RtpUncompressedPayloader, 10> rtp;
   for (int i = 0; i < 10; i++) {
-    LOG(INFO) << "Creating stream number " << i << " with IP:" << ip_pool[i];
     mediax::rtp::StreamInformation stream_info = {
         "test_session_name_" + std::to_string(i),         ip_pool[i], 5004, 160, 90, 5,
         mediax ::rtp::ColourspaceType::kColourspaceRgb24, false};
@@ -105,7 +103,6 @@ TEST(RTPDepayloaderTest, Many) {
 
   // Open and Start
   for (int i = 0; i < 10; i++) {
-    LOG(INFO) << "Opening stream number " << rtp[i].GetIpAddress() << "\n";
     rtp[i].Open();
     rtp[i].Start();
     std::cout << "Start " << i << "\n";
@@ -121,7 +118,6 @@ TEST(RTPDepayloaderTest, Many) {
 
   // Stop and Close
   for (int i = 0; i < 10; i++) {
-    LOG(INFO) << "Opening stream number " << rtp[i].GetIpAddress() << "\n";
     rtp[i].Stop();
     rtp[i].Close();
     std::cout << "Stop " << i << "\n";

@@ -18,7 +18,6 @@
 
 #include "h264/gst/x264/rtp_h264_payloader.h"
 
-#include <glog/logging.h>
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
 
@@ -41,7 +40,7 @@ void RtpH264Gstx264Payloader::SetStreamInfo(const ::mediax::rtp::StreamInformati
 
 int RtpH264Gstx264Payloader::Transmit(unsigned char *new_buffer, bool timeout) {
   if (!started_) {
-    DLOG(ERROR) << "RTP H.264 payloader not started";
+    std::cerr << "RTP H.264 payloader not started\n";
     return -1;
   }
 

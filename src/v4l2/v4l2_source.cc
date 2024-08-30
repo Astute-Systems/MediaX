@@ -14,7 +14,6 @@
 
 #include "v4l2/v4l2_source.h"
 
-#include <glog/logging.h>
 #include <sys/mman.h>
 
 #include <cstring>
@@ -36,13 +35,13 @@ V4L2Capture::V4L2Capture(std::string_view device, int width, int height)
 int V4L2Capture::Initalise() {
   fd_ = open(std::string(device_).c_str(), O_RDWR);
   if (fd_ == -1) {
-    LOG(ERROR) << "Failed to open device: " << device_;
+    std::cerr << "Failed to open device: " << device_;
     return -1;
   }
 
   struct v4l2_capability cap;
   if (ioctl(fd_, VIDIOC_QUERYCAP, &cap) == -1) {
-    LOG(ERROR) << "Failed to query device capabilities";
+    std::cerr << "Failed to query device capabilities\n";
     close(fd_);
     fd_ = -1;
     return -1;
@@ -50,7 +49,7 @@ int V4L2Capture::Initalise() {
   PrintCaps(&cap);
 
   if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
-    LOG(ERROR) << "Device does not support video capture";
+    std::cerr << "Device does not support video capture\n";
     close(fd_);
     fd_ = -1;
     return -1;
@@ -64,8 +63,8 @@ int V4L2Capture::Initalise() {
   format.fmt.pix.field = V4L2_FIELD_NONE;
 
   if (ioctl(fd_, VIDIOC_S_FMT, &format) == -1) {
-    LOG(ERROR) << "Failed to set pixel format for device using UYVY with width: " << width_
-               << " and height: " << height_;
+    std::cerr << "Failed to set pixel format for device using UYVY with width: " << width_ << " and height: " << height_
+              << "\n";
     close(fd_);
     fd_ = -1;
     return -1;
@@ -77,7 +76,7 @@ int V4L2Capture::Initalise() {
   request.memory = V4L2_MEMORY_MMAP;
 
   if (ioctl(fd_, VIDIOC_REQBUFS, &request) == -1) {
-    LOG(ERROR) << "Failed to request buffer";
+    std::cerr << "Failed to request buffer\n";
     close(fd_);
     fd_ = -1;
     return -1;
@@ -89,7 +88,7 @@ int V4L2Capture::Initalise() {
   buffer.index = 0;
 
   if (ioctl(fd_, VIDIOC_QUERYBUF, &buffer) == -1) {
-    LOG(ERROR) << "Failed to query buffer";
+    std::cerr << "Failed to query buffer\n";
     close(fd_);
     fd_ = -1;
     return -1;
@@ -98,14 +97,14 @@ int V4L2Capture::Initalise() {
   buffer_ =
       static_cast<uint8_t*>(mmap(nullptr, buffer.length, PROT_READ | PROT_WRITE, MAP_SHARED, fd_, buffer.m.offset));
   if (buffer_ == MAP_FAILED) {
-    LOG(ERROR) << "Failed to map buffer";
+    std::cerr << "Failed to map buffer\n";
     close(fd_);
     fd_ = -1;
     return -1;
   }
 
   if (ioctl(fd_, VIDIOC_STREAMON, &buffer.type) == -1) {
-    LOG(ERROR) << "Failed to start capture";
+    std::cerr << "Failed to start capture\n";
     close(fd_);
     fd_ = -1;
     return -1;
@@ -116,7 +115,7 @@ int V4L2Capture::Initalise() {
   buffer_info.memory = V4L2_MEMORY_MMAP;
   buffer_info.index = 0;
   if (ioctl(fd_, VIDIOC_QBUF, &buffer_info) == -1) {
-    LOG(ERROR) << "Failed to queue buffer";
+    std::cerr << "Failed to queue buffer\n";
     return -1;
   }
 
@@ -142,14 +141,14 @@ bool V4L2Capture::CaptureFrame(uint8_t* buffer) const {
   buffer_info.memory = V4L2_MEMORY_MMAP;
 
   if (ioctl(fd_, VIDIOC_DQBUF, &buffer_info) == -1) {
-    LOG(ERROR) << "Failed to dequeue buffer";
+    std::cerr << "Failed to dequeue buffer\n";
     return false;
   }
 
   memcpy(buffer, buffer_, width_ * height_ * 2);
 
   if (ioctl(fd_, VIDIOC_QBUF, &buffer_info) == -1) {
-    LOG(ERROR) << "Failed to queue buffer";
+    std::cerr << "Failed to queue buffer\n";
     return false;
   }
 

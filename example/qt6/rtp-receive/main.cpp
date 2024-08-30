@@ -1,5 +1,3 @@
-#include <glog/logging.h>
-
 #include <QCoreApplication>
 #include <QDebug>
 #include <QRtp>

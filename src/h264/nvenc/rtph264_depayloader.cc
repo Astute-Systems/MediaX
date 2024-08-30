@@ -15,7 +15,6 @@
 
 #include "h264/nvenc/rtph264_depayloader.h"
 
-#include <glog/logging.h>
 #include <va/va.h>
 #include <va/va_drm.h>
 #include <va/va_x11.h>
@@ -44,69 +43,69 @@ StatusCode DecodeFrame(VADisplay va_display, VAContextID va_context, VASurfaceID
 
   va_status = vaCreateConfig(va_display, VAProfileH264High, VAEntrypointVLD, nullptr, 0, &va_config);
   if (va_status != VA_STATUS_SUCCESS) {
-    LOG(ERROR) << "Failed to create VA config";
+    std::cerr << "Failed to create VA config\n";
     return StatusCode::kStatusError;
   }
 
   auto type = (VABufferType)0;
   va_status = vaCreateBuffer(va_display, va_context, type, 0, 0, nullptr, &va_buffer);
   if (va_status != VA_STATUS_SUCCESS) {
-    LOG(ERROR) << "Failed to create VA buffer";
+    std::cerr << "Failed to create VA buffer\n";
     return StatusCode::kStatusError;
   }
 
   va_status = vaCreateSurfaces(va_display, VA_RT_FORMAT_YUV420, 640, 480, &va_surface, 1, nullptr, 0);
   if (va_status != VA_STATUS_SUCCESS) {
-    LOG(ERROR) << "Failed to create VA surface";
+    std::cerr << "Failed to create VA surface\n";
     return StatusCode::kStatusError;
   }
 
   va_status = vaCreateContext(va_display, va_config, 0, 0, 0, &va_surface, 1, &va_context);
   if (va_status != VA_STATUS_SUCCESS) {
-    LOG(ERROR) << "Failed to create VA context";
+    std::cerr << "Failed to create VA context\n";
     return StatusCode::kStatusError;
   }
 
   va_status = vaBeginPicture(va_display, va_context, va_surface);
   if (va_status != VA_STATUS_SUCCESS) {
-    LOG(ERROR) << "Failed to begin VA picture";
+    std::cerr << "Failed to begin VA picture\n";
     return StatusCode::kStatusError;
   }
 
   va_status = vaCreateBuffer(va_display, va_context, VASliceDataBufferType, frame_size, 1,
                              const_cast<uint8_t *>(frame_data), &va_buffer);
   if (va_status != VA_STATUS_SUCCESS) {
-    LOG(ERROR) << "Failed to create VA buffer";
+    std::cerr << "Failed to create VA buffer\n";
     return StatusCode::kStatusError;
   }
 
   va_status = vaRenderPicture(va_display, va_context, &va_buffer, 1);
   if (va_status != VA_STATUS_SUCCESS) {
-    LOG(ERROR) << "Failed to render VA picture";
+    std::cerr << "Failed to render VA picture\n";
     return StatusCode::kStatusError;
   }
 
   va_status = vaEndPicture(va_display, va_context);
   if (va_status != VA_STATUS_SUCCESS) {
-    LOG(ERROR) << "Failed to end VA picture";
+    std::cerr << "Failed to end VA picture\n";
     return StatusCode::kStatusError;
   }
 
   va_status = vaSyncSurface(va_display, va_surface);
   if (va_status != VA_STATUS_SUCCESS) {
-    LOG(ERROR) << "Failed to sync VA surface";
+    std::cerr << "Failed to sync VA surface\n";
     return StatusCode::kStatusError;
   }
 
   va_status = vaDeriveImage(va_display, va_surface, &va_image);
   if (va_status != VA_STATUS_SUCCESS) {
-    LOG(ERROR) << "Failed to derive VA image";
+    std::cerr << "Failed to derive VA image\n";
     return StatusCode::kStatusError;
   }
 
   va_status = vaMapBuffer(va_display, va_image.buf, &va_image_data);
   if (va_status != VA_STATUS_SUCCESS) {
-    LOG(ERROR) << "Failed to map VA buffer";
+    std::cerr << "Failed to map VA buffer\n";
     return StatusCode::kStatusError;
   }
 
@@ -114,37 +113,37 @@ StatusCode DecodeFrame(VADisplay va_display, VAContextID va_context, VASurfaceID
 
   va_status = vaUnmapBuffer(va_display, va_image.buf);
   if (va_status != VA_STATUS_SUCCESS) {
-    LOG(ERROR) << "Failed to unmap VA buffer";
+    std::cerr << "Failed to unmap VA buffer\n";
     return StatusCode::kStatusError;
   }
 
   va_status = vaDestroyImage(va_display, va_image.image_id);
   if (va_status != VA_STATUS_SUCCESS) {
-    LOG(ERROR) << "Failed to destroy VA image";
+    std::cerr << "Failed to destroy VA image\n";
     return StatusCode::kStatusError;
   }
 
   va_status = vaDestroyBuffer(va_display, va_buffer);
   if (va_status != VA_STATUS_SUCCESS) {
-    LOG(ERROR) << "Failed to destroy VA buffer";
+    std::cerr << "Failed to destroy VA buffer\n";
     return StatusCode::kStatusError;
   }
 
   va_status = vaDestroyContext(va_display, va_context);
   if (va_status != VA_STATUS_SUCCESS) {
-    LOG(ERROR) << "Failed to destroy VA context";
+    std::cerr << "Failed to destroy VA context\n";
     return StatusCode::kStatusError;
   }
 
   va_status = vaDestroySurfaces(va_display, &va_surface, 1);
   if (va_status != VA_STATUS_SUCCESS) {
-    LOG(ERROR) << "Failed to destroy VA surface";
+    std::cerr << "Failed to destroy VA surface\n";
     return StatusCode::kStatusError;
   }
 
   va_status = vaDestroyConfig(va_display, va_config);
   if (va_status != VA_STATUS_SUCCESS) {
-    LOG(ERROR) << "Failed to destroy VA config";
+    std::cerr << "Failed to destroy VA config\n";
     return StatusCode::kStatusError;
   }
 

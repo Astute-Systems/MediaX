@@ -19,8 +19,6 @@
 #include <gst/gst.h>
 #endif
 
-#include <glog/logging.h>
-
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
@@ -139,7 +137,7 @@ uint8_t BitsPerPixel(rtp::ColourspaceType mode) {
     case rtp::ColourspaceType::kColourspaceAv1:
       return 24;  // Not known but not an error.
     default:
-      LOG(ERROR) << "Unknown colourspace type " << ColourspaceTypeToString(mode);
+      std::cerr << "Unknown colourspace type " << ColourspaceTypeToString(mode) << "\n";
       return 0;
   }
 }

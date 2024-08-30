@@ -1,6 +1,6 @@
 #include "example_helpers.h"
 
-#include <glog/logging.h>
+#include <iostream>
 
 #include "rtp/rtp_types.h"
 
@@ -25,7 +25,7 @@ mediax::rtp::ColourspaceType GetMode(int mode) {
       return mediax::rtp::ColourspaceType::kColourspaceH265;
       break;
     default:
-      LOG(WARNING) << "Invalid video mode " << mode;
+      std::cerr << "Invalid video mode " << mode << "\n";
       return mediax::rtp::ColourspaceType::kColourspaceYuv422;
   }
   return mediax::rtp::ColourspaceType::kColourspaceYuv422;
@@ -48,6 +48,6 @@ std::string ModeToString(int mode) {
     default:
       break;
   }
-  LOG(WARNING) << "Invalid video mode" << mode;
+  std::cerr << "Invalid video mode" << mode << "\n";
   return "Unknown";
 }

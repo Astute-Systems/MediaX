@@ -22,7 +22,6 @@
 
 #include "jpeg/gst/vaapi/rtp_jpeg_depayloader.h"
 
-#include <glog/logging.h>
 #include <gst/gst.h>
 
 #include <algorithm>
@@ -95,7 +94,6 @@ GstFlowReturn RtpJpegGstVaapiDepayloader::NewFrameCallback(GstAppSink *appsink, 
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgba);
   } else {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceUndefined);
-    DLOG(WARNING) << "Unknown colourspace " << colorspace;
   }
 
   depayloader->SetHeight(height);

@@ -22,7 +22,6 @@
 
 #include "h265/gst/vaapi/rtp_h265_depayloader.h"
 
-#include <glog/logging.h>
 #include <gst/gst.h>
 
 #include <algorithm>
@@ -104,7 +103,7 @@ GstFlowReturn RtpH265GstVaapiDepayloader::NewFrameCallback(GstAppSink *appsink, 
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgba);
   } else {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceUndefined);
-    DLOG(WARNING) << "Unknown colourspace " << colorspace;
+    std::cerr << "Unknown colourspace " << colorspace << "\n";
   }
 
   depayloader->SetHeight(height);

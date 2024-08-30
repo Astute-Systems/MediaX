@@ -17,7 +17,7 @@ fi
 # Basic setup for empty docker containers
 apt-get --no-install-recommends -y install cmake make gcc g++ git python3-dev tar zip file
 # Library dependencies
-apt-get --no-install-recommends -y install libv4l-dev libswscale-dev libgflags-dev libgmock-dev libgtkmm-3.0-dev cmake g++ libgtest-dev libva-dev libdrm-dev libx11-dev libxext-dev libxfixes-dev libvdpau-dev cppcheck libunwind-dev libgoogle-glog-dev gcovr lcov swig
+apt-get --no-install-recommends -y install libv4l-dev libswscale-dev libgflags-dev libgmock-dev libgtkmm-3.0-dev cmake g++ libgtest-dev libva-dev libdrm-dev libx11-dev libxext-dev libxfixes-dev libvdpau-dev cppcheck libunwind-dev gcovr lcov swig
 apt-get --no-install-recommends -y install libunwind-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-tools
 # For AV1 RTP Rust gstreamer plugins
 apt-get --no-install-recommends -y install cargo libjson-glib-dev

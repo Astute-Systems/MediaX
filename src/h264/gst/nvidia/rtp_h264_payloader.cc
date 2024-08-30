@@ -14,7 +14,6 @@
 
 #include "h264/gst/nvidia/rtp_h264_payloader.h"
 
-#include <glog/logging.h>
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
 
@@ -43,7 +42,7 @@ bool RtpH264GstNvidiaPayloader::Open() {
   // Create a pipeline
   pipeline_ = gst_pipeline_new("rtp-h264-pipeline");
   if (pipeline_ == nullptr) {
-    DLOG(ERROR) << "Failed to create pipeline";
+    std::cerr << "Failed to create pipeline";
     return false;
   }
 
@@ -82,7 +81,7 @@ bool RtpH264GstNvidiaPayloader::Open() {
           gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "RGB", "width", G_TYPE_INT, 640, "height",
                               G_TYPE_INT, 480, "framerate", GST_TYPE_FRACTION, 25, 1, nullptr);
       appsrc_caps == nullptr) {
-    DLOG(ERROR) << "Failed to create appsrc caps";
+    std::cerr << "Failed to create appsrc caps";
     return false;
   }
   return true;

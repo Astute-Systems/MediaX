@@ -22,7 +22,6 @@
 
 #include "h264/gst/nvidia/rtp_h264_depayloader.h"
 
-#include <glog/logging.h>
 #include <gst/gst.h>
 
 #include <algorithm>
@@ -89,7 +88,7 @@ GstFlowReturn RtpH264GstNvidiaDepayloader::NewFrameCallback(GstAppSink *appsink,
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceRgba);
   } else {
     depayloader->SetColourSpace(mediax::rtp::ColourspaceType::kColourspaceUndefined);
-    DLOG(WARNING) << "Unknown colourspace " << colorspace;
+    std::cerr << "Unknown colourspace " << colorspace << "\n";
   }
   depayloader->SetHeight(height);
   depayloader->SetWidth(width);

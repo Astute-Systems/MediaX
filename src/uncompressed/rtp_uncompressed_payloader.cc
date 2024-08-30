@@ -32,8 +32,6 @@
 #include <sys/socket.h>
 #endif
 
-#include <glog/logging.h>
-
 #include "rtp/rtp_types.h"
 #include "rtp/rtp_utils.h"
 #include "uncompressed/rtp_uncompressed_payloader.h"
@@ -158,11 +156,11 @@ void RtpUncompressedPayloader::SendFrame(RtpUncompressedPayloader *stream) {
     n = sendto(stream->GetEgressPort().sockfd, &packet, stride + 26, 0, (const sockaddr *)&stream->server_addr_out_,
                stream->server_len_out_);
     if (n != stride + 26) {
-      LOG(ERROR) << "Transmit socket failure fd=" << stream->GetEgressPort().sockfd;
+      std::cerr << "Transmit socket failure fd=" << stream->GetEgressPort().sockfd << "\n";
     }
 
     if (n == 0) {
-      LOG(ERROR) << "Transmit socket failure fd=" << stream->GetEgressPort().sockfd;
+      std::cerr << "Transmit socket failure fd=" << stream->GetEgressPort().sockfd << "\n";
       return;
     }
   }
