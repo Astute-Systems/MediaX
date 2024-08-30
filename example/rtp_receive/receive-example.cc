@@ -14,7 +14,6 @@
 #include <cairo.h>
 #include <cairo/cairo.h>
 #include <gflags/gflags.h>
-#include <glog/logging.h>
 #include <gtk/gtk.h>
 
 #include <iostream>
@@ -282,8 +281,6 @@ int main(int argc, char *argv[]) {
 
   gtk_init(&argc, &argv);
 
-  google::InitGoogleLogging(argv[0]);
-  google::InstallFailureSignalHandler();
   mediax::InitRtp(argc, argv);
   std::cout << "Example RTP (Rx) streaming (" << FLAGS_width << "x" << FLAGS_height << " " << ModeToString(FLAGS_mode)
             << ") to " << FLAGS_ipaddr.c_str() << ":" << FLAGS_port << "@" << FLAGS_framerate << "Htz\n";
